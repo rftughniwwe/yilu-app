@@ -260,6 +260,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/onSiteTraining/examBegin",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "试卷详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#999999",

@@ -5,10 +5,10 @@
 			<view class="item" @click="signinNow">
 				<image src="../../static/on-site-sign.png" mode=""></image>
 			</view>
-			<view class="item">
+			<view class="item" @click="learningmaterials">
 				<image src="../../static/learningzl.png" mode=""></image>
 			</view>
-			<view class="item">
+			<view class="item" @click="goOnlineExam">
 				<image src="../../static/online-exam.png" mode=""></image>
 			</view>
 		</view>
@@ -35,6 +35,7 @@
 		},
 		methods:{
 			signinNow(){
+				// 需先扫描二维码
 				uni.navigateTo({
 					url:'./courseDetails'
 				})
@@ -46,6 +47,18 @@
 				// }, (res) => {
 				// 	console.log('扫描结果', JSON.stringify(res))
 				// })
+			},
+			// 前往学习资料
+			goLearningMaterials(){
+				uni.navigateTo({
+					url:'../user/learningMaterials/learningMaterials'
+				})
+			},
+			// 前往在线考试
+			goOnlineExam(){
+				uni.navigateTo({
+					url:'./examBegin'
+				})
 			}
 		}
 	}

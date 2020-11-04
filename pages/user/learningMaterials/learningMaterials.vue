@@ -1,12 +1,14 @@
 <!-- 学习资料 -->
 <template>
 	<view>
-		<!-- <learnTopSlide :tabArr='tabArr' type='3' @tabChange="tabSelected" /> -->
-		<uni-nav-bar fixed="true" leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
-			<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
-		</uni-nav-bar>
+		
+		<view class="wrap-top-tab-bar" >
+			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
+				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
+			</uni-nav-bar>
+		</view>
 
-		<view class="container">
+		<view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
 			<view v-show="num=='0'">
 				<view class="item-block flex-row-start">
 					<image class="pdf-docx-img" src="../../../static/files-PDF.png" mode=""></image>

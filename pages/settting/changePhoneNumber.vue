@@ -113,6 +113,7 @@
 
 	.item {
 		padding: 20rpx 0;
+		border-bottom: 2rpx solid #EFEFEF;
 	}
 
 	.confirm-btn {

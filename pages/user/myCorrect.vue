@@ -1,18 +1,18 @@
 <!-- 我的收藏 -->
 <template>
 	<view>
-		<view class="top-tab-content" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
+		<view class="wrap-top-tab-bar" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
 		</view>
 		
-		<view v-show="content=='0'" class="main-content">
+		<view v-show="content=='0'" class="main-content" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
 			<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' />
 			<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' />
 			<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' />
 		</view>
-		<view v-show="content=='1'" class="article-content">
+		<view v-show="content=='1'" class="article-content" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
 			<newCover position='left' />
 			<newCover position='right' />
 			<newCover position='moreimg' />
@@ -65,9 +65,7 @@
 </script>
 
 <style lang="scss">
-	.top-tab-content {
-		// margin: 30rpx ;
-	}
+	
 
 	.article-content {
 		padding: 30rpx;

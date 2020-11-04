@@ -1,13 +1,13 @@
 <!-- 我的订单页面 -->
 <template>
 	<view>
-		<view :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
+		<view class="wrap-top-tab-bar" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 			<!-- <learnTopSlide :tabArr='tabArr' type='3' @tabChange="tabSelected" /> -->
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
 		</view>
-		<view class="container">
+		<view class="container" :style="{'marginTop':isFullScreen?'170rpx':'120rpx'}">
 			<view class="pay-item">
 				<view class="title">
 					驾驶员课程

@@ -1,13 +1,31 @@
 <!-- 签到页面 -->
 <template>
 	<view class="container-main">
-		<uni-nav-bar :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}" title="签到" fixed="true" color="#333333" leftIcon="arrowleft"
-		 @clickLeft='goback' @clickRight='rightClick' :right-text="tab==2?'月汇总':''" />
+		<view class="wrap-top-tab-bar" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}" >
+			<uni-nav-bar title="签到" color="#333333" leftIcon="arrowleft"
+			 @clickLeft='goback' @clickRight='rightClick' :right-text="tab==2?'月汇总':''" />
+		</view>
+		
+		 <!-- <view class="top-tab-bar flex-between" :style="{'marginTop':isFullScreen?'64rpx':'30rpx'}">
+		 	<view class="back-img" @click="goback">
+		 		<image src="../../static/arrow-left.png" mode=""></image>
+		 	</view>
+			<view class="middle">
+				签到
+			</view>
+			<view class="right-content" @click="rightClick">
+				{{tab==2?'月汇总':''}}
+			</view>
+		 </view> -->
+		 
+		 	
+		
 		<view v-show="tab==1" class="sign-wrap">
+			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
 			<view class="top-content">
 				<view class="subtitle flex-row-start">
 					<image src="../../static/mini-time.png" mode=""></image>
-					<view class="time zz">
+					<view class="time zzz">
 						2020-09-17 19:20
 					</view>
 					<image src="../../static/mini-course.png" mode=""></image>
@@ -55,7 +73,7 @@
 		</view>
 		
 		<view v-show="tab==2" class="statis-wrap">
-			
+			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
 			<view class="date-topic flex-row-start">
 				<view class="header">
 					2020年09/17日
@@ -167,6 +185,7 @@
 				</view>
 			</view>
 		</view>
+		
 		<view class="tab-bar flex-around">
 			<view class="tab-sign" @click="changeTab(1)">
 				<image :src="tab==1?'../../static/location-address.png':'../../static/location-address2.png'" mode=""></image>
@@ -215,7 +234,9 @@
 			},
 			// 月汇总
 			rightClick() {
-
+				uni.navigateTo({
+					url:'./monthlySummary'
+				})
 			}
 		}
 	}
@@ -225,7 +246,16 @@
 	.container-main {
 		position: relative;
 	}
-
+	
+	.top-tab-bar{
+		padding: 30rpx;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 9999;
+		background: #FFFFFF;
+	}
 	.top-content {
 		// padding: 40rpx 30rpx;
 		border-bottom: 20rpx solid #F5F6F7;
@@ -282,7 +312,7 @@
 		text-align: center;
 	}
 
-	.zz {
+	.zzz {
 		margin-right: 30rpx;
 	}
 
@@ -440,5 +470,11 @@
 		border-left: 30rpx solid transparent;
 		border-right: 30rpx solid transparent;
 		border-bottom: 40rpx solid #FFFFFF;
+	}
+	.back-img{
+		image{
+			width: 30rpx;
+			height: 38rpx;
+		}
 	}
 </style>

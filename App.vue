@@ -157,4 +157,13 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+	/* 自定义顶部导航栏 */
+	.wrap-top-tab-bar{
+		background: #FFFFFF;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 9999;
+	}
 </style>
