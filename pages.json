@@ -1,0 +1,285 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			// 主页
+			"path": "pages/tabBar/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			// 默认进入的页面
+			"path": "pages/login/normalLogin",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/documentRegistration/jobLicense",
+			"style": {
+				"navigationBarTitleText": "从业资格证上传"
+			}
+		},
+
+		{
+			"path": "pages/documentRegistration/idCardRegister",
+			"style": {
+				"navigationBarTitleText": "身份证上传"
+			}
+		},
+
+		{
+			"path": "pages/documentRegistration/driverLicense",
+			"style": {
+				"navigationBarTitleText": "驾驶证上传"
+			}
+		},
+
+		{
+			"path": "pages/fillInfomation/fillInfomation",
+			"style": {
+				"navigationBarTitleText": "基本信息"
+			}
+		},
+
+		{
+			"path": "pages/login/codeLogin",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/livebroadcast/livebroadcast",
+			"style": {}
+		}, {
+			"path": "pages/login/fastLogin",
+			"style": {}
+		}, {
+			"path": "pages/login/getPhoneCode",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/userAgreement/userAgreement",
+			"style": {
+				"navigationBarTitleText": "用户协议"
+			}
+		}, {
+			"path": "pages/resetPassword/resetPassword",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/login/faceLogin",
+			"style": {
+				"navigationBarTitleText": "人脸采集"
+			}
+		}
+
+		, {
+			"path": "pages/tabBar/user",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/tabBar/learn",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/searchFor/searchFor",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/aiticlePage/aiticlePage",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/specialTopic/speacialTopicPage",
+			"style": {
+				"navigationBarTitleText": "精选专题"
+			}
+		}, {
+			"path": "pages/specialTopic/specialTopicDetail",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/paymentPage/paymentPage",
+			"style": {
+				"navigationBarTitleText": "支付详情",
+				"enablePullDownRefresh": false,
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#3CA7FF"
+			}
+
+		}, {
+			"path": "pages/leaderBoard/leaderBoard",
+			"style": {
+				"navigationBarTitleText": "排行榜",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#50ADFE",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/userInfomation/userInfomation",
+			"style": {
+				"navigationBarTitleText": "个人信息",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/userInfomation/userEditorName",
+			"style": {
+				"navigationBarTitleText": "设置昵称",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/settting/settting",
+			"style": {
+				"navigationBarTitleText": "设置",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/settting/changePhoneNumber",
+			"style": {
+				"navigationBarTitleText": "修改手机号",
+				"enablePullDownRefresh": false
+			}
+
+		}
+	    ,{
+            "path" : "pages/settting/setFontSize",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "字体大小",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/myNews/myNews",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "系统消息",
+                "enablePullDownRefresh": false
+            }
+            
+        },{
+            "path" : "pages/user/myCourse",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的课程",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/myCorrect",
+            "style" :                                                                                    
+            {
+                "navigationStyle":"custom",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/myOrder/myOrder",
+            "style" :                                                                                    
+            {
+                "navigationStyle":"custom",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/learningMaterials/learningMaterials",
+            "style" :                                                                                    
+            {
+                "navigationStyle":"custom",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/absoutUs",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "关于我们",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/feedback",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "意见反馈",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/onSiteTraining/onSiteTraining",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "现场培训",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/onSiteTraining/courseDetails",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "课程详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/onSiteTraining/signInPage",
+            "style" :                                                                                    
+            {
+                "enablePullDownRefresh": true,
+				"navigationStyle":"custom"
+            }
+            
+        }
+    ],
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#3CA7FF",
+		"backgroundColor": "#FFFFFF",
+		"list": [{
+				"pagePath": "pages/tabBar/index",
+				"text": "咨询",
+				"iconPath": "./static/index-news-no.png",
+				"selectedIconPath": "./static/index-news.png"
+			},
+			{
+				"pagePath": "pages/tabBar/learn",
+				"text": "学习",
+				"iconPath": "./static/learn.png",
+				"selectedIconPath": "./static/learn-selected.png"
+			},
+			{
+				"pagePath": "pages/tabBar/user",
+				"text": "我的",
+				"iconPath": "./static/user.png",
+				"selectedIconPath": "./static/user-selected.png"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "宜陆",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#fff"
+	}
+}
