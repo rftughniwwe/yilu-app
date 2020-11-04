@@ -251,6 +251,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/onSiteTraining/monthlySummary",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "月汇总",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#999999",
