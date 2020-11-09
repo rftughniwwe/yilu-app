@@ -12,11 +12,11 @@
 				直播中
 			</view>
 			<view @click="chooseTab(4)" :class="tab==4?'selected-items':'item'">
-				回访
+				回放
 			</view>
 		</view>
 		<view class="course-contnt">
-			<view class="course-item">
+			<view class="course-item" @click="goPreview">
 				<view class="title text-overflow-ellipsis">
 					五月安全培训危货
 				</view>
@@ -25,6 +25,9 @@
 				</view>
 				<view class="img-content">
 					<image src="../../static/banner.png" mode=""></image>
+					<view class="tags">
+						预告
+					</view>
 				</view>
 			</view>
 			<view class="course-item">
@@ -36,6 +39,9 @@
 				</view>
 				<view class="img-content">
 					<image src="../../static/banner.png" mode=""></image>
+					<view class="tags">
+						直播中
+					</view>
 				</view>
 			</view>
 			<view class="course-item">
@@ -47,6 +53,9 @@
 				</view>
 				<view class="img-content">
 					<image src="../../static/banner.png" mode=""></image>
+					<view class="tags">
+						回放
+					</view>
 				</view>
 			</view>
 		</view>
@@ -64,6 +73,11 @@
 			chooseTab(e){
 				console.log(e)
 				this.tab = e
+			},
+			goPreview(){
+				uni.navigateTo({
+					url:'./coursePreview'
+				})
 			}
 		}
 	}
@@ -115,9 +129,20 @@
 		height: 300rpx;
 		width: 100%;
 		background: #eeeeee;
+		position:relative;
 		image{
 			width: 100%;
 			height: 100%;
+		}
+		.tags{
+			background-color: #F92E6D;
+			color: #FFFFFF;
+			font-size: 28rpx;
+			padding: 4rpx 34rpx;
+			border-bottom-left-radius: 22rpx;
+			position: absolute;
+			right: 0;
+			top: 0;
 		}
 	}
 }

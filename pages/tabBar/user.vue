@@ -35,7 +35,7 @@
 						我的课程
 					</view>
 				</view>
-				<view class="my-sign-in">
+				<view class="my-sign-in" @click="goMySign">
 					<image src="../../static/user-my-signin.png" mode=""></image>
 					<view class="" :style="{'fontSize':globalSize+'rpx'}">
 
@@ -62,7 +62,7 @@
 						<image src="../../static/right-arrow.png" mode=""></image>
 					</view>
 				</view>
-				<view class="item flex-between" @click="goMyCorrect">
+				<view class="item flex-between" @click="goMyCollect">
 					<view class="item-icon flex-row-start">
 						<image src="../../static/my-correct.png" mode=""></image>
 						<view class="title" :style="{'fontSize':globalSize+'rpx'}">
@@ -166,9 +166,9 @@
 				})
 			},
 			// 前往我的收藏
-			goMyCorrect(){
+			goMyCollect(){
 				uni.navigateTo({
-					url:'../user/myCorrect'
+					url:'../user/myCollect'
 				})
 			},
 			// 前往我的订单
@@ -181,6 +181,12 @@
 			goLearningMaterials(){
 				uni.navigateTo({
 					url:'../user/learningMaterials/learningMaterials'
+				})
+			},
+			// 我的签到
+			goMySign(){
+				uni.navigateTo({
+					url:'../onSiteTraining/signInPage'
 				})
 			}
 		}

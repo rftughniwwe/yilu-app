@@ -3,6 +3,8 @@ import {
 	isLogin
 } from './util.js'
 
+const BASE_URL = ''
+
 // const ID_CARD_OCR = 'https://api05.aliyun.venuscn.com/ocr/id-card'
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
 const DVIVING_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/driving_license'
@@ -42,6 +44,7 @@ function getAcceessToken(key, secret) {
 	})
 }
 
+// 请求
 function httpRequest(options) {
 
 	getNetworkType().then((res) => {
@@ -74,5 +77,6 @@ module.exports = {
 	ID_CARD_OCR_KEY,
 	BD_OCR_KEY,
 	BD_OCR_SECRET,
-	DVIVING_CARD_OCR
+	DVIVING_CARD_OCR,
+	BASE_URL
 }

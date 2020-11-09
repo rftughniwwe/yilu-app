@@ -84,7 +84,7 @@
 		data() {
 			return {
 				serachVal: '',
-				showModel:'article',
+				showModel:'normal',
 				tab:1,
 				isFullScreen:false
 			};

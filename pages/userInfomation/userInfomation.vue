@@ -33,16 +33,9 @@
 					性别
 				</view>
 				<view class="right-content">
-					<picker mode="selector" :range="genderArr" @change="changeGender">
-						<view class="flex-between">
-							<view class="head-img">
-								{{genderArr[gender]}}
-							</view>
-							<view class="right-arrow-img">
-								<image src="../../static/right-arrow.png" mode=""></image>
-							</view>
-						</view>
-					</picker>
+					<view class="head-img">
+						男
+					</view>
 				</view>
 			</view>
 			<view class="item flex-between">

@@ -1,12 +1,12 @@
-<!-- 课程详情 -->
+<!-- 课程预告 -->
 <template>
-	<view>
-		<view class="begin-time flex-row-start">
+	<view class="main">
+		<!-- <view class="begin-time flex-row-start">
 			<image src="../../static/timeout.png" mode=""></image>
 			<view class="text">
-				距离课程开始时间 01:29:05
+				距离课程开始时间  01:29:05
 			</view>
-		</view>
+		</view> -->
 		<view class="topic">
 			<view class="title">
 				道路危险货物运输管理
@@ -32,49 +32,49 @@
 				《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
 			</view>
 		</view>
-		<view class="next-step">
-			<nextPageBtn @goNextPage='nextStep' />
+		<view class="trainingObject">
+			<view class="header title">
+				培训对象
+			</view>
+			<view class="subtitle text-overflow5">
+				危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输
+			</view>
+		</view>
+		<view class="btn">
+			添加提醒
 		</view>
 	</view>
 </template>
 
 <script>
-	import nextPageBtn from '@/components/nextPageBtn/nextPageBtn.vue'
-	import useFacePlugin from '../../commons/faceplugin.js'
 	export default {
 		data() {
 			return {
 
 			};
-		},
-		components: {
-			nextPageBtn
-		},
-		methods: {
-			nextStep() {
-				uni.navigateTo({
-					url: './signInPage'
-				})
-				// useFacePlugin({count:1,random:true}).then((res)=>{
-				// 	uni.showToast({
-				// 		title:'识别成功',
-				// 		icon:'success',
-				// 		success() {
-				// 			uni.navigateTo({
-				// 				url:'./signInPage'
-				// 			})
-				// 		}
-				// 	})
-				// },(err)=>{
-				// 	console.error('识别失败',err)
-				// })
-
-			}
 		}
 	}
 </script>
 
 <style lang="scss">
+	page{
+		background-color: #F5F6F7;
+	}
+	.main{
+		position: fixed;
+	}
+	.btn{
+		background-color: #FFFFFF;
+		color: #3CA7FF;
+		border-top: 2rpx solid #EAEAEA;
+		text-align: center;
+		padding: 30rpx 0;
+		position: fixed;
+		left:0;
+		right: 0;
+		bottom: 0;
+		font-size: 30rpx;
+	}
 	.begin-time {
 		padding: 20rpx 30rpx;
 		background-color: rgba(60, 167, 255, 0.27);
@@ -111,10 +111,10 @@
 		font-size: 28rpx;
 	}
 
-	.container-content {
+	.container-content,.trainingObject {
 		padding: 40rpx 30rpx;
 	}
-
+	
 	.text-overflow5 {
 		margin: 30rpx 0;
 	}
@@ -124,7 +124,4 @@
 		border-left: 8rpx solid #3395FA;
 	}
 
-	.next-step {
-		padding: 30rpx;
-	}
 </style>

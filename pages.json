@@ -51,57 +51,66 @@
 		{
 			"path": "pages/livebroadcast/livebroadcast",
 			"style": {}
-		}, {
+		}, 
+		{
 			"path": "pages/login/fastLogin",
 			"style": {}
-		}, {
+		}, 
+		{
 			"path": "pages/login/getPhoneCode",
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/userAgreement/userAgreement",
 			"style": {
 				"navigationBarTitleText": "用户协议"
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/resetPassword/resetPassword",
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		},
+		{
 			"path": "pages/login/faceLogin",
 			"style": {
 				"navigationBarTitleText": "人脸采集"
 			}
-		}
-
-		, {
+		}, 
+		{
 			"path": "pages/tabBar/user",
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		},
+		{
 			"path": "pages/tabBar/learn",
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/searchFor/searchFor",
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/aiticlePage/aiticlePage",
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		}, 
+		{
 			"path": "pages/specialTopic/speacialTopicPage",
 			"style": {
 				"navigationBarTitleText": "精选专题"
 			}
-		}, {
+		},
+		{
 			"path": "pages/specialTopic/specialTopicDetail",
 			"style": {
 				"navigationStyle": "custom"
@@ -152,124 +161,120 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/settting/setFontSize",
+			"style": {
+				"navigationBarTitleText": "字体大小",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/myNews/myNews",
+			"style": {
+				"navigationBarTitleText": "系统消息",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/myCourse",
+			"style": {
+				"navigationBarTitleText": "我的课程",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/myCollect",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/myOrder/myOrder",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/learningMaterials/learningMaterials",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/absoutUs",
+			"style": {
+				"navigationBarTitleText": "关于我们",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/feedback",
+			"style": {
+				"navigationBarTitleText": "意见反馈",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/onSiteTraining/onSiteTraining",
+			"style": {
+				"navigationBarTitleText": "现场培训",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/onSiteTraining/courseDetails",
+			"style": {
+				"navigationBarTitleText": "课程详情",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/onSiteTraining/signInPage",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+
+		}, {
+			"path": "pages/onSiteTraining/monthlySummary",
+			"style": {
+				"navigationBarTitleText": "月汇总",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/onSiteTraining/examBegin",
+			"style": {
+				"navigationBarTitleText": "试卷详情",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/onSiteTraining/examResult",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/user/coursePreview",
+			"style": {
+				"navigationBarTitleText": "课程详情",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/user/myNews/newsDetail",
+			"style": {
+				"navigationBarTitleText": "我的消息",
+				"enablePullDownRefresh": false
+			}
+
 		}
-	    ,{
-            "path" : "pages/settting/setFontSize",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "字体大小",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/myNews/myNews",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "系统消息",
-                "enablePullDownRefresh": false
-            }
-            
-        },{
-            "path" : "pages/user/myCourse",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "我的课程",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/myCorrect",
-            "style" :                                                                                    
-            {
-                "navigationStyle":"custom",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/myOrder/myOrder",
-            "style" :                                                                                    
-            {
-                "navigationStyle":"custom",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/learningMaterials/learningMaterials",
-            "style" :                                                                                    
-            {
-                "navigationStyle":"custom",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/absoutUs",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "关于我们",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/user/feedback",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "意见反馈",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/onSiteTraining/onSiteTraining",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "现场培训",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/onSiteTraining/courseDetails",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "课程详情",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/onSiteTraining/signInPage",
-            "style" :                                                                                    
-            {
-                "enablePullDownRefresh": true,
-				"navigationStyle":"custom"
-            }
-            
-        }
-        ,{
-            "path" : "pages/onSiteTraining/monthlySummary",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "月汇总",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/onSiteTraining/examBegin",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "试卷详情",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+
+	],
 	"tabBar": {
 		"color": "#999999",
 		"selectedColor": "#3CA7FF",

@@ -93,9 +93,9 @@
 		},
 		methods:{
 			newsDetail(){
-				console.log('sb')
+				console.log('sbxxx')
 				uni.navigateTo({
-					url:'./newsDetail'
+					url:'newsDetail'
 				})
 			}
 		}
