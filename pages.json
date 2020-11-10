@@ -1,19 +1,20 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			// 主页
-			"path": "pages/tabBar/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			// 默认进入的页面
 			"path": "pages/login/normalLogin",
 			"style": {
 				"navigationStyle": "custom"
 			}
 		},
+		{
+			// 主页
+			"path": "pages/tabBar/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		
 		{
 			"path": "pages/documentRegistration/jobLicense",
 			"style": {

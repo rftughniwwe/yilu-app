@@ -8,9 +8,25 @@
 	export default {
 		onLaunch: function() {
 
+			// #ifdef APP-PLUS
+				if(uni.getStorageSync('userStorage').userToken){
+					uni.switchTab({
+						url:'pages/tabBar/index'
+					})
+					setTimeout(()=>{
+						plus.navigator.closeSplashscreen()
+					},1000)
+				}else {
+					plus.navigator.closeSplashscreen()
+				}
+			// #endif
+
+
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {
 				uni.setStorageSync('ocr_token', res.data.access_token)
+			},(err)=>{
+				console.log('获取token失败，',err)
 			})
 
 

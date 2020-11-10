@@ -43,6 +43,15 @@ function getNetworkType() {
 
 }
 
+// 获取随机数字
+function getRandomDigits(length){
+	let digit = []
+	for(let i = 0;i<length;i++){
+		digit.push(Math.floor(Math.random() * 10))
+	}
+	return digit.join('')
+}
+
 // 有效期日期处理
 function dateFormat(data,str1,str2){
 	if(!data){
@@ -91,6 +100,16 @@ function getCurrentDate(){
 	return `${year}-${month}`
 }
 
+// 设置登录缓存
+function setAppStorage(options){
+	uni.setStorageSync('userStorage',options)
+}
+
+// 清除登录缓存
+function removeAppStorage(options){
+	uni.removeStorageSync('userStorage')
+}
+
 module.exports = {
 	getNetworkType,
 	isLogin,
@@ -98,5 +117,8 @@ module.exports = {
 	NATION,
 	toBase64,
 	dateFormat,
-	getCurrentDate
+	getCurrentDate,
+	getRandomDigits,
+	setAppStorage,
+	removeAppStorage
 }

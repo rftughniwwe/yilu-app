@@ -4,7 +4,7 @@
 		<navigateBack></navigateBack>
 		<view class="content">
 			<view class="login-title">
-				找回密码
+				重置密码
 			</view>
 			<view class="form-content">
 				<input v-model="phone" class="phone-num-input" type="number" maxlength="11" placeholder="请输入手机号" placeholder-style="color:#CCCCCC" />
@@ -25,6 +25,11 @@
 	import {
 		REG_PHONE
 	} from '../../utils/util.js';
+	import sendSMSCode from '../../commons/api/sendSMSCode.js'
+	import {
+		httpRequest
+	} from '../../utils/httpRequest.js'
+	import Toast from '../../commons/showToast.js'
 	
 	export default {
 		data() {
@@ -51,21 +56,44 @@
 					})
 					return
 				}
-				uni.showToast({
-					title: '验证码已发送',
-					icon: 'success'
+				uni.showLoading({
+					title:'发送中...'
 				})
-				this.flag = true
-				this.timer = setInterval(() => {
-					this.count--
-					if (this.count === 0) {
-						this.flag = false
-						this.count = 60
-						clearInterval(this.timer)
-						this.timer = null
+				
+				sendSMSCode(this.phone).then((res)=>{
+					uni.hideLoading()
+					if(res.data.code == 200){
+						uni.showToast({
+							title: '验证码已发送',
+							icon:'success'
+						})
+						this.flag = true
+						this.timer = setInterval(() => {
+							this.count--
+							if (this.count === 0) {
+								this.flag = false
+								this.count = 60
+								clearInterval(this.timer)
+								this.timer = null
+							}
+						}, 1000)
+					}else {
+						console.log('短信发送错误',res)
+						uni.showToast({
+							title:'短信发送错误'
+						})
 					}
-				}, 1000)
+				},(err)=>{
+					console.log('短信发送失败',err)
+					uni.showToast({
+						title:'短信发送失败'
+					})
+				})
+				
+				
+				
 			},
+			
 			// 修改密码
 			setPwd() {
 				// 请求前的简单判断
@@ -88,8 +116,46 @@
 					})
 					return
 				}
-				
+				uni.showLoading({
+					title:'修改中...'
+				})
 				// 正式请求
+				httpRequest({
+					url:'/user/api/user/update/password',
+					method:'POST',
+					data:{
+						code:this.vrcode,
+						newPassword:this.password,
+						confirmPassword:this.password,
+						mobile:this.phone
+					},
+					success:(res)=>{
+						uni.hideLoading()
+						console.log('修改密码：',res)
+						if(res.data.code == 200){
+							Toast({
+								title:'修改成功',
+								icon:'success'
+							})
+							setTimeout(()=>{
+								uni.navigateBack({
+									delta:1
+								})
+							},1000)
+						}else {
+							Toast({
+								title:res.data.msg
+							})
+						}
+							
+					},
+					fail:(err)=>{
+						console.log('修改密码失败：',err)
+						Toast({
+							title:'修改密码失败'
+						})
+					}
+				})
 			}
 		}
 	}
@@ -101,7 +167,7 @@
 	}
 
 	.content {
-		padding: 0 $uni-spacing-row-big;
+		padding: 0 40rpx;
 	}
 
 	.form-content {
@@ -109,7 +175,7 @@
 		margin-bottom: 30rpx;
 
 		input {
-			padding: 22rpx 8rpx;
+			padding: 26rpx 8rpx;
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 32rpx;
 		}

@@ -2,25 +2,25 @@
 	<view class="bottom-content">
 		<view v-if="mode !=1" class="item" @click="faceLogin">
 			<image src="../../static/facelogin.png" mode=""></image>
-			<view>
+			<view class="zxc">
 				刷脸登录
 			</view>
 		</view>
 		<view v-if="mode !=2" class="item" @click="codeLogin">
 			<image src="../../static/codelogin.png" mode=""></image>
-			<view>
+			<view class="zxc">
 				短信登录
 			</view>
 		</view>
-		<view v-if="mode !=3"class="item" @click="fastLogin">
+		<!-- <view v-if="mode !=3"class="item" @click="fastLogin">
 			<image src="../../static/fastlogin.png" mode=""></image>
 			<view>
 				一键登录
 			</view>
-		</view>
+		</view> -->
 		<view v-if="mode !=4" class="item" @click="psdLogin">
 			<image src="../../static/passwordlogin.png" mode=""></image>
-			<view>
+			<view class="zxc">
 				密码登录
 			</view>
 		</view>
@@ -80,5 +80,8 @@
 				color: #999999;
 			}
 		}
+	}
+	.zxc{
+		text-align: center;
 	}
 </style>

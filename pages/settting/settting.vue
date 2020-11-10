@@ -69,6 +69,9 @@
 
 <script>
 	import primaryBtn from '@/components/primaryBtn/primaryBtn.vue'
+	import {
+		removeAppStorage
+	} from '../../utils/util.js'
 	export default {
 		data() {
 			return {
@@ -105,6 +108,7 @@
 			},
 			// 退出登录
 			logout(){
+				removeAppStorage()
 				uni.reLaunch({
 					url:'../login/normalLogin'
 				})

@@ -3,7 +3,7 @@ import {
 	isLogin
 } from './util.js'
 
-const BASE_URL = ''
+const BASE_URL = 'http://172.168.1.45:8720'
 
 // const ID_CARD_OCR = 'https://api05.aliyun.venuscn.com/ocr/id-card'
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
@@ -51,11 +51,12 @@ function httpRequest(options) {
 
 		if (res) {
 			uni.request({
-				url: options.url,
+				// 必选
+				url: BASE_URL + options.url,
 				success: options.success,
 				fail: options.fail,
-
-				method: options.methods || 'GET',
+				// 非必选
+				method: options.method || 'GET',
 				data: options.data || {},
 				header: options.header || {},
 				timeout: options.timeout || 30000,

@@ -1,15 +1,17 @@
 <!-- 密码登录 -->
 <template>
 	<view>
-		<firstJoinPage v-if='!isFirst'/>
+		<firstJoinPage v-if='!isFirst' />
 		<view v-else class="main">
-			<userAgreementModal @IArgee="userArgee" v-if='userArgeeModal'/>
+			<userAgreementModal @IArgee="userArgee" v-if='userArgeeModal' />
 			<view class="login-title">
 				欢迎登录宜陆
 			</view>
 			<view class="input">
-				<input v-model="phone" class="phone-num-input" type="number" maxlength="11" placeholder="请输入您的手机号" placeholder-style="color:#CCCCCC" />
-				<input v-model="password" class="psd-input" type="text" password placeholder="请输入密码" placeholder-style="color:#CCCCCC" />
+				<input v-model="phone" @blur='onBlur' :focus="isFocus" hold-keyboard class="phone-num-input" type="number" maxlength="11"
+				 placeholder="请输入您的手机号" placeholder-style="color:#CCCCCC" />
+				<input v-model="password" hold-keyboard hold-keyboard='true' class="psd-input" type="text" password placeholder="请输入密码"
+				 placeholder-style="color:#CCCCCC" />
 			</view>
 			<userAgreement></userAgreement>
 			<view class="code-btn-box">
@@ -20,7 +22,7 @@
 			</view>
 			<loginMode mode='4' class='login-mode-bottom'></loginMode>
 		</view>
-		
+
 	</view>
 </template>
 
@@ -30,16 +32,22 @@
 	import firstJoinPage from '@/components/firstJoinPage/firstJoinPage.vue'
 	import userAgreementModal from '@/components/userAgreementModal/userAgreementModal.vue'
 	import {
-		REG_PHONE
+		REG_PHONE,
+		setAppStorage
 	} from '../../utils/util.js'
-	
+	import Toast from '../../commons/showToast.js'
+	import {
+		httpRequest
+	} from '../../utils/httpRequest.js'
+
 	export default {
 		data() {
 			return {
 				phone: '',
 				password: '',
-				isFirst:null,
-				userArgeeModal:null
+				isFirst: null,
+				userArgeeModal: null,
+				isFocus: true
 			}
 		},
 		components: {
@@ -49,18 +57,58 @@
 			firstJoinPage
 		},
 		onLoad() {
-			this.isFirst = uni.getStorageSync('firstIn')	
-			this.userArgeeModal = uni.getStorageSync('userAgreementModal')	
-			
+			this.isFirst = uni.getStorageSync('firstIn')
+			this.userArgeeModal = uni.getStorageSync('userAgreementModal')
+
 			// 要判断是否登录过，并且资料是否填写完毕
 			// 登录过没填写资料跳资料页，
 		},
 		methods: {
 			login() {
 				if (REG_PHONE.test(this.phone) && this.password.length >= 6) {
-					uni.navigateTo({
-						url: '../fillInfomation/fillInfomation'
+					let platform = 2
+					uni.getSystemInfo({
+						success: function(obj) {
+							platform = obj.platform == 'ios' ? '3' : '2'
+						}
 					})
+					httpRequest({
+						url: '/user/api/user/login/password',
+						method: 'POST',
+						data: {
+							clientType: platform,
+							mobile: this.phone,
+							password: this.password
+						},
+						success: function(res) {
+							if (res.data.code == 200) {
+								setAppStorage({
+									userNo: res.data.data.userNo,
+									userToken: res.data.data.token
+								})
+								uni.reLaunch({
+									url: '../tabBar/index'
+								})
+							} else {
+								console.log('登录错误：', res)
+								uni.showToast({
+									title: res.data.msg,
+									icon: 'none'
+								})
+							}
+
+						},
+						fail: function(err) {
+							console.log('密码登录失败：', err)
+							uni.showToast({
+								title: '登录失败'
+							})
+						}
+					})
+					// uni.navigateTo({	
+					// 	url: '../fillInfomation/fillInfomation'
+					// })
+
 				} else {
 					uni.showToast({
 						title: '手机号或密码错误',
@@ -73,8 +121,13 @@
 					url: '../resetPassword/resetPassword'
 				})
 			},
-			userArgee(){
+			userArgee() {
 				this.userArgeeModal = false
+			},
+			onBlur() {
+				this.$nextTick(() => {
+					this.isFocus = false
+				})
 			}
 		}
 	}
@@ -82,14 +135,14 @@
 
 <style lang="scss">
 	.main {
-		padding: 0 $uni-spacing-row-big;
+		padding: 30rpx;
 	}
 
 	.input {
 		margin-bottom: 30rpx;
 
 		input {
-			padding: 28rpx 8rpx;
+			padding: 26rpx 8rpx;
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 32rpx;
 		}

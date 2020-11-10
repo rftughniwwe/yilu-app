@@ -1,27 +1,37 @@
 <template>
-<!-- 获取验证码 -->
+	<!-- 获取验证码 -->
 	<view class="main">
 		<navigateBack></navigateBack>
 		<view class="code-main">
 			<view class="getcode">输入验证码</view>
-			<view class="subtitle">验证码已发送 15888888888</view>
+			<view class="subtitle">验证码已发送 {{phoneNum}}</view>
 			<view class="code-content flex-around">
 				<jpCoded style="height: 80rpx;margin: 30rpx 0;" borderCheckStyle="border-bottom: #3CA7FF solid 0.1upx;" pawType="two"
 				 :width="590" :codes="codes" @inputVal="inputVal"></jpCoded>
 			</view>
-			<view class="interval-code " @click="reGetCode" :style="flag?'opacity:.3':'opacity:1'">
+			<view class="interval-code " @click="GetCode" :style="flag?'opacity:.3':'opacity:1'">
 				<text>
 					{{flag?count+'秒后重新获取验证码':'重新获取验证码'}}
 				</text>
 			</view>
 		</view>
-		
+
 	</view>
 </template>
 
 <script>
 	import navigateBack from '@/components/customBack/customBack.vue';
 	import jpCoded from '@/components/jp-coded/jp-coded.vue';
+	import sendSMSCode from '../../commons/api/sendSMSCode.js'
+	import {
+		httpRequest
+	} from '../../utils/httpRequest.js'
+	import Toast from '../../commons/showToast.js'
+	import {
+		getRandomDigits,
+		setAppStorage
+	} from '../../utils/util.js'
+
 
 	export default {
 		components: {
@@ -33,49 +43,138 @@
 				timer: null,
 				count: 60,
 				flag: true,
-				codes: ''
+				codes: '',
+				phoneNum: ''
 			};
 		},
-		onLoad() {
-			this.reGetCode()
+		onLoad(options) {
+			this.phoneNum = options.phone
+			this.GetCode(options.phone)
 		},
 
 		onUnload() {
 			clearInterval(this.timer)
 		},
 		methods: {
+
+			// 输入验证码
 			inputVal(e) {
 
 				if (e.length === 6) {
-					console.log('输入完成')
-				}
-			},
-			
+					console.log(e)
+					let initialPwd = getRandomDigits(6)
+					uni.showLoading({
+						title:'处理中...'
+					})
+					httpRequest({
+						url: '/user/api/user/registerApp',
+						method: 'POST',
+						data: {
+							code: e,
+							mobile: this.phoneNum,
+							password: initialPwd,
+							repassword: initialPwd
+						},
+						success: (res) => {
+							uni.hideLoading()
+							console.log("res", res)
+							if (res.data.code == 200) {
+								setAppStorage({
+									userNo:res.data.data.userNo,
+									userToken:res.data.data.token
+								})
+								uni.showModal({
+									title: '注册成功',
+									content: `初始密码为 ${initialPwd}，请及时更改`,
+									showCancel: false,
+									confirmText: '我知道了',
+									success: (confirm, cancel) => {
+										if (confirm) {
+											this.codeLogin()
+										}
 
-			reGetCode() {
-				if (this.count === 60) {
-					this.flag = true
-					this.timer = setInterval(() => {
-						this.count--
-						if (this.count === 0) {
-							this.flag = false
-							this.count = 60
-							clearInterval(this.timer)
-							this.timer = null
+									}
+								})
+							}else {
+								console.log('注册错误：',res)
+								Toast({
+									title:res.data.msg,
+									duration:2000
+								})
+							}
+						},
+						fail: (err) => {
+							uni.hideLoading()
+							console.error('注册登录失败', err)
+							Toast({
+								title: '注册登录失败'
+							})
 						}
-					}, 1000)
+					})
 				}
 			},
+			// 验证码登录
+			codeLogin() {
+				
+				uni.reLaunch({
+					url: '../tabBar/index'
+				})
+			},
+
+			// 获取验证码
+			GetCode(phone) {
+				if (this.count === 60) {
+					this.sendTheCode(phone ? phone : this.phoneNum)
+				}
+			},
+			// 发送验证码
+			sendTheCode(phone) {
+				uni.showLoading({
+					title: '发送中...'
+				})
+				sendSMSCode(phone).then((res) => {
+					
+					uni.hideLoading()
+					if (res.data.code == 200) {
+						Toast({
+							title: '发送成功',
+							icon: 'success'
+						})
+						this.flag = true
+						this.timer = setInterval(() => {
+							this.count--
+							if (this.count === 0) {
+								this.flag = false
+								this.count = 60
+								clearInterval(this.timer)
+								this.timer = null
+							}
+						}, 1000)
+					} else {
+						console.log('发送错误',res)
+						Toast({
+							title: '发送错误'
+						})
+					}
+
+				}, (err) => {
+					console.error('发送失败', err)
+					uni.hideLoading()
+					Toast({
+						title: '发送失败'
+					})
+				})
+			}
 		}
 	}
 </script>
 
 <style lang="scss">
 	.main {
-		padding: $uni-spacing-col-base $uni-spacing-row-sm;
+		padding: 30rpx;
 	}
 
-	
+
 
 	.code-main {
 		// margin-top: 10rpx;

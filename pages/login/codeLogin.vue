@@ -36,7 +36,7 @@
 				
 				if(REG_PHONE.test(this.phone)){
 					uni.navigateTo({
-						url: './getPhoneCode'
+						url: `./getPhoneCode?phone=${this.phone}`
 					})
 				}else {
 					uni.showToast({
@@ -57,7 +57,7 @@
 
 <style lang="scss">
 	.main {
-		padding: 0 $uni-spacing-row-big;
+		padding:30rpx;
 	}
 
 	.input {
