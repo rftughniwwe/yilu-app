@@ -128,8 +128,7 @@
 		},
 		onLoad(options) {
 			this.idCardInfo = options.idCard
-			let name = uni.getStorageSync('RegisterName') || '本人'
-			this.text = `请上传${name}的身份证正反面照片`
+			this.text = `请上传${ options.name || '本人'}的身份证正反面照片`
 		},
 		methods: {
 			beginShoot(num) {

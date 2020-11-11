@@ -10,12 +10,14 @@
 
 			// #ifdef APP-PLUS
 				if(uni.getStorageSync('userStorage').userToken){
-					uni.switchTab({
-						url:'pages/tabBar/index'
-					})
-					setTimeout(()=>{
-						plus.navigator.closeSplashscreen()
-					},1000)
+					plus.navigator.closeSplashscreen()
+				
+					// uni.switchTab({
+					// 	url:'pages/tabBar/index'
+					// })
+					// setTimeout(()=>{
+					// 	plus.navigator.closeSplashscreen()
+					// },1000)
 				}else {
 					plus.navigator.closeSplashscreen()
 				}
@@ -24,9 +26,10 @@
 
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {
-				uni.setStorageSync('ocr_token', res.data.access_token)
+				console.log('token获取成功：',res)
+				uni.setStorageSync('ocr_token', res.data.data)
 			},(err)=>{
-				console.log('获取token失败，',err)
+				console.log('获取token失败:',err)
 			})
 
 

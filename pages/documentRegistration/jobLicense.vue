@@ -92,8 +92,7 @@
 		onLoad(options) {
 			console.log('drivingInfo:',options.drivingInfo) 
 			console.log('idCardInfo:',options.idCardInfo) 
-			let name = uni.getStorageSync('RegisterName') || '本人'
-			this.text = `请上传${name}的从业资格证，并录入信息`
+			this.text = `请上传${options.name || '本人'}的从业资格证，并录入信息`
 		},
 		components: {
 			Toast,

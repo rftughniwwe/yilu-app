@@ -110,6 +110,17 @@ function removeAppStorage(options){
 	uni.removeStorageSync('userStorage')
 }
 
+// 获取用户登录信息
+function getUserLoginInfo(str){
+	const user = uni.getStorageSync('userStorage')
+	if(str == 'userNo'){
+		return user.userNo
+	}else if(str == 'token'){
+		return user.token
+	}
+	console.log('ERROR:你得传点什么')
+}
+
 module.exports = {
 	getNetworkType,
 	isLogin,
@@ -120,5 +131,6 @@ module.exports = {
 	getCurrentDate,
 	getRandomDigits,
 	setAppStorage,
-	removeAppStorage
+	removeAppStorage,
+	getUserLoginInfo
 }

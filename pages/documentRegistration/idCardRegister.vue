@@ -106,7 +106,8 @@
 	import {
 		NATION,
 		toBase64,
-		dateFormat
+		dateFormat,
+		getUserLoginInfo
 	} from '../../utils/util.js'
 	import Toast from '../../commons/showToast.js'
 	import topTips from '../../components/fill-info-toptipe/fill-info-toptipe.vue'
@@ -115,7 +116,8 @@
 		ID_CARD_OCR,
 		getAcceessToken,
 		BD_OCR_KEY,
-		BD_OCR_SECRET
+		BD_OCR_SECRET,
+		OCR_Request
 	} from '../../utils/httpRequest.js'
 
 	export default {
@@ -141,9 +143,8 @@
 			nextPageBtn,
 			topTips
 		},
-		onLoad() {
-			let name = uni.getStorageSync('RegisterName') || '本人'
-			this.text = `请上传${name}的身份证正反面照片`
+		onLoad(options) {
+			this.text = `请上传${options.name || '本人'}的身份证正反面照片`
 			this.nationData = NATION
 
 			// getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res)=>{
@@ -155,21 +156,69 @@
 			goNextPager() {
 				let data = this.judgeData()
 				if (data) {
-					console.log('身份证信息：', data)
 					uni.showModal({
-						title:'确认信息',
-						content:'确认信息无误并提交？',
-						success(confirm,cancel) {
-							if(confirm){
-								uni.navigateTo({
-									url: `./driverLicense?idCard=${data}`
-								})
+						title: '确认信息',
+						content: '确认信息无误并提交？',
+						success: (confirm, cancel) => {
+							if (confirm) {
+								this.idCardSave(data)
 							}
 						}
 					})
-					
+
 				}
 
+			},
+			// 保存信息
+			idCardSave(data) {
+				console.log('身份证信息：', data)
+				let datas = {
+					"adresss": data.cardAddress,
+					"dateBirth": data.cardBirthday,
+					"idcardBack": "",
+					"idcardFront": "",
+					"idcardNum": data.cardId,
+					"indate": data.cardUseday,
+					"name": data.cardName,
+					"nation": data.cardNation,
+					"sex": data.cardGender == '男' ? 1 : 2,
+					"userId": parseInt(getUserLoginInfo('userNo')) 
+				}
+				console.log('datas:',datas)
+				uni.showLoading({
+					title:'保存中'
+				})
+				httpRequest({
+					url: '/user/api/tbSysIdCard/save',
+					method: 'POST',
+					data: datas,
+					success:(res)=>{
+						uni.hideLoading()
+						console.log('保存成功：',res)
+						if(res.data.code == 200){
+							Toast({
+								title:'保存成功',
+								icon:'success',
+								mask:true
+							})
+							setTimeout(()=>{
+								uni.navigateTo({
+									url: `./driverLicense`
+								})
+							},1500)
+						}else {
+							Toast({
+								title:res.data.msg
+							})
+						}
+					},
+					fail:(err)=>{
+						
+						Toast({
+							title:"保存信息失败"
+						})
+					}
+				})
 			},
 			// 开始拍摄
 			beginShoot(num) {
@@ -180,7 +229,7 @@
 					sizeType: 'compressed',
 					success(tempFilePaths) {
 						uni.showLoading({
-							title: '处理中',
+							title: '处理中...',
 							mask: true
 						})
 						num === 1 ? that.tempPathBack = tempFilePaths.tempFilePaths[0] : that.tempPathFront = tempFilePaths.tempFilePaths[
@@ -191,9 +240,9 @@
 							let result = original.split(',')[1]
 							let ocrtoken = uni.getStorageSync('ocr_token')
 
-							httpRequest({
-								url: ID_CARD_OCR + '?access_token=' + ocrtoken,
-								methods: 'POST',
+							OCR_Request({
+								url: `${ID_CARD_OCR}?access_token=${ocrtoken}`,
+								method: 'POST',
 								header: {
 									'Content-Type': 'application/x-www-form-urlencoded'
 								},
@@ -231,7 +280,7 @@
 										that.cardName = data.words_result.姓名 ? data.words_result.姓名.words : ''
 										that.cardGender = data.words_result.性别 ? data.words_result.性别.words : ''
 										that.cardNation = data.words_result.民族 ? data.words_result.民族.words : ''
-										that.cardBirthday = data.words_result.出生 ? data.words_result.出生.words : ''
+										that.cardBirthday = data.words_result.出生 ? dateFormat(data.words_result.出生.words, '-', '-'): ''
 										that.cardId = data.words_result.公民身份号码 ? data.words_result.公民身份号码.words : ''
 										that.cardAddress = data.words_result.住址 ? data.words_result.住址.words : ''
 										that.flag1 = true
@@ -239,13 +288,14 @@
 										that.cardUseday = dateFormat(data.words_result.失效日期.words, '-', '-')
 										that.flag2 = true
 									}
-
-
-
 								},
 								fail: (err) => {
 									console.log('OCR失败', err)
 									uni.hideLoading()
+									uni.showToast({
+										title: '识别失败请尝试手动填写',
+										icon: 'none'
+									})
 								}
 							})
 						})
@@ -329,7 +379,6 @@
 			},
 			// 日期改变事件
 			dateChange(e) {
-
 				this.cardBirthday = e.detail.value
 			},
 			validDateChange(e) {
@@ -341,7 +390,7 @@
 
 <style lang="scss">
 	.main {
-		padding: 0 $uni-spacing-row-lg;
+		padding: 0 30rpx;
 
 		.id-card-content {
 			// padding: 10rpx;
@@ -375,7 +424,7 @@
 
 		.next {
 			width: 100%;
-			margin: 80rpx 0 50rpx;
+			margin: 80rpx 0;
 		}
 
 		.input-content {
@@ -389,9 +438,14 @@
 		font-size: 34rpx;
 		color: $uni-text-color;
 	}
+
 	.header {
 		color: $uni-text-color;
 		font-weight: bold;
 		font-size: 34rpx;
+	}
+
+	.edit-infomation {
+		padding: 0 20rpx;
 	}
 </style>

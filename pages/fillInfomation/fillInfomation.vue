@@ -37,11 +37,17 @@
 				<view class="header">
 					服务单位
 				</view>
-				<view class="input-content">
-					<input type="text" maxlength="30" v-model="company" placeholder="请填写" />
+				<view class="input-content xbl">
+					<input type="text" maxlength="30" @input="companyInput" v-model="company" placeholder="请填写" />
 				</view>
 			</view>
-
+			<view class="company-list" v-show="companyArr && companyArr.length > 0">
+				<scroll-view scroll-y="true" class="company-scroll">
+					<view class="title" v-for="(item,index) in companyArr" :key='index' @click="itemSelected(item)">
+						{{item.unitName}}
+					</view>
+				</scroll-view>
+			</view>
 
 		</view>
 		<nextPageBtn @goNextPage='goNextPager'></nextPageBtn>
@@ -51,52 +57,123 @@
 <script>
 	import nextPageBtn from '../../components/nextPageBtn/nextPageBtn.vue'
 	import {
-		REG_PHONE
+		REG_PHONE,
+		getUserLoginInfo
 	} from '../../utils/util.js'
+	import {
+		queryUnitName
+	} from '../../commons/api/apis.js'
+	import Toast from '../../commons/showToast.js'
+	import {
+		httpRequest
+	} from '../../utils/httpRequest.js'
+	
 	export default {
 		data() {
 			return {
 				name: '',
 				gender: '1',
 				phoneNum: '',
-				company: ''
+				company: '',
+				companyArr: [],
 			};
 		},
 		components: {
 			nextPageBtn
 		},
-		methods: {
-			goNextPager() {
+		onLoad() {
 
-				let obj = {
-					name: this.name,
-					gender: this.gender,
-					phoneNum: this.phoneNum,
-					company: this.company
-				}
+		},
+		methods: {
+			// 添加或修改个人基本信息
+			goNextPager() {
 				
-				if(!this.name || !this.company){
+				let obj = {
+					compId: this.compId,
+					mobile: this.phoneNum,
+					nickname: this.name,
+					sex: this.gender,
+					userNo: getUserLoginInfo('userNo'),
+					userType:1
+				}
+
+				if (!this.name || !this.company) {
 					uni.showToast({
-						title:'姓名服务单位不能为空',
-						icon:'none'
+						title: '姓名服务单位不能为空',
+						icon: 'none'
 					})
 					return
 				}
-				if(!REG_PHONE.test(this.phoneNum)){
+				if (!REG_PHONE.test(this.phoneNum)) {
 					uni.showToast({
-						title:"手机号格式不正确",
-						icon:"none"
+						title: "手机号格式不正确",
+						icon: "none"
 					})
 					return
 				}
-				uni.setStorageSync('RegisterName',this.name)
-				uni.navigateTo({
-					url:'../documentRegistration/idCardRegister'
+				uni.showLoading({
+					title: '处理中...'
 				})
 				
+				httpRequest({
+					url: '/user/api/user/perfect/basicInfo',
+					method: 'POST',
+					data: obj,
+					success: (res) => {
+
+						uni.hideLoading()
+						if (res.data.code == 200) {
+							console.log('基本信息修改成功：', res)
+							
+							uni.navigateTo({
+								url: '../documentRegistration/idCardRegister'
+							})
+						} else {
+							console.log('添加错误', res)
+							Toast({
+								title: res.data.msg
+							})
+						}
+					},
+					fail: (err) => {
+						uni.hideLoading()
+						console.log('请求失败：', err)
+					}
+				})
+
+
 			},
 			genderChange(e) {
 				this.gender = e.detail.value
+			},
+			// 服务单位模糊查询
+			companyInput(e) {
+				let val = e.detail.value
+				if (val == '') {
+					this.companyArr = []
+					return
+				}
+				queryUnitName(val).then((res) => {
+
+					if (res.data.code == 200) {
+						this.companyArr = res.data.data
+					} else {
+						Toast({
+							title: res.data.msg
+						})
+					}
+				}, (err) => {
+					console.log('查询公司失败', err)
+					Toast({
+						title: '查询公司失败'
+					})
+				})
+			},
+			itemSelected(item) {
+				console.log('item', item)
+				this.company = item.unitName
+				this.compId = item.unitId
+				this.companyArr = []
 			}
 		}
 	}
@@ -105,7 +182,7 @@
 <style lang="scss">
 	/* 填写基本信息 */
 	.main-base {
-		padding: 10rpx $uni-spacing-row-lg;
+		padding: 10rpx 50rpx;
 		// width: 100%;
 	}
 
@@ -122,9 +199,27 @@
 			text-align: right;
 		}
 	}
+
 	.header {
 		color: $uni-text-color;
 		font-weight: bold;
 		font-size: 34rpx;
+
+	}
+
+	.company-scroll {
+		width: 100%;
+		height: 600rpx;
+	}
+
+	.title {
+		border-bottom: 2rpx solid #eaeaea;
+		padding: 20rpx 0;
+		font-size: 30rpx;
+		color: #666;
+	}
+
+	.xbl {
+		width: 70%;
 	}
 </style>

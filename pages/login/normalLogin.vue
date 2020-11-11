@@ -8,10 +8,10 @@
 				欢迎登录宜陆
 			</view>
 			<view class="input">
-				<input v-model="phone" @blur='onBlur' :focus="isFocus" hold-keyboard class="phone-num-input" type="number" maxlength="11"
-				 placeholder="请输入您的手机号" placeholder-style="color:#CCCCCC" />
-				<input v-model="password" hold-keyboard hold-keyboard='true' class="psd-input" type="text" password placeholder="请输入密码"
-				 placeholder-style="color:#CCCCCC" />
+					<input v-model="phone" hold-keyboard class="phone-num-input" type="number" maxlength="11"
+					 placeholder="请输入您的手机号" placeholder-style="color:#CCCCCC" />
+					<input v-model="password" hold-keyboard hold-keyboard='true' class="psd-input" password placeholder="请输入密码"
+					 placeholder-style="color:#CCCCCC" />
 			</view>
 			<userAgreement></userAgreement>
 			<view class="code-btn-box">
@@ -46,8 +46,7 @@
 				phone: '',
 				password: '',
 				isFirst: null,
-				userArgeeModal: null,
-				isFocus: true
+				userArgeeModal: null
 			}
 		},
 		components: {
@@ -72,6 +71,9 @@
 							platform = obj.platform == 'ios' ? '3' : '2'
 						}
 					})
+					uni.showLoading({
+						title: '登录中...'
+					})
 					httpRequest({
 						url: '/user/api/user/login/password',
 						method: 'POST',
@@ -81,14 +83,22 @@
 							password: this.password
 						},
 						success: function(res) {
+							uni.hideLoading()
 							if (res.data.code == 200) {
 								setAppStorage({
 									userNo: res.data.data.userNo,
 									userToken: res.data.data.token
 								})
-								uni.reLaunch({
-									url: '../tabBar/index'
+								console.log('res',res)
+								uni.navigateTo({
+									url:'../fillInfomation/fillInfomation'
 								})
+								// uni.setStorageSync('userPhoneNumber',this.phone)
+								
+								// 需判断是否完善了信息，完善了跳转主页，否则跳转到信息填写页
+								// uni.reLaunch({
+								// 	url: '../tabBar/index'
+								// })
 							} else {
 								console.log('登录错误：', res)
 								uni.showToast({
@@ -99,6 +109,7 @@
 
 						},
 						fail: function(err) {
+							uni.hideLoading()
 							console.log('密码登录失败：', err)
 							uni.showToast({
 								title: '登录失败'
@@ -123,11 +134,6 @@
 			},
 			userArgee() {
 				this.userArgeeModal = false
-			},
-			onBlur() {
-				this.$nextTick(() => {
-					this.isFocus = false
-				})
 			}
 		}
 	}

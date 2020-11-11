@@ -28,6 +28,7 @@
 </template>
 
 <script>
+	import useFacePlugin from '../../commons/faceplugin.js'
 	export default {
 		data() {
 			return {
@@ -48,10 +49,26 @@
 			},
 			// 刷脸登录
 			faceLogin() {
-				uni.navigateTo({
-					url:'../../pages/login/faceLogin'
+				// uni.navigateTo({
+				// 	url:'../../pages/login/faceLogin'
+				// })
+				useFacePlugin({count:1,random:true}).then((res)=>{
+					// 在此对比人脸
+					// 是否上传完善了信息
+					uni.showToast({
+						title:'识别成功',
+						icon:'success',
+						success() {
+							uni.navigateTo({
+								url:'../fillInfomation/fillInfomation'
+							})
+						}
+					})
+				},(err)=>{
+					console.error('识别失败',err)
 				})
 			},
+			
 			// 短信登录
 			codeLogin() {
 				uni.redirectTo({

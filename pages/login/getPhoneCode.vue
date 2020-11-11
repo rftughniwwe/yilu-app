@@ -77,20 +77,24 @@
 						},
 						success: (res) => {
 							uni.hideLoading()
-							console.log("res", res)
+							console.log("注册/登录成功:", res)
 							if (res.data.code == 200) {
 								setAppStorage({
 									userNo:res.data.data.userNo,
 									userToken:res.data.data.token
 								})
+								
 								uni.showModal({
-									title: '注册成功',
-									content: `初始密码为 ${initialPwd}，请及时更改`,
+									title: '注册/登录成功',
+									content: `密码为 ${initialPwd}，请及时更改`,
 									showCancel: false,
 									confirmText: '我知道了',
 									success: (confirm, cancel) => {
 										if (confirm) {
-											this.codeLogin()
+											// this.codeLogin()
+											uni.navigateTo({
+												url:'../fillInfomation/fillInfomation'
+											})
 										}
 
 									}
