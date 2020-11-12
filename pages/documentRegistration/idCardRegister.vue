@@ -107,7 +107,8 @@
 		NATION,
 		toBase64,
 		dateFormat,
-		getUserLoginInfo
+		getUserLoginInfo,
+		getRandomDigits
 	} from '../../utils/util.js'
 	import Toast from '../../commons/showToast.js'
 	import topTips from '../../components/fill-info-toptipe/fill-info-toptipe.vue'
@@ -117,7 +118,8 @@
 		getAcceessToken,
 		BD_OCR_KEY,
 		BD_OCR_SECRET,
-		OCR_Request
+		OCR_Request,
+		uploadImage
 	} from '../../utils/httpRequest.js'
 
 	export default {
@@ -126,6 +128,8 @@
 				text: '',
 				tempPathBack: '../../static/id-card-back.png',
 				tempPathFront: '../../static/id-card-front.png',
+				tempPathBack_upload:'',
+				tempPathFront_upload:'',
 				cardName: '',
 				cardGender: '',
 				cardNation: '',
@@ -159,8 +163,8 @@
 					uni.showModal({
 						title: '确认信息',
 						content: '确认信息无误并提交？',
-						success: (confirm, cancel) => {
-							if (confirm) {
+						success: (res) => {
+							if (res.confirm) {
 								this.idCardSave(data)
 							}
 						}
@@ -171,55 +175,56 @@
 			},
 			// 保存信息
 			idCardSave(data) {
-				console.log('身份证信息：', data)
+				console.log('zxczxczxc',getUserLoginInfo('userNo'))
 				let datas = {
 					"adresss": data.cardAddress,
 					"dateBirth": data.cardBirthday,
-					"idcardBack": "",
-					"idcardFront": "",
+					"idcardBack": data.cardBackImg,
+					"idcardFront": data.cardFrontImg,
 					"idcardNum": data.cardId,
 					"indate": data.cardUseday,
 					"name": data.cardName,
 					"nation": data.cardNation,
 					"sex": data.cardGender == '男' ? 1 : 2,
-					"userId": parseInt(getUserLoginInfo('userNo')) 
+					"userId": getUserLoginInfo('userNo')
 				}
-				console.log('datas:',datas)
+				console.log('保存信息:', datas)
 				uni.showLoading({
-					title:'保存中'
+					title: '保存中'
 				})
 				httpRequest({
 					url: '/user/api/tbSysIdCard/save',
 					method: 'POST',
 					data: datas,
-					success:(res)=>{
+					success: (res) => {
 						uni.hideLoading()
-						console.log('保存成功：',res)
-						if(res.data.code == 200){
+						console.log('保存成功：', res)
+						if (res.data.code == 200) {
 							Toast({
-								title:'保存成功',
-								icon:'success',
-								mask:true
+								title: '保存成功',
+								icon: 'success',
+								mask: true
 							})
-							setTimeout(()=>{
+							setTimeout(() => {
 								uni.navigateTo({
 									url: `./driverLicense`
 								})
-							},1500)
-						}else {
+							}, 1500)
+						} else {
 							Toast({
-								title:res.data.msg
+								title: res.data.msg
 							})
 						}
 					},
-					fail:(err)=>{
-						
+					fail: (err) => {
+						console.log('保存信息失败',err)
 						Toast({
-							title:"保存信息失败"
+							title: "保存信息失败"
 						})
 					}
 				})
 			},
+
 			// 开始拍摄
 			beginShoot(num) {
 				let that = this
@@ -240,63 +245,84 @@
 							let result = original.split(',')[1]
 							let ocrtoken = uni.getStorageSync('ocr_token')
 
-							OCR_Request({
-								url: `${ID_CARD_OCR}?access_token=${ocrtoken}`,
-								method: 'POST',
-								header: {
-									'Content-Type': 'application/x-www-form-urlencoded'
-								},
-								data: {
-									'image': result,
-									'id_card_side': num === 1 ? 'front' : 'back'
-								},
-								success: (res) => {
-									console.log('OCR完成', res)
-									uni.hideLoading()
-									let data = res.data
-									if (data.image_status === 'non_idcard') {
-										Toast({
-											title: '识别失败，请重试或手动填写'
-										})
-										return
-									} else if (data.idcard_number_type === 0) {
-										Toast({
-											title: '身份证证号识别错误'
-										})
-									} else if (data.idcard_number_type === 2) {
-										Toast({
-											title: '身份证号和性别、出生信息不一致'
-										})
-									} else if (data.idcard_number_type === 3) {
-										Toast({
-											title: '身份证号和出生信息不一致'
-										})
-									} else if (data.idcard_number_type === 4) {
-										Toast({
-											title: '身份证号和性别信息不一致'
-										})
-									}
-									if (num === 1) {
-										that.cardName = data.words_result.姓名 ? data.words_result.姓名.words : ''
-										that.cardGender = data.words_result.性别 ? data.words_result.性别.words : ''
-										that.cardNation = data.words_result.民族 ? data.words_result.民族.words : ''
-										that.cardBirthday = data.words_result.出生 ? dateFormat(data.words_result.出生.words, '-', '-'): ''
-										that.cardId = data.words_result.公民身份号码 ? data.words_result.公民身份号码.words : ''
-										that.cardAddress = data.words_result.住址 ? data.words_result.住址.words : ''
-										that.flag1 = true
-									} else {
-										that.cardUseday = dateFormat(data.words_result.失效日期.words, '-', '-')
-										that.flag2 = true
-									}
-								},
-								fail: (err) => {
-									console.log('OCR失败', err)
-									uni.hideLoading()
-									uni.showToast({
-										title: '识别失败请尝试手动填写',
-										icon: 'none'
+							// ocr 识别图片
+							OCR_Request(ID_CARD_OCR,{
+								'image': result,
+								'id_card_side': num === 1 ? 'front' : 'back'
+							}).then((res) => {
+
+								uni.hideLoading()
+								let data = res.data
+								if (data.image_status === 'non_idcard') {
+									Toast({
+										title: '识别失败，请重试或手动填写'
+									})
+									return
+								} else if (data.idcard_number_type === 0) {
+									Toast({
+										title: '身份证证号识别错误'
+									})
+								} else if (data.idcard_number_type === 2) {
+									Toast({
+										title: '身份证号和性别、出生信息不一致'
+									})
+								} else if (data.idcard_number_type === 3) {
+									Toast({
+										title: '身份证号和出生信息不一致'
+									})
+								} else if (data.idcard_number_type === 4) {
+									Toast({
+										title: '身份证号和性别信息不一致'
 									})
 								}
+
+								uploadImage('/course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
+									let img_data = JSON.parse(respones.data)
+									console.log('上传图片成功：', img_data)
+									if (img_data.code == 200) {
+										
+										if (num === 1) {
+											that.cardName = data.words_result.姓名 ? data.words_result.姓名.words : ''
+											that.cardGender = data.words_result.性别 ? data.words_result.性别.words : ''
+											that.cardNation = data.words_result.民族 ? data.words_result.民族.words : ''
+											that.cardBirthday = data.words_result.出生 ? dateFormat(data.words_result.出生.words, '-', '-') : ''
+											that.cardId = data.words_result.公民身份号码 ? data.words_result.公民身份号码.words : ''
+											that.cardAddress = data.words_result.住址 ? data.words_result.住址.words : ''
+											that.flag1 = true
+											// 上传后的图片
+											that.tempPathBack_upload = img_data.data
+										} else {
+											that.cardUseday = dateFormat(data.words_result.失效日期.words, '-', '-')
+											that.flag2 = true
+											// 上传后的图片
+											that.tempPathFront_upload = img_data.data
+										}
+										
+										// num === 1 ? that.tempPathBack_upload = img_data.data : that.tempPathFront_upload = img_data.data
+										Toast({
+											title: '图片上传成功'
+										})
+									} else {
+										Toast({
+											title: img_data.msg
+										})
+									}
+								}, (err) => {
+									console.log('上传失败，请重试', err)
+									Toast({
+										title: "上传失败，请重试"
+									})
+								})
+
+								
+
+							}, err => {
+								console.log('OCR失败', err)
+								uni.hideLoading()
+								uni.showToast({
+									title: '识别失败请尝试手动填写',
+									icon: 'none'
+								})
 							})
 						})
 
@@ -366,7 +392,9 @@
 					cardBirthday: this.cardBirthday,
 					cardId: this.cardId,
 					cardAddress: this.cardAddress,
-					cardUseday: this.cardUseday
+					cardUseday: this.cardUseday,
+					cardFrontImg: this.tempPathFront_upload,
+					cardBackImg: this.tempPathBack_upload
 				}
 			},
 			// 性别改变事件
@@ -411,6 +439,7 @@
 					font-size: 40rpx;
 					font-weight: bold;
 					color: $uni-text-color;
+					text-shadow: 0 0 5rpx #FFFFFF;
 				}
 			}
 

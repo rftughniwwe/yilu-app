@@ -89,8 +89,8 @@
 									content: `密码为 ${initialPwd}，请及时更改`,
 									showCancel: false,
 									confirmText: '我知道了',
-									success: (confirm, cancel) => {
-										if (confirm) {
+									success: (res) => {
+										if (res.confirm) {
 											// this.codeLogin()
 											uni.navigateTo({
 												url:'../fillInfomation/fillInfomation'

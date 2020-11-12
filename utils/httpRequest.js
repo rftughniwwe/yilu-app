@@ -3,9 +3,11 @@ import {
 	isLogin
 } from './util.js'
 
-const BASE_URL = 'http://172.168.1.45:8720'
-
+const BASE_URL = 'http://172.168.1.229:8720'
+const BASE_URL2 = 'http://172.168.1.229:8730'
+// 身份证OCR地址
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
+// 驾驶证识别OCR地址
 const DVIVING_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/driving_license'
 
 const ID_CARD_OCR_KEY = '203867213'
@@ -19,64 +21,6 @@ const BD_TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'
 const BD_OCR_KEY = '5BG6eDCb0zxoR0cVEcGuIP1k'
 const BD_OCR_SECRET = '9oPaR15FGH1XA3oN1R8hQ3LuV20e5MUE'
 
-// 百度获取accesstoken授权
-function getAcceessToken(key, secret) {
-
-	return new Promise((resolve, reject) => {
-		// uni.request({
-		// 	url:BD_TOKEN_URL+`?grant_type=client_credentials&client_id=${key}&client_secret=${secret}`,
-		// 	success: (res) => {
-		// 		resolve(res)
-		// 	},
-		// 	fail: (err) => {
-		// 		reject(err)
-		// 		uni.showToast({
-		// 			title: '获取Token失败',
-		// 			icon: 'none'
-		// 		})
-		// 	}
-		// })
-		httpRequest({
-			url: '/user/pc/api/user/getToken',
-			success: (res) => {
-				resolve(res)
-			},
-			fail: (err) => {
-				reject(err)
-				uni.showToast({
-					title: '获取Token失败',
-					icon: 'none'
-				})
-			}
-		})
-	})
-}
-
-
-// OCR请求
-function OCR_Request(options) {
-
-	getNetworkType().then((res) => {
-
-		if (res) {
-			uni.request({
-				// 必选
-				url: options.url,
-				success: options.success,
-				fail: options.fail,
-				// 非必选
-				method: options.method || 'GET',
-				data: options.data || {},
-				header: options.header || {},
-				timeout: options.timeout || 30000,
-				sslVerify: false,
-				complete: options.complete || function() {}
-
-			})
-		}
-	})
-
-}
 
 // 请求
 function httpRequest(options) {
@@ -96,11 +40,99 @@ function httpRequest(options) {
 				timeout: options.timeout || 30000,
 				sslVerify: false,
 				complete: options.complete || function() {}
-
 			})
 		}
 	})
 
+}
+
+// 百度获取accesstoken授权
+function getAcceessToken(key, secret) {
+
+	return new Promise((resolve, reject) => {
+
+		httpRequest({
+			url: '/user/pc/api/user/getToken',
+			success: (res) => {
+				resolve(res)
+			},
+			fail: (err) => {
+				reject(err)
+				uni.showToast({
+					title: '获取Token失败',
+					icon: 'none'
+				})
+			}
+		})
+	})
+}
+
+
+// OCR请求
+function OCR_Request(url, options) {
+	let ocrtoken = uni.getStorageSync('ocr_token')
+	return new Promise((resolve, reject) => {
+		getNetworkType().then((res) => {
+
+			if (res) {
+				uni.request({
+					// 必选
+					url: url + '?access_token=' + ocrtoken,
+					success: (res) => {
+						resolve(res)
+					},
+					fail: (err) => {
+						reject(err)
+					},
+					// 非必选
+					method: 'POST',
+					data: options,
+					header: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				})
+			}
+		})
+	})
+
+
+}
+
+
+
+
+// 上传图片
+function uploadImage(url, fileType = 'picFile', filePath, params) {
+	let token = uni.getStorageSync('userStorage').userToken
+	
+	const data = {
+		url: BASE_URL2 + url,
+		name: fileType,
+		filePath: filePath,
+		formData: {
+
+		},
+		header: {
+			token: token
+		}
+	};
+	uni.showLoading({
+		title: '上传中...'
+	})
+
+	return new Promise((resolve, reject) => {
+		uni.uploadFile({
+			...data,
+			success: (res) => {
+				uni.hideLoading()
+				resolve(res)
+			},
+			fail: (err) => {
+				uni.hideLoading()
+				reject(err)
+			}
+		})
+	})
 }
 
 module.exports = {
@@ -114,5 +146,6 @@ module.exports = {
 	BD_OCR_SECRET,
 	DVIVING_CARD_OCR,
 	BASE_URL,
-	OCR_Request
+	OCR_Request,
+	uploadImage
 }

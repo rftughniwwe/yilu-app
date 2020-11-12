@@ -24,10 +24,10 @@
 						从业资格类别
 					</view>
 					<view class="input-content">
-						<!-- <input type="text" maxlength="10" v-model="cardGender" value="" placeholder="请填写" /> -->
-						<picker mode="selector" :range="jobTypeData" @change="jobTypeChange">
+						<input type="text" maxlength="10" v-model="cardjobType" value="" placeholder="请填写" />
+						<!-- <picker mode="selector" :range="jobTypeData" @change="jobTypeChange">
 							<view :class="cardjobType?'picker-text-normal':'picker-text'">{{cardjobType?cardjobType:'请选择类别'}}</view>
-						</picker>
+						</picker> -->
 					</view>
 				</view>
 
@@ -75,6 +75,14 @@
 <script>
 	import Toast from '@/commons/showToast.js'
 	import topTips from '@/components/fill-info-toptipe/fill-info-toptipe.vue'
+	import {
+		httpRequest,
+		uploadImage
+	} from '../../utils/httpRequest.js'
+	import {
+		getUserLoginInfo
+	} from '../../utils/util.js'
+	
 	export default {
 		data() {
 			return {
@@ -86,12 +94,11 @@
 				validEndDate: '',
 				jobTypeData: ['111', '222'],
 				tempPath: '../../static/allow-job.png',
+				tempPath_upload:'',
 				flag:false
 			};
 		},
 		onLoad(options) {
-			console.log('drivingInfo:',options.drivingInfo) 
-			console.log('idCardInfo:',options.idCardInfo) 
 			this.text = `请上传${options.name || '本人'}的从业资格证，并录入信息`
 		},
 		components: {
@@ -99,6 +106,7 @@
 			topTips
 		},
 		methods: {
+			
 			beginDateChange(e) {
 				this.validBeginDate = e.detail.value
 			},
@@ -108,6 +116,7 @@
 			jobTypeChange(e) {
 				this.cardjobType = this.jobTypeData[e.detail.value]
 			},
+			// 拍摄或选取图片
 			beginShoot() {
 				let that = this
 
@@ -116,19 +125,75 @@
 					sizeType: 'compressed',
 					success(tempFilePaths) {
 						that.tempPath = tempFilePaths.tempFilePaths[0]
-						that.flag = true
+						
+						uploadImage('/course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
+							let img_data = JSON.parse(respones.data)
+							console.log('上传图片成功：', img_data)
+							if (img_data.code == 200) {
+								that.flag = true
+								that.tempPath_upload = img_data.data
+								Toast({
+									title: '上传成功'
+								})
+							} else {
+								Toast({
+									title: img_data.msg
+								})
+							}
+						}, (err) => {
+							console.log('上传失败，请重试', err)
+							Toast({
+								title: "上传失败，请重试"
+							})
+						})
+						
+						
+						
+						
 					},
 					fail(err) {
 						console.log(err)
 					}
 				})
 			},
+			// 提交
 			submit() {
 				let data = this.judgeData()
+				
 				if(data){
-					console.log('完成！',data)
+					data.userId = getUserLoginInfo('userNo')
+					uni.showLoading({
+						title:'保存中...'
+					})
+					httpRequest({
+						url:'/user/api/tbSysQualification/save',
+						method:'POST',
+						data:data,
+						success:(res)=>{
+							uni.hideLoading()
+							console.log('保存成功：',res)
+							if(res.data.code == 200){
+								uni.switchTab({
+									url:'../tabBar/index'
+								})
+							}else {
+								Toast({
+									title:res.data.msg
+								})
+							}
+						},
+						fail:(err)=>{
+							uni.hideLoading()
+							console.log('保存失败：',err)
+							Toast({
+								title:'保存失败'
+							})
+						}
+					})
 				}
 			},
+			
+			// 数据校验
 			judgeData() {
 			
 				if (!this.flag) {
@@ -172,11 +237,12 @@
 					return
 				}
 				return {
-					cardName: this.cardName,
-					cardjobType: this.cardjobType,
-					cardId: this.cardId,
-					validBeginDate: this.validBeginDate,
-					validEndDate: this.validEndDate
+					indateStart:this.validBeginDate,
+					indateEnd:this.validEndDate,
+					name:this.cardName,
+					qualificationNum:this.cardId,
+					qualificationSubjecton:this.cardjobType,
+					drivingFront:this.tempPath_upload
 				}
 			},
 		}
@@ -218,6 +284,7 @@
 				font-size: 40rpx;
 				font-weight: bold;
 				color: $uni-text-color;
+				text-shadow: 0 0 5rpx #FFFFFF;
 			}
 		}
 

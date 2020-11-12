@@ -96,11 +96,14 @@
 	import topTips from '@/components/fill-info-toptipe/fill-info-toptipe.vue'
 	import {
 		toBase64,
-		dateFormat
+		dateFormat,
+		getUserLoginInfo
 	} from '../../utils/util.js'
 	import {
 		httpRequest,
-		DVIVING_CARD_OCR
+		DVIVING_CARD_OCR,
+		OCR_Request,
+		uploadImage
 	} from '../../utils/httpRequest.js'
 
 	export default {
@@ -111,6 +114,8 @@
 				flag2: false,
 				tempPathBack: '../../static/driver-back.png',
 				tempPathFront: '../../static/driver-front.png',
+				tempPathFront_upload:'',
+				tempPathBack_upload:'',
 				cardName: '',
 				cardAllowCarType: '',
 				cardFirstAllow: '',
@@ -118,7 +123,7 @@
 				cardBeginDate: '',
 				cardEndDate: '',
 				carTypeData: ['a1', 'a2', 'a1和a2'],
-				idCardInfo:{}
+				idCardInfo: {}
 			};
 		},
 		components: {
@@ -146,54 +151,80 @@
 						num === 1 ? that.tempPathFront = tempFilePaths.tempFilePaths[0] : that.tempPathBack = tempFilePaths.tempFilePaths[
 							0]
 
-						if (num === 1) {
-							that.flag1 = true
-						} else {
-							that.flag2 = true
-							uni.hideLoading()
-							return
-						}
+						
 
 						toBase64(tempFilePaths.tempFilePaths[0], (r) => {
 							let original = r
 							let result = original.split(',')[1]
 							let ocrtoken = uni.getStorageSync('ocr_token')
 
-							httpRequest({
-								url: DVIVING_CARD_OCR + '?access_token=' + ocrtoken,
-								methods: 'POST',
-								header: {
-									'Content-Type': 'application/x-www-form-urlencoded'
-								},
-								data: {
-									'image': result
-								},
-								success: (res) => {
-									console.log('识别成功：', res)
-									uni.hideLoading()
-									if (!res.data.words_result) {
-										Toast({
-											title: '识别失败，请重试或手动填写'
-										})
-										return
-									}
-									that.cardName = res.data.words_result.姓名 ? res.data.words_result.姓名.words : ''
-									that.cardAllowCarType = res.data.words_result.准驾车型 ? res.data.words_result.准驾车型.words : ''
-									that.cardFirstAllow = res.data.words_result.初次领证日期 ? dateFormat(res.data.words_result.初次领证日期.words, '-',
-										'-') : ''
-									that.cardId = res.data.words_result.证号 ? res.data.words_result.证号.words : ''
-									that.cardBeginDate = res.data.words_result.有效期限 ? dateFormat(res.data.words_result.有效期限.words, '-', '-') :
-										''
-									that.cardEndDate = res.data.words_result.至 ? res.data.words_result.至.words === '长期' ? '长期' : dateFormat(
-										res.data.words_result
-										.至.words, '-', '-') : ''
-								},
-								fail: (err) => {
-									uni.hideLoading()
-									console.log('驾驶证识别失败')
-								}
+							uni.showLoading({
+								title:'识别中...'
 							})
+							// ocr 驾驶证识别
+							OCR_Request(DVIVING_CARD_OCR, {
+								'image': result
+							}).then((res) => {
 
+								uni.hideLoading()
+								let data = res.data
+								
+								if (!data.words_result) {
+									Toast({
+										title: '识别失败，请重试。'
+									})
+									return
+								}
+								
+								console.log('驾驶证识别成功：',data.words_result)
+								uploadImage('/course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
+									let img_data = JSON.parse(respones.data)
+									console.log('上传图片成功：', img_data)
+									if (img_data.code == 200) {
+										if (num === 1) {
+											that.flag1 = true
+											that.tempPathFront_upload = img_data.data
+										} else {
+											that.flag2 = true
+											that.tempPathBack_upload = img_data.data
+											return
+										}
+										// num === 1 ? 
+										//  that.tempPathFront = img_data.data: that.tempPathBack = img_data.data
+										
+										that.cardName = res.data.words_result.姓名 ? res.data.words_result.姓名.words : '';
+										that.cardAllowCarType = res.data.words_result.准驾车型 ? res.data.words_result.准驾车型.words : '';
+										that.cardFirstAllow = res.data.words_result.初次领证日期 ? dateFormat(res.data.words_result.初次领证日期.words, '-','-') : '';
+										that.cardId = res.data.words_result.证号 ? res.data.words_result.证号.words : ''	;
+										that.cardBeginDate = res.data.words_result.有效期限 ? dateFormat(res.data.words_result.有效期限.words, '-', '-') : '';
+										that.cardEndDate = res.data.words_result.至 ? res.data.words_result.至.words === '长期' ? '长期' : dateFormat(res.data.words_result.至.words, '-', '-') : '';
+										
+										Toast({
+											title: '上传成功'
+										})
+									} else {
+										Toast({
+											title: img_data.msg
+										})
+									}
+								}, (err) => {
+									console.log('上传失败，请重试', err)
+									Toast({
+										title: "上传失败，请重试"
+									})
+								})
+
+
+
+
+							}, err => {
+								console.log('OCR失败', err)
+								uni.hideLoading()
+								uni.showToast({
+									title: '识别失败请尝试手动填写',
+									icon: 'none'
+								})
+							})
 						})
 
 
@@ -205,25 +236,57 @@
 				})
 			},
 
+			// 下一步
 			goNextPager() {
 				let data = this.judgeData()
-				let that = this
+				
 				if (data) {
 					uni.showModal({
 						title: '确认信息',
 						content: '确认信息无误并提交？',
-						success(confirm, cancel) {
-							if (confirm) {
-								console.log('驾驶证信息', data)
-								uni.navigateTo({
-									url: `./jobLicense?idCardInfo=${that.idCardInfo}drivingInfo=${data}`
-								})
+						success:res=>{
+							if (res.confirm) {
+								this.confirmSubmit(data)
 							}
 						}
 					})
 
 				}
 			},
+			// 确认提交
+			confirmSubmit(data){
+				data.userId =  getUserLoginInfo('userNo')
+				uni.showLoading({
+					title:'保存中...'
+				})
+				httpRequest({
+					url:'/user/api/tbSysDrivingLicense/save',
+					method:'POST',
+					data:data,
+					success:(res)=>{
+						uni.hideLoading()
+						console.log('res',res)
+						if(res.data.code == 200){
+							uni.navigateTo({
+								url: './jobLicense'
+							})
+						}else {
+							Toast({
+								title:res.data.msg
+							})
+						}
+					},
+					fail:(err)=>{
+						uni.hideLoading()
+						console.log('保存失败',err)
+						Toast({
+							title:'保存失败'
+						})
+					}
+					
+				})
+			},
+			// 数据校验
 			judgeData() {
 
 				if (!this.flag1 || !this.flag2) {
@@ -272,12 +335,19 @@
 					return
 				}
 				return {
-					cardName: this.cardName,
-					cardAllowCarType: this.cardAllowCarType,
-					cardFirstAllow: this.cardFirstAllow,
-					cardId: this.cardId,
-					cardBeginDate: this.cardBeginDate,
-					cardEndDate: this.cardEndDate
+					// cardName: this.cardName,
+					// cardAllowCarType: this.cardAllowCarType,
+					// cardFirstAllow: this.cardFirstAllow,
+					// cardId: this.cardId,
+					// cardBeginDate: this.cardBeginDate,
+					// cardEndDate: this.cardEndDate,
+					drivingBack:this.tempPathFront_upload,
+					drivingFront:this.tempPathFront_upload,
+					drivingNum:this.cardId,
+					drivingSubjecton:this.cardAllowCarType,
+					indateEnd:this.cardEndDate,
+					indateStart:this.cardBeginDate,
+					name:this.cardName
 				}
 			},
 			// 准驾车型改变事件
@@ -323,6 +393,7 @@
 				font-size: 40rpx;
 				font-weight: bold;
 				color: $uni-text-color;
+				text-shadow: 0 0 5rpx #FFFFFF;
 			}
 		}
 
@@ -337,6 +408,7 @@
 			text-align: right;
 		}
 	}
+
 	.header {
 		color: $uni-text-color;
 		font-weight: bold;
