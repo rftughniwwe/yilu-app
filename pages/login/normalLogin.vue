@@ -37,7 +37,8 @@
 	} from '../../utils/util.js'
 	import Toast from '../../commons/showToast.js'
 	import {
-		httpRequest
+		httpRequest,
+		getQualification
 	} from '../../utils/httpRequest.js'
 
 	export default {
@@ -64,6 +65,7 @@
 		},
 		methods: {
 			login() {
+				let that = this
 				if (REG_PHONE.test(this.phone) && this.password.length >= 6) {
 					let platform = 2
 					uni.getSystemInfo({
@@ -89,16 +91,47 @@
 									userNo: res.data.data.userNo,
 									userToken: res.data.data.token
 								})
-								console.log('res',res)
-								uni.navigateTo({
-									url:'../fillInfomation/fillInfomation'
-								})
-								// uni.setStorageSync('userPhoneNumber',this.phone)
 								
-								// 需判断是否完善了信息，完善了跳转主页，否则跳转到信息填写页
-								// uni.reLaunch({
-								// 	url: '../tabBar/index'
-								// })
+								let userInfoComplete = uni.getStorageSync('userCompleteInfo');
+								console.log('info~',userInfoComplete)
+								if(userInfoComplete == 1){
+									uni.reLaunch({
+										url: '../tabBar/index'
+									})
+								}else if(userInfoComplete == 2){
+									uni.navigateTo({
+										url:'./faceLogin'
+									})
+								}else {
+									getQualification({
+										userid: res.data.data.userNo
+									}).then(respones => {
+										if (respones.data.code == 200) {
+											if(respones.data.data && respones.data.data.qualificationId && respones.data.data.drivingFront && respones.data.data.qualificationSubjecton){
+												// 1：已经完善，跳主页
+												uni.setStorageSync('userCompleteInfo', 1)
+												uni.reLaunch({
+													url: '../tabBar/index'
+												})
+											}else {
+												// 2：未完善，需要完善，直接跳人脸注册页面
+												uni.setStorageSync('userCompleteInfo', 2)
+												uni.navigateTo({
+													url:`./faceLogin?userPhone=${that.phone}`
+												})
+											}
+											
+										} else {
+											console.log('查询信息是否完善失败：', respones)
+											uni.showToast({
+												title: '查询信息是否完善失败',
+												icon: 'none'
+											})
+										}
+									}, err => {
+										console.log('查询信息是否完善失败：', err)
+									})
+								}
 							} else {
 								console.log('登录错误：', res)
 								uni.showToast({

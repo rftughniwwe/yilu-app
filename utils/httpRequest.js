@@ -98,7 +98,23 @@ function OCR_Request(url, options) {
 
 }
 
-
+// 查询从业资格证信息
+function getQualification(options){
+	
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/user/api/tbSysQualification/view',
+			method:'GET',
+			data:options,
+			success:(res)=>{
+				resolve(res)
+			},
+			fail:(err)=>{
+				reject(err)
+			}
+		})
+	})
+}
 
 
 // 上传图片
@@ -147,5 +163,6 @@ module.exports = {
 	DVIVING_CARD_OCR,
 	BASE_URL,
 	OCR_Request,
-	uploadImage
+	uploadImage,
+	getQualification
 }

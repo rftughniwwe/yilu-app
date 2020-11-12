@@ -108,6 +108,7 @@ function setAppStorage(options){
 // 清除登录缓存
 function removeAppStorage(options){
 	uni.removeStorageSync('userStorage')
+	uni.removeStorageSync('userCompleteInfo')
 }
 
 // 获取用户登录信息
@@ -121,6 +122,12 @@ function getUserLoginInfo(str){
 	console.log('ERROR:你得传点什么')
 }
 
+// 返回系统信息
+function getSystemInfo(){
+	let info = uni.getSystemInfoSync()
+	return info
+}
+
 module.exports = {
 	getNetworkType,
 	isLogin,
@@ -132,5 +139,6 @@ module.exports = {
 	getRandomDigits,
 	setAppStorage,
 	removeAppStorage,
-	getUserLoginInfo
+	getUserLoginInfo,
+	getSystemInfo
 }

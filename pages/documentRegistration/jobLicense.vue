@@ -156,6 +156,7 @@
 					}
 				})
 			},
+			
 			// 提交
 			submit() {
 				let data = this.judgeData()

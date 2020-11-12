@@ -2,8 +2,13 @@
 	import {
 		getAcceessToken,
 		BD_OCR_KEY,
-		BD_OCR_SECRET
+		BD_OCR_SECRET,
+		
 	} from '@/utils/httpRequest.js'
+
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 
 	export default {
 		onLaunch: function() {
@@ -32,8 +37,7 @@
 				console.log('获取token失败:',err)
 			})
 
-
-
+			
 			
 			// 判断是否是全面屏，适配自定义的top bar
 			if (!uni.getStorageSync('isFullScreen')) {

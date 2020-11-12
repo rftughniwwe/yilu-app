@@ -1,21 +1,25 @@
-import { httpRequest } from '../../utils/httpRequest.js'
+import {
+	httpRequest,
+	getQualification
+} from '../../utils/httpRequest.js'
 
 // 模糊查询公司
-export function queryUnitName(name){
-	
-	return new Promise((resolve,reject)=>{
+export function queryUnitName(name) {
+
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/user/api/tbSysServiceUnit/selectByUnitName',
-			method:'POST',
-			data:{
-				unitName:name
+			url: '/user/api/tbSysServiceUnit/selectByUnitName',
+			method: 'POST',
+			data: {
+				unitName: name
 			},
-			success:function(res){
+			success: function(res) {
 				resolve(res)
 			},
-			fail:function(err){
+			fail: function(err) {
 				reject(err)
 			}
 		})
 	})
 }
+

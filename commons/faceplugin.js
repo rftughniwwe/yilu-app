@@ -18,7 +18,7 @@ export default function useFacePlugin(options){
 				if (data.base64ImageMap) { // base64ImageMap包含了所有出现的动作的照片
 					image = data.base64ImageMap.bestImage0.replace(/\%2B/g, '+'); // base64特殊字符处理
 				
-					resolve(data)
+					resolve(image)
 				}
 			} else {
 				reject(data)

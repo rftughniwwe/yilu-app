@@ -24,7 +24,8 @@
 	import jpCoded from '@/components/jp-coded/jp-coded.vue';
 	import sendSMSCode from '../../commons/api/sendSMSCode.js'
 	import {
-		httpRequest
+		httpRequest,
+		getQualification
 	} from '../../utils/httpRequest.js'
 	import Toast from '../../commons/showToast.js'
 	import {
@@ -86,17 +87,15 @@
 								
 								uni.showModal({
 									title: '注册/登录成功',
-									content: `密码为 ${initialPwd}，请及时更改`,
+									content: `随机密码为 ${initialPwd}，请及时更改`,
 									showCancel: false,
 									confirmText: '我知道了',
-									success: (res) => {
-										if (res.confirm) {
-											// this.codeLogin()
-											uni.navigateTo({
-												url:'../fillInfomation/fillInfomation'
-											})
+									success: (ressss) => {
+										if (ressss.confirm) {
+											
+											this.codeLogin(res.data.data.userNo)
+											
 										}
-
 									}
 								})
 							}else {
@@ -118,11 +117,48 @@
 				}
 			},
 			// 验证码登录
-			codeLogin() {
-				
-				uni.reLaunch({
-					url: '../tabBar/index'
-				})
+			codeLogin(num) {
+				let that = this
+				let userInfoComplete = uni.getStorageSync('userCompleteInfo');
+				if(userInfoComplete == 1){
+					uni.reLaunch({
+						url: '../tabBar/index'
+					})
+				}else if(userInfoComplete == 2){
+					uni.navigateTo({
+						url:'./faceLogin'
+					})
+				}else {
+					getQualification({
+						userid: num
+					}).then(respones => {
+						console.log('查询信息：', respones)
+						if (respones.data.code == 200) {
+							if(respones.data.data && respones.data.data.qualificationId && respones.data.data.drivingFront && respones.data.data.qualificationSubjecton){
+								// 1：已经完善，跳主页
+								uni.setStorageSync('userCompleteInfo', 1)
+								uni.reLaunch({
+									url: '../tabBar/index'
+								})
+							}else {
+								// 2：未完善，需要完善，直接跳人脸注册页面
+								uni.setStorageSync('userCompleteInfo', 2)
+								uni.navigateTo({
+									url:`./faceLogin?userPhone=${that.phoneNum}`
+								})
+							}
+							
+						} else {
+							console.log('查询信息是否完善失败：', respones)
+							uni.showToast({
+								title: '查询信息是否完善失败',
+								icon: 'none'
+							})
+						}
+					}, err => {
+						console.log('查询信息是否完善失败：', err)
+					})
+				}
 			},
 
 			// 获取验证码

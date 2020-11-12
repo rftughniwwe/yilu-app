@@ -2,7 +2,7 @@
 <template>
 	<view class="main">
 		<view class="tips">
-			<text>根据交通运输部关于在线培训的规范要求，在线学习人员须进行人脸识别功能的设置</text> 
+			<text>根据交通运输部关于在线培训的规范要求，在线学习人员须进行人脸识别功能的设置</text>
 		</view>
 		<view class="middle-content">
 			<image src="../../static/face-login-img.png" mode=""></image>
@@ -27,26 +27,79 @@
 
 <script>
 	import useFacePlugin from '../../commons/faceplugin.js'
+	import {
+		httpRequest
+	} from '../../utils/httpRequest.js'
+	import {
+		getUserLoginInfo,
+		getSystemInfo
+	} from '../../utils/util.js'
 	export default {
 		data() {
 			return {
-
+				userPhone: ''
 			};
 		},
-		methods:{
-			beginFace(){
-				useFacePlugin({count:1,random:true}).then((res)=>{
-					uni.showToast({
-						title:'识别成功',
-						icon:'success',
-						success() {
-							uni.navigateTo({
-								url:'../fillInfomation/fillInfomation'
+		onLoad(options) {
+			this.userPhone = options.userPhone
+			console.log('options',options)
+		},
+		methods: {
+			// 开始识别
+			beginFace() {
+				console.log('phone',this.userPhone)
+				let that = this
+				useFacePlugin({
+					count: 1,
+					random: true
+				}).then((res) => {
+
+					console.log('注册人脸:', res)
+					uni.showLoading({
+						title:'上传中...',
+						mask:true
+					})
+					let userNo = getUserLoginInfo('userNo')
+					let platform = getSystemInfo().platform
+					let obj = {
+						"base64":res,
+						"clientType":platform =='android'?2:3,
+						"mobile":that.userPhone,
+						"userNo":parseInt(userNo)
+					}
+					
+					httpRequest({
+						url:'/user/api/baiduFaceAip/auth/addface',
+						method:'POST',
+						data:obj,
+						success:response=>{
+							uni.hideLoading()
+							console.log('上传人脸成功：',response)
+							console.log('params',obj)
+							if(response.data.code == 200){
+								// uni.navigateTo({
+								// 	url:'../fillInfomation/fillInfomation'
+								// })
+							}else {
+								uni.showToast({
+									title:response.data.msg,
+									icon:'none'
+								})
+							}
+						},
+						fail:err=>{
+							console.log('上传人脸失败',err)
+							uni.hideLoading()
+							uni.showToast({
+								title:"上传人脸失败",
+								icon:'none'
 							})
 						}
 					})
-				},(err)=>{
-					console.error('识别失败',err)
+
+					
+				}, (err) => {
+					console.error('识别失败', err)
 				})
 			}
 		}
@@ -57,7 +110,8 @@
 	.main {
 		padding: $uni-spacing-col-base $uni-spacing-row-base;
 	}
-	.tips{
+
+	.tips {
 		text-align: center;
 		color: $uni-text-color;
 		font-size: 28rpx;
@@ -65,32 +119,38 @@
 		width: 77%;
 		margin: 40rpx auto;
 	}
-	.middle-content{
+
+	.middle-content {
 		text-align: center;
 		padding: 70rpx 0;
-		image{
+
+		image {
 			width: 420rpx;
 			height: 420rpx;
 		}
 	}
-	.bottom-content{
-		
-		.item{
+
+	.bottom-content {
+
+		.item {
 			text-align: center;
-			image{
+
+			image {
 				width: 58rpx;
 				height: 58rpx;
 			}
-			.item-txt{
+
+			.item-txt {
 				color: $uni-text-color;
 				font-size: 26rpx;
 				font-weight: bold;
 			}
 		}
-		
+
 	}
-	.begin-btn{
-		background:$uni-color-primary;
+
+	.begin-btn {
+		background: $uni-color-primary;
 		color: #FFFFFF;
 		font-size: 36rpx;
 		padding: 8rpx 0;
