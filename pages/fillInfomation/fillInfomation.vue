@@ -17,10 +17,10 @@
 				<view class="input-content">
 					<radio-group name="gender" @change="genderChange">
 						<label class="first-label">
-							<radio :value="1" /><text>男</text>
+							<radio :value="1" :checked="gender==1"/><text>男</text>
 						</label>
 						<label>
-							<radio :value="2" /><text>女</text>
+							<radio :value="2" :checked="gender==2"/><text>女</text>
 						</label>
 					</radio-group>
 				</view>
@@ -82,12 +82,11 @@
 			nextPageBtn
 		},
 		onLoad() {
-
+			this.queryInfo()
 		},
 		methods: {
 			// 添加或修改个人基本信息
 			goNextPager() {
-				
 				let obj = {
 					compId: this.compId,
 					mobile: this.phoneNum,
@@ -143,6 +142,34 @@
 
 
 			},
+			
+			// 查询
+			queryInfo(){
+				let userno = getUserLoginInfo('userNo')
+				httpRequest({
+					url:'/user/api/user/perfect/getBasicInfo?userNo='+userno,
+					method:'POST',
+					success:resp=>{
+						console.log('resp:',resp)
+						if(resp.data.code == 200){
+							if(resp.data.data){
+								let _data = resp.data.data
+								// this.compId = _data.compId
+								this.phoneNum = _data.mobile
+								this.name = _data.nickname
+								this.gender = _data.sex
+							}
+						}
+					},
+					fail:err=>{
+						console.log('请求失败',err)
+						Toast({
+							title:'请求失败'
+						})
+					}
+				})
+			},
+			
 			genderChange(e) {
 				this.gender = e.detail.value
 			},
@@ -169,6 +196,7 @@
 					})
 				})
 			},
+			
 			itemSelected(item) {
 				console.log('item', item)
 				this.company = item.unitName

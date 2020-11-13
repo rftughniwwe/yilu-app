@@ -31,6 +31,9 @@
 			loginMode,
 			userAgreement
 		},
+		onUnload() {
+			this.phone = ''
+		},
 		methods: {
 			goCode() {
 				

@@ -106,16 +106,18 @@
 				padding: 20rpx 56rpx;
 				border-radius: $uni-border-radius-half-circle;
 				font-size: 32rpx;
+				
 			}
 
 			.fuck-you-btn {
-				border: 1rpx solid #707070;
-				color: #707070;
+				border: 1rpx solid #cfcfcf;
+				color: #cfcfcf;
 			}
 
 			.i-agree-btn {
 				color: #FFFFFF;
 				background: #3CA7FF;
+				border: none;
 			}
 		}
 	}

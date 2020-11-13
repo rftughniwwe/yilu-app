@@ -62,8 +62,9 @@
 			inputVal(e) {
 
 				if (e.length === 6) {
-					console.log(e)
+					
 					let initialPwd = getRandomDigits(6)
+					console.log('initialPwd:',initialPwd)
 					uni.showLoading({
 						title:'处理中...'
 					})
@@ -84,20 +85,7 @@
 									userNo:res.data.data.userNo,
 									userToken:res.data.data.token
 								})
-								
-								uni.showModal({
-									title: '注册/登录成功',
-									content: `随机密码为 ${initialPwd}，请及时更改`,
-									showCancel: false,
-									confirmText: '我知道了',
-									success: (ressss) => {
-										if (ressss.confirm) {
-											
-											this.codeLogin(res.data.data.userNo)
-											
-										}
-									}
-								})
+								this.codeLogin(res.data.data.userNo)
 							}else {
 								console.log('注册错误：',res)
 								Toast({
@@ -125,8 +113,8 @@
 						url: '../tabBar/index'
 					})
 				}else if(userInfoComplete == 2){
-					uni.navigateTo({
-						url:'./faceLogin'
+					uni.reLaunch({
+						url:`./faceLogin?userPhone=${that.phoneNum}`
 					})
 				}else {
 					getQualification({
@@ -143,7 +131,7 @@
 							}else {
 								// 2：未完善，需要完善，直接跳人脸注册页面
 								uni.setStorageSync('userCompleteInfo', 2)
-								uni.navigateTo({
+								uni.reLaunch({
 									url:`./faceLogin?userPhone=${that.phoneNum}`
 								})
 							}

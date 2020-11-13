@@ -150,10 +150,7 @@
 		onLoad(options) {
 			this.text = `请上传${options.name || '本人'}的身份证正反面照片`
 			this.nationData = NATION
-
-			// getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res)=>{
-			// 	uni.setStorageSync('ocr_token',res.data.access_token)
-			// })
+			this.queryIdCardInfo()
 		},
 		methods: {
 			// 下一步
@@ -173,9 +170,45 @@
 				}
 
 			},
+			// 身份证信息查看
+			queryIdCardInfo(){
+				let userno = getUserLoginInfo('userNo');
+				httpRequest({
+					url:'/user/api/tbSysIdCard/view?userid='+userno,
+					success:resp=>{
+						console.log('resp:',resp)
+						if(resp.data.code == 200){
+							
+							if(resp.data.data){
+								let _data = resp.data.data
+								this.flag1 = _data.idcardFront?true:false
+								this.flag2 = _data.idcardBack?true:false
+								this.cardName = _data.name;
+								this.cardGender = _data.sex;
+								this.cardNation = _data.nation;
+								this.cardBirthday = _data.dateBirth;
+								this.cardId = _data.idcardNum;
+								this.cardAddress = _data.adresss;
+								this.cardUseday = _data.indate;
+								this.tempPathFront_upload = _data.idcardFront;
+								this.tempPathBack_upload = _data.idcardBack;
+								this.tempPathBack = _data.idcardBack;
+								this.tempPathFront = _data.idcardFront;
+							}
+						}
+					},
+					fail:err=>{
+						console.log('请求失败',err)
+						Toast({
+							title:'请求失败'
+						})
+					}
+				})
+			},
+			
 			// 保存信息
 			idCardSave(data) {
-				console.log('zxczxczxc',getUserLoginInfo('userNo'))
+				
 				let datas = {
 					"adresss": data.cardAddress,
 					"dateBirth": data.cardBirthday,
@@ -298,7 +331,6 @@
 											that.tempPathFront_upload = img_data.data
 										}
 										
-										// num === 1 ? that.tempPathBack_upload = img_data.data : that.tempPathFront_upload = img_data.data
 										Toast({
 											title: '图片上传成功'
 										})

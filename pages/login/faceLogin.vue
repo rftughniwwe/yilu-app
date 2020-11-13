@@ -45,29 +45,29 @@
 			console.log('options',options)
 		},
 		methods: {
-			// 开始识别
+			//注册人脸 开始识别
 			beginFace() {
-				console.log('phone',this.userPhone)
+				
 				let that = this
 				useFacePlugin({
 					count: 1,
 					random: true
 				}).then((res) => {
 
-					console.log('注册人脸:', res)
 					uni.showLoading({
 						title:'上传中...',
 						mask:true
 					})
 					let userNo = getUserLoginInfo('userNo')
 					let platform = getSystemInfo().platform
+					
 					let obj = {
 						"base64":res,
 						"clientType":platform =='android'?2:3,
 						"mobile":that.userPhone,
-						"userNo":parseInt(userNo)
+						"userNo":userNo
 					}
-					
+					console.log('paramas',obj)
 					httpRequest({
 						url:'/user/api/baiduFaceAip/auth/addface',
 						method:'POST',
@@ -75,11 +75,11 @@
 						success:response=>{
 							uni.hideLoading()
 							console.log('上传人脸成功：',response)
-							console.log('params',obj)
+							
 							if(response.data.code == 200){
-								// uni.navigateTo({
-								// 	url:'../fillInfomation/fillInfomation'
-								// })
+								uni.navigateTo({
+									url:'../fillInfomation/fillInfomation'
+								})
 							}else {
 								uni.showToast({
 									title:response.data.msg,

@@ -54,10 +54,10 @@
 				</view>
 				<view class="info-item flex-between">
 					<view class="header">
-						档案编号
+						证件编号
 					</view>
 					<view class="input-content">
-						<input type="text" maxlength="40" v-model="cardId" value="" placeholder="请填写档案编号" />
+						<input type="text" maxlength="40" v-model="cardId" value="" placeholder="请填写证件编号" />
 					</view>
 				</view>
 				<view class="info-item flex-between">
@@ -134,8 +134,10 @@
 		onLoad(options) {
 			this.idCardInfo = options.idCard
 			this.text = `请上传${ options.name || '本人'}的身份证正反面照片`
+			this.queryInfo()
 		},
 		methods: {
+			// 选取照片或拍摄
 			beginShoot(num) {
 				let that = this
 				if (num === 2 && that.tempPathFront === '../../static/driver-front.png') {
@@ -286,6 +288,40 @@
 					
 				})
 			},
+			
+			// 驾驶证信息查看
+			queryInfo(){
+				let userno = getUserLoginInfo('userNo');
+				httpRequest({
+					url:'/user/api/tbSysDrivingLicense/view?userid='+userno,
+					success:resp=>{
+						console.log('驾驶证信息:',resp)
+						if(resp.data.code == 200){
+							
+							if(resp.data.data){
+								let _data = resp.data.data
+								this.flag1 = _data.drivingFront?true:false
+								this.tempPathFront_upload = _data.drivingBack;
+								this.tempPathBack_upload = _data.drivingFront;
+								this.tempPathBack = _data.drivingBack,
+								this.tempPathFront = _data.drivingFront,
+								this.cardId = _data.drivingId;
+								this.cardAllowCarType = _data.drivingSubjecton;
+								this.cardEndDate = _data.indateEnd;
+								this.cardBeginDate = _data.indateStart;
+								this.cardName = _data.name;
+								this.cardFirstAllow = _data.cardFirstAllow;
+							}
+						}
+					},
+					fail:err=>{
+						console.log('请求失败',err)
+						Toast({
+							title:'请求失败'
+						})
+					}
+				})
+			},
 			// 数据校验
 			judgeData() {
 
@@ -335,19 +371,14 @@
 					return
 				}
 				return {
-					// cardName: this.cardName,
-					// cardAllowCarType: this.cardAllowCarType,
-					// cardFirstAllow: this.cardFirstAllow,
-					// cardId: this.cardId,
-					// cardBeginDate: this.cardBeginDate,
-					// cardEndDate: this.cardEndDate,
-					drivingBack:this.tempPathFront_upload,
+					drivingBack:this.tempPathBack_upload,
 					drivingFront:this.tempPathFront_upload,
 					drivingNum:this.cardId,
 					drivingSubjecton:this.cardAllowCarType,
 					indateEnd:this.cardEndDate,
 					indateStart:this.cardBeginDate,
-					name:this.cardName
+					name:this.cardName,
+					cardFirstAllow:this.cardFirstAllow
 				}
 			},
 			// 准驾车型改变事件

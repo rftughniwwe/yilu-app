@@ -60,8 +60,11 @@
 			this.isFirst = uni.getStorageSync('firstIn')
 			this.userArgeeModal = uni.getStorageSync('userAgreementModal')
 
-			// 要判断是否登录过，并且资料是否填写完毕
-			// 登录过没填写资料跳资料页，
+	
+		},
+		onUnload() {
+			this.phone = ''
+			this.password = ''
 		},
 		methods: {
 			login() {
@@ -86,6 +89,7 @@
 						},
 						success: function(res) {
 							uni.hideLoading()
+							console.log('密码登录成功：',res)
 							if (res.data.code == 200) {
 								setAppStorage({
 									userNo: res.data.data.userNo,
@@ -93,14 +97,14 @@
 								})
 								
 								let userInfoComplete = uni.getStorageSync('userCompleteInfo');
-								console.log('info~',userInfoComplete)
+								
 								if(userInfoComplete == 1){
 									uni.reLaunch({
 										url: '../tabBar/index'
 									})
 								}else if(userInfoComplete == 2){
-									uni.navigateTo({
-										url:'./faceLogin'
+									uni.reLaunch({
+										url:`./faceLogin?userPhone=${that.phone}`
 									})
 								}else {
 									getQualification({
@@ -116,7 +120,7 @@
 											}else {
 												// 2：未完善，需要完善，直接跳人脸注册页面
 												uni.setStorageSync('userCompleteInfo', 2)
-												uni.navigateTo({
+												uni.reLaunch({
 													url:`./faceLogin?userPhone=${that.phone}`
 												})
 											}

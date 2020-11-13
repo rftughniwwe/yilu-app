@@ -29,6 +29,13 @@
 
 <script>
 	import useFacePlugin from '../../commons/faceplugin.js'
+	import {
+		httpRequest,
+		getQualification
+	} from '../../utils/httpRequest.js'
+	import {
+		setAppStorage
+	} from '../../utils/util.js'
 	export default {
 		data() {
 			return {
@@ -49,24 +56,122 @@
 			},
 			// 刷脸登录
 			faceLogin() {
-				// uni.navigateTo({
-				// 	url:'../../pages/login/faceLogin'
-				// })
-				useFacePlugin({count:1,random:true}).then((res)=>{
+				useFacePlugin({count:0,random:true}).then((res)=>{
 					// 在此对比人脸
 					// 是否上传完善了信息
-					uni.showToast({
-						title:'识别成功',
-						icon:'success',
-						success() {
-							uni.navigateTo({
-								url:'../fillInfomation/fillInfomation'
+					uni.showLoading({
+						title:'登录中....',
+						mask:true
+					})
+				
+					
+					httpRequest({
+						url:'/user/api/baiduFaceAip/auth/facelogin',
+						method:'POST',
+						data:{
+							base64:res
+						},
+						success:resp=>{
+							
+							console.log('人脸登录成功：',resp)
+							uni.hideLoading()
+							if(resp.data.code == 200){
+								setAppStorage({
+									userNo:resp.data.data.userNo,
+									userToken:resp.data.data.token
+								})
+								this.routePage(resp.data.data.userNo)
+							}else {
+								uni.showModal({
+									title:"识别失败",
+									content:resp.data.msg,
+									cancelText:"取消",
+									confirmText:"再次重试",
+									success:(res)=>{
+										if(res.confirm){
+											this.faceLogin()
+										}
+									}
+								})
+								// uni.showToast({
+								// 	title:resp.data.msg,
+								// 	icon:'none'
+								// })
+							}
+							
+						},
+						fail:err=>{
+							uni.hideLoading()
+							console.log('人脸登录失败',err)
+							uni.showToast({
+								title:'人脸登录失败',
+								icon:'none'
 							})
 						}
 					})
+					
+					// uni.showToast({
+					// 	title:'识别成功',
+					// 	icon:'success',
+					// 	success() {
+					// 		uni.navigateTo({
+					// 			url:'../fillInfomation/fillInfomation'
+					// 		})
+					// 	}
+					// })
 				},(err)=>{
 					console.error('识别失败',err)
 				})
+			},
+			
+			// 跳转页面
+			routePage(num){
+				let that = this
+				let userInfoComplete = uni.getStorageSync('userCompleteInfo');
+				console.log('userinfo',userInfoComplete)
+				if(userInfoComplete == 1){
+					// 1：已经完善，跳主页
+					uni.reLaunch({
+						url: '../tabBar/index'
+					})
+				}else if(userInfoComplete == 2){
+					// 2：未完善，需要完善，直接跳信息完善页面
+					uni.navigateTo({
+						url:'../../pages/fillInfomation/fillInfomation'
+					})
+				}else {
+					// 查不到缓存就请求
+					getQualification({
+						userid: num
+					}).then(respones => {
+						console.log('查询完善信息：', respones)
+						if (respones.data.code == 200) {
+							if(respones.data.data && respones.data.data.qualificationId && respones.data.data.drivingFront && respones.data.data.qualificationSubjecton){
+								// 1：已经完善，跳主页
+								// 设置缓存，下次进来就不用请求了
+								uni.setStorageSync('userCompleteInfo', 1)
+								uni.reLaunch({
+									url: '../tabBar/index'
+								})
+							}else {
+								// 2：未完善，需要完善，直接跳信息完善页面
+								uni.setStorageSync('userCompleteInfo', 2)
+								uni.navigateTo({
+									url:'../../pages/fillInfomation/fillInfomation'
+								})
+							}
+							
+						} else {
+							console.log('查询信息是否完善失败：', respones)
+							uni.showToast({
+								title: '查询信息是否完善失败',
+								icon: 'none'
+							})
+						}
+					}, err => {
+						console.log('查询信息是否完善失败：', err)
+					})
+				}
 			},
 			
 			// 短信登录
