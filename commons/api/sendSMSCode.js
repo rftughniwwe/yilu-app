@@ -21,6 +21,6 @@ export default function sendSMSCode(num){
 			fail:function(err){
 				reject(err)
 			}
-		})
+		},1)
 	})
 }

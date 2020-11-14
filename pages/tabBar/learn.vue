@@ -1,14 +1,14 @@
 <!-- 学习页面 -->
 <template>
 	<view class="mainzz">
-		<chooseLearningType v-if='!chooseTypePager' />
+		<chooseLearningType v-if='!chooseTypePager'/>
 		<view v-else class="learning-content">
 			<view :class="type === 2?'no-padding':'learn-top-bar'">
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
 					<view class="left-select">
-						<picker class="flex-between" :range="typeArr" @change="bindPickerChange">
+						<picker class="flex-between" :range="typeArrStr" @change="bindPickerChange">
 							<view class="topic">
-								{{typeArr[type]}}
+								{{typeArr.length>0?typeArr[type]["categoryName"]:'安全教育'}}
 							</view>
 							<image src="../../static/down-push-arrow.png" mode=""></image>
 						</picker>
@@ -177,13 +177,20 @@
 	import chooseLearningType from '@/components/chooseLearningType/chooseLearningType.vue'
 	import learnTopSlide from '@/components/learnTopSlide/learnTopSlide.vue'
 	import chooseLearningModeModal from '@/components/chooseLearningModeModal/chooseLearningModeModal.vue'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
 	import course from '@/components/course/course.vue'
 	import {
 		getCurrentDate
 	} from '../../utils/util.js'
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
 
 	const app = getApp()
-	
+
 
 	export default {
 		data() {
@@ -191,7 +198,8 @@
 				chooseTypePager: null,
 				// 0 安全教育，1继续教育，2 自主学习
 				type: 0,
-				typeArr: ['安全教育', '继续教育', '自主学习'],
+				typeArr: [],
+				typeArrStr: [],
 				isHideSafetyModal: true,
 				selfLearnType: 1,
 				safetyType: 1,
@@ -210,8 +218,9 @@
 			this.chooseTypePager = uni.getStorageSync('isShowChooseType')
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.type = uni.getStorageSync('teachType')
-
-			// this.isHideSafetyModal = false
+			this.typeArr = uni.getStorageSync('learningOptions')
+			
+			this.setOptions()
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
 
@@ -231,11 +240,20 @@
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
 			})
+
+			
 		},
 		onShow() {
 			this.date = getCurrentDate()
 		},
 		methods: {
+			
+			setOptions(){
+				let d = this.typeArr
+				d.forEach((item,index)=>{
+					this.typeArrStr.push(item.categoryName)
+				})
+			},
 			// 扫描二维码
 			scanCode() {
 				let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
@@ -247,13 +265,18 @@
 					console.log('扫描结果', JSON.stringify(res))
 				})
 			},
+
 			closeTypeModal(data) {
 				this.isHideSafetyModal = true
 				this.safetyType = data.item
 			},
 			bindPickerChange(e) {
 				this.type = e.target.value
-				uni.setStorageSync('teachType',this.type)
+				let item = this.typeArr[e.target.value]
+				
+				uni.setStorageSync('teachType', this.type)
+				uni.setStorageSync('selectedLearningType',item)
+				
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
 				}

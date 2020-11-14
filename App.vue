@@ -13,16 +13,17 @@
 	export default {
 		onLaunch: function() {
 
+			// 检查是否登录
 			// #ifdef APP-PLUS
-				if(uni.getStorageSync('userStorage').userToken){
-					plus.navigator.closeSplashscreen()
+				if(uni.getStorageSync('userStorage').userNo){
+					// plus.navigator.closeSplashscreen()
 				
-					// uni.switchTab({
-					// 	url:'pages/tabBar/index'
-					// })
-					// setTimeout(()=>{
-					// 	plus.navigator.closeSplashscreen()
-					// },1000)
+					uni.switchTab({
+						url:'pages/tabBar/index'
+					})
+					setTimeout(()=>{
+						plus.navigator.closeSplashscreen()
+					},1000)
 				}else {
 					plus.navigator.closeSplashscreen()
 				}
@@ -188,5 +189,11 @@
 		left: 0;
 		right: 0;
 		z-index: 9999;
+	}
+	
+	.no-data{
+		text-align: center;
+		margin: 20rpx;
+		font-size: 32rpx;
 	}
 </style>

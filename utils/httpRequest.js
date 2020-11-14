@@ -3,8 +3,13 @@ import {
 	isLogin
 } from './util.js'
 
+// 登录注册地址
 const BASE_URL = 'http://172.168.1.229:8720'
+// 正常地址
 const BASE_URL2 = 'http://172.168.1.229:8730'
+// 咨询接口
+const BASE_URL3 = 'http://172.168.1.229:8740'
+
 // 身份证OCR地址
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
 // 驾驶证识别OCR地址
@@ -23,21 +28,31 @@ const BD_OCR_SECRET = '9oPaR15FGH1XA3oN1R8hQ3LuV20e5MUE'
 
 
 // 请求
-function httpRequest(options) {
+function httpRequest(options, url_type) {
 
+	let base_url = ''
+	
+	if(url_type == 2){
+		base_url = BASE_URL2
+	}else if(url_type = 3){
+		base_url = BASE_URL3
+	}else {
+		base_url = BASE_URL
+	}
+	
 	getNetworkType().then((res) => {
 
 		if (res) {
 			uni.request({
 				// 必选
-				url: BASE_URL + options.url,
+				url: base_url + options.url,
 				success: options.success,
 				fail: options.fail,
 				// 非必选
 				method: options.method || 'GET',
 				data: options.data || {},
 				header: options.header || {},
-				timeout: options.timeout || 30000,
+				timeout: options.timeout || 10000,
 				sslVerify: false,
 				complete: options.complete || function() {}
 			})
@@ -99,17 +114,17 @@ function OCR_Request(url, options) {
 }
 
 // 查询从业资格证信息
-function getQualification(options){
-	
-	return new Promise((resolve,reject)=>{
+function getQualification(options) {
+
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/user/api/tbSysQualification/view',
-			method:'GET',
-			data:options,
-			success:(res)=>{
+			url: '/user/api/tbSysQualification/view',
+			method: 'GET',
+			data: options,
+			success: (res) => {
 				resolve(res)
 			},
-			fail:(err)=>{
+			fail: (err) => {
 				reject(err)
 			}
 		})
@@ -120,7 +135,7 @@ function getQualification(options){
 // 上传图片
 function uploadImage(url, fileType = 'picFile', filePath, params) {
 	let token = uni.getStorageSync('userStorage').userToken
-	
+
 	const data = {
 		url: BASE_URL2 + url,
 		name: fileType,

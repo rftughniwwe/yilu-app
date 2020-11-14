@@ -16,51 +16,62 @@
 			</view>
 		</view>
 		<view class="main-content">
-			<view :class="num===0?'selected-item':''" class="item" @click="selectItem(0)">
-				安全教育
-			</view>
-			<view :class="num===1?'selected-item':''" class="item" @click="selectItem(1)">
-				继续教育
-			</view>
-			<view :class="num===2?'selected-item':''" class="item" @click="selectItem(2)">
-				自主学习
-			</view>
-			<view class="confirm-btn-content">
-				<primaryBtn @callBackFun='confirm' text="确定" />
+			<template v-if="dataArr && dataArr.length > 0">
+				<view class="item" v-for="(items,index) in dataArr" :key='index' @click="selectItem(index,items)"  :class="num===index?'selected-item':''">
+					{{items.categoryName}}
+				</view>
+				<view class="confirm-btn-content">
+					<primaryBtn @callBackFun='confirm' text="确定" />
+				</view>
+			</template>
 			
-			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	// import primaryBtn from '../primaryBtn/primaryBtn.vue'
+	import primaryBtn from '../primaryBtn/primaryBtn.vue'
+	import Toast from '@/commons/showToast.js'
+	
+	
 	const app = getApp()
 	export default {
 		data() {
 			return {
-				num: -1
+				num: -1,
+				dataArr:[]
 			};
 		},
 		components: {
-
+			primaryBtn
+		},
+		mounted() {
+			let data = uni.getStorageSync('learningOptions')
+			if(!data || data.length <= 0){
+				Toast({
+					title:"获取数据失败"
+				})
+			}
+			console.log('data:',data)
+			this.dataArr = data
 		},
 		methods: {
 			confirm() {
-				
+
 				if (this.num !== -1) {
-					uni.setStorageSync('isShowChooseType',true)
-					uni.setStorageSync('teachType',this.num)
-					
+					uni.setStorageSync('isShowChooseType', true)
+					uni.setStorageSync('teachType', this.num)
+
 					uni.$emit('chooesedTypezz', {
 						num: this.num
 					})
 				}
 
 			},
-			selectItem(num) {
+			selectItem(num,item) {
+				console.log('选择：',item)
+				uni.setStorageSync('selectedLearningType',item)
 				this.num = num
-				
 			}
 
 		}

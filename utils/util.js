@@ -105,10 +105,16 @@ function setAppStorage(options){
 	uni.setStorageSync('userStorage',options)
 }
 
-// 清除登录缓存
+// 清除缓存
 function removeAppStorage(options){
+	// 登录信息
 	uni.removeStorageSync('userStorage')
+	// 用户是否填写完信息
 	uni.removeStorageSync('userCompleteInfo')
+	// 学习选择
+	uni.removeStorageSync('teachType')
+	// 选择的学习模块
+	uni.removeStorageSync('selectedLearningType')
 }
 
 // 获取用户登录信息

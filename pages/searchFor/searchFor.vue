@@ -19,38 +19,31 @@
 				<image src="../../static/hot.png" mode=""></image>
 			</view>
 			<view class="history-hot">
-				<view class="item-block">
-					危化品运输安全行车
-				</view>
-				<view class="item-block">
-					道路危险货物
-				</view>
-				<view class="item-block">
-					国际反洗钱专业认证
-				</view>
-				<view class="item-block">
-					道路危险货物运输
-				</view>
+				<template v-if="hotSearch && hotSearch.length > 0">
+					<view v-for="(item,index) in hotSearch" :key='index' class="item-block">
+						{{item.name}}
+					</view>
+				</template>
+				<template v-else>
+					<view class="no-data">暂无热门搜索</view>
+				</template>
 			</view>
 			<view class="history-serach flex-between">
 				<view class="title-txt">
 					历史搜索
 				</view>
-				<image src="../../static/delete-serach.png" mode=""></image>
+				<image src="../../static/delete-serach.png" mode="" @click="removeData"></image>
 			</view>
 			<view class="history-hot">
-				<view class="item-block">
-					危化品运输安全行车
-				</view>
-				<view class="item-block">
-					道路危险货物
-				</view>
-				<view class="item-block">
-					国际反洗钱专业认证
-				</view>
-				<view class="item-block">
-					道路危险货物运输
-				</view>
+				<template v-if="historySearch && historySearch.length > 0">
+					<view v-for="(item,index) in historySearch" :key='index' class="item-block">
+						{{item.name}}
+					</view>
+				</template>
+				<template v-else>
+					<view class="no-data">暂无历史搜索</view>
+				</template>
+			
 			</view>
 		</view>
 		<view v-if="showModel === 'article'" class="article-serach">
@@ -80,24 +73,114 @@
 <script>
 	import newsCover from '@/components/news-cover/news-cover.vue'
 	import course from '@/components/course/course.vue'
+	import Toast from '@/commons/showToast.js'
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+	import {
+		getHotSearchData,
+		getHistorySearchData,
+		clearHistorySearch
+	} from '@/commons/api/apis.js'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
+	
+	
 	export default {
 		data() {
 			return {
 				serachVal: '',
 				showModel:'normal',
 				tab:1,
-				isFullScreen:false
+				isFullScreen:false,
+				hotSearch:[],
+				historySearch:[],
+				userNo:''
 			};
 		},
 		onLoad(options) {
 			// this.showModel = options.model
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			this.getHotSearchData()
+		},
+		onShow() {
+			this.userNo = getUserLoginInfo('userNo')
 		},
 		components:{
 			newsCover,
 			course
 		},
 		methods:{
+			// 获取热门搜索数据
+			getHotSearchData(){
+				getHotSearchData().then(res=>{
+					console.log("热门搜索数据,",res)
+					this.getHistoryData()
+					if(res.data.code== 200){
+						this.hotSearch = res.data.data
+					}else {
+						Toast({
+							title:res.data.msg
+						})
+					}
+				},err=>{
+					console.log('获取数据失败：',err)
+					Toast({
+						title:"获取数据失败"
+					})
+				})
+			},
+			
+			// 获取历史搜索数据
+			getHistoryData(){
+				
+				getHistorySearchData(this.userNo).then(res=>{
+					console.log("历史搜索数据,",res)
+					if(res.data.code== 200){
+						this.historySearch =  res.data.data
+					}else {
+						Toast({
+							title:res.data.msg
+						})
+					}
+				},err=>{
+					console.log('获取数据失败：',err)
+					Toast({
+						title:"获取数据失败"
+					})
+				})
+			},
+			
+			// 删除历史数据
+			removeData(){
+				if(!this.historySearch || this.historySearch.length <= 0){
+					return
+				}
+				uni.showLoading({
+					title:'正在清除...'
+				})
+				clearHistorySearch(this.userNo).then(res=>{
+					uni.hideLoading()
+					console.log(res)
+					if(res.data.code == 200){
+						Toast({
+							title:"清除成功"
+						})
+					}else{
+						Toast({
+							title:res.data.msg
+						})
+					}
+				},err=>{
+					console.log('获取数据失败：',err)
+					uni.hideLoading()
+					Toast({
+						title:"获取数据失败"
+					})
+				})
+			},
+			
 			checkoutTab(e){
 				this.tab = e
 			},
@@ -213,5 +296,9 @@
 	}
 	.course-content{
 	
+	}
+	.no-data{
+		text-align: center;
+		margin: 20rpx;
 	}
 </style>

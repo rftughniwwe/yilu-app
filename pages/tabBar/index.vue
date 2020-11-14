@@ -28,11 +28,13 @@
 			</swiper>
 		</view>
 		<view class="news-content">
-			<view>
-				<newCover @GoArticleDetails='goDetails' position='left'></newCover>
-				<newCover @GoArticleDetails='goDetails' position='moreimg'></newCover>
-				<newCover @GoArticleDetails='goDetails' position='right'></newCover>
-				<newCover @GoArticleDetails='goDetails' position='text'></newCover>
+			<template v-if="newsArr && newsArr.length > 0">
+				<view v-for="(items,index) in newsArr" :key='index'>
+					<newCover @GoArticleDetails='goDetails' position='left' :datas='items'></newCover>
+				</view>
+			</template>
+			<view v-else class="no-data">
+				暂无咨询
 			</view>
 		</view>
 		<view class="special-topic">
@@ -66,7 +68,7 @@
 				<newCover position='right'></newCover>
 			</view>
 		</view>
-		<loadingData v-if="reachBtm"></loadingData>
+		<!-- <loadingData v-if="reachBtm"></loadingData> -->
 		<view class="refresh" @click="refreshHandle">
 			<image src="../../static/refresh.png" mode=""></image>
 		</view>
@@ -76,45 +78,117 @@
 <script>
 	import newCover from '@/components/news-cover/news-cover.vue'
 	import loadingData from '@/components/loadingData/loadingData.vue'
+	import Toast from '@/commons/showToast.js'
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	
+	
 	export default {
 		data() {
 			return {
-				reachBtm: false,
-				isFullScreen:false
+				isFullScreen:false,
+				newsArr:[]
 			};
-		},
-		onLoad() {
-			this.isFullScreen = uni.getStorageSync('isFullScreen')
-		},
-		onReachBottom() {
-
-			this.reachBtm = true
-			this.loadData()
 		},
 		components: {
 			newCover,
 			loadingData
 		},
+		onLoad() {
+			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			
+			this.getIndexInfomation()
+			
+			this.getLearningOptions()
+		},
+		onReachBottom() {
+			this.loadData()
+		},
+		onPullDownRefresh() {
+			this.getIndexInfomation()
+		},
 		methods: {
-
+			// 上拉加载更多
 			loadData() {
-				uni.showLoading()
-				setTimeout(() => {
-					uni.hideLoading()
-					this.reachBtm = false
-				}, 1000)
+				this.getIndexInfomation()
+				
 			},
+			// 获取主页数据
+			getIndexInfomation(){
+				
+				uni.showLoading({
+					title:'加载中...',
+					mask:true
+				})
+				httpRequest({
+					url:'/community/api/blog/list',
+					method:'POST',
+					success:resp=>{
+						uni.hideLoading()
+						uni.stopPullDownRefresh()
+						console.log('resp:',resp)
+						if(resp.data.code == 200){
+							this.newsArr = resp.data.data.list
+							
+						}else {
+							Toast({
+								title:resp.data.msg
+							})
+						}
+					},
+					fail:err=>{
+						uni.stopPullDownRefresh()
+						uni.hideLoading()
+						console.log(err)
+						Toast({
+							title:'加载数据失败'
+						})
+					}
+				},3)
+			},
+			// 获取学习选项
+			getLearningOptions() {
+				uni.showLoading({
+					title:'加载中...',
+					mask:true
+				})
+				httpRequest({
+					url: '/course/api/course/category/categorylist',
+					success: resp => {
+						console.log('学习选项',resp)
+						uni.hideLoading()
+						if (resp.data.code == 200) {
+							uni.setStorageSync('learningOptions',resp.data.data)
+						}else {
+							request_success(resp)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						request_err(err, '获取数据失败')
+					}
+				}, 2)
+			},
+			
 			refreshHandle(){
-				console.log('刷新。。')
+				this.getIndexInfomation()
 			},
+			// 前往搜索页
 			goToSerach(){
 				uni.navigateTo({
 					url:'../searchFor/searchFor'
 				})
 			},
-			goDetails(){
+			// 前往咨询详情
+			goDetails(e){
+				let id = e.newsId
 				uni.navigateTo({
-					url:'../aiticlePage/aiticlePage'
+					url:'../aiticlePage/aiticlePage?id='+id
 				})
 			},
 			goSpeacialTopic(){
