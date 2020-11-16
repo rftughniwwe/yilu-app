@@ -8,6 +8,70 @@ const NATION = [
 	'毛南族', '仡佬族', '锡伯族', '阿昌族', '普米族', '塔吉克族', '怒族', '乌孜别克族', '俄罗斯族', '鄂温克族', '德昂族', '保安族', '裕固族', '京族', '塔塔尔族', '独龙族',
 	'鄂伦春族', '赫哲族', '门巴族', '珞巴族', '基诺族'
 ]
+const LEARNING_MODE_DATA = [{
+		"id": "1080387521456295937",
+		"categoryName": "安全教育",
+		"floor": 1,
+		"remark": null,
+		"listSub": [{
+				"id": "1080387575940304898",
+				"categoryName": "从业人员技能培训",
+				"floor": 2,
+				"remark": ""
+			},
+			{
+				"id": "1080748559775240194",
+				"categoryName": "安全领导小组学习",
+				"floor": 2,
+				"remark": ""
+			},
+			{
+				"id": "1080752583811469314",
+				"categoryName": "从业人员安全学习",
+				"floor": 2,
+				"remark": ""
+			},
+			{
+				"id": "1232501813918695426",
+				"categoryName": "应急演练",
+				"floor": 2,
+				"remark": ""
+			}
+		]
+	},
+	{
+		"id": "1263818106115375105",
+		"categoryName": "继续教育",
+		"floor": 1,
+		"remark": null,
+		"listSub": [{
+				"id": "1263818166278471681",
+				"categoryName": "驾驶员",
+				"floor": 2,
+				"remark": null
+			},
+			{
+				"id": "1263818224717709313",
+				"categoryName": "押运员",
+				"floor": 2,
+				"remark": null
+			},
+			{
+				"id": "1263818285547700225",
+				"categoryName": "装卸管理员",
+				"floor": 2,
+				"remark": null
+			}
+		]
+	},
+	{
+		"id": "1320662675097346049",
+		"categoryName": "自主学习",
+		"floor": 1,
+		"remark": null,
+		"listSub": []
+	}
+]
 
 // 获取网络状态
 function getNetworkType() {
@@ -44,28 +108,28 @@ function getNetworkType() {
 }
 
 // 获取随机数字
-function getRandomDigits(length){
+function getRandomDigits(length) {
 	let digit = []
-	for(let i = 0;i<length;i++){
+	for (let i = 0; i < length; i++) {
 		digit.push(Math.floor(Math.random() * 10))
 	}
 	return digit.join('')
 }
 
 // 有效期日期处理
-function dateFormat(data,str1,str2){
-	if(!data){
+function dateFormat(data, str1, str2) {
+	if (!data) {
 		return ''
 	}
 	let arr = data.split('')
 	let new_arr = []
-	arr.forEach((item,index)=>{
+	arr.forEach((item, index) => {
 		new_arr.push(item)
-		if(index === 3){
-			
+		if (index === 3) {
+
 			new_arr.push(str1)
 		}
-		if(index === 5){
+		if (index === 5) {
 			new_arr.push(str2)
 		}
 	})
@@ -78,7 +142,7 @@ function isLogin() {
 }
 
 // 图片转base64
-function toBase64(path,rallback) {
+function toBase64(path, rallback) {
 	plus.io.resolveLocalFileSystemURL(path, function(entry) {
 		entry.file(function(e) {
 			let fileReader = new plus.io.FileReader();
@@ -91,22 +155,22 @@ function toBase64(path,rallback) {
 }
 
 // 获取当前日期时间
-function getCurrentDate(){
+function getCurrentDate() {
 	let date = new Date()
 	let year = date.getFullYear()
-	let month = date.getMonth() +1
+	let month = date.getMonth() + 1
 	let day = date.getDay()
-	
+
 	return `${year}-${month}`
 }
 
 // 设置登录缓存
-function setAppStorage(options){
-	uni.setStorageSync('userStorage',options)
+function setAppStorage(options) {
+	uni.setStorageSync('userStorage', options)
 }
 
 // 清除缓存
-function removeAppStorage(options){
+function removeAppStorage(options) {
 	// 登录信息
 	uni.removeStorageSync('userStorage')
 	// 用户是否填写完信息
@@ -118,18 +182,18 @@ function removeAppStorage(options){
 }
 
 // 获取用户登录信息
-function getUserLoginInfo(str){
+function getUserLoginInfo(str) {
 	const user = uni.getStorageSync('userStorage')
-	if(str == 'userNo'){
+	if (str == 'userNo') {
 		return user.userNo
-	}else if(str == 'token'){
+	} else if (str == 'token') {
 		return user.token
 	}
 	console.log('ERROR:你得传点什么')
 }
 
 // 返回系统信息
-function getSystemInfo(){
+function getSystemInfo() {
 	let info = uni.getSystemInfoSync()
 	return info
 }
@@ -146,5 +210,6 @@ module.exports = {
 	setAppStorage,
 	removeAppStorage,
 	getUserLoginInfo,
-	getSystemInfo
+	getSystemInfo,
+	LEARNING_MODE_DATA
 }

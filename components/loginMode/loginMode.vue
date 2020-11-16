@@ -36,6 +36,10 @@
 	import {
 		setAppStorage
 	} from '../../utils/util.js'
+	import {
+		faceVerification
+	} from '@/commons/api/apis.js'
+	
 	export default {
 		data() {
 			return {
@@ -54,6 +58,7 @@
 			fastLogin() {
 
 			},
+			
 			// 刷脸登录
 			faceLogin() {
 				useFacePlugin({count:0,random:true}).then((res)=>{
@@ -64,61 +69,36 @@
 						mask:true
 					})
 				
-					
-					httpRequest({
-						url:'/user/api/baiduFaceAip/auth/facelogin',
-						method:'POST',
-						data:{
-							base64:res
-						},
-						success:resp=>{
-							
-							console.log('人脸登录成功：',resp)
-							uni.hideLoading()
-							if(resp.data.code == 200){
-								setAppStorage({
-									userNo:resp.data.data.userNo,
-									userToken:resp.data.data.token
-								})
-								this.routePage(resp.data.data.userNo)
-							}else {
-								uni.showModal({
-									title:"识别失败",
-									content:resp.data.msg,
-									cancelText:"取消",
-									confirmText:"再次重试",
-									success:(res)=>{
-										if(res.confirm){
-											this.faceLogin()
-										}
+					faceVerification(res).then((resp)=>{
+						uni.hideLoading()
+						if(resp.data.code == 200){
+							setAppStorage({
+								userNo:resp.data.data.userNo,
+								userToken:resp.data.data.token
+							})
+							this.routePage(resp.data.data.userNo)
+						}else {
+							uni.showModal({
+								title:"识别失败",
+								content:resp.data.msg+'。请重试',
+								cancelText:"取消",
+								confirmText:"再次重试",
+								success:(res)=>{
+									if(res.confirm){
+										this.faceLogin()
 									}
-								})
-								// uni.showToast({
-								// 	title:resp.data.msg,
-								// 	icon:'none'
-								// })
-							}
-							
-						},
-						fail:err=>{
-							uni.hideLoading()
-							console.log('人脸登录失败',err)
-							uni.showToast({
-								title:'人脸登录失败',
-								icon:'none'
+								}
 							})
 						}
+					},err=>{
+						uni.hideLoading()
+						console.log('人脸登录失败',err)
+						uni.showToast({
+							title:'人脸登录失败',
+							icon:'none'
+						})
 					})
 					
-					// uni.showToast({
-					// 	title:'识别成功',
-					// 	icon:'success',
-					// 	success() {
-					// 		uni.navigateTo({
-					// 			url:'../fillInfomation/fillInfomation'
-					// 		})
-					// 	}
-					// })
 				},(err)=>{
 					console.error('识别失败',err)
 				})

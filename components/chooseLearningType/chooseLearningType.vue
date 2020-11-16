@@ -17,14 +17,14 @@
 		</view>
 		<view class="main-content">
 			<template v-if="dataArr && dataArr.length > 0">
-				<view class="item" v-for="(items,index) in dataArr" :key='index' @click="selectItem(index,items)"  :class="num===index?'selected-item':''">
+				<view class="item" v-for="(items,index) in dataArr" :key='index' @click="selectItem(index,items)" :class="num===index?'selected-item':''">
 					{{items.categoryName}}
 				</view>
 				<view class="confirm-btn-content">
 					<primaryBtn @callBackFun='confirm' text="确定" />
 				</view>
 			</template>
-			
+
 		</view>
 	</view>
 </template>
@@ -32,28 +32,48 @@
 <script>
 	import primaryBtn from '../primaryBtn/primaryBtn.vue'
 	import Toast from '@/commons/showToast.js'
-	
-	
+	import {
+		LEARNING_MODE_DATA
+	} from '@/utils/util.js'
+
 	const app = getApp()
 	export default {
 		data() {
 			return {
 				num: -1,
-				dataArr:[]
+				dataArr: [{
+						"id": "1080387521456295937",
+						"categoryName": "安全教育",
+						"floor": 1,
+						"remark": null
+					},
+					{
+						"id": "1263818106115375105",
+						"categoryName": "继续教育",
+						"floor": 1,
+						"remark": null
+					},
+					{
+						"id": "1320662675097346049",
+						"categoryName": "自主学习",
+						"floor": 1,
+						"remark": null
+					}
+				]
 			};
 		},
 		components: {
 			primaryBtn
 		},
 		mounted() {
-			let data = uni.getStorageSync('learningOptions')
-			if(!data || data.length <= 0){
-				Toast({
-					title:"获取数据失败"
-				})
-			}
-			console.log('data:',data)
-			this.dataArr = data
+			// let data = uni.getStorageSync('learningOptions')
+			// if (!data || data.length <= 0) {
+			// 	Toast({
+			// 		title: "获取数据失败"
+			// 	})
+			// }
+			// console.log('data:', data)
+			this.dataArr = LEARNING_MODE_DATA
 		},
 		methods: {
 			confirm() {
@@ -68,9 +88,9 @@
 				}
 
 			},
-			selectItem(num,item) {
-				console.log('选择：',item)
-				uni.setStorageSync('selectedLearningType',item)
+			selectItem(num, item) {
+				console.log('选择：', item)
+				uni.setStorageSync('selectedLearningType', item)
 				this.num = num
 			}
 

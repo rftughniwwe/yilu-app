@@ -3,12 +3,9 @@ import {
 	isLogin
 } from './util.js'
 
-// 登录注册地址
-const BASE_URL = 'http://172.168.1.229:8720'
-// 正常地址
-const BASE_URL2 = 'http://172.168.1.229:8730'
-// 咨询接口
-const BASE_URL3 = 'http://172.168.1.229:8740'
+
+const BASE_URL = 'http://172.168.1.229'
+
 
 // 身份证OCR地址
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
@@ -31,15 +28,16 @@ const BD_OCR_SECRET = '9oPaR15FGH1XA3oN1R8hQ3LuV20e5MUE'
 function httpRequest(options, url_type) {
 
 	let base_url = ''
-	
-	if(url_type == 2){
-		base_url = BASE_URL2
+	if(url_type == 1){
+		// 登录注册地址
+		base_url = BASE_URL+':8720'
+	}else if(url_type == 2){
+		base_url = BASE_URL+':8730'
+		return
 	}else if(url_type = 3){
-		base_url = BASE_URL3
-	}else {
-		base_url = BASE_URL
+		base_url = BASE_URL+':8740'
 	}
-	
+	console.log('baseURL:',base_url)
 	getNetworkType().then((res) => {
 
 		if (res) {
@@ -78,7 +76,7 @@ function getAcceessToken(key, secret) {
 					icon: 'none'
 				})
 			}
-		})
+		},1)
 	})
 }
 
@@ -127,7 +125,7 @@ function getQualification(options) {
 			fail: (err) => {
 				reject(err)
 			}
-		})
+		},1)
 	})
 }
 

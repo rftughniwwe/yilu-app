@@ -3,28 +3,13 @@
 	<view>
 		<scroll-view class="scroll-content" scroll-x="true">
 			<view class="flex-between" v-if="type == 0">
-				<view @click="chagneTab(1)" class="items" :class="selfNum===1?'selected-item':''">
-					从业人员安全学习
-				</view>
-				<view @click="chagneTab(2)" class="items middle-items" :class="selfNum===2?'selected-item':''">
-					从业人员技能培训
-				</view>
-				<view @click="chagneTab(3)" class="items" :class="selfNum===3?'selected-item':''">
-					安全领导小组学习
-				</view>
-				<view @click="chagneTab(4)" class="items" :class="selfNum===4?'selected-item':''">
-					应急演练
+				<view class="items" v-for="(item,index) in datas" :key='index' @click="chagneTab(index,item)" :class="selfNum===index?'selected-item':''">
+					{{item.categoryName}}
 				</view>
 			</view>
 			<view class="flex-between" v-if="type ==1">
-				<view @click="chagneTab(1)" class="items" :class="num===1?'selected-item':''">
-					驾驶员
-				</view>
-				<view @click="chagneTab(2)" class="items middle-items" :class="num===2?'selected-item':''">
-					押运员
-				</view>
-				<view @click="chagneTab(3)" class="items" :class="num===3?'selected-item':''">
-					装卸管理员
+				<view class="items" v-for="(item,index) in datas" :key='index' @click="chagneTab(index,item)" :class="selfNum===index?'selected-item':''">
+					{{item.categoryName}}
 				</view>
 			</view>
 			<view class="flex-evenly" v-if="type ==2">
@@ -49,27 +34,33 @@
 </template>
 
 <script>
+	const _global = getApp().globalData
 	export default {
 		data() {
 			return {
 				// 默认选中第一个tab
 				num: 1,
 				selfNum: 1,
-				otherTab: 0
+				otherTab: 0,
+				datas:[]
 			};
 		},
 		props: ['type', 'safetyType', 'selfLearnType', 'tabArr'],
 		created() {
-
 			this.selfNum = this.safetyType
+			this.datas =  uni.getStorageSync('LearningSubType')
 			uni.$on('closeModalMask', (data) => {
-				this.selfNum = data.item
+				this.selfNum = data.index
 			})
 		},
+		updated(){
+			this.datas =  uni.getStorageSync('LearningSubType')
+		},
 		methods: {
-			chagneTab(e) {
+			chagneTab(e,item) {
 				this.num = e
 				this.selfNum = e
+				uni.setStorageSync('LearningSubTypeSubItem',item)
 			},
 			selfChagneTab(num) {
 				uni.$emit('selfChange', {

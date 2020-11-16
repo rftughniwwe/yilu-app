@@ -104,7 +104,7 @@
 			
 			this.getIndexInfomation()
 			
-			this.getLearningOptions()
+			// this.getLearningOptions()
 		},
 		onReachBottom() {
 			this.loadData()
@@ -134,7 +134,6 @@
 						console.log('resp:',resp)
 						if(resp.data.code == 200){
 							this.newsArr = resp.data.data.list
-							
 						}else {
 							Toast({
 								title:resp.data.msg
@@ -153,26 +152,26 @@
 			},
 			// 获取学习选项
 			getLearningOptions() {
-				uni.showLoading({
-					title:'加载中...',
-					mask:true
-				})
-				httpRequest({
-					url: '/course/api/course/category/categorylist',
-					success: resp => {
-						console.log('学习选项',resp)
-						uni.hideLoading()
-						if (resp.data.code == 200) {
-							uni.setStorageSync('learningOptions',resp.data.data)
-						}else {
-							request_success(resp)
-						}
-					},
-					fail: err => {
-						uni.hideLoading()
-						request_err(err, '获取数据失败')
-					}
-				}, 2)
+				// uni.showLoading({
+				// 	title:'加载中...',
+				// 	mask:true
+				// })
+				// httpRequest({
+				// 	url: '/course/api/course/category/categorylist',
+				// 	success: resp => {
+				// 		console.log('学习选项',resp)
+				// 		uni.hideLoading()
+				// 		if (resp.data.code == 200) {
+				// 			uni.setStorageSync('learningOptions',resp.data.data)
+				// 		}else {
+				// 			request_success(resp)
+				// 		}
+				// 	},
+				// 	fail: err => {
+				// 		uni.hideLoading()
+				// 		request_err(err, '获取数据失败')
+				// 	}
+				// }, 2)
 			},
 			
 			refreshHandle(){

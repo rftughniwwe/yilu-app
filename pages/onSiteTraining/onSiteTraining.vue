@@ -5,7 +5,7 @@
 			<view class="item" @click="signinNow">
 				<image src="../../static/on-site-sign.png" mode=""></image>
 			</view>
-			<view class="item" @click="learningmaterials">
+			<view class="item" @click="goLearningMaterials">
 				<image src="../../static/learningzl.png" mode=""></image>
 			</view>
 			<view class="item" @click="goOnlineExam">
@@ -27,26 +27,31 @@
 </template>
 
 <script>
+	
 	export default {
 		data() {
 			return {
 
 			};
 		},
+		onLoad() {
+			
+		},
 		methods:{
 			signinNow(){
 				// 需先扫描二维码
-				uni.navigateTo({
-					url:'./courseDetails'
+			
+				let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
+				mpaasScanModule.mpaasScan({
+					'type': 'qr',
+					'scanType': ['qrCode', 'barCode'],
+					'hideAlbum': true
+				}, (res) => {
+					console.log('扫描结果',res)
+					uni.navigateTo({
+						url:'./courseDetails'
+					})
 				})
-				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				// mpaasScanModule.mpaasScan({
-				// 	'type': 'qr',
-				// 	'scanType': ['qrCode', 'barCode'],
-				// 	'hideAlbum': true
-				// }, (res) => {
-				// 	console.log('扫描结果', JSON.stringify(res))
-				// })
 			},
 			// 前往学习资料
 			goLearningMaterials(){

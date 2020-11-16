@@ -11,6 +11,9 @@
 	} from '@/utils/util.js'
 
 	export default {
+		globalData:{
+			LearningSubType:{}
+		},
 		onLaunch: function() {
 
 			// 检查是否登录

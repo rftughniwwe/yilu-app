@@ -152,7 +152,7 @@
 								title: '登录失败'
 							})
 						}
-					})
+					},1)
 					// uni.navigateTo({	
 					// 	url: '../fillInfomation/fillInfomation'
 					// })

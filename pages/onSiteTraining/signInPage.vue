@@ -17,9 +17,6 @@
 				{{tab==2?'月汇总':''}}
 			</view>
 		 </view> -->
-		 
-		 	
-		
 		<view v-show="tab==1" class="sign-wrap">
 			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
 			<view class="top-content">
@@ -60,13 +57,13 @@
 			</view>
 			<view class="map-contentzz">
 				<view class="top-tips flex-row-start">
-					<image src="../../static/success.png" mode=""></image>
-					<view class="txt">
-						已进入签到范围：
+					<image v-show="isInRange" src="../../static/success.png" mode=""></image>
+					<view class="txt" :class="{'color':isInRange?'#666':'#FFE1DE'}">
+						{{isInRange?'已进入签到范围：':'未进入打卡范围'}}
 					</view>
 				</view>
 				<view class="address">
-					上海市浦东新区松林路357号-1楼
+					{{addressTxt}}
 				</view>
 				<map :latitude="121.5249" :longitude="31.1310" class="mapz"></map>
 			</view>
@@ -211,7 +208,15 @@
 		data() {
 			return {
 				tab: 1,
-				isFullScreen: false
+				isFullScreen: false,
+				addressTxt:'',
+				// 目标经度121.512806,31.105032
+				targetLongitude: 121.512806,
+				// 目标纬度
+				targetLatitude: 31.105032,
+				range: 800,
+				isInRange: false,
+				timer:null
 			};
 		},
 		components: {
@@ -220,8 +225,78 @@
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			// 每五秒获取一次位置信息
+			this.timer = setInterval(()=>{
+				this.getLocationFun()
+			},10000)
+		},
+		onShow() {
+			this.getLocationFun()
+		},
+		onPullDownRefresh() {
+			this.getLocationFun()
+		},
+		onUnload() {
+			clearInterval(this.timer)
 		},
 		methods: {
+			// 获取位置
+			getLocationFun() {
+				// uni.showLoading({
+				// 	title:'获取位置中...'
+				// })
+				uni.stopPullDownRefresh()
+				uni.getLocation({
+					type: 'gcj02',
+					geocode: true,
+					success: res => {
+						// uni.hideLoading()
+						uni.setStorageSync('userAddress',res)
+						let ads = res.address
+						this.addressTxt = ads.city + ads.district + ads.street+ ads.streetNum+ ads.poiName;
+						this.calcLocation(res)
+					},
+					fail: err => {
+						console.log('获取位置失败：', err)
+						// uni.hideLoading()
+						uni.showModal({
+							title: '获取位置失败',
+							content: '获取位置失败，请重试',
+							confirmText: '再次重试',
+							cancelText: '取消',
+							success: res => {
+								if (res.confirm) {
+									this.getLocationFun()
+								}
+							}
+						})
+						Toast({
+							title: '获取位置失败'
+						})
+					}
+				})
+			},
+			// 计算位置
+			calcLocation(res) {
+				let curLong = res.longitude
+				let curLati = res.latitude
+				let longAbs = Math.abs(curLong - this.targetLongitude)
+				let latiAbs = Math.abs(curLati - this.targetLatitude)
+				console.log('经度差：', longAbs)
+				console.log('纬度差：', latiAbs)
+				if (longAbs >= 1 || latiAbs >= 1) {
+					this.isInRange = false
+					return
+				}
+				let lntDegree = (longAbs / 0.0001) * 11;
+				let latDegree = (latiAbs / 0.0001) * 10;
+				if(lntDegree > this.range || latDegree > this.range){
+					this.isInRange = false
+					return
+				}
+				this.isInRange = true
+			},
+			
 			// 底部tab变换
 			changeTab(num) {
 				this.tab = num
@@ -317,6 +392,9 @@
 	}
 
 	.top-tips {
+		.txt{
+			font-size: 30rpx;
+		}
 		image {
 			width: 44rpx;
 			height: 44rpx;
@@ -327,7 +405,7 @@
 	.address {
 		margin: 30rpx 0;
 		font-weight: bold;
-		font-size: 34rpx;
+		font-size: 32rpx;
 		letter-spacing: 2rpx;
 	}
 

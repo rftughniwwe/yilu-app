@@ -138,7 +138,7 @@
 						uni.hideLoading()
 						console.log('请求失败：', err)
 					}
-				})
+				},1)
 
 
 			},
@@ -167,7 +167,7 @@
 							title:'请求失败'
 						})
 					}
-				})
+				},1)
 			},
 			
 			genderChange(e) {

@@ -20,7 +20,7 @@ export function queryUnitName(name) {
 				reject(err)
 			}
 		})
-	})
+	},1)
 }
 
 // 获取热门搜索数据
@@ -76,4 +76,24 @@ export function clearHistorySearch(num){
 			}
 		},2)
 	})
+}
+
+// 人脸登录，人脸验证用其他接口
+export function faceVerification(res){
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/user/api/baiduFaceAip/auth/facelogin',
+			method:'POST',
+			data:{
+				base64:res
+			},
+			success:resp=>{
+				resolve(resp)
+			},
+			fail:err=>{
+				reject(err)
+			}
+		},1)
+	})
+	
 }

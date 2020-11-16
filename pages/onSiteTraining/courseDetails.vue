@@ -12,7 +12,7 @@
 				道路危险货物运输管理
 			</view>
 			<view class="subtitle middle">
-				开课时间:2020-09-2019:30-20:30 · 名师:景晴
+				开课时间:2020-09-20 19:30 · 名师:景晴
 			</view>
 			<view class="subtitle">
 				开课地点：上海市浦东新区松林路357号-1楼
@@ -40,7 +40,16 @@
 
 <script>
 	import nextPageBtn from '@/components/nextPageBtn/nextPageBtn.vue'
+	import Toast from '@/commons/showToast.js'
 	import useFacePlugin from '../../commons/faceplugin.js'
+	import {
+		faceVerification
+	} from '@/commons/api/apis.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+
 	export default {
 		data() {
 			return {
@@ -50,26 +59,51 @@
 		components: {
 			nextPageBtn
 		},
+		onLoad() {},
 		methods: {
+			// 下一步
 			nextStep() {
-				uni.navigateTo({
-					url: './signInPage'
-				})
-				// useFacePlugin({count:1,random:true}).then((res)=>{
-				// 	uni.showToast({
-				// 		title:'识别成功',
-				// 		icon:'success',
-				// 		success() {
-				// 			uni.navigateTo({
-				// 				url:'./signInPage'
-				// 			})
-				// 		}
-				// 	})
-				// },(err)=>{
-				// 	console.error('识别失败',err)
-				// })
 
-			}
+
+				// 人脸采集
+				useFacePlugin({
+					count: 0,
+					random: true
+				}).then((res) => {
+					uni.showLoading({
+						title: "验证中..."
+					})
+					// 人脸验证
+					faceVerification(res).then(resp => {
+						uni.hideLoading()
+						console.log('人脸验证：',resp)
+						if (resp.data.code == 200) {
+							uni.navigateTo({
+								url: './signInPage'
+							})
+						} else {
+							uni.showModal({
+								title: "识别错误",
+								content: resp.data.msg + '。请重试',
+								cancelText: "取消",
+								confirmText: "再次重试",
+								success: (res) => {
+									if (res.confirm) {
+										this.nextStep()
+									}
+								}
+							})
+						}
+					}, err => {
+						uni.hideLoading()
+						request_err(err, '验证失败。')
+					})
+				}, (err) => {
+					console.error('识别失败', err)
+					request_err(err, '人脸采集失败。')
+				})
+			},
+
 		}
 	}
 </script>

@@ -183,7 +183,8 @@
 	} from '@/commons/ResponseTips.js'
 	import course from '@/components/course/course.vue'
 	import {
-		getCurrentDate
+		getCurrentDate,
+		LEARNING_MODE_DATA
 	} from '../../utils/util.js'
 	import {
 		httpRequest
@@ -218,7 +219,8 @@
 			this.chooseTypePager = uni.getStorageSync('isShowChooseType')
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.type = uni.getStorageSync('teachType')
-			this.typeArr = uni.getStorageSync('learningOptions')
+			
+			this.typeArr = LEARNING_MODE_DATA
 			
 			this.setOptions()
 			// 第一次进入学习模块时的事件监听
@@ -237,6 +239,7 @@
 				this.selfLearnType = data.tab
 			})
 
+			// 安全教育中第一次选择subtitle变化
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
 			})
@@ -270,13 +273,16 @@
 				this.isHideSafetyModal = true
 				this.safetyType = data.item
 			},
+			// 左上角选择学习模块
 			bindPickerChange(e) {
 				this.type = e.target.value
 				let item = this.typeArr[e.target.value]
-				
 				uni.setStorageSync('teachType', this.type)
+				// 主项
 				uni.setStorageSync('selectedLearningType',item)
-				
+				// 子项
+				uni.setStorageSync('LearningSubType',item.listSub)
+				// app.globalData.LearningSubType = item.listSub
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
 				}

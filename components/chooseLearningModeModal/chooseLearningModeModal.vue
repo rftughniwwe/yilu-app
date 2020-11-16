@@ -1,9 +1,9 @@
 <!-- 改变学习类型的模态框 -->
 <template>
-	<view class="modal-content-mask" @click.stop.prevent="closeModal(0)"  @touchmove.stop.prevent="moveStop">
+	<view class="modal-content-mask" @click.stop.prevent="closeModal(-1)"  @touchmove.stop.prevent="moveStop">
 		<view class="modal-content">
 			<view class="close-img">
-				<image src="../../static/close-img.png" mode="" @click="closeModal(0)"></image>
+				<image src="../../static/close-img.png" mode="" @click="closeModal(-1)"></image>
 			</view>
 			<view class="title">
 				请选择类型
@@ -13,7 +13,10 @@
 					安全教育
 				</view>
 				<view class="models-content">
-					<view class="item" @click.stop="closeModal(1)">
+					<view class="item" v-for="(item,index) in datas" :key='index'  @click.stop="closeModal(index,item)">
+						{{item.categoryName}}
+					</view>
+					<!-- <view class="item">
 						从业人员安全学习
 					</view>
 					<view class="item" @click.stop="closeModal(2)">
@@ -24,7 +27,7 @@
 					</view>
 					<view class="item" @click.stop="closeModal(4)">
 						应急演练
-					</view>
+					</view> -->
 				</view>
 			</view>
 		</view>
@@ -32,17 +35,22 @@
 </template>
 
 <script>
+	const app = getApp().globalData
 	export default {
 		data() {
 			return {
-				
+				datas:[]
 			};
 		},
+		mounted() {
+			this.datas = uni.getStorageSync('selectedLearningType').listSub
+		},
 		methods:{
-			closeModal(num){
+			closeModal(num,item){
 				uni.setStorageSync('isHideSafetyModal',true)
-				
-				uni.$emit('closeModalMask',{item:num})
+				uni.setStorageSync('LearningSubType',item)
+				// app.LearningSubType = item
+				uni.$emit('closeModalMask',{index:num})
 			},
 			moveStop(){},
 			

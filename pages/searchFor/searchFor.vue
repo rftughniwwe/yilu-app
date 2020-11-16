@@ -7,7 +7,7 @@
 				<image src="../../static/serach-img.png" mode=""></image>
 				<input type="text" value="" v-model="serachVal" placeholder="搜索" placeholder-class="placeStyle" />
 			</view>
-			<view class="serach-btn">
+			<view class="serach-btn" @click="serachContent">
 				搜索
 			</view>
 		</view>
@@ -43,7 +43,7 @@
 				<template v-else>
 					<view class="no-data">暂无历史搜索</view>
 				</template>
-			
+
 			</view>
 		</view>
 		<view v-if="showModel === 'article'" class="article-serach">
@@ -56,9 +56,17 @@
 				</view>
 			</view>
 			<view v-show="tab===1" class="news-content">
-				<newsCover @GoArticleDetails='goDetails' position='left'></newsCover>
-				<newsCover @GoArticleDetails='goDetails' position='text'></newsCover>
-				<newsCover @GoArticleDetails='goDetails' position='right'></newsCover>
+				<template v-if="newsArr && newsArr.length > 0">
+					<view v-for="(items,index) in newsArr" :key='index'>
+						<newCover @GoArticleDetails='goDetails' position='left' :datas='items'></newCover>
+					</view>
+				</template>
+				<template v-else>
+					<view class="no-data mt">
+						暂无咨询
+					</view>
+				</template>
+
 			</view>
 			<view v-show="tab===2" class="course-content">
 				<course></course>
@@ -71,9 +79,9 @@
 </template>
 
 <script>
-	import newsCover from '@/components/news-cover/news-cover.vue'
 	import course from '@/components/course/course.vue'
 	import Toast from '@/commons/showToast.js'
+	import newCover from '@/components/news-cover/news-cover.vue'
 	import {
 		httpRequest
 	} from '@/utils/httpRequest.js'
@@ -85,18 +93,22 @@
 	import {
 		getUserLoginInfo
 	} from '@/utils/util.js'
-	
-	
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+
 	export default {
 		data() {
 			return {
 				serachVal: '',
-				showModel:'normal',
-				tab:1,
-				isFullScreen:false,
-				hotSearch:[],
-				historySearch:[],
-				userNo:''
+				showModel: 'normal',
+				tab: 1,
+				isFullScreen: false,
+				hotSearch: [],
+				historySearch: [],
+				userNo: '',
+				newsArr: []
 			};
 		},
 		onLoad(options) {
@@ -107,100 +119,130 @@
 		onShow() {
 			this.userNo = getUserLoginInfo('userNo')
 		},
-		components:{
-			newsCover,
-			course
+		components: {
+			course,
+			newCover
 		},
-		methods:{
+		methods: {
 			// 获取热门搜索数据
-			getHotSearchData(){
-				getHotSearchData().then(res=>{
-					console.log("热门搜索数据,",res)
+			getHotSearchData() {
+				getHotSearchData().then(res => {
+					console.log("热门搜索数据,", res)
 					this.getHistoryData()
-					if(res.data.code== 200){
+					if (res.data.code == 200) {
 						this.hotSearch = res.data.data
-					}else {
+					} else {
 						Toast({
-							title:res.data.msg
+							title: res.data.msg
 						})
 					}
-				},err=>{
-					console.log('获取数据失败：',err)
+				}, err => {
+					console.log('获取数据失败：', err)
 					Toast({
-						title:"获取数据失败"
+						title: "获取数据失败"
 					})
 				})
 			},
-			
+
 			// 获取历史搜索数据
-			getHistoryData(){
-				
-				getHistorySearchData(this.userNo).then(res=>{
-					console.log("历史搜索数据,",res)
-					if(res.data.code== 200){
-						this.historySearch =  res.data.data
-					}else {
+			getHistoryData() {
+
+				getHistorySearchData(this.userNo).then(res => {
+					console.log("历史搜索数据,", res)
+					if (res.data.code == 200) {
+						this.historySearch = res.data.data
+					} else {
 						Toast({
-							title:res.data.msg
+							title: res.data.msg
 						})
 					}
-				},err=>{
-					console.log('获取数据失败：',err)
+				}, err => {
+					console.log('获取数据失败：', err)
 					Toast({
-						title:"获取数据失败"
+						title: "获取数据失败"
 					})
 				})
 			},
-			
+
 			// 删除历史数据
-			removeData(){
-				if(!this.historySearch || this.historySearch.length <= 0){
+			removeData() {
+				if (!this.historySearch || this.historySearch.length <= 0) {
 					return
 				}
 				uni.showLoading({
-					title:'正在清除...'
+					title: '正在清除...'
 				})
-				clearHistorySearch(this.userNo).then(res=>{
+				clearHistorySearch(this.userNo).then(res => {
 					uni.hideLoading()
 					console.log(res)
-					if(res.data.code == 200){
+					if (res.data.code == 200) {
 						Toast({
-							title:"清除成功"
+							title: "清除成功"
 						})
-					}else{
+					} else {
 						Toast({
-							title:res.data.msg
+							title: res.data.msg
 						})
 					}
-				},err=>{
-					console.log('获取数据失败：',err)
+				}, err => {
+					console.log('获取数据失败：', err)
 					uni.hideLoading()
 					Toast({
-						title:"获取数据失败"
+						title: "获取数据失败"
 					})
 				})
 			},
-			
-			checkoutTab(e){
+			// 搜索
+			serachContent() {
+				let val = this.serachVal
+				uni.showLoading({
+					title: '搜索中...'
+				})
+				httpRequest({
+					url: '/community/api/blog/search/list',
+					method: 'POST',
+					data: {
+						"articleType": 2,
+						"title": val
+					},
+					success: res => {
+						uni.hideLoading()
+						this.showModel = 'article'
+						console.log('zxczxczxczxczxc', res)
+						if (res.data.code == 200) {
+							this.newsArr = res.data.data.list
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						request_err(err, '搜索失败')
+					}
+				}, 3)
+			},
+			// 前往咨询详情
+			goDetails(e) {
+				let id = e.newsId
+				uni.navigateTo({
+					url: '../aiticlePage/aiticlePage?id=' + id
+				})
+			},
+			checkoutTab(e) {
 				this.tab = e
 			},
-			goBack(){
+			goBack() {
 				uni.navigateBack({
-					delta:1
+					delta: 1
 				})
 			},
-			goDetails(){
-				uni.navigateTo({
-					url:'../aiticlePage/aiticlePage'
-				})
-			}
 		}
 	}
 </script>
 
 <style lang="scss">
 	.top-search-content {
-		
+
 		border-bottom: 1px solid #eee;
 
 		image {
@@ -276,29 +318,37 @@
 		font-weight: bold;
 		color: #333333;
 	}
-	
-	.tab-selected{
+
+	.tab-selected {
 		color: $uni-color-primary;
-		border-bottom:6rpx solid $uni-color-primary;
+		border-bottom: 6rpx solid $uni-color-primary;
 		// font-size: 36rpx;
 		font-weight: bold;
 	}
-	.tab-content{
+
+	.tab-content {
 		border-bottom: 3rpx solid #eee;
-		color:#333333;
+		color: #333333;
 		font-size: 34rpx;
-		view{
+
+		view {
 			padding: 30rpx 4rpx 30rpx 2rpx;
 		}
 	}
-	.news-content,.course-content{
+
+	.news-content,
+	.course-content {
 		padding: 30rpx $uni-spacing-row-lg 20rpx;
 	}
-	.course-content{
-	
-	}
-	.no-data{
+
+	.course-content {}
+
+	.no-data {
 		text-align: center;
 		margin: 20rpx;
+	}
+
+	.mt {
+		margin-top: 200rpx;
 	}
 </style>
