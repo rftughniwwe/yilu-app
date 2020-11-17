@@ -73,7 +73,7 @@
 						<image src="../../static/right-arrow.png" mode=""></image>
 					</view>
 				</view>
-				<view class="item flex-between" @click="goLearningMaterials">
+				<!-- <view class="item flex-between" @click="goLearningMaterials">
 					<view class="item-icon flex-row-start">
 						<image src="../../static/user-my-zl.png" mode=""></image>
 						<view class="title" :style="{'fontSize':globalSize+'rpx'}">
@@ -83,7 +83,7 @@
 					<view class="right-arrow-img">
 						<image src="../../static/right-arrow.png" mode=""></image>
 					</view>
-				</view>
+				</view> -->
 				<view class="item flex-between" @click="goAboutUs">
 					<view class="item-icon flex-row-start">
 						<image src="../../static/user-about-us.png" mode=""></image>
@@ -186,7 +186,7 @@
 			// 我的签到
 			goMySign(){
 				uni.navigateTo({
-					url:'../onSiteTraining/signInPage'
+					url:'../user/mySignInPage/mySignInPage'
 				})
 			}
 		}

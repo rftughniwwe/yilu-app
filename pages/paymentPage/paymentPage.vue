@@ -18,7 +18,7 @@
 					继续教育
 				</view>
 			</view>
-			<view class="item flex-between">
+			<view class="item bottom-brd flex-between">
 				<view class="titile">
 					姓名
 				</view>
@@ -26,9 +26,20 @@
 					王大锤
 				</view>
 			</view>
+			<view class="item flex-between">
+				<view class="titile">
+					购买使用权限
+					<view class="tips">
+						有效期至：<text class="hight-color">2021-04-22</text>
+					</view>
+				</view>
+				<view class="content">
+					1年
+				</view>
+			</view>
 		</view>
 		<view class="valid-period">
-			<view class="valid-time flex-between">
+			<!-- <view class="valid-time flex-between">
 				<view :class="num==1?'selected-item':'item-date'" @click="changeTime(1)">
 					一个月
 				</view>
@@ -44,7 +55,7 @@
 			</view>
 			<view class="tips">
 				有效期至：<text class="hight-color">2020-04-22</text>
-			</view>
+			</view> -->
 		</view>
 		<view class="pay-money">
 			<view class="item flex-between">
@@ -83,7 +94,7 @@
 						￥210
 					</view>	
 				</view>
-				<image :src="payMode===1?'../../static/selected-img.png':'../../static/no-selected-img.png'" mode=""></image>
+				<image class="options-img" :src="payMode===1?'../../static/selected-img.png':'../../static/no-selected-img.png'" mode=""></image>
 			</view>
 			<view class="item flex-between"  @click="changePayMode(2)">
 				<view class="wechat flex-row-start">
@@ -92,7 +103,7 @@
 						￥210
 					</view>	
 				</view>
-				<image :src="payMode===1?'../../static/no-selected-img.png':'../../static/selected-img.png'" mode=""></image>
+				<image class="options-img" :src="payMode===1?'../../static/no-selected-img.png':'../../static/selected-img.png'" mode=""></image>
 			</view>
 		</view>
 		<view class="go-pay-btn">
@@ -106,7 +117,6 @@
 	export default {
 		data() {
 			return {
-				num: 1,
 				payMode:1
 			};
 		},
@@ -117,11 +127,6 @@
 
 		},
 		methods: {
-			changeTime(nums) {
-				
-				this.num = nums
-				// console.log('111',this.caculationDate(num)) 
-			},
 			changePayMode(num){
 				this.payMode = num
 			},
@@ -155,10 +160,12 @@
 		border-top: 2rpx solid #EAEAEA;
 		border-bottom: 2rpx solid #EAEAEA;
 	}
-
+	.bottom-brd{
+		border-bottom: 2rpx solid #EAEAEA;
+	}
 	.item {
 		padding: 20rpx 30rpx;
-
+		
 		.title {
 			color: #333333;
 			font-size: 38rpx;
@@ -186,26 +193,17 @@
 		padding: 12rpx 26rpx;
 	}
 	.valid-period {
-		background-color: #FFFFFF;
-		padding: 20rpx 30rpx;
 		margin-bottom: 40rpx;
-		.valid-time {
-			padding: 20rpx 0;
-
-			
-		}
-
-		.tips {
-			text-align: center;
-			color: #999999;
-			font-size: 24rpx;
-
-			.hight-color {
-				color: #3CA7FF;
-			}
+	}
+	.tips {
+		text-align: center;
+		color: #999999;
+		font-size: 24rpx;
+		margin-top: 10rpx;
+		.hight-color {
+			color: #3CA7FF;
 		}
 	}
-
 	.pay-money {
 		background-color: #FFFFFF;
 		
@@ -221,7 +219,7 @@
 		background-color: #FFFFFF;
 		padding: 14rpx 30rpx;
 		.item{
-			image{
+			.options-img{
 				width: 46rpx;
 				height: 46rpx;
 			}
@@ -230,8 +228,8 @@
 	.zhifub{
 		image{
 			margin-right: 20rpx;
-			width: 50rpx;
-			height: 40rpx;
+			width: 46rpx;
+			height: 44rpx;
 		}
 		view{
 			color: #333333;
@@ -241,8 +239,8 @@
 	.wechat{
 		image{
 			margin-right: 20rpx;
-			width: 50rpx;
-			height: 32rpx;
+			width: 44rpx;
+			height: 38rpx;
 		}
 		view{
 			color: #333333;

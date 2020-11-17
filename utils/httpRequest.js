@@ -37,7 +37,6 @@ function httpRequest(options, url_type) {
 	}else if(url_type = 3){
 		base_url = BASE_URL+':8740'
 	}
-	console.log('baseURL:',base_url)
 	getNetworkType().then((res) => {
 
 		if (res) {

@@ -1,5 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		
 		{
 			// 主页
 			"path": "pages/tabBar/index",
@@ -15,6 +16,16 @@
 				"navigationStyle": "custom"
 			}
 		},
+		{
+			"path": "pages/paymentPage/paymentPage",
+			"style": {
+				"navigationBarTitleText": "支付详情",
+				"enablePullDownRefresh": false,
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#3CA7FF"
+			}
+		
+		}, 
 		{
 		    "path" : "pages/examQuestion/examQuestion",
 		    "style" :                                                                                    
@@ -125,16 +136,7 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
-			"path": "pages/paymentPage/paymentPage",
-			"style": {
-				"navigationBarTitleText": "支付详情",
-				"enablePullDownRefresh": false,
-				"navigationBarTextStyle": "white",
-				"navigationBarBackgroundColor": "#3CA7FF"
-			}
-
-		}, {
+		},{
 			"path": "pages/leaderBoard/leaderBoard",
 			"style": {
 				"navigationBarTitleText": "排行榜",
@@ -283,6 +285,15 @@
 			}
 
 		}
+        ,{
+            "path" : "pages/user/mySignInPage/mySignInPage",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#999999",

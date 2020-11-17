@@ -8,7 +8,7 @@
 				</view>
 			</view>
 			<view class="flex-between" v-if="type ==1">
-				<view class="items" v-for="(item,index) in datas" :key='index' @click="chagneTab(index,item)" :class="selfNum===index?'selected-item':''">
+				<view class="items" v-for="(item,index) in datas2" :key='index' @click="chagneTab(index,item)" :class="selfNum===index?'selected-item':''">
 					{{item.categoryName}}
 				</view>
 			</view>
@@ -42,25 +42,68 @@
 				num: 1,
 				selfNum: 1,
 				otherTab: 0,
-				datas:[]
+				datas: [{
+						"id": "1080387575940304898",
+						"categoryName": "从业人员技能培训",
+						"floor": 2,
+						"remark": ""
+					},
+					{
+						"id": "1080748559775240194",
+						"categoryName": "安全领导小组学习",
+						"floor": 2,
+						"remark": ""
+					},
+					{
+						"id": "1080752583811469314",
+						"categoryName": "从业人员安全学习",
+						"floor": 2,
+						"remark": ""
+					},
+					{
+						"id": "1232501813918695426",
+						"categoryName": "应急演练",
+						"floor": 2,
+						"remark": ""
+					}
+				],
+				datas2: [{
+						"id": "1263818166278471681",
+						"categoryName": "驾驶员",
+						"floor": 2,
+						"remark": null
+					},
+					{
+						"id": "1263818224717709313",
+						"categoryName": "押运员",
+						"floor": 2,
+						"remark": null
+					},
+					{
+						"id": "1263818285547700225",
+						"categoryName": "装卸管理员",
+						"floor": 2,
+						"remark": null
+					}
+				]
 			};
 		},
 		props: ['type', 'safetyType', 'selfLearnType', 'tabArr'],
 		created() {
 			this.selfNum = this.safetyType
-			this.datas =  uni.getStorageSync('LearningSubType')
 			uni.$on('closeModalMask', (data) => {
 				this.selfNum = data.index
 			})
 		},
-		updated(){
-			this.datas =  uni.getStorageSync('LearningSubType')
+		updated() {
+			// this.datas = uni.getStorageSync('LearningSubType')
+			// console.log('update:', uni.getStorageSync('LearningSubType'))
 		},
 		methods: {
-			chagneTab(e,item) {
+			chagneTab(e, item) {
 				this.num = e
 				this.selfNum = e
-				uni.setStorageSync('LearningSubTypeSubItem',item)
+				uni.setStorageSync('LearningSubTypeSubItem', item)
 			},
 			selfChagneTab(num) {
 				uni.$emit('selfChange', {

@@ -27,42 +27,55 @@
 </template>
 
 <script>
-	
 	export default {
 		data() {
-			return {
-
-			};
+			return {};
 		},
 		onLoad() {
-			
+
 		},
-		methods:{
-			signinNow(){
+		methods: {
+			signinNow() {
 				// 需先扫描二维码
-			
-				let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				mpaasScanModule.mpaasScan({
-					'type': 'qr',
-					'scanType': ['qrCode', 'barCode'],
-					'hideAlbum': true
-				}, (res) => {
-					console.log('扫描结果',res)
-					uni.navigateTo({
-						url:'./courseDetails'
-					})
+
+				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
+				// mpaasScanModule.mpaasScan({
+				// 	'type': 'qr',
+				// 	'scanType': ['qrCode', 'barCode'],
+				// 	'hideAlbum': true
+				// }, (res) => {
+				// 	let d = JSON.parse((JSON.stringify(res)))
+				// 	let r = JSON.parse((JSON.stringify(d.resp_result)))
+				// 	console.log('扫描结果1',r)
+				// 	uni.navigateTo({
+				// 		url:'./courseDetails?scanres='+res
+				// 	})
+				// })
+				uni.scanCode({
+					scanType: ['qrCode'],
+					onlyFromCamera: true,
+					success: res => {
+						let r = JSON.parse(JSON.stringify(res.result))
+						console.log('结果：', r)
+						uni.navigateTo({
+							url: './courseDetails?scanres='+r
+						})
+					},
+					fail: err => {
+						console.log('扫描失败', err)
+					}
 				})
 			},
 			// 前往学习资料
-			goLearningMaterials(){
+			goLearningMaterials() {
 				uni.navigateTo({
-					url:'../user/learningMaterials/learningMaterials'
+					url: '../user/learningMaterials/learningMaterials'
 				})
 			},
 			// 前往在线考试
-			goOnlineExam(){
+			goOnlineExam() {
 				uni.navigateTo({
-					url:'./examBegin'
+					url: './examBegin'
 				})
 			}
 		}
@@ -82,13 +95,15 @@
 			height: 234rpx;
 		}
 	}
-	.topic{
+
+	.topic {
 		color: #333333;
 		font-size: 34rpx;
 		font-weight: bold;
 		margin-bottom: 30rpx;
 	}
-	.content{
+
+	.content {
 		color: #333333;
 		font-size: 30rpx;
 		margin-bottom: 30rpx;

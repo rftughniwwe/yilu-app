@@ -9,13 +9,13 @@
 		</view>
 		<view class="topic">
 			<view class="title">
-				道路危险货物运输管理
+				{{courseInfo.title}}
 			</view>
 			<view class="subtitle middle">
-				开课时间:2020-09-20 19:30 · 名师:景晴
+				开课时间:{{courseInfo.beginTime?courseInfo.beginTime:'未知'}} · 名师:{{courseInfo.teacher?courseInfo.teacher:'未知'}}
 			</view>
 			<view class="subtitle">
-				开课地点：上海市浦东新区松林路357号-1楼
+				开课地点：{{courseInfo.address?courseInfo.address:'未知'}}
 			</view>
 		</view>
 		<view class="container-content">
@@ -23,13 +23,13 @@
 				直播介绍
 			</view>
 			<view class="subtitle text-overflow5">
-				《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
+				{{courseInfo.introduct?courseInfo.introduct:'未知'}}
 			</view>
 			<view class="header title">
 				老师介绍
 			</view>
 			<view class="subtitle text-overflow5">
-				《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
+				{{courseInfo.teacherIntro?courseInfo.teacherIntro:'未知'}}
 			</view>
 		</view>
 		<view class="next-step">
@@ -53,13 +53,15 @@
 	export default {
 		data() {
 			return {
-
+				courseInfo:{}
 			};
 		},
 		components: {
 			nextPageBtn
 		},
-		onLoad() {},
+		onLoad(options) {
+			this.courseInfo = options.scanres
+		},
 		methods: {
 			// 下一步
 			nextStep() {
@@ -79,7 +81,7 @@
 						console.log('人脸验证：',resp)
 						if (resp.data.code == 200) {
 							uni.navigateTo({
-								url: './signInPage'
+								url: './signInPage?scanResult='+this.courseInfo
 							})
 						} else {
 							uni.showModal({

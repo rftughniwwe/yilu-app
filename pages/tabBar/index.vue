@@ -86,13 +86,13 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
-	
-	
+
+
 	export default {
 		data() {
 			return {
-				isFullScreen:false,
-				newsArr:[]
+				isFullScreen: false,
+				newsArr: []
 			};
 		},
 		components: {
@@ -101,9 +101,9 @@
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			
+
 			this.getIndexInfomation()
-			
+
 			// this.getLearningOptions()
 		},
 		onReachBottom() {
@@ -116,39 +116,39 @@
 			// 上拉加载更多
 			loadData() {
 				this.getIndexInfomation()
-				
+
 			},
 			// 获取主页数据
-			getIndexInfomation(){
-				
+			getIndexInfomation() {
+
 				uni.showLoading({
-					title:'加载中...',
-					mask:true
+					title: '加载中...',
+					mask: true
 				})
 				httpRequest({
-					url:'/community/api/blog/list',
-					method:'POST',
-					success:resp=>{
+					url: '/community/api/blog/list',
+					method: 'POST',
+					success: resp => {
 						uni.hideLoading()
 						uni.stopPullDownRefresh()
-						console.log('resp:',resp)
-						if(resp.data.code == 200){
+						console.log('resp:', resp)
+						if (resp.data.code == 200) {
 							this.newsArr = resp.data.data.list
-						}else {
+						} else {
 							Toast({
-								title:resp.data.msg
+								title: resp.data.msg
 							})
 						}
 					},
-					fail:err=>{
+					fail: err => {
 						uni.stopPullDownRefresh()
 						uni.hideLoading()
 						console.log(err)
 						Toast({
-							title:'加载数据失败'
+							title: '加载数据失败'
 						})
 					}
-				},3)
+				}, 3)
 			},
 			// 获取学习选项
 			getLearningOptions() {
@@ -173,44 +173,60 @@
 				// 	}
 				// }, 2)
 			},
-			
-			refreshHandle(){
+
+			refreshHandle() {
 				this.getIndexInfomation()
 			},
 			// 前往搜索页
-			goToSerach(){
+			goToSerach() {
 				uni.navigateTo({
-					url:'../searchFor/searchFor'
+					url: '../searchFor/searchFor'
 				})
 			},
 			// 前往咨询详情
-			goDetails(e){
+			goDetails(e) {
 				let id = e.newsId
 				uni.navigateTo({
-					url:'../aiticlePage/aiticlePage?id='+id
+					url: '../aiticlePage/aiticlePage?id=' + id
 				})
 			},
-			goSpeacialTopic(){
+			goSpeacialTopic() {
 				uni.navigateTo({
-					url:'../specialTopic/speacialTopicPage'
+					url: '../specialTopic/speacialTopicPage'
 				})
 			},
-			gomyNews(){
+			gomyNews() {
 				uni.navigateTo({
-					url:'../user/myNews/myNews'
+					url: '../user/myNews/myNews'
 				})
 			},
 			scanCode() {
-				let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				mpaasScanModule.mpaasScan({
-					'type': 'qr',
-					'scanType': ['qrCode', 'barCode'],
-					'hideAlbum': true
-				}, (res) => {
-					console.log('扫描结果', JSON.stringify(res))
+				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
+				// mpaasScanModule.mpaasScan({
+				// 	'type': 'qr',
+				// 	'scanType': ['qrCode', 'barCode'],
+				// 	'hideAlbum': true
+				// }, (res) => {
+				// 	console.log('首页扫描结果1',res)
+				// 	console.log('首页扫描结果2',JSON.parse(res))
+				// 	uni.navigateTo({
+				// 		url:'../onSiteTraining/courseDetails?scanres='+res
+				// 	})
+				// })
+				uni.scanCode({
+					scanType: ['qrCode'],
+					onlyFromCamera: true,
+					success: res => {
+						uni.navigateTo({
+							url:'../onSiteTraining/courseDetails?scanres='
+						})
+					},
+					fail: err => {
+						console.log('扫描失败', err)
+					}
 				})
 			},
-			
+
 		}
 
 	}
@@ -278,7 +294,7 @@
 		}
 	}
 
-	.news-content{
+	.news-content {
 		padding: 30rpx $uni-spacing-row-lg 20rpx;
 	}
 
@@ -347,11 +363,13 @@
 		overflow: hidden;
 		white-space: nowrap;
 	}
-	.refresh{
+
+	.refresh {
 		position: fixed;
 		right: 16rpx;
 		bottom: 40rpx;
-		image{
+
+		image {
 			width: 133rpx;
 			height: 133rpx;
 		}

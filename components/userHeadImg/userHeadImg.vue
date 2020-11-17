@@ -21,6 +21,8 @@
 <style lang="scss">
 .main{
 	border-radius: $uni-border-radius-circle;
+	background-image: url(../../static/user2.png);
+	background-size: 100% 100%;
 	background-color: #eeeeee;
 	image{
 		width: 100%;

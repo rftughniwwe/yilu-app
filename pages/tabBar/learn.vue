@@ -1,7 +1,7 @@
 <!-- 学习页面 -->
 <template>
 	<view class="mainzz">
-		<chooseLearningType v-if='!chooseTypePager'/>
+		<chooseLearningType v-if='!chooseTypePager' />
 		<view v-else class="learning-content">
 			<view :class="type === 2?'no-padding':'learn-top-bar'">
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
@@ -21,13 +21,55 @@
 					</view>
 				</view>
 			</view>
+
 			<!-- 继续教育和安全教育 -->
 			<view v-show="type !== 2" class="learning-teach">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide :type='type' :safetyType="safetyType" />
 				</view>
+
 				<view class="top-img-content">
-					<image src="../../static/anquan-top-img.png" mode=""></image>
+					<swiper class="swiper-content" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="600" circular="true">
+						<swiper-item>
+							<view class="swiper-item">
+								<image src="../../static/banner.png" mode=""></image>
+							</view>
+						</swiper-item>
+						<swiper-item>
+							<view class="swiper-item">
+								<image src="../../static/banner2.png" mode=""></image>
+							</view>
+						</swiper-item>
+					</swiper>
+					<!-- <image src="../../static/anquan-top-img.png" mode=""></image> -->
+				</view>
+				<view class="online-notice">
+					<view class="top-tips flex-row-start">
+						<image src="../../static/shuxian.png" mode=""></image>
+						学习中心
+					</view>
+					<view class="notice-card flex-between">
+						<view class="notice-cover">
+							<image src="../../static/banner2.png" mode=""></image>
+						</view>
+						<view class="notice-desc">
+							<view class="notice-title text-overflow2">
+								道路危险货物运输管理（上）
+							</view>
+							<view class="notice-time">
+								时间：2020-12-12 20:00
+							</view>
+							<view class="notive-teacher-join flex-between">
+								<view class="teacher">
+									<view class="xxx">老师：王带锤</view>
+									<view class="xxx">9999人参与</view>
+								</view>
+								<view class="join-room">
+									进入直播间
+								</view>
+							</view>
+						</view>
+					</view>
 				</view>
 				<view class="learning-center">
 					<view class="top-tips flex-row-start">
@@ -60,6 +102,7 @@
 
 				</view>
 			</view>
+
 			<!-- 自主学习 -->
 			<view v-show="type === 2" class="self-learning">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
@@ -219,9 +262,8 @@
 			this.chooseTypePager = uni.getStorageSync('isShowChooseType')
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.type = uni.getStorageSync('teachType')
-			
+
 			this.typeArr = LEARNING_MODE_DATA
-			
 			this.setOptions()
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
@@ -244,16 +286,16 @@
 				this.isHideSafetyModal = true
 			})
 
-			
+
 		},
 		onShow() {
 			this.date = getCurrentDate()
 		},
 		methods: {
-			
-			setOptions(){
+
+			setOptions() {
 				let d = this.typeArr
-				d.forEach((item,index)=>{
+				d.forEach((item, index) => {
 					this.typeArrStr.push(item.categoryName)
 				})
 			},
@@ -265,7 +307,9 @@
 					'scanType': ['qrCode', 'barCode'],
 					'hideAlbum': true
 				}, (res) => {
-					console.log('扫描结果', JSON.stringify(res))
+					uni.navigateTo({
+						url: '../onSiteTraining/courseDetails'
+					})
 				})
 			},
 
@@ -279,9 +323,9 @@
 				let item = this.typeArr[e.target.value]
 				uni.setStorageSync('teachType', this.type)
 				// 主项
-				uni.setStorageSync('selectedLearningType',item)
+				uni.setStorageSync('selectedLearningType', item)
 				// 子项
-				uni.setStorageSync('LearningSubType',item.listSub)
+				uni.setStorageSync('LearningSubType', item.listSub)
 				// app.globalData.LearningSubType = item.listSub
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
@@ -380,12 +424,22 @@
 	.top-slide-content {}
 
 	.top-img-content {
-		margin: 20rpx 0 20rpx;
+		margin: 30rpx 0 40rpx;
+		// image {
+		// 	width: 100%;
+		// 	height: 295rpx;
+		// 	border-radius: $uni-border-radius-base;
+		// }
+	}
 
+	.swiper-content {
+		width: 100%;
+		height: 300rpx;
+		border-radius: 20rpx;
 		image {
 			width: 100%;
-			height: 295rpx;
-			border-radius: $uni-border-radius-base;
+			height: 300rpx;
+			border-radius: 20rpx;
 		}
 	}
 
@@ -603,4 +657,55 @@
 			font-size: 30rpx;
 		}
 	}
+	.notice-card{
+		border-radius: 8rpx;
+		box-shadow: 0px 0px 18rpx rgba(234, 234, 234, 0.63);
+		margin: 40rpx 0;
+		background-color: #FFFFFF;
+		padding: 30rpx 24rpx;
+	}
+	.notice-cover{
+		width: 25%;
+		border-radius: 8rpx;
+		background-color: #eaeaea;
+		height: 206rpx;
+		margin-right: 30rpx;
+		image{
+			border-radius: 8rpx;
+			width: 100%;
+			height: 100%;
+			
+		}
+	}
+	.notice-desc{
+		width: 70%;
+		.notice-title{
+			color: #333333;
+			font-size: 32rpx;
+			font-weight: bold;
+			letter-spacing: 2rpx;
+			margin-bottom: 10rpx;
+		}
+		.notice-time{
+			color: #333333;
+			font-size: 24rpx;
+			margin-bottom: 40rpx;
+		}
+		.teacher{
+			.xxx{
+				color: #999;
+				font-size: 24rpx;
+			}
+		}
+		.join-room{
+			border-radius: $uni-border-radius-half-circle;
+			border: none;
+			background: rgba(60, 167, 255, 0.1);
+			color: #3CA7FF;
+			font-size: 24rpx;
+			text-align: center;
+			padding: 12rpx 24rpx;
+		}
+	}
+	
 </style>

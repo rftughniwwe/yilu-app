@@ -23,34 +23,35 @@
 				<view class="subtitle flex-row-start">
 					<image src="../../static/mini-time.png" mode=""></image>
 					<view class="time zzz">
-						2020-09-17 19:20
+						{{courseInfo.beginTime?courseInfo.beginTime:'未知'}}
 					</view>
 					<image src="../../static/mini-course.png" mode=""></image>
 					<view class="time">
-						当前课程：驾驶员
+						当前课程：{{courseInfo.title?courseInfo.title:'未知'}}
 					</view>
 				</view>
 				<view class="sign-content flex-around">
-					<view class="sign-in">
+					<view class="sign-in" @click="sign(1)">
 						<view class="sign-title">
-							签入时间：09:20
+							签入时间：09:00
 						</view>
 						<view class="sign-img">
-							<image src="../../static/checkedin.png" mode=""></image>
+							<!-- <image src="../../static/checkedin.png" mode=""></image> -->
+							<image src="../../static/signin.png" mode=""></image>
 						</view>
 						<view class="sign-tips">
-							09:20已签入
+							未签入
 						</view>
 					</view>
 					<view class="sign-in">
-						<view class="sign-title">
-							签入时间：19:20
+						<view class="sign-title"  @click="sign(2)">
+							签出时间：19:00
 						</view>
 						<view class="sign-img">
 							<image src="../../static/signin.png" mode=""></image>
 						</view>
 						<view class="sign-tips">
-							19:20未签入
+							未签出
 						</view>
 					</view>
 				</view>
@@ -58,12 +59,13 @@
 			<view class="map-contentzz">
 				<view class="top-tips flex-row-start">
 					<image v-show="isInRange" src="../../static/success.png" mode=""></image>
-					<view class="txt" :class="{'color':isInRange?'#666':'#FFE1DE'}">
-						{{isInRange?'已进入签到范围：':'未进入打卡范围'}}
+					<image v-show='!isInRange' src="../../static/signin.png" mode=""></image>
+					<view class="txt">
+						{{isInRange?'已进入签到范围：':'当前位置未进入签到范围'}}
 					</view>
 				</view>
 				<view class="address">
-					{{addressTxt}}
+					{{courseInfo.address?courseInfo.address:'未知'}}
 				</view>
 				<map :latitude="121.5249" :longitude="31.1310" class="mapz"></map>
 			</view>
@@ -203,18 +205,19 @@
 <script>
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 	import userHeadImg from "@/components/userHeadImg/userHeadImg.vue"
-	
+	import Toast from '@/commons/showToast.js'
 	export default {
 		data() {
 			return {
 				tab: 1,
+				courseInfo:{},
 				isFullScreen: false,
 				addressTxt:'',
-				// 目标经度121.512806,31.105032
+				// 目标经度 121.512806,31.105032
 				targetLongitude: 121.512806,
 				// 目标纬度
 				targetLatitude: 31.105032,
-				range: 800,
+				range: 500,
 				isInRange: false,
 				timer:null
 			};
@@ -223,9 +226,12 @@
 			uniNavBar,
 			userHeadImg
 		},
-		onLoad() {
+		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			// 每五秒获取一次位置信息
+			this.courseInfo = options.scanResult
+			this.targetLongitude = options.scanResult.longtitude
+			this.targetLatitude = options.scanResult.latitude
+			// 每十秒获取一次位置信息
 			this.timer = setInterval(()=>{
 				this.getLocationFun()
 			},10000)
@@ -297,6 +303,18 @@
 				this.isInRange = true
 			},
 			
+			sign(num){
+				// 1签入 2签出
+				if(!this.isInRange){
+					Toast({
+						title:'未进入打卡范围'
+					})
+					return
+				}
+				console.log('签入成功')
+				// 请求
+			},
+			
 			// 底部tab变换
 			changeTab(num) {
 				this.tab = num
@@ -360,7 +378,7 @@
 		background-color: #F0F4F7;
 		height: 292rpx;
 		border-radius: 12rpx;
-		padding: 30rpx;
+		padding: 30rpx 40rpx;
 	}
 
 	.sign-img {
