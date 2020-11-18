@@ -10,39 +10,49 @@
 
 		<view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
 			<view v-show="num=='0'">
-				<view class="item-block flex-row-start">
-					<image class="pdf-docx-img" src="../../../static/files-PDF.png" mode=""></image>
-					<view class="file-content">
-						<view class="title">
-							驾驶员安全教育.pdf
+				<template v-if="filesData && filesData.length >0">
+					<view class="item-block flex-row-start">
+						<image class="pdf-docx-img" src="../../../static/files-PDF.png" mode=""></image>
+						<view class="file-content text-overflow2">
+							<view class="title">
+								驾驶员安全教育.pdf
+							</view>
+							<view class="file-size">
+								999MB
+							</view>
 						</view>
-						<view class="file-size">
-							999MB
-						</view>
-					</view>
-				</view>
-				<view class="item-block flex-row-start">
-					<image class="file-img" src="../../../static/files-img.png" mode=""></image>
-					<view class="file-content">
-						<view class="title">
-							驾驶员安全教育
-						</view>
-						<view class="file-size">
-							999MB
+						<view class="action-content flex-between">
+							<image class="preview-img" src="../../../static/preview-file.png" mode=""></image>
+							<image class="download-img" src="../../../static/download.png" mode=""></image>
 						</view>
 					</view>
-				</view>
-				<view class="item-block flex-row-start">
-					<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
-					<view class="file-content">
-						<view class="title">
-							驾驶员安全教育.doc
-						</view>
-						<view class="file-size">
-							999MB
+					<view class="item-block flex-row-start">
+						<image class="file-img" src="../../../static/files-img.png" mode=""></image>
+						<view class="file-content">
+							<view class="title">
+								驾驶员安全教育
+							</view>
+							<view class="file-size">
+								999MB
+							</view>
 						</view>
 					</view>
-				</view>
+					<view class="item-block flex-row-start">
+						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
+						<view class="file-content">
+							<view class="title">
+								驾驶员安全教育.doc
+							</view>
+							<view class="file-size">
+								999MB
+							</view>
+						</view>
+					</view>
+				</template>
+				<template v-else>
+					<EmptyData type='serach'/>
+				</template>
+				
 			</view>
 			<view v-show="num=='1'">
 				<view class="video-item">
@@ -69,12 +79,23 @@
 <script>
 	import learnTopSlide from '@/components/learnTopSlide/learnTopSlide.vue'
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	import Toast from '@/commons/showToast.js'
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	
 	export default {
 		data() {
 			return {
 				tabArr: ['文件', '视频'],
 				num: '0',
-				isFullScreen: false
+				isFullScreen: false,
+				filesData:[]
 			};
 		},
 		components: {
@@ -83,8 +104,38 @@
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			this.getaccessoryList()
 		},
 		methods: {
+			// 获取现场培训学习资料
+			getaccessoryList(){
+				// 选择的一级分类
+				let categoryId1 = uni.getStorageSync('selectedLearningType').id
+				// 选择的二级分类
+				let categoryId2 = uni.getStorageSync('LearningSubType').id
+				// 所属公司ID
+				let compId = uni.getStorageSync('userBasicInfo').compId	
+				httpRequest({
+					url:'/course/auth/course/accessory/accessoryList',
+					method:'POST',
+					data:{
+						  "categoryId1": categoryId1,
+						  "categoryId2": categoryId2,
+						  "lecturerUserNo": compId
+					},
+					success:res=>{
+						console.log('学习资料：',res)
+						if(res.data.code==200){
+							this.filesData = res.data.data
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						request_err(err,'获取学习资料失败')
+					}
+				},2)
+			},
 			tabSelected(data) {
 				this.num = data.tab
 			},
@@ -152,5 +203,17 @@
 			width: 148rpx;
 			height: 148rpx;
 		}
+	}
+	.file-content{
+		width: 75%;
+	}
+	.preview-img{
+		width: 38rpx;
+		height: 40rpx;
+		margin-right: 60rpx;
+	}
+	.download-img{
+		width: 50rpx;
+		height: 50rpx;
 	}
 </style>

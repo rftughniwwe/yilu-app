@@ -18,6 +18,9 @@
 				开课地点：上海市浦东新区松林路357号-1楼
 			</view>
 		</view>
+		<view class="ppp">
+			
+		
 		<view class="container-content">
 			<view class="header title">
 				直播介绍
@@ -40,6 +43,7 @@
 				危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输
 			</view>
 		</view>
+		</view>
 		<view class="btn">
 			添加提醒
 		</view>
@@ -47,11 +51,26 @@
 </template>
 
 <script>
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	import Toast from '@/commons/showToast.js'
 	export default {
 		data() {
 			return {
-
 			};
+		},
+		onLoad(options) {
+			this.getCourseDetails(options.id)
+		},
+		methods:{
+			getCourseDetails(id){
+				console.log('课程ID',id)
+			}
 		}
 	}
 </script>
@@ -123,5 +142,7 @@
 		padding: 0 20rpx;
 		border-left: 8rpx solid #3395FA;
 	}
-
+	.ppp{
+		padding-bottom: 50rpx;
+	}
 </style>

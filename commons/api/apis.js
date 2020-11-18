@@ -97,3 +97,19 @@ export function faceVerification(res){
 	})
 	
 }
+
+// 获取用基本信息接口
+export function getUserBasicInfo(num){
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/user/api/user/perfect/getBasicInfo?userNo='+num,
+			method:'POST',
+			success:res=>{
+				resolve(res)
+			},
+			fail:err=>{
+				reject(err)
+			}
+		},1)
+	})
+}

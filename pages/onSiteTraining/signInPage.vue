@@ -229,8 +229,8 @@
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.courseInfo = options.scanResult
-			this.targetLongitude = options.scanResult.longtitude
-			this.targetLatitude = options.scanResult.latitude
+			this.targetLongitude = options.scanResult.longtitude?options.scanResult.longtitude:121.512806
+			this.targetLatitude = options.scanResult.latitude?options.scanResult.latitude:31.105032
 			// 每十秒获取一次位置信息
 			this.timer = setInterval(()=>{
 				this.getLocationFun()
@@ -314,6 +314,7 @@
 				console.log('签入成功')
 				// 请求
 			},
+			
 			
 			// 底部tab变换
 			changeTab(num) {

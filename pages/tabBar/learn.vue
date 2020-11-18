@@ -46,7 +46,7 @@
 				<view class="online-notice">
 					<view class="top-tips flex-row-start">
 						<image src="../../static/shuxian.png" mode=""></image>
-						学习中心
+						直播中
 					</view>
 					<view class="notice-card flex-between">
 						<view class="notice-cover">
@@ -286,6 +286,7 @@
 				this.isHideSafetyModal = true
 			})
 
+			this.get
 
 		},
 		onShow() {
@@ -336,6 +337,10 @@
 				if (num == 1) {
 					uni.navigateTo({
 						url: '../onSiteTraining/onSiteTraining'
+					})
+				}else if (num == 2){
+					uni.navigateTo({
+						url:'../user/myCourse'
 					})
 				}
 				// 需判断是否付费

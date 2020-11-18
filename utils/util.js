@@ -73,6 +73,9 @@ const LEARNING_MODE_DATA = [{
 	}
 ]
 
+const LIVE_STATUS = ['未开播','正在直播','待回放','待转存','回放']
+
+
 // 获取网络状态
 function getNetworkType() {
 	return new Promise((resolve, reject) => {
@@ -211,5 +214,6 @@ module.exports = {
 	removeAppStorage,
 	getUserLoginInfo,
 	getSystemInfo,
-	LEARNING_MODE_DATA
+	LEARNING_MODE_DATA,
+	LIVE_STATUS
 }

@@ -7,8 +7,17 @@
 	} from '@/utils/httpRequest.js'
 
 	import {
-		getUserLoginInfo
+		getUserLoginInfo,
 	} from '@/utils/util.js'
+
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+
+	import {
+		getUserBasicInfo
+	} from '@/commons/api/apis.js'
 
 	export default {
 		globalData:{
@@ -19,19 +28,36 @@
 			// 检查是否登录
 			// #ifdef APP-PLUS
 				if(uni.getStorageSync('userStorage').userNo){
-					plus.navigator.closeSplashscreen()
-				
-					// uni.switchTab({
-					// 	url:'pages/tabBar/index'
-					// })
-					// setTimeout(()=>{
-					// 	plus.navigator.closeSplashscreen()
-					// },1000)
+					// plus.navigator.closeSplashscreen()
+					uni.switchTab({
+						url:'pages/tabBar/index'
+					})
+					setTimeout(()=>{
+						plus.navigator.closeSplashscreen()
+					},1000)
 				}else {
 					plus.navigator.closeSplashscreen()
 				}
 			// #endif
 
+			// 获取用户信息
+			let userBasicInfo = uni.getStorageSync('userBasicInfo')
+			if(!userBasicInfo.compId){
+				let userNo = getUserLoginInfo('userNo')
+				console.log('用户编号：',userNo)
+				getUserBasicInfo(userNo).then(res=>{
+					
+					console.log('用户基本信息',res)
+					if(res.data.code == 200){
+						uni.setStorageSync('userBasicInfo',res.data.data)
+					}else {
+						request_success(res)
+					}
+				},err=>{
+					console.log('获取用户基本信息失败')
+					
+				})
+			}
 
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {

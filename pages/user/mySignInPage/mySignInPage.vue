@@ -29,8 +29,29 @@
 						<view class="sign-txt ttt">
 							已打卡
 						</view>
-						<view class="detail-btn">
+						<view class="detail-btn" @click="goDetails">
 							查看详情
+						</view>
+					</view>
+				</view>
+			</view>
+			<view class="item flex-between">
+				<view class="cover-content">
+					<image src="../../../static/banner2.png" mode=""></image>
+				</view>
+				<view class="sign-desc">
+					<view class="sign-topic text-overflow2">
+						安全教育学习安全教育学习
+					</view>
+					<view class="sign-time">
+						2020-09-09 19:30-20:30
+					</view>
+					<view class="sign-bottom flex-row-start">
+						<view class="no-sign-txt ttt">
+							未打卡
+						</view>
+						<view class="detail-btn" @click="goDetails">
+							去学习
 						</view>
 					</view>
 				</view>
@@ -45,13 +66,20 @@
 			return {
 				
 			};
+		},
+		methods:{
+			goDetails(){
+				uni.navigateTo({
+					url:'./mySignInDetail'
+				})
+			}
 		}
 	}
 </script>
 
 <style lang="scss">
 .top-content{
-	padding: 40rpx 30rpx;
+	padding:24rpx 30rpx;
 	background-color: #F8F8F8;
 	.topic{
 		
@@ -81,7 +109,7 @@
 		margin-bottom: 34rpx;
 		.cover-content{
 			width: 40%;
-			height: 206rpx;
+			height: 230rpx;
 			border-radius: 8rpx;
 			background-color: #eaeaea;
 			margin-right: 24rpx;

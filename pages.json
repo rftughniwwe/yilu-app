@@ -1,6 +1,5 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		
 		{
 			// 主页
 			"path": "pages/tabBar/index",
@@ -10,12 +9,28 @@
 			}
 		},
 		{
+			"path": "pages/onSiteTraining/signInPage",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		
+		},
+		{
 			// 默认进入的页面
 			"path": "pages/login/normalLogin",
 			"style": {
 				"navigationStyle": "custom"
 			}
 		},
+		
+		{
+			"path": "pages/fillInfomation/fillInfomation",
+			"style": {
+				"navigationBarTitleText": "基本信息"
+			}
+		},
+		
 		{
 			"path": "pages/paymentPage/paymentPage",
 			"style": {
@@ -47,12 +62,7 @@
 				"navigationBarTitleText": "身份证上传"
 			}
 		},
-		{
-			"path": "pages/fillInfomation/fillInfomation",
-			"style": {
-				"navigationBarTitleText": "基本信息"
-			}
-		},
+	
 		
 		{
 			"path": "pages/documentRegistration/jobLicense",
@@ -243,14 +253,9 @@
 				"enablePullDownRefresh": false
 			}
 
-		}, {
-			"path": "pages/onSiteTraining/signInPage",
-			"style": {
-				"enablePullDownRefresh": true,
-				"navigationStyle": "custom"
-			}
-
-		}, {
+		}, 
+		
+		{
 			"path": "pages/onSiteTraining/monthlySummary",
 			"style": {
 				"navigationBarTitleText": "月汇总",
@@ -290,6 +295,15 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/mySignInPage/mySignInDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的签到",
                 "enablePullDownRefresh": false
             }
             

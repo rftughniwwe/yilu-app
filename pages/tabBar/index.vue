@@ -33,9 +33,9 @@
 					<newCover @GoArticleDetails='goDetails' position='left' :datas='items'></newCover>
 				</view>
 			</template>
-			<view v-else class="no-data">
-				暂无咨询
-			</view>
+			<template v-else>
+				<EmptyData type='serach'/>
+			</template>
 		</view>
 		<view class="special-topic">
 			<view class="header flex-between">
@@ -79,6 +79,7 @@
 	import newCover from '@/components/news-cover/news-cover.vue'
 	import loadingData from '@/components/loadingData/loadingData.vue'
 	import Toast from '@/commons/showToast.js'
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import {
 		httpRequest
 	} from '@/utils/httpRequest.js'
@@ -86,8 +87,13 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
-
-
+	import {
+		getUserLoginInfo,
+	} from '@/utils/util.js'
+	import {
+		getUserBasicInfo
+	} from '@/commons/api/apis.js'
+	
 	export default {
 		data() {
 			return {
@@ -97,13 +103,14 @@
 		},
 		components: {
 			newCover,
-			loadingData
+			loadingData,
+			EmptyData
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 
 			this.getIndexInfomation()
-
+			this.getUserInfo()
 			// this.getLearningOptions()
 		},
 		onReachBottom() {
@@ -118,6 +125,26 @@
 				this.getIndexInfomation()
 
 			},
+			// 获取用户信息
+			getUserInfo(){
+				let userBasicInfo = uni.getStorageSync('userBasicInfo')
+				if(userBasicInfo.compId){
+					return
+				}
+				let userNo = getUserLoginInfo('userNo')
+				getUserBasicInfo(userNo).then(res=>{
+					
+					console.log('用户基本信息',res)
+					if(res.data.code == 200){
+						uni.setStorageSync('userBasicInfo',res.data.data)
+					}else {
+						request_success(res)
+					}
+				},err=>{
+					console.log('获取用户基本信息失败')
+					
+				})
+			},
 			// 获取主页数据
 			getIndexInfomation() {
 
@@ -131,7 +158,7 @@
 					success: resp => {
 						uni.hideLoading()
 						uni.stopPullDownRefresh()
-						console.log('resp:', resp)
+						console.log('首页咨询:', resp)
 						if (resp.data.code == 200) {
 							this.newsArr = resp.data.data.list
 						} else {
