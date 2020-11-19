@@ -35,31 +35,12 @@
 	import {
 		LEARNING_MODE_DATA
 	} from '@/utils/util.js'
-
 	const app = getApp()
 	export default {
 		data() {
 			return {
 				num: -1,
-				dataArr: [{
-						"id": "1080387521456295937",
-						"categoryName": "安全教育",
-						"floor": 1,
-						"remark": null
-					},
-					{
-						"id": "1263818106115375105",
-						"categoryName": "继续教育",
-						"floor": 1,
-						"remark": null
-					},
-					{
-						"id": "1320662675097346049",
-						"categoryName": "自主学习",
-						"floor": 1,
-						"remark": null
-					}
-				]
+				dataArr: []
 			};
 		},
 		components: {
@@ -77,23 +58,19 @@
 		},
 		methods: {
 			confirm() {
-
 				if (this.num !== -1) {
 					uni.setStorageSync('isShowChooseType', true)
 					uni.setStorageSync('teachType', this.num)
-
 					uni.$emit('chooesedTypezz', {
 						num: this.num
 					})
 				}
-
 			},
 			selectItem(num, item) {
 				console.log('选择：', item)
 				uni.setStorageSync('selectedLearningType', item)
 				this.num = num
 			}
-
 		}
 	}
 </script>
@@ -102,47 +79,40 @@
 	page {
 		background-color: #f5f6f7;
 	}
-
 	.top-content {
 		// width: 100%;
 		height: 540rpx;
 		background-image: url(../../static/chooseType-bg.png);
 		background-size: 100% 100%;
 		padding: 100rpx 40rpx 0;
-
 		.subtitle {
 			color: #FFFFFF;
 			font-size: 40rpx;
 		}
-
 		.title {
 			color: #FFFFFF;
 			font-size: 50rpx;
 			font-weight: bold;
 			margin: 20rpx 0;
 		}
-
 		.delimiter {
 			image {
 				width: 48rpx;
 				height: 5rpx;
 			}
 		}
-
 		.tips {
 			color: #FFFFFF;
 			font-size: 30rpx;
 			margin: 30rpx 0;
 		}
 	}
-
 	.main-content {
 		background-color: #FFFFFF;
 		border-radius: 20rpx;
 		margin: -200rpx 30rpx 0;
 		padding: 100rpx 50rpx;
 		border: 2rpx solid #eee;
-
 		// .wrap-content{
 		// 	padding: ;
 		// }
@@ -153,7 +123,6 @@
 			text-align: center;
 		}
 	}
-
 	.selected-item {
 		color: #333333;
 		font-size: 40rpx;
@@ -161,7 +130,6 @@
 		border-top: 2rpx solid #EAEAEA;
 		border-bottom: 2rpx solid #EAEAEA;
 	}
-
 	.confirm-btn-content {
 		margin: 50rpx 0 0;
 	}

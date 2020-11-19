@@ -16,18 +16,6 @@
 					<view class="item" v-for="(item,index) in datas" :key='index'  @click.stop="closeModal(index,item)">
 						{{item.categoryName}}
 					</view>
-					<!-- <view class="item">
-						从业人员安全学习
-					</view>
-					<view class="item" @click.stop="closeModal(2)">
-						从业人员技能培训
-					</view>
-					<view class="item" @click.stop="closeModal(3)">
-						安全领导小组学习
-					</view>
-					<view class="item" @click.stop="closeModal(4)">
-						应急演练
-					</view> -->
 				</view>
 			</view>
 		</view>
@@ -48,7 +36,8 @@
 		methods:{
 			closeModal(num,item){
 				uni.setStorageSync('isHideSafetyModal',true)
-				uni.setStorageSync('LearningSubType',item)
+				// 设置二级分类
+				uni.setStorageSync('LearningSubTypeSubItem',item)
 				// app.LearningSubType = item
 				uni.$emit('closeModalMask',{index:num})
 			},

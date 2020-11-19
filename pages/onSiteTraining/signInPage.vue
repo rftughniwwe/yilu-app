@@ -1,12 +1,12 @@
 <!-- 签到页面 -->
 <template>
 	<view class="container-main">
-		<view class="wrap-top-tab-bar" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}" >
-			<uni-nav-bar title="签到" color="#333333" leftIcon="arrowleft"
-			 @clickLeft='goback' @clickRight='rightClick' :right-text="tab==2?'月汇总':''" />
+		<view class="wrap-top-tab-bar" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
+			<uni-nav-bar title="签到" color="#333333" leftIcon="arrowleft" @clickLeft='goback' @clickRight='rightClick'
+			 :right-text="tab==2?'月汇总':''" />
 		</view>
-		
-		 <!-- <view class="top-tab-bar flex-between" :style="{'marginTop':isFullScreen?'64rpx':'30rpx'}">
+
+		<!-- <view class="top-tab-bar flex-between" :style="{'marginTop':isFullScreen?'64rpx':'30rpx'}">
 		 	<view class="back-img" @click="goback">
 		 		<image src="../../static/arrow-left.png" mode=""></image>
 		 	</view>
@@ -44,7 +44,7 @@
 						</view>
 					</view>
 					<view class="sign-in">
-						<view class="sign-title"  @click="sign(2)">
+						<view class="sign-title" @click="sign(2)">
 							签出时间：19:00
 						</view>
 						<view class="sign-img">
@@ -70,7 +70,7 @@
 				<map :latitude="121.5249" :longitude="31.1310" class="mapz"></map>
 			</view>
 		</view>
-		
+
 		<view v-show="tab==2" class="statis-wrap">
 			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
 			<view class="date-topic flex-row-start">
@@ -84,20 +84,18 @@
 			</view>
 			<view class="card-content">
 				<view class="triangle-up">
-					
+
 				</view>
 				<view class="user-info flex-row-start">
-					<userHeadImg width='80rpx' height='80rpx'/>
-					<view class="user-name">
-						王大锤
-					</view>
+					<userHeadImg width='80rpx' height='80rpx' />
+					<userName/>
 				</view>
 				<view class="today-learning">
 					<view class="subheading">
 						今日学习次数
 					</view>
 					<view class="subtitle-s">
-						你真是太棒了，今日一共学习了2次!
+						你真是太棒了，今日一共学习了{{tongJiSign.count}}次!
 					</view>
 				</view>
 				<view class="learning-data">
@@ -107,7 +105,7 @@
 					<view class="zz flex-between">
 						<view class="xxx">
 							<view class="topic">
-                                1小时51分钟
+								{{tongJiSign.todayStudyTime}}
 							</view>
 							<view class="subheading">
 								今日学习
@@ -115,7 +113,7 @@
 						</view>
 						<view class="xxx">
 							<view class="topic">
-							    10小时51分钟
+								{{tongJiSign.countStudyTime}}
 							</view>
 							<view class="subheading">
 								累计学习
@@ -128,10 +126,30 @@
 						签到记录
 					</view>
 					<view class="items-content">
-						<view class="item flex-between">
+						<template v-if="tongJiSign.list && tongJiSign.list.length > 0">
+							<view v-for="(item,index) in tongJiSign.list" :key='index' class="item flex-between">
+								<view class="head flex-row-start">
+									<view class="circle">
+							
+									</view>
+									<view class="record-txt">
+										{{item.name?item.name:'未知'}}
+									</view>
+								</view>
+								<view class="time-content">
+									{{item.time?item.time:'未知'}}
+								</view>
+							</view>
+						</template>
+						<template v-else>
+							<view class="no-data">
+								暂无签到记录
+							</view>
+						</template>
+					<!-- 	<view class="item flex-between">
 							<view class="head flex-row-start">
 								<view class="circle">
-									
+
 								</view>
 								<view class="record-txt">
 									驾驶员
@@ -144,7 +162,7 @@
 						<view class="item flex-between">
 							<view class="head flex-row-start">
 								<view class="circle">
-									
+
 								</view>
 								<view class="record-txt">
 									驾驶员
@@ -157,7 +175,7 @@
 						<view class="item flex-between">
 							<view class="head flex-row-start">
 								<view class="circle">
-									
+
 								</view>
 								<view class="record-txt">
 									驾驶员
@@ -170,7 +188,7 @@
 						<view class="item flex-between">
 							<view class="head flex-row-start">
 								<view class="circle">
-									
+
 								</view>
 								<view class="record-txt">
 									驾驶员
@@ -180,11 +198,12 @@
 								01：13：39
 							</view>
 						</view>
+					 -->
 					</view>
 				</view>
 			</view>
 		</view>
-		
+
 		<view class="tab-bar flex-around">
 			<view class="tab-sign" @click="changeTab(1)">
 				<image :src="tab==1?'../../static/location-address.png':'../../static/location-address2.png'" mode=""></image>
@@ -206,35 +225,55 @@
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 	import userHeadImg from "@/components/userHeadImg/userHeadImg.vue"
 	import Toast from '@/commons/showToast.js'
+	import useFacePlugin from '../../commons/faceplugin.js'
+	import userName from '@/components/userName/userName.vue'
+	
+	import {
+		faceVerification,
+		getSignOnDateTime
+	} from '@/commons/api/apis.js'
+	import {
+		getSystemInfo,
+		getUserLoginInfo
+	} from '@/utils/util.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+
 	export default {
 		data() {
 			return {
 				tab: 1,
-				courseInfo:{},
+				courseInfo: {},
 				isFullScreen: false,
-				addressTxt:'',
+				addressTxt: '',
 				// 目标经度 121.512806,31.105032
 				targetLongitude: 121.512806,
 				// 目标纬度
 				targetLatitude: 31.105032,
 				range: 500,
 				isInRange: false,
-				timer:null
+				timer: null,
+				tongJiSign:[]
 			};
 		},
 		components: {
 			uniNavBar,
-			userHeadImg
+			userHeadImg,
+			userName
 		},
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.courseInfo = options.scanResult
-			this.targetLongitude = options.scanResult.longtitude?options.scanResult.longtitude:121.512806
-			this.targetLatitude = options.scanResult.latitude?options.scanResult.latitude:31.105032
+			this.targetLongitude = options.scanResult.longtitude ? options.scanResult.longtitude : 121.512806
+			this.targetLatitude = options.scanResult.latitude ? options.scanResult.latitude : 31.105032
+
+			this.getSignInData()
 			// 每十秒获取一次位置信息
-			this.timer = setInterval(()=>{
+			this.timer = setInterval(() => {
 				this.getLocationFun()
-			},10000)
+			}, 30000)
 		},
 		onShow() {
 			this.getLocationFun()
@@ -257,9 +296,9 @@
 					geocode: true,
 					success: res => {
 						// uni.hideLoading()
-						uni.setStorageSync('userAddress',res)
+						uni.setStorageSync('userAddress', res)
 						let ads = res.address
-						this.addressTxt = ads.city + ads.district + ads.street+ ads.streetNum+ ads.poiName;
+						this.addressTxt = ads.city + ads.district + ads.street + ads.streetNum + ads.poiName;
 						this.calcLocation(res)
 					},
 					fail: err => {
@@ -296,26 +335,88 @@
 				}
 				let lntDegree = (longAbs / 0.0001) * 11;
 				let latDegree = (latiAbs / 0.0001) * 10;
-				if(lntDegree > this.range || latDegree > this.range){
+				if (lntDegree > this.range || latDegree > this.range) {
 					this.isInRange = false
 					return
 				}
 				this.isInRange = true
 			},
 			
-			sign(num){
+			// 获取签到数据
+			getSignInData() {
+				getSignOnDateTime().then(res=>{
+					console.log('获取签到数据：',res)
+					if(res.data.code==200){
+						this.tongJiSign = res.data.data
+					}else {
+						request_success(res)
+					}
+				},err=>{
+					request_err(err,'获取签到数据失败')
+				})
+			},
+
+			// 签入签出
+			sign(num) {
 				// 1签入 2签出
-				if(!this.isInRange){
+				if (!this.isInRange) {
 					Toast({
-						title:'未进入打卡范围'
+						title: '未进入打卡范围'
 					})
 					return
 				}
-				console.log('签入成功')
+
+				if (num == 1) {
+					// 签入
+					this.judgment().then(res=>{
+						
+					})
+					
+				} else {
+					// 签出
+					
+					// 人脸采集
+					useFacePlugin({
+						count: 0,
+						random: true
+					}).then((res) => {
+
+						uni.showLoading({
+							title: "验证中..."
+						})
+
+						// 人脸验证
+						faceVerification(res).then(resp => {
+							uni.hideLoading()
+							console.log('人脸验证成功：', resp)
+							if (resp.data.code == 200) {
+								
+								this.judgment().then(res=>{
+									
+								})
+
+							} else {
+								request_success(res)
+							}
+						}, err => {
+							uni.hideLoading()
+							request_err(err, '验证失败')
+						})
+					}, (err) => {
+						console.error('识别失败', err)
+						request_err(err, '人脸采集失败。')
+					})
+				}
 				// 请求
 			},
-			
-			
+
+			// 判断签入签出条件,时间判断
+			judgment(){
+				return new Promise((resolve,reject)=>{
+					resolve(1)
+				})
+			},
+
 			// 底部tab变换
 			changeTab(num) {
 				this.tab = num
@@ -326,10 +427,11 @@
 					delta: 1
 				})
 			},
+			
 			// 月汇总
 			rightClick() {
 				uni.navigateTo({
-					url:'./monthlySummary'
+					url: './monthlySummary'
 				})
 			}
 		}
@@ -340,8 +442,8 @@
 	.container-main {
 		position: relative;
 	}
-	
-	.top-tab-bar{
+
+	.top-tab-bar {
 		padding: 30rpx;
 		position: fixed;
 		top: 0;
@@ -350,6 +452,7 @@
 		z-index: 9999;
 		background: #FFFFFF;
 	}
+
 	.top-content {
 		// padding: 40rpx 30rpx;
 		border-bottom: 20rpx solid #F5F6F7;
@@ -411,9 +514,10 @@
 	}
 
 	.top-tips {
-		.txt{
+		.txt {
 			font-size: 30rpx;
 		}
+
 		image {
 			width: 44rpx;
 			height: 44rpx;
@@ -470,95 +574,108 @@
 		color: #38A6FD;
 		text-align: center;
 	}
-	
-	.statis-wrap{
+
+	.statis-wrap {
 		background-color: #CEE5FE;
 		height: 100vh;
 		padding: 40rpx 30rpx;
 	}
-	.date-topic{
-		image{
+
+	.date-topic {
+		image {
 			width: 54rpx;
 			height: 55rpx;
 		}
 	}
-	.header{
+
+	.header {
 		margin-right: 30rpx;
 		font-size: 58rpx;
 		font-weight: bold;
 		color: #333333;
-		
+
 	}
-	.subtitle-s{
+
+	.subtitle-s {
 		color: #333333;
 		font-size: 32rpx;
 		font-weight: bold;
 		margin: 10rpx 0 20rpx;
 		letter-spacing: 2rpx;
 	}
-	.subheading{
+
+	.subheading {
 		font-size: 28rpx;
 		color: #666;
-		
+
 	}
-	.user-info{
+
+	.user-info {
 		margin-bottom: 80rpx;
 	}
-	.user-name{
-		font-size: 36rpx;
-		color: #333333;
-		margin-left: 20rpx;
-	}
-	.card-content{
+
+
+	.card-content {
 		background: #FFFFFF;
 		border-radius: 20rpx;
 		position: relative;
 		padding: 40rpx 30rpx;
 		margin: 60rpx 0 30rpx;
 	}
-	.today-learning{
+
+	.today-learning {
 		margin: 30rpx 0 50rpx;
 	}
-	.topic{
+
+	.topic {
 		color: #333333;
 		font-size: 38rpx;
 		text-align: center;
 		font-weight: bold;
 		margin-bottom: 10rpx;
 	}
-	.xxx{
-		.subheading{
+
+	.xxx {
+		.subheading {
 			text-align: center;
 		}
 	}
-	.learning-data{
-		margin-bottom:56rpx;
+
+	.learning-data {
+		margin-bottom: 56rpx;
 	}
-	.zz{
+
+	.zz {
 		margin: 20rpx 0;
 	}
-	.items-content{
+
+	.items-content {
 		margin: 20rpx 0;
 	}
-	.item{
+
+	.item {
 		padding: 10rpx 0;
 	}
-	.circle{
+
+	.circle {
 		margin-right: 16rpx;
 		width: 20rpx;
 		height: 20rpx;
 		border-radius: 50%;
 		background-color: #3CA7FF;
 	}
-	.record-txt{
+
+	.record-txt {
 		font-size: 28rpx;
 		color: #333333;
 	}
-	.time-content{
+
+	.time-content {
 		font-size: 28rpx;
 		color: #333333;
 	}
-	.triangle-up{
+
+	.triangle-up {
 		position: absolute;
 		top: -40rpx;
 		left: 40rpx;
@@ -568,10 +685,16 @@
 		border-right: 30rpx solid transparent;
 		border-bottom: 40rpx solid #FFFFFF;
 	}
-	.back-img{
-		image{
+
+	.back-img {
+		image {
 			width: 30rpx;
 			height: 38rpx;
 		}
+	}
+	.no-data{
+		text-align: center;
+		color: #999999;
+		margin: 30rpx 0;
 	}
 </style>

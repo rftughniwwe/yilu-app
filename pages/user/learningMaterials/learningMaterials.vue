@@ -88,6 +88,9 @@
 	} from '@/commons/ResponseTips.js'
 	import Toast from '@/commons/showToast.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	import {
+		getLearningTypeInfo
+	} from '@/utils/util.js'
 	
 	export default {
 		data() {
@@ -110,11 +113,12 @@
 			// 获取现场培训学习资料
 			getaccessoryList(){
 				// 选择的一级分类
-				let categoryId1 = uni.getStorageSync('selectedLearningType').id
+				let categoryId1 = getLearningTypeInfo().categoryId1
 				// 选择的二级分类
-				let categoryId2 = uni.getStorageSync('LearningSubType').id
+				let categoryId2 = getLearningTypeInfo().categoryId2
 				// 所属公司ID
-				let compId = uni.getStorageSync('userBasicInfo').compId	
+				let compId = getLearningTypeInfo().compId
+				
 				httpRequest({
 					url:'/course/auth/course/accessory/accessoryList',
 					method:'POST',

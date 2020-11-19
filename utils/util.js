@@ -1,3 +1,5 @@
+import Toast from '@/commons/showToast.js'
+
 // 手机正则
 const REG_PHONE = /^1[3456789]\d{9}$/
 
@@ -180,8 +182,12 @@ function removeAppStorage(options) {
 	uni.removeStorageSync('userCompleteInfo')
 	// 学习选择
 	uni.removeStorageSync('teachType')
-	// 选择的学习模块
+	// 选择的学习一级分类
 	uni.removeStorageSync('selectedLearningType')
+	// 选择的学习二级分类
+	uni.removeStorageSync('LearningSubTypeSubItem')
+	uni.removeStorageSync('isShowChooseType')
+	uni.removeStorageSync('isHideSafetyModal')
 }
 
 // 获取用户登录信息
@@ -201,6 +207,25 @@ function getSystemInfo() {
 	return info
 }
 
+// 获取选择的分类信息和公司ID
+function getLearningTypeInfo(){
+	let obj = {}
+	try{
+		// 学习模块中选择的一级分类
+		obj.categoryId1 = uni.getStorageSync('selectedLearningType').id
+		// 学习模块中选择的二级分类
+		obj.categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
+		obj.compId = uni.getStorageSync('userBasicInfo').compId
+	}catch(err){
+		console.log('获取ID失败')
+		Toast({
+			title:'缺少参数'
+		})
+	}
+	
+	return obj
+}
+
 module.exports = {
 	getNetworkType,
 	isLogin,
@@ -215,5 +240,6 @@ module.exports = {
 	getUserLoginInfo,
 	getSystemInfo,
 	LEARNING_MODE_DATA,
-	LIVE_STATUS
+	LIVE_STATUS,
+	getLearningTypeInfo
 }

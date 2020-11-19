@@ -2,16 +2,19 @@
 <template>
 	<view>
 		<scroll-view class="scroll-content" scroll-x="true">
+			<!-- 安全教育 -->
 			<view class="flex-between" v-if="type == 0">
-				<view class="items" v-for="(item,index) in datas" :key='index' @click="chagneTab(index,item)" :class="selfNum===index?'selected-item':''">
+				<view class="items" v-for="(item,index) in datas" :key='index' @click="chagneTab(index,item)" :class="AnquanNum===index?'selected-item':''">
 					{{item.categoryName}}
 				</view>
 			</view>
+			<!-- 继续教育 -->
 			<view class="flex-between" v-if="type ==1">
-				<view class="items" v-for="(item,index) in datas2" :key='index' @click="chagneTab(index,item)" :class="selfNum===index?'selected-item':''">
+				<view class="items" v-for="(item,index) in datas2" :key='index' @click="chagneTab(index,item)" :class="JixuNum===index?'selected-item':''">
 					{{item.categoryName}}
 				</view>
 			</view>
+			
 			<view class="flex-evenly" v-if="type ==2">
 				<view @click="selfChagneTab(1)" class="items" :class="selfLearnType===1?'selected-item':''">
 					课程
@@ -39,8 +42,8 @@
 		data() {
 			return {
 				// 默认选中第一个tab
-				num: 1,
-				selfNum: 1,
+				AnquanNum: 0,
+				JixuNum:0,
 				otherTab: 0,
 				datas: [{
 						"id": "1080387575940304898",
@@ -88,9 +91,10 @@
 				]
 			};
 		},
-		props: ['type', 'safetyType', 'selfLearnType', 'tabArr'],
+		props: ['type', 'AnquanType','selfLearnType', 'tabArr'],
 		created() {
-			this.selfNum = this.safetyType
+			this.AnquanNum = this.AnquanType>=0?this.AnquanType:uni.getStorageSync('anquanTab')
+			this.JixuNum = uni.getStorageSync('jixuTab')?uni.getStorageSync('jixuTab'):0
 			uni.$on('closeModalMask', (data) => {
 				this.selfNum = data.index
 			})
@@ -100,10 +104,17 @@
 			// console.log('update:', uni.getStorageSync('LearningSubType'))
 		},
 		methods: {
+			// 安全教育学习教育改变事件
 			chagneTab(e, item) {
-				this.num = e
-				this.selfNum = e
+				if(this.type==0){
+					uni.setStorageSync('anquanTab',e)
+					this.AnquanNum = e
+				}else if(this.type==1){
+					uni.setStorageSync('jixuTab',e)
+					this.JixuNum = e
+				}
 				uni.setStorageSync('LearningSubTypeSubItem', item)
+				console.log('选择的子模块：',item)
 			},
 			selfChagneTab(num) {
 				uni.$emit('selfChange', {

@@ -6,9 +6,9 @@
 			<view :class="type === 2?'no-padding':'learn-top-bar'">
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
 					<view class="left-select">
-						<picker class="flex-between" :range="typeArrStr" @change="bindPickerChange">
+						<picker class="flex-between" :range="typeArrStr" :value="type"  @change="bindPickerChange">
 							<view class="topic">
-								{{typeArr.length>0?typeArr[type]["categoryName"]:'安全教育'}}
+								{{typeArrStr.length>0?typeArrStr[type]:'安全教育'}}
 							</view>
 							<image src="../../static/down-push-arrow.png" mode=""></image>
 						</picker>
@@ -25,12 +25,12 @@
 			<!-- 继续教育和安全教育 -->
 			<view v-show="type !== 2" class="learning-teach">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
-					<learnTopSlide :type='type' :safetyType="safetyType" />
+					<learnTopSlide :type='type' :AnquanType="AnquanType"/>
 				</view>
 
 				<view class="top-img-content">
 					<swiper class="swiper-content" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="600" circular="true">
-						<swiper-item>
+						<swiper-item class="swiper-item-wrap">
 							<view class="swiper-item">
 								<image src="../../static/banner.png" mode=""></image>
 							</view>
@@ -246,7 +246,7 @@
 				typeArrStr: [],
 				isHideSafetyModal: true,
 				selfLearnType: 1,
-				safetyType: 1,
+				AnquanType: -1,
 				date: '',
 				isFullScreen: false
 			};
@@ -264,7 +264,7 @@
 			this.type = uni.getStorageSync('teachType')
 
 			this.typeArr = LEARNING_MODE_DATA
-			this.setOptions()
+			this.setOptions(LEARNING_MODE_DATA)
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
 
@@ -272,7 +272,7 @@
 					if (data.num === 0) {
 						this.isHideSafetyModal = false
 					}
-					this.type = data.num
+					this.type = data.num?data.num:0
 					this.chooseTypePager = true
 				}
 			})
@@ -284,9 +284,9 @@
 			// 安全教育中第一次选择subtitle变化
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
+				this.AnquanType = data.index
 			})
 
-			this.get
 
 		},
 		onShow() {
@@ -294,8 +294,8 @@
 		},
 		methods: {
 
-			setOptions() {
-				let d = this.typeArr
+			setOptions(data) {
+				let d = data
 				d.forEach((item, index) => {
 					this.typeArrStr.push(item.categoryName)
 				})
@@ -314,10 +314,10 @@
 				})
 			},
 
-			closeTypeModal(data) {
-				this.isHideSafetyModal = true
-				this.safetyType = data.item
-			},
+			// closeTypeModal(data) {
+			// 	this.isHideSafetyModal = true
+			// 	this.safetyType = data.item
+			// },
 			// 左上角选择学习模块
 			bindPickerChange(e) {
 				this.type = e.target.value
@@ -326,7 +326,18 @@
 				// 主项
 				uni.setStorageSync('selectedLearningType', item)
 				// 子项
-				uni.setStorageSync('LearningSubType', item.listSub)
+				if(e.target.value == 0){
+					let tab = uni.getStorageSync('anquanTab')
+					uni.setStorageSync('LearningSubTypeSubItem', item[tab])
+					console.log('变换的sub分类',item[tab])
+				}else if(e.target.value == 1){
+					let tab = uni.getStorageSync('jixuTab')
+					// uni.setStorageSync('LearningSubType', item.listSub)
+					uni.setStorageSync('LearningSubTypeSubItem', item[tab])
+					console.log('变换的sub分类',item[tab])
+				}
+				
+				
 				// app.globalData.LearningSubType = item.listSub
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
@@ -430,6 +441,7 @@
 
 	.top-img-content {
 		margin: 30rpx 0 40rpx;
+		border-radius: 20rpx;
 		// image {
 		// 	width: 100%;
 		// 	height: 295rpx;
@@ -505,7 +517,7 @@
 
 	.join-btn {
 		image {
-			width: 200rpx;
+			width: 210rpx;
 			height: 60rpx;
 		}
 	}
@@ -712,5 +724,12 @@
 			padding: 12rpx 24rpx;
 		}
 	}
-	
+	.swiper-item,.swiper-item-wrap{
+		border-radius: 20rpx;
+	}
+	.swiper-item{
+		image{
+			border-radius: 20rpx;
+		}
+	}
 </style>

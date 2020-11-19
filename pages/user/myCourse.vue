@@ -96,7 +96,8 @@
 	import Toast from '@/commons/showToast.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import {
-		LIVE_STATUS
+		LIVE_STATUS,
+		getLearningTypeInfo
 	} from '@/utils/util.js'
 	
 	export default {
@@ -118,11 +119,11 @@
 			// 获取我的课程
 			getMyCourse() {
 				// 选择的一级分类
-				let categoryId1 = uni.getStorageSync('selectedLearningType').id
+				let categoryId1 = getLearningTypeInfo().categoryId1
 				// 选择的二级分类
-				let categoryId2 = uni.getStorageSync('LearningSubType').id
+				let categoryId2 = getLearningTypeInfo().categoryId2
 				// 所属公司ID
-				let compId = uni.getStorageSync('userBasicInfo').compId
+				let compId = getLearningTypeInfo().compId
 				let tab = this.tab
 				if (!categoryId1 || !categoryId2 || !compId) {
 					Toast({

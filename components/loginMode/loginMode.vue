@@ -37,7 +37,7 @@
 		setAppStorage
 	} from '../../utils/util.js'
 	import {
-		faceVerification
+		faceLogin
 	} from '@/commons/api/apis.js'
 	
 	export default {
@@ -69,7 +69,7 @@
 						mask:true
 					})
 				
-					faceVerification(res).then((resp)=>{
+					faceLogin(res).then((resp)=>{
 						uni.hideLoading()
 						if(resp.data.code == 200){
 							setAppStorage({

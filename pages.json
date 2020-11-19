@@ -16,6 +16,8 @@
 			}
 		
 		},
+		
+		
 		{
 			// 默认进入的页面
 			"path": "pages/login/normalLogin",

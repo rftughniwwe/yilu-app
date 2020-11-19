@@ -49,6 +49,10 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
+	import {
+		getSystemInfo,
+		getUserLoginInfo
+	} from '@/utils/util.js'
 
 	export default {
 		data() {
@@ -71,12 +75,12 @@
 				useFacePlugin({
 					count: 0,
 					random: true
-				}).then((res) => {
+				}).then((face) => {
 					uni.showLoading({
 						title: "验证中..."
 					})
 					// 人脸验证
-					faceVerification(res).then(resp => {
+					faceVerification(face).then(resp => {
 						uni.hideLoading()
 						console.log('人脸验证：',resp)
 						if (resp.data.code == 200) {
@@ -98,7 +102,7 @@
 						}
 					}, err => {
 						uni.hideLoading()
-						request_err(err, '验证失败。')
+						request_err(err, '验证失败')
 					})
 				}, (err) => {
 					console.error('识别失败', err)

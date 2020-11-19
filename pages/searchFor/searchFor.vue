@@ -62,9 +62,7 @@
 					</view>
 				</template>
 				<template v-else>
-					<view class="no-data mt">
-						暂无咨询
-					</view>
+					<EmptyData type='serach'/>
 				</template>
 
 			</view>
@@ -82,6 +80,7 @@
 	import course from '@/components/course/course.vue'
 	import Toast from '@/commons/showToast.js'
 	import newCover from '@/components/news-cover/news-cover.vue'
+	import EmptyData from '@/components/emptyPage/emptyPage.vue'
 	import {
 		httpRequest
 	} from '@/utils/httpRequest.js'
