@@ -290,7 +290,7 @@
 
 		},
 		onShow() {
-			this.date = getCurrentDate()
+			this.date = getCurrentDate('month')
 		},
 		methods: {
 
@@ -328,13 +328,11 @@
 				// 子项
 				if(e.target.value == 0){
 					let tab = uni.getStorageSync('anquanTab')
-					uni.setStorageSync('LearningSubTypeSubItem', item[tab])
-					console.log('变换的sub分类',item[tab])
+					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
 				}else if(e.target.value == 1){
 					let tab = uni.getStorageSync('jixuTab')
 					// uni.setStorageSync('LearningSubType', item.listSub)
-					uni.setStorageSync('LearningSubTypeSubItem', item[tab])
-					console.log('变换的sub分类',item[tab])
+					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
 				}
 				
 				

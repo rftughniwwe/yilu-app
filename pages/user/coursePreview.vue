@@ -19,32 +19,32 @@
 			</view>
 		</view>
 		<view class="ppp">
-			
-		
-		<view class="container-content">
-			<view class="header title">
-				直播介绍
+
+
+			<view class="container-content">
+				<view class="header title">
+					直播介绍
+				</view>
+				<view class="subtitle text-overflow5">
+					《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
+				</view>
+				<view class="header title">
+					老师介绍
+				</view>
+				<view class="subtitle text-overflow5">
+					《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
+				</view>
 			</view>
-			<view class="subtitle text-overflow5">
-				《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
-			</view>
-			<view class="header title">
-				老师介绍
-			</view>
-			<view class="subtitle text-overflow5">
-				《危险货物道路运输安全管理办法》是为加强危险货物道路运输安全管理，预防危险货物道路运输事故，保护人民群众生命安全、环境安全和财产安全，根据《中华人民共和国安全
+			<view class="trainingObject">
+				<view class="header title">
+					培训对象
+				</view>
+				<view class="subtitle text-overflow5">
+					危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输
+				</view>
 			</view>
 		</view>
-		<view class="trainingObject">
-			<view class="header title">
-				培训对象
-			</view>
-			<view class="subtitle text-overflow5">
-				危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输危险货物道路运输
-			</view>
-		</view>
-		</view>
-		<view class="btn">
+		<view class="btn" @click="subscribe()">
 			添加提醒
 		</view>
 	</view>
@@ -59,41 +59,96 @@
 		request_success
 	} from '@/commons/ResponseTips.js'
 	import Toast from '@/commons/showToast.js'
+	import {
+		subscribeCourse
+	} from '@/commons/api/apis.js'
+
 	export default {
 		data() {
 			return {
+				isSubscribe: false
 			};
 		},
 		onLoad(options) {
 			this.getCourseDetails(options.id)
 		},
-		methods:{
-			getCourseDetails(id){
-				console.log('课程ID',id)
+		methods: {
+			// 根据课程ID查询详情
+			getCourseDetails(id) {
+				console.log('课程ID', id)
+			},
+			// 添加提醒
+			subscribe() {
+				uni.showLoading({
+					title: '添加中...'
+				})
+				let paramter = {
+					courseId: '',
+					courseName: '',
+					coursePeriodId: '',
+					startTime: '',
+					userNo: ''
+				}
+				subscribeCourse(paramter).then(res => {
+					console.log('添加成功', res)
+					if (res.data.code == 200) {
+						Toast({
+							title: '添加成功'
+						})
+					} else {
+						request_success(res)
+					}
+				})
+			},
+			
+			// 取消提醒
+			cancelSubscribe() {
+				uni.showLoading({
+					title: '删除中...'
+				})
+				let obj = {
+					"chapterdId": 0,
+					"courseId": 0,
+					"coursePeriodId": 0,
+					"userNo": 0
+				}
+				cancelSubscribe(obj).then(res => {
+					console.log('删除：',res)
+					if (res.data.code == 200) {
+						Toast({
+							title: '删除成功'
+						})
+					} else {
+						request_success(res)
+					}
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
-	page{
+	page {
 		background-color: #F5F6F7;
 	}
-	.main{
+
+	.main {
 		position: fixed;
 	}
-	.btn{
+
+	.btn {
 		background-color: #FFFFFF;
 		color: #3CA7FF;
 		border-top: 2rpx solid #EAEAEA;
 		text-align: center;
 		padding: 30rpx 0;
 		position: fixed;
-		left:0;
+		left: 0;
 		right: 0;
 		bottom: 0;
 		font-size: 30rpx;
 	}
+
 	.begin-time {
 		padding: 20rpx 30rpx;
 		background-color: rgba(60, 167, 255, 0.27);
@@ -130,10 +185,11 @@
 		font-size: 28rpx;
 	}
 
-	.container-content,.trainingObject {
+	.container-content,
+	.trainingObject {
 		padding: 40rpx 30rpx;
 	}
-	
+
 	.text-overflow5 {
 		margin: 30rpx 0;
 	}
@@ -142,7 +198,8 @@
 		padding: 0 20rpx;
 		border-left: 8rpx solid #3395FA;
 	}
-	.ppp{
+
+	.ppp {
 		padding-bottom: 50rpx;
 	}
 </style>

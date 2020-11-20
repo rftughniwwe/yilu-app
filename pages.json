@@ -9,6 +9,15 @@
 			}
 		},
 		{
+			"path": "pages/onSiteTraining/monthlySummary",
+			"style": {
+				"navigationBarTitleText": "月汇总",
+				"enablePullDownRefresh": false
+			}
+		
+		},
+		
+		{
 			"path": "pages/onSiteTraining/signInPage",
 			"style": {
 				"enablePullDownRefresh": true,
@@ -257,14 +266,7 @@
 
 		}, 
 		
-		{
-			"path": "pages/onSiteTraining/monthlySummary",
-			"style": {
-				"navigationBarTitleText": "月汇总",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
+		 {
 			"path": "pages/onSiteTraining/examBegin",
 			"style": {
 				"navigationBarTitleText": "试卷详情",

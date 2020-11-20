@@ -7,6 +7,19 @@ import {
 	getUserLoginInfo,
 	getLearningTypeInfo
 } from '@/utils/util.js'
+import {
+	request_err,
+	request_success
+} from '@/commons/ResponseTips.js'
+
+// 选择的一级分类
+const categoryId1 = getLearningTypeInfo().categoryId1
+// 选择的二级分类
+const categoryId2 = getLearningTypeInfo().categoryId2
+// 所属公司ID
+const compId = getLearningTypeInfo().compId
+// 用户ID
+const userNum = getUserLoginInfo('userNo')
 
 // 模糊查询公司
 export function queryUnitName(name) {
@@ -106,7 +119,6 @@ export function faceLogin(res) {
 // 人脸验证
 export function faceVerification(face) {
 	let phone = uni.getStorageSync('userBasicInfo').mobile
-	let userNum = getUserLoginInfo('userNo')
 	let platform = getSystemInfo().platform
 	let datas = {
 		base64: face,
@@ -114,7 +126,6 @@ export function faceVerification(face) {
 		mobile: phone,
 		userNo: userNum
 	}
-	console.log('UserNumber',userNum)
 	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: '/user/api/baiduFaceAip/auth/faceVeryfy',
@@ -165,14 +176,8 @@ export function getIdCardInfo() {
 
 // 签到根据时间选择获取统计数据
 export function getSignOnDateTime() {
-	// 选择的一级分类
-	let categoryId1 = getLearningTypeInfo().categoryId1
-	// 选择的二级分类
-	let categoryId2 = getLearningTypeInfo().categoryId2
-	// 所属公司ID
-	let compId = getLearningTypeInfo().compId
-	let userNum = getUserLoginInfo('userNo')
-	
+
+
 	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: '/user/api/tbCourVideoStudyHistory/signonDateTime',
@@ -183,12 +188,96 @@ export function getSignOnDateTime() {
 				"compId": compId,
 				"userId": userNum,
 			},
+			success: res => {
+				resolve(res)
+			},
+			fail: err => {
+				reject(err)
+			}
+		}, 1)
+	})
+}
+
+// 获取签到月汇总数据
+export function getMonthSummaryData(options) {
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url: '/user/api/tbCourVideoStudyHistory/monthCount',
+			method: 'POST',
+			data: {
+				"categoryId1": categoryId1,
+				"categoryId2": categoryId2,
+				"compId": compId,
+				"dateTime": "",
+				"month": options.month,
+				"userId": userNum,
+				"weekEnd": "",
+				"weekStart": ""
+			},
 			success:res=>{
 				resolve(res)
 			},
 			fail:err=>{
-				reject(err)
+				request_err(err,'获取数据失败')
 			}
 		}, 1)
+	})
+	
+}
+
+// 添加课程预约提醒
+export function subscribeCourse(options){
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/user/api/user/msg/save',
+			data:options,
+			method:'POST',
+			success:res=>{
+				uni.hideLoading()
+				resolve(res)
+			},
+			fail:err=>{
+				uni.hideLoading()
+				request_err(err,'添加提醒失败')
+			}
+		},1)
+	})
+}
+
+// 取消课程预约提醒
+export function  cancelSubscribe(options){
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/user/api/user/msg/delete',
+			data:options,
+			method:'DELETE',
+			success:res=>{
+				uni.hideLoading()
+				resolve(res)
+			},
+			fail:err=>{
+				uni.hideLoading()
+				request_err(err,'添加提醒失败')
+			}
+		},1)
+	})
+}
+
+// 签入签出
+export function signInOut(params){
+	params.compId = compId
+	params.userId = userNum
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/user/api/tbSignon/save',
+			method:'post',
+			data:params,
+			success:res=>{
+				resolve(res)
+			},
+			fail:err=>{
+				request_err(err,'签到失败')
+			}
+		},1)
 	})
 }

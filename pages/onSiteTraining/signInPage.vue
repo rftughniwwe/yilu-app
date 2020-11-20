@@ -31,7 +31,7 @@
 					</view>
 				</view>
 				<view class="sign-content flex-around">
-					<view class="sign-in" @click="sign(1)">
+					<view class="sign-in" @click="sign(0)">
 						<view class="sign-title">
 							签入时间：09:00
 						</view>
@@ -44,7 +44,7 @@
 						</view>
 					</view>
 					<view class="sign-in">
-						<view class="sign-title" @click="sign(2)">
+						<view class="sign-title" @click="sign(1)">
 							签出时间：19:00
 						</view>
 						<view class="sign-img">
@@ -88,7 +88,7 @@
 				</view>
 				<view class="user-info flex-row-start">
 					<userHeadImg width='80rpx' height='80rpx' />
-					<userName/>
+					<userName />
 				</view>
 				<view class="today-learning">
 					<view class="subheading">
@@ -130,7 +130,7 @@
 							<view v-for="(item,index) in tongJiSign.list" :key='index' class="item flex-between">
 								<view class="head flex-row-start">
 									<view class="circle">
-							
+
 									</view>
 									<view class="record-txt">
 										{{item.name?item.name:'未知'}}
@@ -146,59 +146,6 @@
 								暂无签到记录
 							</view>
 						</template>
-					<!-- 	<view class="item flex-between">
-							<view class="head flex-row-start">
-								<view class="circle">
-
-								</view>
-								<view class="record-txt">
-									驾驶员
-								</view>
-							</view>
-							<view class="time-content">
-								01：13：39
-							</view>
-						</view>
-						<view class="item flex-between">
-							<view class="head flex-row-start">
-								<view class="circle">
-
-								</view>
-								<view class="record-txt">
-									驾驶员
-								</view>
-							</view>
-							<view class="time-content">
-								01：13：39
-							</view>
-						</view>
-						<view class="item flex-between">
-							<view class="head flex-row-start">
-								<view class="circle">
-
-								</view>
-								<view class="record-txt">
-									驾驶员
-								</view>
-							</view>
-							<view class="time-content">
-								01：13：39
-							</view>
-						</view>
-						<view class="item flex-between">
-							<view class="head flex-row-start">
-								<view class="circle">
-
-								</view>
-								<view class="record-txt">
-									驾驶员
-								</view>
-							</view>
-							<view class="time-content">
-								01：13：39
-							</view>
-						</view>
-					 -->
 					</view>
 				</view>
 			</view>
@@ -227,14 +174,16 @@
 	import Toast from '@/commons/showToast.js'
 	import useFacePlugin from '../../commons/faceplugin.js'
 	import userName from '@/components/userName/userName.vue'
-	
+
 	import {
 		faceVerification,
-		getSignOnDateTime
+		getSignOnDateTime,
+		signInOut
 	} from '@/commons/api/apis.js'
 	import {
 		getSystemInfo,
-		getUserLoginInfo
+		getUserLoginInfo,
+		getCurrentDate
 	} from '@/utils/util.js'
 	import {
 		request_err,
@@ -255,7 +204,7 @@
 				range: 500,
 				isInRange: false,
 				timer: null,
-				tongJiSign:[]
+				tongJiSign: []
 			};
 		},
 		components: {
@@ -327,8 +276,6 @@
 				let curLati = res.latitude
 				let longAbs = Math.abs(curLong - this.targetLongitude)
 				let latiAbs = Math.abs(curLati - this.targetLatitude)
-				console.log('经度差：', longAbs)
-				console.log('纬度差：', latiAbs)
 				if (longAbs >= 1 || latiAbs >= 1) {
 					this.isInRange = false
 					return
@@ -341,18 +288,18 @@
 				}
 				this.isInRange = true
 			},
-			
+
 			// 获取签到数据
 			getSignInData() {
-				getSignOnDateTime().then(res=>{
-					console.log('获取签到数据：',res)
-					if(res.data.code==200){
+				getSignOnDateTime().then(res => {
+					console.log('获取签到数据：', res)
+					if (res.data.code == 200) {
 						this.tongJiSign = res.data.data
-					}else {
+					} else {
 						request_success(res)
 					}
-				},err=>{
-					request_err(err,'获取签到数据失败')
+				}, err => {
+					request_err(err, '获取签到数据失败')
 				})
 			},
 
@@ -365,16 +312,38 @@
 					})
 					return
 				}
+				let address = uni.getStorageSync('userAddress')
+
+				let params = {
+					"chapterdId": 0,
+					"courseId": 0,
+					"coursePeriodId": 0,
+					"numEvent": "",
+
+					"signonAddr": this.addressTxt,
+					"signonApp": 0,
+					"signonLat": address.latitude,
+					"signonLon": address.longitude,
+					"signonTime": getCurrentDate('month'),
+					"signonType": num,
+				}
 
 				if (num == 1) {
 					// 签入
-					this.judgment().then(res=>{
-						
+					signInOut(params).then(res => {
+						console.log('签到：', res)
+						if (res.data.code == 200) {
+							Toast({
+								title: '签到成功'
+							})
+						} else {
+							request_success(res)
+						}
 					})
-					
+
 				} else {
 					// 签出
-					
+
 					// 人脸采集
 					useFacePlugin({
 						count: 0,
@@ -390,9 +359,16 @@
 							uni.hideLoading()
 							console.log('人脸验证成功：', resp)
 							if (resp.data.code == 200) {
-								
-								this.judgment().then(res=>{
-									
+
+								signInOut(params).then(res => {
+									console.log('签出：', res)
+									if (res.data.code == 200) {
+										Toast({
+											title: '签出成功'
+										})
+									} else {
+										request_success(res)
+									}
 								})
 
 							} else {
@@ -410,13 +386,6 @@
 				// 请求
 			},
 
-			// 判断签入签出条件,时间判断
-			judgment(){
-				return new Promise((resolve,reject)=>{
-					resolve(1)
-				})
-			},
-
 			// 底部tab变换
 			changeTab(num) {
 				this.tab = num
@@ -427,7 +396,7 @@
 					delta: 1
 				})
 			},
-			
+
 			// 月汇总
 			rightClick() {
 				uni.navigateTo({
@@ -692,7 +661,8 @@
 			height: 38rpx;
 		}
 	}
-	.no-data{
+
+	.no-data {
 		text-align: center;
 		color: #999999;
 		margin: 30rpx 0;

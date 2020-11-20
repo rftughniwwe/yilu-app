@@ -21,9 +21,7 @@
 		<view class="item-block">
 			<view class="user-info item flex-row-start">
 				<userHeadImg width='80rpx' height='80rpx' />
-				<view class="user-name">
-					王带锤
-				</view>
+				<userName/>
 			</view>
 
 			<view class="item flex-between" @click="learningClick(1)">
@@ -184,6 +182,10 @@
 
 <script>
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
+	import userName from '@/components/userName/userName.vue'
+	import {
+		getMonthSummaryData
+	} from '@/commons/api/apis.js'
 	export default {
 		data() {
 			return {
@@ -196,10 +198,31 @@
 		onShow() {
 
 		},
+		onLoad() {
+			this.initialData()
+		},
 		components: {
-			userHeadImg
+			userHeadImg,
+			userName
 		},
 		methods: {
+			// 获取数据
+			initialData(){
+				let date = new Date()
+				let initYear = date.getFullYear()
+				let initMonth = date.getMonth() +1
+				let month = initYear+'-'+initMonth
+				getMonthSummaryData({month:month}).then(res=>{
+					console.log('月汇总数据',res)
+					if(res.data.code == 200){
+						
+					}else {
+						request_success(res)
+					}
+				})
+			},
+			
+			// 日期变换
 			dateChange(e) {
 				console.log('zxczxc', e.detail.value)
 			},
@@ -269,13 +292,6 @@
 	.item {
 		padding: 34rpx 30rpx;
 		border-bottom: 2rpx solid #EEEEEE;
-	}
-
-	.user-name {
-		color: #333333;
-		font-size: 34rpx;
-		margin-left: 26rpx;
-		font-weight: bold;
 	}
 
 	.head {

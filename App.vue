@@ -41,7 +41,7 @@
 
 			// 获取用户信息
 			let userBasicInfo = uni.getStorageSync('userBasicInfo')
-			if(!userBasicInfo.compId){
+			if(!userBasicInfo){
 				let userNo = getUserLoginInfo('userNo')
 				console.log('用户编号：',userNo)
 				getUserBasicInfo(userNo).then(res=>{

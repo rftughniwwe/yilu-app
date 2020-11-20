@@ -160,13 +160,30 @@ function toBase64(path, rallback) {
 }
 
 // 获取当前日期时间
-function getCurrentDate() {
+function getCurrentDate(str,delimiter,type) {
 	let date = new Date()
 	let year = date.getFullYear()
 	let month = date.getMonth() + 1
 	let day = date.getDay()
-
-	return `${year}-${month}`
+	let hours = date.getHours()
+	let min = date.getMinutes()
+	let sec = date.getSeconds()
+	let delimit = delimiter?delimiter:'-'
+	
+	if(str === 'year'){
+		return `${year}`
+	}else if(str==='month'){
+		return `${year}${delimit}${month}`
+	}else if(str==='day'){
+		return `${year}${delimit}${month}${delimit}${day}`
+	}else if(str==='hours'){
+		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}`
+	}else if (str==='sec'){
+		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
+	}else {
+		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
+	}
+	
 }
 
 // 设置登录缓存
@@ -188,6 +205,8 @@ function removeAppStorage(options) {
 	uni.removeStorageSync('LearningSubTypeSubItem')
 	uni.removeStorageSync('isShowChooseType')
 	uni.removeStorageSync('isHideSafetyModal')
+	// 用户基本信息
+	uni.removeStorageSync('userBasicInfo')
 }
 
 // 获取用户登录信息
