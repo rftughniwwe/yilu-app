@@ -98,6 +98,9 @@
 			uni.$on('closeModalMask', (data) => {
 				this.selfNum = data.index
 			})
+			uni.pageScrollTo({
+				selector:'selected-item'
+			})
 		},
 		updated() {
 			// this.datas = uni.getStorageSync('LearningSubType')

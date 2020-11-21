@@ -55,7 +55,6 @@
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
 					success: res => {
-						let r = JSON.parse(JSON.stringify(res.result))
 						console.log('结果：', r)
 						uni.navigateTo({
 							url: './courseDetails?scanres='+r
