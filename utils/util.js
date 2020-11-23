@@ -75,7 +75,7 @@ const LEARNING_MODE_DATA = [{
 	}
 ]
 
-const LIVE_STATUS = ['未开播','正在直播','待回放','待转存','回放']
+const LIVE_STATUS = ['未开播', '正在直播', '待回放', '待转存', '回放']
 
 
 // 获取网络状态
@@ -160,7 +160,7 @@ function toBase64(path, rallback) {
 }
 
 // 获取当前日期时间
-function getCurrentDate(str,delimiter,type) {
+function getCurrentDate(str, delimiter, type) {
 	let date = new Date()
 	let year = date.getFullYear()
 	let month = date.getMonth() + 1
@@ -168,22 +168,22 @@ function getCurrentDate(str,delimiter,type) {
 	let hours = date.getHours()
 	let min = date.getMinutes()
 	let sec = date.getSeconds()
-	let delimit = delimiter?delimiter:'-'
-	
-	if(str === 'year'){
+	let delimit = delimiter ? delimiter : '-'
+
+	if (str === 'year') {
 		return `${year}`
-	}else if(str==='month'){
+	} else if (str === 'month') {
 		return `${year}${delimit}${month}`
-	}else if(str==='day'){
+	} else if (str === 'day') {
 		return `${year}${delimit}${month}${delimit}${day}`
-	}else if(str==='hours'){
+	} else if (str === 'hours') {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}`
-	}else if (str==='sec'){
+	} else if (str === 'sec') {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
-	}else {
+	} else {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
 	}
-	
+
 }
 
 // 设置登录缓存
@@ -227,22 +227,36 @@ function getSystemInfo() {
 }
 
 // 获取选择的分类信息和公司ID
-function getLearningTypeInfo(){
+function getLearningTypeInfo() {
 	let obj = {}
-	try{
+	try {
 		// 学习模块中选择的一级分类
 		obj.categoryId1 = uni.getStorageSync('selectedLearningType').id
 		// 学习模块中选择的二级分类
 		obj.categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
 		obj.compId = uni.getStorageSync('userBasicInfo').compId
-	}catch(err){
+	} catch (err) {
 		console.log('获取ID失败')
 		Toast({
-			title:'缺少参数'
+			title: '缺少参数'
 		})
 	}
-	
+
 	return obj
+}
+
+// 倒计时
+function getCountDown(time) {
+	let times = time
+	// 小时
+	let hours = Math.floor((times / 3600)) < 10 ? '0' + Math.floor((times / 3600)): Math.floor((times / 3600))
+	
+	// 分钟
+	let min = Math.floor(times / 60) < 10 ? '0' + Math.floor(times / 60) : Math.floor(times / 60)
+	// 秒
+	let second = Math.floor(times % 60) < 10 ? '0' + Math.floor(times % 60) : Math.floor(times % 60)
+
+	return `${hours}:${min}:${second}`
 }
 
 module.exports = {
@@ -260,5 +274,6 @@ module.exports = {
 	getSystemInfo,
 	LEARNING_MODE_DATA,
 	LIVE_STATUS,
-	getLearningTypeInfo
+	getLearningTypeInfo,
+	getCountDown
 }

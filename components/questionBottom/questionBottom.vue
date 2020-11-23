@@ -3,12 +3,12 @@
 	<view class="main flex-between">
 		<view class="answer-sheet flex-evenly">
 			<image src="../../static/answer-sheet-img.png" mode=""></image>
-			<view class="txt">
+			<view class="txt" @click="answerSheet">
 				答题卡
 			</view>
 		</view>
 		<view class="submit-btn">
-			<view class="txt">
+			<view class="txt" @click="complete">
 				交卷
 			</view>
 		</view>
@@ -21,6 +21,14 @@
 			return {
 
 			};
+		},
+		methods:{
+			answerSheet(){
+				this.$emit('answerSheet')
+			},
+			complete(){
+				this.$emit('complete')
+			}
 		}
 	}
 </script>

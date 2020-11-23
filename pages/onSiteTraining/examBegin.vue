@@ -49,7 +49,7 @@
 				</view>
 			</view>
 			<view class="begin-btn">
-				<primaryBtn text='开始考试' />
+				<primaryBtn text='开始考试' @callBackFun='goExam'/>
 			</view>
 			<view class="exam-desc">
 				<view class="topic">
@@ -81,6 +81,13 @@
 		},
 		components: {
 			primaryBtn
+		},
+		methods:{
+			goExam(){
+				uni.navigateTo({
+					url:'../examQuestion/examQuestion'
+				})
+			}
 		}
 	}
 </script>
