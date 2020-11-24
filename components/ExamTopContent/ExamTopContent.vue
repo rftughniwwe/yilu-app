@@ -7,7 +7,7 @@
 			</text>
 		</view>
 		<view class="timeout">
-			{{timecountdown}}
+			{{timecountdown?timecountdown:'00:00:00'}}
 		</view>
 		<view class="current-count">
 			<text class="currTxt">{{datas.current}}</text>/{{datas.total}}
@@ -35,27 +35,36 @@
 		updated() {
 
 		},
-		destroyed() {
+		beforeDestroy() {
 			clearInterval(this.timer)
+			this.timer = null
+		},
+		destroyed() {
+			// console.log('组件卸载之前2',this.timer)
+			// clearInterval(this.timer)
+			// this.timer = null
+			// console.log('组件卸载之前3',this.timer)
 		},
 		methods: {
 			countDown(d) {
 				let t = parseInt(d)
 				this.timer = setInterval(() => {
 					if (t <= 0) {
+						clearInterval(this.timer)
+						this.timer = null
 						uni.showModal({
 							title: '考试结束，自动交卷',
 							showCancel: false,
-							confirmText: '确定',
+							confirmText: '交卷',
 							success: (res) => {
 								if (res.confirm) {
-									uni.navigateBack({
-										delta: 1
+									uni.redirectTo({
+										url:'../../pages/onSiteTraining/examResult'
 									})
 								}
 							}
 						})
-						clearInterval(this.timer)
+						
 						return
 					}
 					t--

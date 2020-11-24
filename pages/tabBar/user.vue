@@ -15,10 +15,10 @@
 					</view>
 					<view class="user-name-phone ">
 						<view class="name" :style="{'fontSize':globalSize+'rpx'}">
-							王大锤
+							<userName color='#FFF'/>
 						</view>
 						<view class="phone" :style="{'fontSize':(globalSize-8)+'rpx'}">
-							16777777777
+							{{mobile}}
 						</view>
 					</view>
 				</view>
@@ -113,18 +113,22 @@
 
 <script>
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
+	import userName from '@/components/userName/userName.vue'
 	export default {
 		data() {
 			return {
 				isFullScreen: false,
-				globalSize:34
+				globalSize:34,
+				mobile:''
 			};
 		},
 		components: {
-			userHeadImg
+			userHeadImg,
+			userName
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			this.mobile = uni.getStorageSync('userBasicInfo').mobile
 		},
 		onShow() {
 			this.globalSize = uni.getStorageSync('globalFontSize')

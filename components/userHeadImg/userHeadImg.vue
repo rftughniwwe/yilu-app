@@ -1,6 +1,6 @@
 <template>
 	<view class="main" :style="{'width':width,'height':height}">
-		<image :src="url" mode="aspectFit"></image>
+		<image :src="headimg" mode="aspectFit"></image>
 	</view>
 </template>
 
@@ -8,12 +8,18 @@
 	export default {
 		data() {
 			return {
-				
+				headimg:''
 			};
 		},
-		props:['width','height','url'],
+		props:['width','height'],
 		mounted() {
 			// 获取用户头像
+			let headurl = uni.getStorageSync('userBasicInfo').headImgUrl
+			this.headimg = headurl
+		},
+		updated() {
+			let headurl = uni.getStorageSync('userBasicInfo').headImgUrl
+			this.headimg = headurl
 		}
 	}
 </script>

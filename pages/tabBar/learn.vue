@@ -284,6 +284,7 @@
 			// 安全教育中第一次选择subtitle变化
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
+				console.log(',,,,,',data.index)
 				this.AnquanType = data.index
 			})
 

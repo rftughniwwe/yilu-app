@@ -1,12 +1,11 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-		    "path" : "pages/examQuestion/examQuestion",
-		    "style" :                                                                                    
-		    {
-		        "enablePullDownRefresh": false
-		    }
-		    
+			// 默认进入的页面
+			"path": "pages/login/normalLogin",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		},
 		{
 			// 主页
@@ -16,7 +15,14 @@
 				"enablePullDownRefresh":true
 			}
 		},
-		
+		{
+		    "path" : "pages/examQuestion/examQuestion",
+		    "style" :                                                                                    
+		    {
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
 		{
 			"path": "pages/onSiteTraining/monthlySummary",
 			"style": {
@@ -34,16 +40,6 @@
 			}
 		
 		},
-		
-		
-		{
-			// 默认进入的页面
-			"path": "pages/login/normalLogin",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		
 		{
 			"path": "pages/fillInfomation/fillInfomation",
 			"style": {

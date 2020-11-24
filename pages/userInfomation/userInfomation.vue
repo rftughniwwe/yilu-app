@@ -21,7 +21,7 @@
 				</view>
 				<view class="right-content flex-between" @click="goEditName">
 					<view class="head-img">
-						王大锤
+						<userName/>
 					</view>
 					<view class="right-arrow-img">
 						<image src="../../static/right-arrow.png" mode=""></image>
@@ -57,6 +57,7 @@
 
 <script>
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
+	import userName from '@/components/userName/userName.vue'
 	export default {
 		data() {
 			return {
@@ -66,7 +67,8 @@
 			};
 		},
 		components: {
-			userHeadImg
+			userHeadImg,
+			userName
 		},
 		methods: {
 			// 选择头像

@@ -1,9 +1,9 @@
 <!-- 考试结果页 -->
 <template>
 	<view>
-		<view class="zxczxc">
-			<uni-nav-bar xibai='noborder' leftIcon="arrowleft" fixed="true" background-color='transparent' @clickLeft='navigate' @clickRight='rightClick'
-			 rightIcon="redo" />
+		<view class="zxczxc" :style="{'padding-top': isFullScreen?'100rpx':'40rpx'}">
+			<uni-nav-bar xibai='noborder' leftIcon="arrowleft" fixed="true" background-color='transparent' @clickLeft='navigate'
+			 @clickRight='rightClick' rightIcon="redo" />
 		</view>
 		<view class="top-content flex-evenly">
 			<view class="score">
@@ -17,7 +17,7 @@
 					试卷总分：100分
 				</view>
 			</view>
-			
+
 		</view>
 		<view class="exam-info">
 			<view class="items">
@@ -54,15 +54,19 @@
 	export default {
 		data() {
 			return {
-
+				isFullScreen: false
 			};
 		},
 		components: {
 			uniNavBar
 		},
+		onLoad() {
+			this.isFullScreen = uni.getStorageSync('isFullScreen')
+		},
 		methods: {
+			// 返回
 			navigate() {
-				uni.navigateTo({
+				uni.switchTab({
 					url: '../tabBar/index'
 				})
 			},
@@ -98,9 +102,11 @@
 	.score {
 		margin-top: 160rpx;
 	}
-	.zzz{
+
+	.zzz {
 		margin-bottom: 100rpx;
 	}
+
 	.subheading {
 		font-size: 30rpx;
 		color: #9C5B09;
@@ -126,7 +132,7 @@
 	}
 
 	.exam-info {
-		padding:80rpx 0 50rpx;
+		padding: 80rpx 0 50rpx;
 		width: 70%;
 		margin: 0 auto;
 	}

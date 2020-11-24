@@ -175,6 +175,7 @@
 						]
 					}
 				]
+				
 			};
 		},
 		components: {
@@ -184,6 +185,9 @@
 		},
 		onShow() {
 
+		},
+		onUnload() {
+			console.log('页面卸载')
 		},
 		onLoad() {
 			uni.setNavigationBarTitle({
@@ -209,7 +213,18 @@
 			},
 			// 交卷
 			completeExam() {
-				console.log('交卷点击')
+				uni.showModal({
+					title:'提交',
+					content:'确认交卷吗？',
+					success:res=>{
+						if(res.confirm){
+							uni.redirectTo({
+								url:'../onSiteTraining/examResult'
+							})
+						}
+					}
+				})
+			
 			}
 		}
 	}
@@ -345,14 +360,12 @@
 		width: 86rpx;
 		height: 86rpx;
 		border-radius: $uni-border-radius-half-circle;
-		// display: inline-block;
-		margin-right: 40rpx;
 		font-size: 34rpx;
 		vertical-align: middle;
 		text-align: center;
 		white-space: nowrap;
 		text-overflow: hidden;
-		margin-bottom: 50rpx;
+		margin:0 26rpx 40rpx 30rpx;
 		line-height: 2.5;
 	}
 

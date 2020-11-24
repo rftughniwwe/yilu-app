@@ -103,8 +103,8 @@
 			})
 		},
 		updated() {
-			// this.datas = uni.getStorageSync('LearningSubType')
-			// console.log('update:', uni.getStorageSync('LearningSubType'))
+			this.AnquanNum = this.AnquanType>=0?this.AnquanType:uni.getStorageSync('anquanTab')
+			this.JixuNum = uni.getStorageSync('jixuTab')?uni.getStorageSync('jixuTab'):0
 		},
 		methods: {
 			// 安全教育学习教育改变事件

@@ -1,5 +1,5 @@
 <template>
-	<view class="user-name">
+	<view class="user-name" :style="{'color':color?color:'#333'}">
 		{{user.nickname?user.nickname:'未知用户'}}
 	</view>
 </template>
@@ -11,6 +11,7 @@
 				user:{}
 			};
 		},
+		props:['color'],
 		created() {
 			let userinfo = uni.getStorageSync('userBasicInfo')
 			this.user = userinfo
