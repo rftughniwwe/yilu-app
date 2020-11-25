@@ -18,7 +18,11 @@
         },
         /* 模块配置 */
         "modules" : {
-            "Maps" : {}
+            "Maps" : {},
+            "VideoPlayer" : {},
+            "Payment" : {},
+            "Geolocation" : {},
+            "Contacts" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -63,6 +67,14 @@
                         "appkey_ios" : "a30aed841a7efbe89641dfd127b97f83",
                         "appkey_android" : "fa130574b0b837ce672a9d7cb7df301c"
                     }
+                },
+                "payment" : {
+                    "alipay" : {
+                        "__platform__" : [ "ios", "android" ]
+                    }
+                },
+                "push" : {
+                    "unipush" : {}
                 }
             },
             "icons" : {
@@ -151,6 +163,34 @@
                     "isCloud" : true,
                     "bought" : 0,
                     "pid" : "2179",
+                    "parameters" : {}
+                }
+            },
+            "DC-WBFaceService" : {
+                "__plugin_info__" : {
+                    "name" : "DC-WBFaceService",
+                    "description" : "人脸识别 SDK。",
+                    "platforms" : "Android,iOS",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=1300",
+                    "android_package_name" : "uni.yiliapp.com",
+                    "ios_bundle_id" : "",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "1300",
+                    "parameters" : {}
+                }
+            },
+            "DC-WBNormal" : {
+                "__plugin_info__" : {
+                    "name" : "DC-WBNormal",
+                    "description" : "WB Normal SDK uni-app 插件",
+                    "platforms" : "Android",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=1491",
+                    "android_package_name" : "uni.yiliapp.com",
+                    "ios_bundle_id" : "",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "1491",
                     "parameters" : {}
                 }
             }

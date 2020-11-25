@@ -87,6 +87,12 @@
 			}
 		},
 		{
+			"path": "pages/login3/login",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/livebroadcast/livebroadcast",
 			"style": {}
 		}, 
@@ -307,7 +313,22 @@
                 "enablePullDownRefresh": false
             }
             
-        }
+        },
+		// 第三方
+		{
+			"path": "pages/course/list/list",
+			"style": {}
+		},
+		{
+			"path": "pages/course/view/view",
+			"style": {}
+		},
+		{
+			"path": "pages/verifyFace/verifyFace",
+			"style": {
+				"navigationBarTitleText": "人脸识别"
+			}
+		}
     ],
 	"tabBar": {
 		"color": "#999999",

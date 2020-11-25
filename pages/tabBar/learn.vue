@@ -349,8 +349,12 @@
 						url: '../onSiteTraining/onSiteTraining'
 					})
 				}else if (num == 2){
+					// uni.navigateTo({
+					// 	url:'../user/myCourse'
+					// })
+					console.log('nmsl')
 					uni.navigateTo({
-						url:'../user/myCourse'
+						url:'../course/list/list'
 					})
 				}
 				// 需判断是否付费
