@@ -11,15 +11,24 @@
 				headimg:''
 			};
 		},
-		props:['width','height'],
+		props:['width','height','url'],
 		mounted() {
 			// 获取用户头像
 			let headurl = uni.getStorageSync('userBasicInfo').headImgUrl
-			this.headimg = headurl
+			if(this.url){
+				this.headimg = this.url
+			}else {
+				this.headimg = headurl
+			}
+			
 		},
 		updated() {
 			let headurl = uni.getStorageSync('userBasicInfo').headImgUrl
-			this.headimg = headurl
+			if(this.url){
+				this.headimg = this.url
+			}else {
+				this.headimg = headurl
+			}
 		}
 	}
 </script>

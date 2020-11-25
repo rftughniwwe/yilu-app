@@ -1,13 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			// 默认进入的页面
-			"path": "pages/login/normalLogin",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			// 主页
 			"path": "pages/tabBar/index",
 			"style": {
@@ -15,6 +8,24 @@
 				"enablePullDownRefresh":true
 			}
 		},
+		{
+			"path": "pages/leaderBoard/leaderBoard",
+			"style": {
+				"navigationBarTitleText": "排行榜",
+				"navigationBarTextStyle": "white",
+				"navigationBarBackgroundColor": "#50ADFE",
+				"enablePullDownRefresh": false
+			}
+		
+		},
+		{
+			// 默认进入的页面
+			"path": "pages/login/normalLogin",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		
 		{
 		    "path" : "pages/examQuestion/examQuestion",
 		    "style" :                                                                                    
@@ -159,16 +170,8 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
-		},{
-			"path": "pages/leaderBoard/leaderBoard",
-			"style": {
-				"navigationBarTitleText": "排行榜",
-				"navigationBarTextStyle": "white",
-				"navigationBarBackgroundColor": "#50ADFE",
-				"enablePullDownRefresh": false
-			}
-
-		}, {
+		},
+		 {
 			"path": "pages/userInfomation/userInfomation",
 			"style": {
 				"navigationBarTitleText": "个人信息",

@@ -34,11 +34,13 @@ function httpRequest(options, url_type) {
 		base_url = BASE_URL+':8720'
 	}else if(url_type == 2){
 		base_url = BASE_URL+':8730'
-	}else if(url_type = 3){
+	}else if(url_type == 3){
 		base_url = BASE_URL+':8740'
+	}else if(url_type == 4){
+		base_url = BASE_URL+':8700'
 	}
 	getNetworkType().then((res) => {
-
+		console.log('bbb',base_url)
 		if (res) {
 			uni.request({
 				// 必选

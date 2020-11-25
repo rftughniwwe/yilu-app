@@ -33,21 +33,21 @@
 					<input type="number" maxlength="11" v-model="phoneNum" placeholder="请填写" />
 				</view>
 			</view>
-			<view class="info-item flex-between">
+			<!-- <view class="info-item flex-between">
 				<view class="header">
 					服务单位
 				</view>
 				<view class="input-content xbl">
 					<input type="text" maxlength="30" @input="companyInput" v-model="company" placeholder="请填写" />
 				</view>
-			</view>
-			<view class="company-list" v-show="companyArr && companyArr.length > 0">
+			</view> -->
+			<!-- <view class="company-list" v-show="companyArr && companyArr.length > 0">
 				<scroll-view scroll-y="true" class="company-scroll">
 					<view class="title" v-for="(item,index) in companyArr" :key='index' @click="itemSelected(item)">
 						{{item.unitName}}
 					</view>
 				</scroll-view>
-			</view>
+			</view> -->
 
 		</view>
 		<nextPageBtn @goNextPage='goNextPager'></nextPageBtn>
@@ -61,7 +61,8 @@
 		getUserLoginInfo
 	} from '../../utils/util.js'
 	import {
-		queryUnitName
+		queryUnitName,
+		setUserInfomation
 	} from '../../commons/api/apis.js'
 	import Toast from '../../commons/showToast.js'
 	import {
@@ -96,9 +97,9 @@
 					userType:1
 				}
 
-				if (!this.name || !this.company) {
+				if (!this.name) {
 					uni.showToast({
-						title: '姓名服务单位不能为空',
+						title: '姓名不能为空',
 						icon: 'none'
 					})
 					return
@@ -114,31 +115,49 @@
 					title: '处理中...'
 				})
 				
-				httpRequest({
-					url: '/user/api/user/perfect/basicInfo',
-					method: 'POST',
-					data: obj,
-					success: (res) => {
-
-						uni.hideLoading()
-						if (res.data.code == 200) {
-							console.log('基本信息修改成功：', res)
-							
-							uni.navigateTo({
-								url: '../documentRegistration/idCardRegister'
-							})
-						} else {
-							console.log('添加错误', res)
-							Toast({
-								title: res.data.msg
-							})
-						}
-					},
-					fail: (err) => {
-						uni.hideLoading()
-						console.log('请求失败：', err)
+				setUserInfomation(obj).then(res=>{
+					uni.hideLoading()
+					if (res.data.code == 200) {
+						console.log('基本信息修改成功：', res)
+						
+						uni.navigateTo({
+							url: '../documentRegistration/idCardRegister?infoMation='+obj
+						})
+					} else {
+						console.log('添加错误', res)
+						Toast({
+							title: res.data.msg
+						})
 					}
-				},1)
+				},err=>{
+					uni.hideLoading()
+					console.log('请求失败：', err)
+				})
+				// httpRequest({
+				// 	url: '/user/api/user/perfect/basicInfo',
+				// 	method: 'POST',
+				// 	data: obj,
+				// 	success: (res) => {
+
+				// 		uni.hideLoading()
+				// 		if (res.data.code == 200) {
+				// 			console.log('基本信息修改成功：', res)
+							
+				// 			uni.navigateTo({
+				// 				url: '../documentRegistration/idCardRegister?infoMation='+obj
+				// 			})
+				// 		} else {
+				// 			console.log('添加错误', res)
+				// 			Toast({
+				// 				title: res.data.msg
+				// 			})
+				// 		}
+				// 	},
+				// 	fail: (err) => {
+				// 		uni.hideLoading()
+				// 		console.log('请求失败：', err)
+				// 	}
+				// },1)
 
 
 			},
@@ -198,7 +217,6 @@
 			},
 			
 			itemSelected(item) {
-				console.log('item', item)
 				this.company = item.unitName
 				this.compId = item.unitId
 				this.companyArr = []

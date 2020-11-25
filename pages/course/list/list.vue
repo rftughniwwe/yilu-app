@@ -227,10 +227,6 @@
 	}
 
 	.course_list {
-		margin-top: 90rpx;
-		/*  #ifdef  MP || APP-PLUS */
-		margin-top: 180rpx;
-		/*  #endif  */
 	}
 
 	.result_item {

@@ -281,3 +281,21 @@ export function signInOut(params){
 		},1)
 	})
 }
+
+// 设置基本信息
+export function setUserInfomation(obj){
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url: '/user/api/user/perfect/basicInfo',
+			method: 'POST',
+			data: obj,
+			success: (res) => {
+		
+				resolve(res)
+			},
+			fail: (err) => {
+				reject(err)
+			}
+		},1)
+	})
+}

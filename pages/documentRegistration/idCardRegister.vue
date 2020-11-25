@@ -121,15 +121,18 @@
 		OCR_Request,
 		uploadImage
 	} from '../../utils/httpRequest.js'
-
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
 	export default {
 		data() {
 			return {
 				text: '',
 				tempPathBack: '../../static/id-card-back.png',
 				tempPathFront: '../../static/id-card-front.png',
-				tempPathBack_upload:'',
-				tempPathFront_upload:'',
+				tempPathBack_upload: '',
+				tempPathFront_upload: '',
 				cardName: '',
 				cardGender: '',
 				cardNation: '',
@@ -140,7 +143,8 @@
 				flag1: false,
 				flag2: false,
 				genderData: ['男', '女'],
-				nationData: []
+				nationData: [],
+				infomation: {}
 			};
 		},
 		components: {
@@ -150,6 +154,7 @@
 		onLoad(options) {
 			this.text = `请上传${options.name || '本人'}的身份证正反面照片`
 			this.nationData = NATION
+			this.infomation = options.infoMation
 			this.queryIdCardInfo()
 		},
 		methods: {
@@ -171,18 +176,18 @@
 
 			},
 			// 身份证信息查看
-			queryIdCardInfo(){
+			queryIdCardInfo() {
 				let userno = getUserLoginInfo('userNo');
 				httpRequest({
-					url:'/user/api/tbSysIdCard/view?userid='+userno,
-					success:resp=>{
-						console.log('resp:',resp)
-						if(resp.data.code == 200){
-							
-							if(resp.data.data){
+					url: '/user/api/tbSysIdCard/view?userid=' + userno,
+					success: resp => {
+						console.log('resp:', resp)
+						if (resp.data.code == 200) {
+
+							if (resp.data.data) {
 								let _data = resp.data.data
-								this.flag1 = _data.idcardFront?true:false
-								this.flag2 = _data.idcardBack?true:false
+								this.flag1 = _data.idcardFront ? true : false
+								this.flag2 = _data.idcardBack ? true : false
 								this.cardName = _data.name;
 								this.cardGender = _data.sex;
 								this.cardNation = _data.nation;
@@ -197,18 +202,18 @@
 							}
 						}
 					},
-					fail:err=>{
-						console.log('请求失败',err)
+					fail: err => {
+						console.log('请求失败', err)
 						Toast({
-							title:'请求失败'
+							title: '请求失败'
 						})
 					}
-				},1)
+				}, 1)
 			},
-			
+
 			// 保存信息
 			idCardSave(data) {
-				
+
 				let datas = {
 					"adresss": data.cardAddress,
 					"dateBirth": data.cardBirthday,
@@ -223,7 +228,7 @@
 				}
 				console.log('保存信息:', datas)
 				uni.showLoading({
-					title: '保存中'
+					title: '保存中...'
 				})
 				httpRequest({
 					url: '/user/api/tbSysIdCard/save',
@@ -233,16 +238,8 @@
 						uni.hideLoading()
 						console.log('保存成功：', res)
 						if (res.data.code == 200) {
-							Toast({
-								title: '保存成功',
-								icon: 'success',
-								mask: true
-							})
-							setTimeout(() => {
-								uni.navigateTo({
-									url: `./driverLicense`
-								})
-							}, 1500)
+							this.getCompanyById(data.cardId)
+
 						} else {
 							Toast({
 								title: res.data.msg
@@ -250,12 +247,59 @@
 						}
 					},
 					fail: (err) => {
-						console.log('保存信息失败',err)
+						console.log('保存信息失败', err)
 						Toast({
 							title: "保存信息失败"
 						})
 					}
-				},1)
+				}, 1)
+			},
+			// 根据身份证号获取服务单位
+			getCompanyById(id) {
+				httpRequest({
+					url: '/user/api/compUser/selectCompByIdCard',
+					data: {
+						idCard: id
+					},
+					method: 'POST',
+					success: res => {
+						console.log('查询成功：', res)
+						if (res.data.code == 200) {
+							this.setCompany(res.data.data)
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						request_err(err, '查询服务单位失败')
+					}
+				}, 1)
+			},
+
+			// 设置服务单位
+			setCompany(data) {
+				let info = this.infomation
+				info.compId = data.compId
+
+				setUserInfomation(info).then(res => {
+					if (res.data.code == 200) {
+
+						Toast({
+							title: '保存成功',
+							icon: 'success',
+							mask: true
+						})
+						setTimeout(() => {
+							uni.navigateTo({
+								url: `./driverLicense`
+							})
+						}, 1500)
+					} else {
+						request_success(res)
+					}
+				}, err => {
+					console.log('请求失败：', err)
+				})
 			},
 
 			// 开始拍摄
@@ -279,7 +323,7 @@
 							let ocrtoken = uni.getStorageSync('ocr_token')
 
 							// ocr 识别图片
-							OCR_Request(ID_CARD_OCR,{
+							OCR_Request(ID_CARD_OCR, {
 								'image': result,
 								'id_card_side': num === 1 ? 'front' : 'back'
 							}).then((res) => {
@@ -313,7 +357,7 @@
 									let img_data = JSON.parse(respones.data)
 									console.log('上传图片成功：', img_data)
 									if (img_data.code == 200) {
-										
+
 										if (num === 1) {
 											that.cardName = data.words_result.姓名 ? data.words_result.姓名.words : ''
 											that.cardGender = data.words_result.性别 ? data.words_result.性别.words : ''
@@ -330,7 +374,7 @@
 											// 上传后的图片
 											that.tempPathFront_upload = img_data.data
 										}
-										
+
 										Toast({
 											title: '图片上传成功'
 										})
@@ -346,7 +390,7 @@
 									})
 								})
 
-								
+
 
 							}, err => {
 								console.log('OCR失败', err)

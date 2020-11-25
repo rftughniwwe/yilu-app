@@ -28,36 +28,19 @@
 			// 检查是否登录
 			// #ifdef APP-PLUS
 			if (uni.getStorageSync('userStorage').userNo) {
-				// plus.navigator.closeSplashscreen()
-				uni.switchTab({
-					url: 'pages/tabBar/index'
-				})
-				setTimeout(() => {
-					plus.navigator.closeSplashscreen()
-				}, 1000)
+				plus.navigator.closeSplashscreen()
+				// uni.switchTab({
+				// 	url: 'pages/tabBar/index'
+				// })
+				// setTimeout(() => {
+				// 	plus.navigator.closeSplashscreen()
+				// }, 1000)
 			} else {
 				plus.navigator.closeSplashscreen()
 			}
 			// #endif
 
-			// 获取用户信息
-			let userBasicInfo = uni.getStorageSync('userBasicInfo')
-			if (!userBasicInfo) {
-				let userNo = getUserLoginInfo('userNo')
-				console.log('用户编号：', userNo)
-				getUserBasicInfo(userNo).then(res => {
-
-					console.log('用户基本信息', res)
-					if (res.data.code == 200) {
-						uni.setStorageSync('userBasicInfo', res.data.data)
-					} else {
-						request_success(res)
-					}
-				}, err => {
-					console.log('获取用户基本信息失败')
-
-				})
-			}
+			
 
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {
@@ -83,6 +66,25 @@
 
 
 
+		},
+		onLoad:()=> {
+			// 获取用户信息
+			let userBasicInfo = uni.getStorageSync('userBasicInfo')
+			if (!userBasicInfo) {
+				let userNo = getUserLoginInfo('userNo')
+				getUserBasicInfo(userNo).then(res => {
+			
+					console.log('用户基本信息获取：', res)
+					if (res.data.code == 200) {
+						uni.setStorageSync('userBasicInfo', res.data.data)
+					} else {
+						request_success(res)
+					}
+				}, err => {
+					console.log('获取用户基本信息失败')
+			
+				})
+			}
 		},
 		onShow: function() {
 			website.serviceInfo(result => {
