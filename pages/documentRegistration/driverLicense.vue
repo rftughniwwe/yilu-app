@@ -148,7 +148,8 @@
 					sizeType: 'compressed',
 					success(tempFilePaths) {
 						uni.showLoading({
-							title: '处理中...'
+							title: '处理中...',
+							mask:true
 						})
 						num === 1 ? that.tempPathFront = tempFilePaths.tempFilePaths[0] : that.tempPathBack = tempFilePaths.tempFilePaths[
 							0]
@@ -161,7 +162,8 @@
 							let ocrtoken = uni.getStorageSync('ocr_token')
 
 							uni.showLoading({
-								title:'识别中...'
+								title:'识别中...',
+								mask:true
 							})
 							// ocr 驾驶证识别
 							OCR_Request(DVIVING_CARD_OCR, {
@@ -261,6 +263,7 @@
 				uni.showLoading({
 					title:'保存中...'
 				})
+				console.log('ddddd',data)
 				httpRequest({
 					url:'/user/api/tbSysDrivingLicense/save',
 					method:'POST',

@@ -180,6 +180,8 @@ function getCurrentDate(str, delimiter, type) {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}`
 	} else if (str === 'sec') {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
+	}else if(str === 'onlyHours'){
+		return `${hours}:${min}`
 	} else {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
 	}
@@ -247,12 +249,13 @@ function getLearningTypeInfo() {
 
 // 倒计时
 function getCountDown(time) {
+	
 	let times = time
 	// 小时
 	let hours = Math.floor((times / 3600)) < 10 ? '0' + Math.floor((times / 3600)): Math.floor((times / 3600))
 	
 	// 分钟
-	let min = Math.floor(times / 60) < 10 ? '0' + Math.floor(times / 60) : Math.floor(times / 60)
+	let min = Math.floor(times / 60)%60 < 10 ? '0' + Math.floor(times / 60)%60 : Math.floor(times / 60)%60
 	// 秒
 	let second = Math.floor(times % 60) < 10 ? '0' + Math.floor(times % 60) : Math.floor(times % 60)
 

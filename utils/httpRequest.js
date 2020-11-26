@@ -5,7 +5,8 @@ import {
 
 
 const BASE_URL = 'http://172.168.1.229'
-
+// 图片上传
+const BASE_URL2 = 'http://172.168.1.229:8730'
 
 // 身份证OCR地址
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
@@ -40,7 +41,6 @@ function httpRequest(options, url_type) {
 		base_url = BASE_URL+':8700'
 	}
 	getNetworkType().then((res) => {
-		console.log('bbb',base_url)
 		if (res) {
 			uni.request({
 				// 必选

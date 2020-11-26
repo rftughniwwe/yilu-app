@@ -4,32 +4,34 @@
 		<view class="begin-time flex-row-start">
 			<image src="../../static/timeout.png" mode=""></image>
 			<view class="text">
-				距离课程开始时间 01:29:05
+				距离课程开始时间: {{countdownStr?countdownStr:'00:00:00'}}
 			</view>
 		</view>
 		<view class="topic">
 			<view class="title">
-				{{courseInfo.title}}
+				{{courseInfo.name}}
 			</view>
 			<view class="subtitle middle">
-				开课时间:{{courseInfo.beginTime?courseInfo.beginTime:'未知'}} · 名师:{{courseInfo.teacher?courseInfo.teacher:'未知'}}
+				开课时间：{{courseInfo.startTime?courseInfo.startTime:'未知'}} · 名师：{{courseInfo.teacher?courseInfo.teacher:'未知'}}
 			</view>
 			<view class="subtitle">
-				开课地点：{{courseInfo.address?courseInfo.address:'未知'}}
+				开课地点：{{courseInfo.addr?courseInfo.addr:'未知'}}
 			</view>
 		</view>
 		<view class="container-content">
 			<view class="header title">
-				直播介绍
+				培训介绍
 			</view>
 			<view class="subtitle text-overflow5">
-				{{courseInfo.introduct?courseInfo.introduct:'未知'}}
+				<rich-text :nodes="courseInfo.trainIntro"></rich-text>
+				<!-- {{courseInfo.trainIntro?courseInfo.trainIntro:'未知'}} -->
 			</view>
 			<view class="header title">
-				老师介绍
+				讲师介绍
 			</view>
 			<view class="subtitle text-overflow5">
-				{{courseInfo.teacherIntro?courseInfo.teacherIntro:'未知'}}
+				<rich-text :nodes="courseInfo.teacherIntro"></rich-text>
+				<!-- {{courseInfo.teacherIntro?courseInfo.teacherIntro:'未知'}} -->
 			</view>
 		</view>
 		<view class="next-step">
@@ -51,65 +53,123 @@
 	} from '@/commons/ResponseTips.js'
 	import {
 		getSystemInfo,
-		getUserLoginInfo
+		getUserLoginInfo,
+		getCountDown
 	} from '@/utils/util.js'
 
 	export default {
 		data() {
 			return {
-				courseInfo:{}
+				courseInfo: {},
+				timer: null,
+				countdownStr: '',
+				count: 0
 			};
 		},
 		components: {
 			nextPageBtn
 		},
 		onLoad(options) {
-			this.courseInfo = options.scanres
+			this.courseInfo = uni.getStorageSync('scanData')
+		},
+		onShow() {
+			this.countDown()
+		},
+		onUnload() {
+			clearInterval(this.timer)
+			this.timer = null
+		},
+		onHide() {
+			clearInterval(this.timer)
+			this.timer = null
 		},
 		methods: {
 			// 下一步
 			nextStep() {
-
-
-				// 人脸采集
-				useFacePlugin({
-					count: 0,
-					random: true
-				}).then((face) => {
-					uni.showLoading({
-						title: "验证中..."
+				console.log('counttttt,', this.count)
+				if (this.count > 600) {
+					Toast({
+						title: '还没有到签入时间!'
 					})
-					// 人脸验证
-					faceVerification(face).then(resp => {
-						uni.hideLoading()
-						console.log('人脸验证：',resp)
-						if (resp.data.code == 200) {
-							uni.navigateTo({
-								url: './signInPage?scanResult='+this.courseInfo
-							})
-						} else {
+				} else if (this.count <= 0) {
+					Toast({
+						title: '签入时间已过！不能签入'
+					})
+				} else {
+					uni.navigateTo({
+						url: './signInPage'
+					})
+				}
+				// 人脸采集
+				// useFacePlugin({
+				// 	count: 0,
+				// 	random: true
+				// }).then((face) => {
+				// 	uni.showLoading({
+				// 		title: "验证中..."
+				// 	})
+				// 	// 人脸验证
+				// 	faceVerification(face).then(resp => {
+				// 		uni.hideLoading()
+				// 		console.log('人脸验证：',resp)
+				// 		if (resp.data.code == 200) {
+				// 			uni.navigateTo({
+				// 				url: './signInPage?scanResult='+this.courseInfo
+				// 			})
+				// 		} else {
+				// 			uni.showModal({
+				// 				title: "识别错误",
+				// 				content: resp.data.msg + '。请重试',
+				// 				cancelText: "取消",
+				// 				confirmText: "再次重试",
+				// 				success: (res) => {
+				// 					if (res.confirm) {
+				// 						this.nextStep()
+				// 					}
+				// 				}
+				// 			})
+				// 		}
+				// 	}, err => {
+				// 		uni.hideLoading()
+				// 		request_err(err, '验证失败')
+				// 	})
+				// }, (err) => {
+				// 	console.error('识别失败', err)
+				// 	request_err(err, '人脸采集失败。')
+				// })
+			},
+
+			// 倒计时
+			countDown() {
+				let start = new Date(this.courseInfo.startTime).getTime()
+				let now = new Date().getTime()
+
+				let time = Math.floor(start / 1000) - Math.floor(now / 1000)
+				if (time > 0) {
+					this.timer = setInterval(() => {
+						if (time <= 0) {
+							clearInterval(this.timer)
+							this.timer = null
 							uni.showModal({
-								title: "识别错误",
-								content: resp.data.msg + '。请重试',
-								cancelText: "取消",
-								confirmText: "再次重试",
-								success: (res) => {
+								title: '提示',
+								content: '培训已经开始，是否进行签到？',
+								success: res => {
 									if (res.confirm) {
 										this.nextStep()
 									}
 								}
 							})
+							return
 						}
-					}, err => {
-						uni.hideLoading()
-						request_err(err, '验证失败')
-					})
-				}, (err) => {
-					console.error('识别失败', err)
-					request_err(err, '人脸采集失败。')
-				})
-			},
+						time--
+						this.count = time
+						this.countdownStr = getCountDown(time)
+					}, 1000)
+				} else {
+					this.countdownStr = '培训已开始'
+				}
 
+			}
 		}
 	}
 </script>

@@ -120,11 +120,13 @@ export function faceLogin(res) {
 export function faceVerification(face) {
 	let phone = uni.getStorageSync('userBasicInfo').mobile
 	let platform = getSystemInfo().platform
+	let u = getUserLoginInfo('userNo')
+	console.log('uuuuser,',u)
 	let datas = {
 		base64: face,
 		clientType: platform == 'android' ? 2 : 3,
 		mobile: phone,
-		userNo: userNum
+		userNo: u
 	}
 	return new Promise((resolve, reject) => {
 		httpRequest({
@@ -269,7 +271,7 @@ export function signInOut(params){
 	params.userId = userNum
 	return new Promise((resolve,reject)=>{
 		httpRequest({
-			url:'/user/api/tbSignon/save',
+			url:'/course/auth/face/sign/log/signSave',
 			method:'post',
 			data:params,
 			success:res=>{
@@ -278,7 +280,7 @@ export function signInOut(params){
 			fail:err=>{
 				request_err(err,'签到失败')
 			}
-		},1)
+		},2)
 	})
 }
 

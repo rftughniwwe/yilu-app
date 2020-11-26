@@ -125,6 +125,10 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
+	import {
+		setUserInfomation
+	} from '@/commons/api/apis.js'
+	const app = getApp().globalData
 	export default {
 		data() {
 			return {
@@ -144,7 +148,6 @@
 				flag2: false,
 				genderData: ['男', '女'],
 				nationData: [],
-				infomation: {}
 			};
 		},
 		components: {
@@ -154,7 +157,6 @@
 		onLoad(options) {
 			this.text = `请上传${options.name || '本人'}的身份证正反面照片`
 			this.nationData = NATION
-			this.infomation = options.infoMation
 			this.queryIdCardInfo()
 		},
 		methods: {
@@ -189,7 +191,7 @@
 								this.flag1 = _data.idcardFront ? true : false
 								this.flag2 = _data.idcardBack ? true : false
 								this.cardName = _data.name;
-								this.cardGender = _data.sex;
+								this.cardGender = _data.sex==1?'男':'女';
 								this.cardNation = _data.nation;
 								this.cardBirthday = _data.dateBirth;
 								this.cardId = _data.idcardNum;
@@ -228,7 +230,8 @@
 				}
 				console.log('保存信息:', datas)
 				uni.showLoading({
-					title: '保存中...'
+					title: '保存中...',
+					mask:true
 				})
 				httpRequest({
 					url: '/user/api/tbSysIdCard/save',
@@ -263,7 +266,7 @@
 					},
 					method: 'POST',
 					success: res => {
-						console.log('查询成功：', res)
+						console.log('查询成功zz：', res)
 						if (res.data.code == 200) {
 							this.setCompany(res.data.data)
 						} else {
@@ -278,9 +281,25 @@
 
 			// 设置服务单位
 			setCompany(data) {
-				let info = this.infomation
-				info.compId = data.compId
-
+				if(!data.compId){
+					uni.showModal({
+						title:'提示',
+						content:'您没有所属的服务单位，请联系公司添加。',
+						cancelText:'退出',
+						confirmText:'确定',
+						success:res=>{
+							if(res.cancel){
+								// #ifdef APP-PLUS
+									plus.runtime.quit()
+								// #endif
+							}
+						}
+					})
+					return
+				}
+				console.log('zzzzzzz',data)
+				let info = app.userBasicInfo
+				console.log('123123123',info)
 				setUserInfomation(info).then(res => {
 					if (res.data.code == 200) {
 

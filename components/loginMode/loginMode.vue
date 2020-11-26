@@ -80,7 +80,7 @@
 						}else {
 							uni.showModal({
 								title:"识别失败",
-								content:resp.data.msg+'。请重试',
+								content:resp.data.msg,
 								cancelText:"取消",
 								confirmText:"再次重试",
 								success:(res)=>{

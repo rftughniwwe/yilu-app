@@ -20,38 +20,44 @@
 		<view v-show="tab==1" class="sign-wrap">
 			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
 			<view class="top-content">
-				<view class="subtitle flex-row-start">
-					<image src="../../static/mini-time.png" mode=""></image>
-					<view class="time zzz">
-						{{courseInfo.beginTime?courseInfo.beginTime:'未知'}}
+				<view class="subtitle">
+					<view class="flex-row-start">
+						<image src="../../static/mini-time.png" mode=""></image>
+						<view class="time zzz">
+							开始时间：{{signDatas.startTime?signDatas.startTime:'未知'}}
+						</view>
 					</view>
-					<image src="../../static/mini-course.png" mode=""></image>
-					<view class="time">
-						当前课程：{{courseInfo.title?courseInfo.title:'未知'}}
+					<view class="flex-row-start" style="margin-top: 20rpx;">
+						<image src="../../static/mini-course.png" mode=""></image>
+						<view class="time">
+							当前课程：{{signDatas.courseName?signDatas.courseName:'未知'}}
+						</view>
 					</view>
+
 				</view>
 				<view class="sign-content flex-around">
 					<view class="sign-in" @click="sign(0)">
 						<view class="sign-title">
-							签入时间：09:00
+							签入时间：{{signInTime?signInTime:'未签入'}}
 						</view>
 						<view class="sign-img">
-							<!-- <image src="../../static/checkedin.png" mode=""></image> -->
-							<image src="../../static/signin.png" mode=""></image>
+							<image v-if='noSign1' src="../../static/signin.png" mode=""></image>
+							<image v-if='!noSign1' src="../../static/checkedin.png" mode=""></image>
 						</view>
 						<view class="sign-tips">
-							未签入
+							{{noSign1?'未签入':'已签入'}}
 						</view>
 					</view>
-					<view class="sign-in">
-						<view class="sign-title" @click="sign(1)">
-							签出时间：19:00
+					<view class="sign-in" @click="sign(1)">
+						<view class="sign-title">
+							签出时间：{{signOutTime?signOutTime:'未签出'}}
 						</view>
 						<view class="sign-img">
-							<image src="../../static/signin.png" mode=""></image>
+							<image v-if='noSign2' src="../../static/signin.png" mode=""></image>
+							<image v-if='!noSign2' src="../../static/checkedin.png" mode=""></image>
 						</view>
 						<view class="sign-tips">
-							未签出
+							{{noSign2?'未签出':'已签出'}}
 						</view>
 					</view>
 				</view>
@@ -65,9 +71,9 @@
 					</view>
 				</view>
 				<view class="address">
-					{{courseInfo.address?courseInfo.address:'未知'}}
+					{{signDatas.addr?signDatas.addr:'未知'}}
 				</view>
-				<map :latitude="121.5249" :longitude="31.1310" class="mapz"></map>
+				<map :latitude="signDatas.lat" :longitude="signDatas.lon" class="mapz"></map>
 			</view>
 		</view>
 
@@ -174,7 +180,9 @@
 	import Toast from '@/commons/showToast.js'
 	import useFacePlugin from '../../commons/faceplugin.js'
 	import userName from '@/components/userName/userName.vue'
-
+	import {
+		base64ToPath
+	} from '../../js_sdk/gsq-image-tools/image-tools/index.js'
 	import {
 		faceVerification,
 		getSignOnDateTime,
@@ -189,22 +197,25 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
+	import {
+		uploadImage
+	} from '@/utils/httpRequest.js'
 
 	export default {
 		data() {
 			return {
 				tab: 1,
-				courseInfo: {},
 				isFullScreen: false,
 				addressTxt: '',
 				// 目标经度 121.512806,31.105032
-				targetLongitude: 121.512806,
-				// 目标纬度
-				targetLatitude: 31.105032,
-				range: 500,
 				isInRange: false,
 				timer: null,
-				tongJiSign: []
+				tongJiSign: [],
+				signDatas: {},
+				noSign1: true,
+				noSign2: true,
+				signInTime: '',
+				signOutTime: ''
 			};
 		},
 		components: {
@@ -214,10 +225,7 @@
 		},
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			this.courseInfo = options.scanResult
-			this.targetLongitude = options.scanResult.longtitude ? options.scanResult.longtitude : 121.512806
-			this.targetLatitude = options.scanResult.latitude ? options.scanResult.latitude : 31.105032
-
+			this.signDatas = uni.getStorageSync('scanData')
 			this.getSignInData()
 			// 每十秒获取一次位置信息
 			this.timer = setInterval(() => {
@@ -225,6 +233,7 @@
 			}, 30000)
 		},
 		onShow() {
+
 			this.getLocationFun()
 		},
 		onPullDownRefresh() {
@@ -274,15 +283,15 @@
 			calcLocation(res) {
 				let curLong = res.longitude
 				let curLati = res.latitude
-				let longAbs = Math.abs(curLong - this.targetLongitude)
-				let latiAbs = Math.abs(curLati - this.targetLatitude)
+				let longAbs = Math.abs(curLong - this.signDatas.lon)
+				let latiAbs = Math.abs(curLati - this.signDatas.lat)
 				if (longAbs >= 1 || latiAbs >= 1) {
 					this.isInRange = false
 					return
 				}
 				let lntDegree = (longAbs / 0.0001) * 11;
 				let latDegree = (latiAbs / 0.0001) * 10;
-				if (lntDegree > this.range || latDegree > this.range) {
+				if (lntDegree > this.signDatas.limit || latDegree > this.signDatas.limit) {
 					this.isInRange = false
 					return
 				}
@@ -305,7 +314,8 @@
 
 			// 签入签出
 			sign(num) {
-				// 1签入 2签出
+				let that = this
+				// 0签入 1签出
 				if (!this.isInRange) {
 					Toast({
 						title: '未进入打卡范围'
@@ -315,74 +325,99 @@
 				let address = uni.getStorageSync('userAddress')
 
 				let params = {
-					"chapterdId": 0,
-					"courseId": 0,
-					"coursePeriodId": 0,
-					"numEvent": "",
-
-					"signonAddr": this.addressTxt,
+					"chapterdId": this.signDatas.chapterList[0].chapterId,
+					"compId": uni.getStorageSync('userBasicInfo').compId,
+					"refId": this.signDatas.courseId,
+					"coursePeriodId": this.signDatas.periodList[0].periodId,
+					"numEvent": this.signDatas.courseName,
+					"refName": this.signDatas.courseName,
+					"place": this.addressTxt,
 					"signonApp": 0,
-					"signonLat": address.latitude,
-					"signonLon": address.longitude,
+					"latitude": address.latitude,
+					"longitude": address.longitude,
 					"signonTime": getCurrentDate('month'),
 					"signonType": num,
+					"startTime": this.signDatas.startTime,
+					"endTime": this.signDatas.endTime,
+					"courseType": '4',
+					"faceContrasResult": 'success',
+					"userNo": getUserLoginInfo('userNo')
 				}
 
-				if (num == 1) {
-					// 签入
-					signInOut(params).then(res => {
-						console.log('签到：', res)
-						if (res.data.code == 200) {
-							Toast({
-								title: '签到成功'
-							})
-						} else {
-							request_success(res)
-						}
+
+				// 签入签出
+				// 人脸采集
+				useFacePlugin({
+					count: 0,
+					random: true
+				}).then((res) => {
+
+					uni.showLoading({
+						title: "验证中..."
 					})
 
-				} else {
-					// 签出
+					// base64转图片
+					base64ToPath(res).then(path => {
 
-					// 人脸采集
-					useFacePlugin({
-						count: 0,
-						random: true
-					}).then((res) => {
-
-						uni.showLoading({
-							title: "验证中..."
-						})
-
-						// 人脸验证
-						faceVerification(res).then(resp => {
-							uni.hideLoading()
-							console.log('人脸验证成功：', resp)
-							if (resp.data.code == 200) {
-
-								signInOut(params).then(res => {
-									console.log('签出：', res)
-									if (res.data.code == 200) {
-										Toast({
-											title: '签出成功'
-										})
-									} else {
-										request_success(res)
-									}
-								})
-
+						// 图片上传到阿里云
+						uploadImage('/course/api/upload/pic', 'picFile', path, {}).then(response => {
+							let img_data = JSON.parse(response.data)
+							if (img_data.code == 200) {
+								params.userImage = img_data.data
 							} else {
-								request_success(res)
+								Toast({
+									title: '上传人脸图片失败'
+								})
+								return
 							}
-						}, err => {
-							uni.hideLoading()
-							request_err(err, '验证失败')
+
+							console.log('签入签出参数：', params)
+
+							// 人脸验证
+							faceVerification(res).then(resp => {
+								uni.hideLoading()
+								console.log('人脸验证成功：', resp)
+
+								if (resp.data.code == 200) {
+
+									signInOut(params).then(_res => {
+										console.log('签入签出：', _res)
+										if (_res.data.code == 200) {
+											if (num == 0) {
+												that.noSign1 = false
+												that.signInTime = getCurrentDate('onlyHours')
+											} else if (num == 1) {
+												that.noSign2 = false
+												that.signOutTime = getCurrentDate('onlyHours')
+											}
+											Toast({
+												title: num == 0 ? '签入成功' : '签出成功',
+												icon: 'success'
+											})
+										} else {
+											request_success(_res)
+										}
+									})
+
+								} else {
+									request_success(resp)
+								}
+							}, err => {
+								uni.hideLoading()
+								request_err(err, '验证失败')
+							})
+
+						}, error => {
+							console.log('上传人脸图片失败：', error)
 						})
-					}, (err) => {
-						console.error('识别失败', err)
-						request_err(err, '人脸采集失败。')
+
+					}).catch(error => {
+						console.error('转换失败', error)
 					})
-				}
+
+				}, (err) => {
+					request_err(err, '人脸采集失败。')
+				})
 				// 请求
 			},
 
@@ -507,7 +542,7 @@
 
 	.mapz {
 		width: 690rpx;
-		height: 300rpx;
+		height: 400rpx;
 	}
 
 	.tab-bar {

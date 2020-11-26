@@ -69,6 +69,8 @@
 		httpRequest
 	} from '../../utils/httpRequest.js'
 	
+	const app = getApp().globalData
+	
 	export default {
 		data() {
 			return {
@@ -77,6 +79,7 @@
 				phoneNum: '',
 				company: '',
 				companyArr: [],
+				compId:''
 			};
 		},
 		components: {
@@ -89,7 +92,6 @@
 			// 添加或修改个人基本信息
 			goNextPager() {
 				let obj = {
-					compId: this.compId,
 					mobile: this.phoneNum,
 					nickname: this.name,
 					sex: this.gender,
@@ -119,9 +121,9 @@
 					uni.hideLoading()
 					if (res.data.code == 200) {
 						console.log('基本信息修改成功：', res)
-						
+						app.userBasicInfo = obj
 						uni.navigateTo({
-							url: '../documentRegistration/idCardRegister?infoMation='+obj
+							url: '../documentRegistration/idCardRegister'
 						})
 					} else {
 						console.log('添加错误', res)
