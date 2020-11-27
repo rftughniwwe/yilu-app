@@ -109,17 +109,17 @@
 				let that = this
 				let userInfoComplete = uni.getStorageSync('userCompleteInfo');
 				console.log('userinfo',userInfoComplete)
-				if(userInfoComplete == 1){
-					// 1：已经完善，跳主页
-					uni.reLaunch({
-						url: '../tabBar/index'
-					})
-				}else if(userInfoComplete == 2){
-					// 2：未完善，需要完善，直接跳信息完善页面
-					uni.navigateTo({
-						url:'../../pages/fillInfomation/fillInfomation'
-					})
-				}else {
+				// if(userInfoComplete == 1){
+				// 	// 1：已经完善，跳主页
+				// 	uni.reLaunch({
+				// 		url: '../tabBar/index'
+				// 	})
+				// }else if(userInfoComplete == 2){
+				// 	// 2：未完善，需要完善，直接跳信息完善页面
+				// 	uni.navigateTo({
+				// 		url:'../../pages/fillInfomation/fillInfomation'
+				// 	})
+				// }else {
 					// 查不到缓存就请求
 					getQualification({
 						userid: num
@@ -151,7 +151,7 @@
 					}, err => {
 						console.log('查询信息是否完善失败：', err)
 					})
-				}
+				// }
 			},
 			
 			// 短信登录

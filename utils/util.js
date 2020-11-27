@@ -163,11 +163,11 @@ function toBase64(path, rallback) {
 function getCurrentDate(str, delimiter, type) {
 	let date = new Date()
 	let year = date.getFullYear()
-	let month = date.getMonth() + 1
-	let day = date.getDay()
-	let hours = date.getHours()
-	let min = date.getMinutes()
-	let sec = date.getSeconds()
+	let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
+	let day = date.getDate()() < 10 ? '0' + date.getDate()() : date.getDate()()
+	let hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+	let min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+	let sec = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
 	let delimit = delimiter ? delimiter : '-'
 
 	if (str === 'year') {
@@ -180,7 +180,7 @@ function getCurrentDate(str, delimiter, type) {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}`
 	} else if (str === 'sec') {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
-	}else if(str === 'onlyHours'){
+	} else if (str === 'onlyHours') {
 		return `${hours}:${min}`
 	} else {
 		return `${year}${delimit}${month}${delimit}${day} ${hours}:${min}:${sec}`
@@ -249,17 +249,40 @@ function getLearningTypeInfo() {
 
 // 倒计时
 function getCountDown(time) {
-	
+
 	let times = time
 	// 小时
-	let hours = Math.floor((times / 3600)) < 10 ? '0' + Math.floor((times / 3600)): Math.floor((times / 3600))
-	
+	let hours = Math.floor((times / 3600)) < 10 ? '0' + Math.floor((times / 3600)) : Math.floor((times / 3600))
+
 	// 分钟
-	let min = Math.floor(times / 60)%60 < 10 ? '0' + Math.floor(times / 60)%60 : Math.floor(times / 60)%60
+	let min = Math.floor(times / 60) % 60 < 10 ? '0' + Math.floor(times / 60) % 60 : Math.floor(times / 60) % 60
 	// 秒
 	let second = Math.floor(times % 60) < 10 ? '0' + Math.floor(times % 60) : Math.floor(times % 60)
 
 	return `${hours}:${min}:${second}`
+}
+
+// 获取日期和星期
+function dateWeek(){
+	let date = new Date()
+	let year = date.getFullYear()
+	let mon = (date.getMonth()+1)<10?'0'+(date.getMonth()+1)<10:date.getMonth()+1
+	let day = date.getDate()<10?'0'+date.getDate():date.getDate()
+	let mapping = {
+		'0':'日',
+		'1':'一',
+		'2':'二',
+		'3':'三',
+		'4':'四',
+		'5':'五',
+		'6':'六'
+	}
+	let week = mapping[date.getDay()]
+	let obj = {
+		'date':`${year}年${mon}/${day}日`,
+		'week':`星期${week}`
+	}
+	return obj
 }
 
 module.exports = {
@@ -278,5 +301,6 @@ module.exports = {
 	LEARNING_MODE_DATA,
 	LIVE_STATUS,
 	getLearningTypeInfo,
-	getCountDown
+	getCountDown,
+	dateWeek
 }

@@ -96,17 +96,17 @@
 									userToken: res.data.data.token
 								})
 								
-								let userInfoComplete = uni.getStorageSync('userCompleteInfo');
+								// let userInfoComplete = uni.getStorageSync('userCompleteInfo');
 								
-								if(userInfoComplete == 1){
-									uni.reLaunch({
-										url: '../tabBar/index'
-									})
-								}else if(userInfoComplete == 2){
-									uni.reLaunch({
-										url:`./faceLogin?userPhone=${that.phone}`
-									})
-								}else {
+								// if(userInfoComplete == 1){
+								// 	uni.reLaunch({
+								// 		url: '../tabBar/index'
+								// 	})
+								// }else if(userInfoComplete == 2){
+								// 	uni.reLaunch({
+								// 		url:`./faceLogin?userPhone=${that.phone}`
+								// 	})
+								// }else {
 									getQualification({
 										userid: res.data.data.userNo
 									}).then(respones => {
@@ -135,7 +135,7 @@
 									}, err => {
 										console.log('查询信息是否完善失败：', err)
 									})
-								}
+								// }
 							} else {
 								console.log('登录错误：', res)
 								uni.showToast({

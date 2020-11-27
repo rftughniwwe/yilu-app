@@ -278,6 +278,7 @@ export function signInOut(params){
 				resolve(res)
 			},
 			fail:err=>{
+				uni.hideLoading()
 				request_err(err,'签到失败')
 			}
 		},2)
@@ -300,4 +301,22 @@ export function setUserInfomation(obj){
 			}
 		},1)
 	})
+}
+
+// 获取签到回显数据
+export function getOldSignData(datas){
+	return new Promise((resolve)=>{
+		httpRequest({
+			url:'/course/auth/face/sign/log/signlist',
+			method:'POST',
+			data:datas,
+			success:res=>{
+				resolve(res)
+			},
+			fail:err=>{
+				request_err(err)
+			}
+		},2)
+	})
+	
 }

@@ -86,20 +86,20 @@
 		methods: {
 			// 下一步
 			nextStep() {
-				console.log('counttttt,', this.count)
-				if (this.count > 600) {
-					Toast({
-						title: '还没有到签入时间!'
-					})
-				} else if (this.count <= 0) {
-					Toast({
-						title: '签入时间已过！不能签入'
-					})
-				} else {
-					uni.navigateTo({
-						url: './signInPage'
-					})
-				}
+				// if (this.count > 600) {
+				// 	Toast({
+				// 		title: '还没有到签入时间!'
+				// 	})
+				// } else if (this.count <= 0) {
+				// 	Toast({
+				// 		title: '签入时间已过！不能签入'
+				// 	})
+				// } else {
+					
+				// }
+				uni.navigateTo({
+					url: './signInPage'
+				})
 				// 人脸采集
 				// useFacePlugin({
 				// 	count: 0,
@@ -166,7 +166,13 @@
 						this.countdownStr = getCountDown(time)
 					}, 1000)
 				} else {
-					this.countdownStr = '培训已开始'
+					let end = new Date(this.courseInfo.endTime).getTime()
+					let now = new Date().getTime()
+					if (now > end) {
+						this.countdownStr = '培训已经结束'
+					} else {
+						this.countdownStr = '培训已开始'
+					}
 				}
 
 			}

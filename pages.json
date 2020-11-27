@@ -1,6 +1,14 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/onSiteTraining/signInPage",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		
+		},
+		{
 			// 默认进入的页面
 			"path": "pages/login/normalLogin",
 			"style": {
@@ -44,14 +52,6 @@
 		
 		},
 		
-		{
-			"path": "pages/onSiteTraining/signInPage",
-			"style": {
-				"enablePullDownRefresh": true,
-				"navigationStyle": "custom"
-			}
-		
-		},
 		{
 			"path": "pages/fillInfomation/fillInfomation",
 			"style": {
