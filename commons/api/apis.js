@@ -160,8 +160,8 @@ export function getUserBasicInfo(num) {
 }
 
 // 获取身份证信息
-export function getIdCardInfo() {
-	let usernum = getUserLoginInfo('userNo')
+export function getIdCardInfo(num) {
+	let usernum = num || getUserLoginInfo('userNo')
 	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: '/user/api/tbSysIdCard/view?userid=' + usernum,

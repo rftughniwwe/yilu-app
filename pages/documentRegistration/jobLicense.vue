@@ -64,7 +64,9 @@
 					</view>
 				</view>
 				<view class="next">
-					<button class="done-btn none-border" @click="submit">完成</button>
+					<!-- <button class="done-btn" @click="submit">完成</button> -->
+					<nextPageBtn @goNextPage='submit' text='完成' :isSolid='true'></nextPageBtn>
+					<nextPageBtn @goNextPage='directNextPage' text='跳过'></nextPageBtn>
 				</view>
 			</view>
 			
@@ -174,9 +176,15 @@
 							uni.hideLoading()
 							console.log('保存成功：',res)
 							if(res.data.code == 200){
-								uni.switchTab({
-									url:'../tabBar/index'
+								Toast({
+									title:'保存成功',
 								})
+								setTimeout(()=>{
+									uni.switchTab({
+										url:'../tabBar/index'
+									})
+								},1500)
+								
 							}else {
 								Toast({
 									title:res.data.msg
@@ -245,6 +253,12 @@
 					qualificationSubjecton:this.cardjobType,
 					drivingFront:this.tempPath_upload
 				}
+			},
+		
+			directNextPage(){
+				uni.switchTab({
+					url:'../tabBar/index'
+				})
 			},
 		}
 	}

@@ -1,13 +1,13 @@
 <template>
 	<!--pages/course/list/list.wxml-->
 	<view>
-		<!-- <view class="search_box">
+		<view class="search_box">
 			<view class="p_relative center_box">
 				<image class="search_icon" src=""></image>
 				<view class="search_input" @tap="goSearch">请输入搜索内容</view>
 			</view>
-		</view> -->
-		<!-- <class-list class="classList" @triggerchange="selectCB" :showPrice="showPrice" :filterData="map"></class-list> -->
+		</view>
+		<class-list class="classList" @triggerchange="selectCB" :showPrice="showPrice" :filterData="map"></class-list>
 		<view class="course_list">
 			<view v-for="(item, index) in courseList" :key="index" @tap="goDetail" :data-id="item.id" data-type class="result_item">
 				<view class="img_box">
@@ -119,11 +119,11 @@
 		onShareAppMessage: function() {},
 		methods: {
 			
-			// goSearch: () => {
-			// 	uni.navigateTo({
-			// 		url: '../search/search'
-			// 	});
-			// },
+			goSearch: () => {
+				uni.navigateTo({
+					url: '../search/search'
+				});
+			},
 
 			// 跳转课程详情
 			goDetail(e) {
@@ -227,6 +227,7 @@
 	}
 
 	.course_list {
+		margin-top: 180rpx;
 	}
 
 	.result_item {

@@ -122,6 +122,7 @@
 					if (res.data.code == 200) {
 						console.log('基本信息修改成功：', res)
 						app.userBasicInfo = obj
+						uni.setStorageSync('loginUserBasicInfo')
 						uni.navigateTo({
 							url: '../documentRegistration/idCardRegister'
 						})

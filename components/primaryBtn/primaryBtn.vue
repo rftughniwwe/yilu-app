@@ -23,7 +23,6 @@
 
 <style lang="scss">
 .main-btn{
-	// border-radius: $uni-border-radius-half-circle;
 	color: #FFFFFF;
 	background-color: $uni-color-primary;
 	width: 100%;

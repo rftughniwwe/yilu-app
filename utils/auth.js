@@ -115,7 +115,7 @@ const login = () => {
 			})
 		} else {
 			uni.navigateTo({
-				url: '/pages/login/login'
+				url: '/pages/login3/login'
 			});
 		}
 

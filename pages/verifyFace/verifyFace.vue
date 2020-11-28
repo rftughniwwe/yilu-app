@@ -33,6 +33,14 @@
 <script>
 	// pages/verifyFace/verifyFace.js
 	import * as auth from '@/commons/api/user.js'
+	import {
+		getIdCardInfo
+	} from '@/commons/api/apis.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	
 	export default {
 		name: "verifyFace",
 		data() {
@@ -46,7 +54,8 @@
 				startCamera: 0,
 				num: 0,
 				time: -1,
-				bgc: '#fff'
+				bgc: '#fff',
+				idCardinfo:{}
 			}
 		},
 		onLoad: function(options) {
@@ -91,14 +100,28 @@
 				this.userInfo = uni.getStorageSync('userInfo')
 				fn();
 			}
-			
+			this.getIDCardInfo()
 			
 		},
 		methods: {
-			
+			// 获取身份证信息
+			getIDCardInfo(){
+				getIdCardInfo().then(res=>{
+					console.log('获取身份证信息：',res)
+					if(res.data.code == 200){
+						this.idCardinfo.id = res.data.data.idcardNum
+						this.idCardinfo.name = res.data.data.name
+					}else {
+						request_success(res)
+					}
+				},err=>{
+					request_err(err,'获取身份失败')
+				})
+			},
 			toError() {
 				uni.$emit("verifyFaceErr:" + this.refId)
 			},
+			
 			async getData() {
 				uni.showLoading({
 					title: '加载中...',
@@ -107,6 +130,7 @@
 				let faceData = await auth.getFaceData({
 					userNo: uni.getStorageSync('userStorage').userNo
 				})
+				console.log('获取的身份证信息：',this.idCardinfo)
 				const orderNo = (new Date).getTime();
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
@@ -117,8 +141,8 @@
 					data: {
 						webankAppId: faceData.wbappid,
 						orderNo: orderNo,
-						name: '郭昶',
-						idNo: '360730199802272032',
+						name: this.idCardinfo.name,
+						idNo: this.idCardinfo.id,
 						userId: userId,
 						version: '1.0.0',
 						sign: nonce
@@ -166,19 +190,19 @@
 								manualCookie: true //是否由SDK内部处理sdk网络请求的cookie
 							}
 						}, result => {
-							console.debug('result={}', result)
-							// if(result.scene != 'wb_face_callback_verify_result' || (result.res && !result.res.success)) {
-							// 	uni.showModal({
-							// 	    title: '提示',
-							// 		showCancel: false,
-							// 	    content: '人脸验证失败！请重新验证或者验证身体证号和真实名字是否正确',
-							// 	    success: function (res) {
+							console.debug('人脸验证：', result)
+							if(result.scene != 'wb_face_callback_verify_result' || (result.res && !result.res.success)) {
+								uni.showModal({
+								    title: '提示',
+									showCancel: false,
+								    content: '人脸验证失败！请重新验证或者验证身体证号和真实名字是否正确',
+								    success: function (res) {
 										
-							// 		}
-							// 	});
-							// 	this.toError();
-							// 	return;
-							// }
+									}
+								});
+								this.toError();
+								return;
+							}
 							
 							let fn = () => {
 								uni.hideLoading()
@@ -192,16 +216,6 @@
 								});
 							}
 							if (this.type == 2) {
-								console.log({
-									userNo: this.userInfo.userNo,
-									signType: this.signType,
-									refId: this.refId,
-									longitude: this.longitude,
-									latitude: this.latitude,
-									place: this.place,
-									userImageBase64: result.res.userImageString,
-									faceContrasResult: 'Success',
-								})
 								auth.faceSignLog({
 									userNo: this.userInfo.userNo,
 									signType: this.signType,

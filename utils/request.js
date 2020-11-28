@@ -64,20 +64,17 @@ const request = (params, cb) => {
             'key': 'userInfo',
             'data': null
           });
-          // #ifdef MP-WEIXIN
-          login();
-          return
-          // #endif
 		  uni.showToast({
-		    title: result.msg,
-		    icon: 'none'
+		    title: '登录过期',
+		    icon: 'none',
+			duration:1500
 		  });
-          logout();
 		  setTimeout(()=>{
-			  login();
-		  })
-		  
-		  console.log(result);
+			  uni.navigateTo({
+			  	url:'/pages/login3/login'
+			  })
+		  },1500)
+		  return
         } else if(result.code == 514) {
 			uni.showToast({
 				title: '请输入真实的名字和身份证号码',

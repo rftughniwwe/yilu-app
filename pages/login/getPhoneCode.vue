@@ -32,7 +32,9 @@
 		getRandomDigits,
 		setAppStorage
 	} from '../../utils/util.js'
-
+	import {
+		getIdCardInfo
+	} from '@/commons/api/apis.js'
 
 	export default {
 		components: {
@@ -117,13 +119,12 @@
 				// 		url:`./faceLogin?userPhone=${that.phoneNum}`
 				// 	})
 				// }else {
-					getQualification({
-						userid: num
-					}).then(respones => {
+					getIdCardInfo(num).then(respones => {
 						console.log('查询信息：', respones)
 						if (respones.data.code == 200) {
-							if(respones.data.data && respones.data.data.qualificationId && respones.data.data.drivingFront && respones.data.data.qualificationSubjecton){
-								// 1：已经完善，跳主页
+							let _data = respones.data.data
+							if(_data && _data.name && _data.drivingFront.idcardNum){
+								// 1：已经完善了身份信息，跳主页
 								uni.setStorageSync('userCompleteInfo', 1)
 								uni.reLaunch({
 									url: '../tabBar/index'

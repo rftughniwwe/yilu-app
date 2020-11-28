@@ -29,13 +29,13 @@
 			// #ifdef APP-PLUS
 			// 已登录并且完善了用户资料
 			if (uni.getStorageSync('userStorage').userNo && uni.getStorageSync('userCompleteInfo') == 1) {
-				// plus.navigator.closeSplashscreen()
-				uni.switchTab({
-					url: 'pages/tabBar/index'
-				})
-				setTimeout(() => {
-					plus.navigator.closeSplashscreen()
-				}, 1000)
+				plus.navigator.closeSplashscreen()
+				// uni.switchTab({
+				// 	url: 'pages/tabBar/index'
+				// })
+				// setTimeout(() => {
+				// 	plus.navigator.closeSplashscreen()
+				// }, 1000)
 			} else {
 				plus.navigator.closeSplashscreen()
 			}

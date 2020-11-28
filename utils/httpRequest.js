@@ -165,6 +165,23 @@ function uploadImage(url, fileType = 'picFile', filePath, params) {
 	})
 }
 
+// 请求二维码地址
+function requestQrCodeUrl(url){
+	return new Promise((resolve,reject)=>{
+		uni.request({
+			url:url,
+			method:'GET',
+			success: (res) => {
+				resolve(res)
+			},
+			fail: (err) => {
+				reject(err)
+			}
+		})
+	})
+	
+}
+
 module.exports = {
 	httpRequest,
 	getAcceessToken,
@@ -178,5 +195,6 @@ module.exports = {
 	BASE_URL,
 	OCR_Request,
 	uploadImage,
-	getQualification
+	getQualification,
+	requestQrCodeUrl
 }

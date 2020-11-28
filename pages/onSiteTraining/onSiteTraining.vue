@@ -27,6 +27,15 @@
 </template>
 
 <script>
+	import {
+		httpRequest,
+		requestQrCodeUrl
+	} from '@/utils/httpRequest.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	
 	export default {
 		data() {
 			return {};
@@ -48,9 +57,9 @@
 						"teacher": "李老师", 				//讲师姓名				
 						"name": "测试123123", 				//培训名称
 						"limit": 500, 						//打卡限制范围
-						"startTime": "2020-11-27 16:10:00", //培训开始时间 
+						"startTime": "2020-11-28 15:42:00", //培训开始时间 
 						"id": 10, 							//培训ID
-						"endTime": "2020-11-27 17:00:00", 	//培训结束时间 
+						"endTime": "2020-11-28 15:35:00", 	//培训结束时间 
 						"periodList": [ 					//课时集合ID
 							{
 								"periodId": "1321284834970796034", //课时id
@@ -99,9 +108,17 @@
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
 					success: res => {
-						uni.setStorageSync('scanData',obj.data)
-						uni.navigateTo({
-							url: './courseDetails'
+						uni.showLoading({
+							title:'解析中...'
+						})
+						requestQrCodeUrl(res.result).then((res)=>{
+							uni.hideLoading()
+							uni.setStorageSync('scanData',res.data.data)
+							console.log('解析结果',res)
+							
+						},(err)=>{
+							uni.hideLoading()
+							request_err(err,'解析二维码失败')
 						})
 					},
 					fail: err => {
@@ -117,8 +134,11 @@
 			},
 			// 前往在线考试
 			goOnlineExam() {
+				// uni.navigateTo({
+				// 	url: './examBegin'
+				// })
 				uni.navigateTo({
-					url: './examBegin'
+					url:'../exam/list'
 				})
 			}
 		}

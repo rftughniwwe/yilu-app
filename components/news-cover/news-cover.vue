@@ -11,7 +11,7 @@
 			<view class="form-time flex-between">
 				<!-- <image v-if="datas.isTop" class="top-img" src="../../static/top.png" mode=""></image> -->
 				<image class="head-user-img" :src="datas.bloggerUserImg" mode=""></image>
-				<text>{{datas.bloggerNickname}}</text>
+				<text>{{datas.bloggerNickname?datas.bloggerNickname:'未知用户'}}</text>
 			</view>
 		</view>
 		<!-- <view v-if="position==='text'" class="topic-top-content">

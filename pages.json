@@ -1,12 +1,16 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/onSiteTraining/signInPage",
+			"path": "pages/documentRegistration/driverLicense",
 			"style": {
-				"enablePullDownRefresh": true,
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "驾驶证上传"
 			}
-		
+		},
+		{
+			"path": "pages/documentRegistration/idCardRegister",
+			"style": {
+				"navigationBarTitleText": "身份证上传"
+			}
 		},
 		{
 			// 默认进入的页面
@@ -14,6 +18,14 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/onSiteTraining/signInPage",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom"
+			}
+		
 		},
 		{
 			// 主页
@@ -33,8 +45,6 @@
 			}
 		
 		},
-		
-		
 		{
 		    "path" : "pages/examQuestion/examQuestion",
 		    "style" :                                                                                    
@@ -69,29 +79,13 @@
 			}
 		
 		}, 
-		{
-			"path": "pages/documentRegistration/driverLicense",
-			"style": {
-				"navigationBarTitleText": "驾驶证上传"
-			}
-		},
-		{
-			"path": "pages/documentRegistration/idCardRegister",
-			"style": {
-				"navigationBarTitleText": "身份证上传"
-			}
-		},
 	
-		
 		{
 			"path": "pages/documentRegistration/jobLicense",
 			"style": {
 				"navigationBarTitleText": "从业资格证上传"
 			}
 		},
-		
-		
-	
 		{
 			"path": "pages/login/codeLogin",
 			"style": {
@@ -332,6 +326,45 @@
 			"style": {
 				"navigationBarTitleText": "人脸识别"
 			}
+		},
+		// 考试
+		{
+			"path": "pages/exam/gradeResult",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/exam/details",
+			"style": {
+				"navigationBarTitleText": "试卷详情"
+			}
+		},
+		{
+			"path": "pages/exam/startExam",
+			"style": {}
+		},
+		{
+			"path": "pages/exam/examInfo",
+			"style": {}
+		},
+		{
+			"path": "pages/exam/result",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/exam/explain",
+			"style": {}
+		},
+		{
+			"path": "pages/exam/pay",
+			"style": {}
+		},
+		{
+			"path": "pages/exam/list",
+			"style": {}
 		}
     ],
 	"tabBar": {

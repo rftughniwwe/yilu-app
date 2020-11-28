@@ -91,6 +91,7 @@
 	import questionBottom from '@/components/questionBottom/questionBottom.vue'
 	import examTopContent from '@/components/ExamTopContent/ExamTopContent.vue'
 	import examSwpier from '@/components/examSwpier/examSwpier.vue'
+	import primaryBtn from '@/components/primaryBtn/primaryBtn.vue'
 	export default {
 		data() {
 			return {

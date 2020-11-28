@@ -17,12 +17,17 @@
 			<swiper class="swiper-content" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="600" circular="true">
 				<swiper-item>
 					<view class="swiper-item">
-						<image src="../../static/banner.png" mode=""></image>
+						<image src="../../static/index-banner1.png" mode=""></image>
 					</view>
 				</swiper-item>
 				<swiper-item>
 					<view class="swiper-item">
-						<image src="../../static/banner2.png" mode=""></image>
+						<image src="../../static/index-banner2.png" mode=""></image>
+					</view>
+				</swiper-item>
+				<swiper-item>
+					<view class="swiper-item">
+						<image src="../../static/index-banner3.png" mode=""></image>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -81,7 +86,8 @@
 	import Toast from '@/commons/showToast.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import {
-		httpRequest
+		httpRequest,
+		requestQrCodeUrl
 	} from '@/utils/httpRequest.js'
 	import {
 		request_err,
@@ -155,10 +161,12 @@
 				httpRequest({
 					url: '/community/api/blog/list',
 					method: 'POST',
+					data:{
+						articleType:'2'
+					},
 					success: resp => {
 						uni.hideLoading()
 						uni.stopPullDownRefresh()
-						console.log('首页咨询:', resp)
 						if (resp.data.code == 200) {
 							this.newsArr = resp.data.data.list
 						} else {
@@ -244,8 +252,18 @@
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
 					success: res => {
-						uni.navigateTo({
-							url:'../onSiteTraining/courseDetails?scanres='
+						console.log('扫描结果：',res.result)
+						uni.showLoading({
+							title:'解析中...'
+						})
+						requestQrCodeUrl(res.result).then((res)=>{
+							uni.hideLoading()
+							console.log('解析结果',res)
+							uni.setStorageSync('scanData',res.data.data)
+							
+						},(err)=>{
+							uni.hideLoading()
+							request_err(err,'解析二维码失败')
 						})
 					},
 					fail: err => {

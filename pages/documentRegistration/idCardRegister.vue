@@ -19,7 +19,6 @@
 				</view>
 			</view>
 		</view>
-
 		<view class="edit-infomation" v-if="flag1 || flag2">
 			<view class="bottom-tips">
 				请确认您的个人信息，若有误请点击修改
@@ -69,7 +68,7 @@
 					<view class="header">
 						身份证号
 					</view>
-					<view class="input-content">
+					<view class="input-content xxxxx">
 						<input type="text" maxlength="18" v-model="cardId" value="" placeholder="请填写身份证号" />
 					</view>
 				</view>
@@ -77,8 +76,9 @@
 					<view class="header">
 						证件地址
 					</view>
-					<view class="input-content">
-						<input type="text" maxlength="40" v-model="cardAddress" value="" placeholder="请填写证件地址" />
+					<view class="input-content xxxxx">
+						<!-- <input type="text" maxlength="40" v-model="cardAddress" value="" placeholder="请填写证件地址" /> -->
+						<textarea value="" placeholder="" v-model="cardAddress"  placeholder="请填写证件地址" auto-height/>
 					</view>
 				</view>
 				<view class="info-item flex-between">
@@ -281,11 +281,11 @@
 
 			// 设置服务单位
 			setCompany(data) {
-				if(!data.compId){
+				if(!data || !data.compId){
 					uni.showModal({
 						title:'提示',
-						content:'您没有所属的服务单位，请联系公司添加。',
-						cancelText:'退出',
+						content:'您没有所属的服务单位，请联系管理人员添加',
+						cancelText:'暂时不用',
 						confirmText:'确定',
 						success:res=>{
 							if(res.cancel){
@@ -297,10 +297,11 @@
 					})
 					return
 				}
-				console.log('zzzzzzz',data)
+				// let info = uni.getStorageSync('loginUserBasicInfo')
 				let info = app.userBasicInfo
-				console.log('123123123',info)
+				info.compId = data.compId
 				setUserInfomation(info).then(res => {
+					console.log('xiba',res)
 					if (res.data.code == 200) {
 
 						Toast({
@@ -550,11 +551,15 @@
 			width: 100%;
 			margin: 80rpx 0;
 		}
-
+		
 		.input-content {
+			overflow-y: hidden;
 			input {
 				text-align: right;
 			}
+		}
+		.xxxxx{
+			max-width: 65%;
 		}
 	}
 
@@ -567,6 +572,7 @@
 		color: $uni-text-color;
 		font-weight: bold;
 		font-size: 34rpx;
+		max-width: 30%;
 	}
 
 	.edit-infomation {

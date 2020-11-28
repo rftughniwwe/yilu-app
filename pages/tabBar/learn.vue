@@ -32,12 +32,12 @@
 					<swiper class="swiper-content" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="600" circular="true">
 						<swiper-item class="swiper-item-wrap">
 							<view class="swiper-item">
-								<image src="../../static/banner.png" mode=""></image>
+								<image src="../../static/learning-banner2.png" mode=""></image>
 							</view>
 						</swiper-item>
 						<swiper-item>
 							<view class="swiper-item">
-								<image src="../../static/banner2.png" mode=""></image>
+								<image src="../../static/learning-banner1.png" mode=""></image>
 							</view>
 						</swiper-item>
 					</swiper>
@@ -230,7 +230,8 @@
 		LEARNING_MODE_DATA
 	} from '../../utils/util.js'
 	import {
-		httpRequest
+		httpRequest,
+		requestQrCodeUrl
 	} from '@/utils/httpRequest.js'
 
 	const app = getApp()
@@ -303,15 +304,37 @@
 			},
 			// 扫描二维码
 			scanCode() {
-				let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				mpaasScanModule.mpaasScan({
-					'type': 'qr',
-					'scanType': ['qrCode', 'barCode'],
-					'hideAlbum': true
-				}, (res) => {
-					uni.navigateTo({
-						url: '../onSiteTraining/courseDetails'
-					})
+				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
+				// mpaasScanModule.mpaasScan({
+				// 	'type': 'qr',
+				// 	'scanType': ['qrCode', 'barCode'],
+				// 	'hideAlbum': true
+				// }, (res) => {
+				// 	uni.navigateTo({
+				// 		url: '../onSiteTraining/courseDetails'
+				// 	})
+				// })
+				uni.scanCode({
+					scanType: ['qrCode'],
+					onlyFromCamera: true,
+					success: res => {
+						console.log('扫描结果：',res.result)
+						uni.showLoading({
+							title:'解析中...'
+						})
+						requestQrCodeUrl(res.result).then((res)=>{
+							uni.hideLoading()
+							uni.setStorageSync('scanData',res.data.data)
+							console.log('解析结果',res)
+							
+						},(err)=>{
+							uni.hideLoading()
+							request_err(err,'解析二维码失败')
+						})
+					},
+					fail: err => {
+						console.log('扫描失败', err)
+					}
 				})
 			},
 
@@ -352,7 +375,6 @@
 					// uni.navigateTo({
 					// 	url:'../user/myCourse'
 					// })
-					console.log('nmsl')
 					uni.navigateTo({
 						url:'../course/list/list'
 					})
@@ -454,7 +476,7 @@
 
 	.swiper-content {
 		width: 100%;
-		height: 300rpx;
+		height: 260rpx;
 		border-radius: 20rpx;
 		image {
 			width: 100%;

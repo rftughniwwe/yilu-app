@@ -462,13 +462,19 @@
 												uni.showModal({
 													title:'提示',
 													content:'签出成功，是否立即进行考试？',
-													cancelText:'下次一定',
+													cancelText:'稍后',
 													confirmText:'前往考试',
 													confirmColor:'#38A6FD',
 													success:res=>{
 														if(res.confirm){
 															uni.navigateTo({
-																url:'./examBegin'
+																url:'../exam/list'
+															})
+														}else if(res.cancel){
+															uni.showModal({
+																title:'提示',
+																content:'可在现场培训的在线考试进行考试',
+																confirmText:'我知道了'
 															})
 														}
 													}

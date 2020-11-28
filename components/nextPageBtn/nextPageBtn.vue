@@ -1,6 +1,6 @@
 <template>
 	<view class="main">
-		<view class="infomation-next-btn" @click="next">下一步</view>
+		<view :class="isSolid?'infomation-next-btn2':'infomation-next-btn'" @click="next">{{text?text:'下一步'}}</view>
 	</view>
 </template>
 
@@ -10,6 +10,7 @@
 			return {
 			};
 		},
+		props:['isSolid','text'],
 		methods: {
 			next() {
 				
@@ -23,6 +24,7 @@
 <style lang="scss">
 	.main {
 		// width: 100%;
+		margin: 30rpx 0;
 	}
 
 	/* 第一次注册的信息采集页面的下一步按钮 */
@@ -35,6 +37,15 @@
 		text-align: center;
 		padding: 20rpx 0;
 		border-radius: 10rpx;
-		// width: 100%;
+	}
+	.infomation-next-btn2{
+		background: $uni-color-primary;
+		color: #FFFFFF;
+		border: 1px solid $uni-color-primary;
+		font-size: 36rpx;
+		margin: 30rpx 0;
+		text-align: center;
+		padding: 20rpx 0;
+		border-radius: 10rpx;
 	}
 </style>

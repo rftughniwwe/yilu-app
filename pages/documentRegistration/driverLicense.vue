@@ -85,7 +85,8 @@
 		</view>
 
 		<view class="next">
-			<nextPageBtn @goNextPage='goNextPager'></nextPageBtn>
+			<nextPageBtn @goNextPage='goNextPager' :isSolid='true'></nextPageBtn>
+			<nextPageBtn @goNextPage='directNextPage' text='跳过'></nextPageBtn>
 		</view>
 	</view>
 </template>
@@ -290,6 +291,12 @@
 					}
 					
 				},1)
+			},
+			
+			directNextPage(){
+				uni.navigateTo({
+					url: './jobLicense'
+				})
 			},
 			
 			// 驾驶证信息查看
