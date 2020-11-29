@@ -121,7 +121,6 @@ export function faceVerification(face) {
 	let phone = uni.getStorageSync('userBasicInfo').mobile
 	let platform = getSystemInfo().platform
 	let u = getUserLoginInfo('userNo')
-	console.log('uuuuser,',u)
 	let datas = {
 		base64: face,
 		clientType: platform == 'android' ? 2 : 3,
@@ -293,7 +292,6 @@ export function setUserInfomation(obj){
 			method: 'POST',
 			data: obj,
 			success: (res) => {
-		
 				resolve(res)
 			},
 			fail: (err) => {
@@ -318,5 +316,45 @@ export function getOldSignData(datas){
 			}
 		},2)
 	})
+}
+
+// 根据培训场次获取试卷ID
+export function getExamIdByTraingId(id){
 	
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/exam/auth/exam/selectExamIdByTrainingId',
+			method:'POST',
+			data:{
+				"trainingid":id
+			},
+			success:res=>{
+				resolve(res)
+			},
+			fail:err=>{
+				request_err(err,'获取试卷失败')
+			}
+		},5)
+	})
+}
+
+// 获取试卷详情
+export function getExamDetails(examId){
+	let userno = getUserLoginInfo('userNo')
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'/exam/auth/exam/info',
+			method:'POST',
+			data:{
+				"examId":examId,
+				"userNo":userno
+			},
+			success:res=>{
+				resolve(res)
+			},
+			fail:err=>{
+				request_err(err,'获取试卷失败')
+			}
+		},5)
+	})
 }

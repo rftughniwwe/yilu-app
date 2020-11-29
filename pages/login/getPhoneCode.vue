@@ -123,7 +123,7 @@
 						console.log('查询信息：', respones)
 						if (respones.data.code == 200) {
 							let _data = respones.data.data
-							if(_data && _data.name && _data.drivingFront.idcardNum){
+							if(_data && _data.name && _data.idcardNum){
 								// 1：已经完善了身份信息，跳主页
 								uni.setStorageSync('userCompleteInfo', 1)
 								uni.reLaunch({

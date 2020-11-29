@@ -39,7 +39,7 @@
 				</view>
 			</template>
 			<template v-else>
-				<EmptyData type='serach'/>
+				<EmptyData type='serach' />
 			</template>
 		</view>
 		<view class="special-topic">
@@ -95,11 +95,13 @@
 	} from '@/commons/ResponseTips.js'
 	import {
 		getUserLoginInfo,
+		scanCodeReturn,
+		getNotRealTime
 	} from '@/utils/util.js'
 	import {
 		getUserBasicInfo
 	} from '@/commons/api/apis.js'
-	
+
 	export default {
 		data() {
 			return {
@@ -132,23 +134,23 @@
 
 			},
 			// 获取用户信息
-			getUserInfo(){
+			getUserInfo() {
 				let userBasicInfo = uni.getStorageSync('userBasicInfo')
-				if(userBasicInfo.compId){
+				if (userBasicInfo.compId) {
 					return
 				}
 				let userNo = getUserLoginInfo('userNo')
-				getUserBasicInfo(userNo).then(res=>{
-					
-					console.log('用户基本信息',res)
-					if(res.data.code == 200){
-						uni.setStorageSync('userBasicInfo',res.data.data)
-					}else {
+				getUserBasicInfo(userNo).then(res => {
+
+					console.log('用户基本信息', res)
+					if (res.data.code == 200) {
+						uni.setStorageSync('userBasicInfo', res.data.data)
+					} else {
 						request_success(res)
 					}
-				},err=>{
+				}, err => {
 					console.log('获取用户基本信息失败')
-					
+
 				})
 			},
 			// 获取主页数据
@@ -161,8 +163,8 @@
 				httpRequest({
 					url: '/community/api/blog/list',
 					method: 'POST',
-					data:{
-						articleType:'2'
+					data: {
+						articleType: '2'
 					},
 					success: resp => {
 						uni.hideLoading()
@@ -236,35 +238,53 @@
 				})
 			},
 			scanCode() {
-				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				// mpaasScanModule.mpaasScan({
-				// 	'type': 'qr',
-				// 	'scanType': ['qrCode', 'barCode'],
-				// 	'hideAlbum': true
-				// }, (res) => {
-				// 	console.log('首页扫描结果1',res)
-				// 	console.log('首页扫描结果2',JSON.parse(res))
-				// 	uni.navigateTo({
-				// 		url:'../onSiteTraining/courseDetails?scanres='+res
-				// 	})
-				// })
+				let sT = getNotRealTime('start')
+				let eT = getNotRealTime('end')
+				console.log('st',sT)
+				console.log('et',eT)
+				// 插件扫码
+				let obj = {
+					"teacher": '王老师',
+					"name": "ceshi",
+					"limit": 500,
+					"lon": "121.506292",
+					"startTime": sT,
+					"trainIntro": "<p>测试介绍</p>",
+					"id": 11,
+					"endTime": eT,
+					"addr": "浦江科技广场21号楼5",
+					"type": 1,
+					"lat": "31.0991625",
+					"teacherIntro": "<p>介绍</p>"
+				}
+				
 				uni.scanCode({
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
 					success: res => {
-						console.log('扫描结果：',res.result)
-						uni.showLoading({
-							title:'解析中...'
+						// 测试用数据
+						uni.setStorageSync('scanData', obj)
+						uni.navigateTo({
+							url: '../onSiteTraining/courseDetails'
 						})
-						requestQrCodeUrl(res.result).then((res)=>{
-							uni.hideLoading()
-							console.log('解析结果',res)
-							uni.setStorageSync('scanData',res.data.data)
-							
-						},(err)=>{
-							uni.hideLoading()
-							request_err(err,'解析二维码失败')
-						})
+					
+						// console.log('扫描结果：', res)
+						// uni.showLoading({
+						// 	title: '解析中...'
+						// })
+						// requestQrCodeUrl(res.result).then((resp) => {
+						// 	scanCodeReturn(resp)
+						// 	if (resp.data.code == 200) {
+						// 		uni.navigateTo({
+						// 			url:'../onSiteTraining/courseDetails'
+						// 		})
+						// 	} else {
+						// 		request_success(resp)
+						// 	}
+						// }, (err) => {
+						// 	uni.hideLoading()
+						// 	request_err(err, '解析二维码失败')
+						// })
 					},
 					fail: err => {
 						console.log('扫描失败', err)

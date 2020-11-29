@@ -40,7 +40,8 @@
 		faceLogin,
 		getIdCardInfo
 	} from '@/commons/api/apis.js'
-
+	import auth from "@/utils/auth";
+	
 	export default {
 		data() {
 			return {
@@ -81,6 +82,15 @@
 								userNo: resp.data.data.userNo,
 								userToken: resp.data.data.token
 							})
+							uni.setStorage({
+								'key': 'userToken',
+								'data': resp.data.data.token,
+								success: () => {
+									auth.getUserInfo((data) => {
+										uni.$emit('_userLogin', data)
+									})
+								}
+							});
 							this.routePage(resp.data.data.userNo)
 						} else {
 							uni.showModal({
@@ -130,7 +140,7 @@
 					console.log('查询完善信息：', respones)
 					if (respones.data.code == 200) {
 						let _data = respones.data.data
-						if (_data && _data.name && _data.drivingFront.idcardNum) {
+						if (_data && _data.name && _data.idcardNum) {
 							// 1：已经完善，跳主页
 							// 设置缓存，下次进来就不用请求了
 							uni.setStorageSync('userCompleteInfo', 1)

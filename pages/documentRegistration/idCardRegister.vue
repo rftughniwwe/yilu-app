@@ -297,9 +297,10 @@
 					})
 					return
 				}
-				// let info = uni.getStorageSync('loginUserBasicInfo')
-				let info = app.userBasicInfo
-				info.compId = data.compId
+				let infoStorage = uni.getStorageSync('loginUserBasicInfo')
+				let info = infoStorage
+				info.compId = parseInt(data.compId)
+				console.log('zzzzzzzz',info)
 				setUserInfomation(info).then(res => {
 					console.log('xiba',res)
 					if (res.data.code == 200) {

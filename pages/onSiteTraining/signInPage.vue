@@ -2,7 +2,7 @@
 <template>
 	<view class="container-main">
 		<view class="wrap-top-tab-bar" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
-			<uni-nav-bar title="签到" color="#333333" leftIcon="arrowleft" @clickLeft='goback' @clickRight='rightClick'
+			<uni-nav-bar title="培训签到" color="#333333" leftIcon="arrowleft" @clickLeft='goback' @clickRight='rightClick'
 			 :right-text="tab==2?'月汇总':''" />
 		</view>
 
@@ -36,7 +36,7 @@
 					<view class="flex-row-start" style="margin-top: 20rpx;">
 						<image src="../../static/mini-course.png" mode=""></image>
 						<view class="time">
-							当前课程：{{signDatas.courseName?signDatas.courseName:oldSignData[0].refName}}
+							当前课程：{{signDatas.name?signDatas.name:oldSignData[0].refName}}
 						</view>
 					</view>
 
@@ -267,7 +267,7 @@
 			// 每十秒获取一次位置信息
 			// this.timer = setInterval(() => {
 			// 	this.getLocationFun()
-			// }, 30000)
+			// }, 10000)
 		},
 		onShow() {
 			this.getLocationFun()
@@ -351,11 +351,10 @@
 					request_err(err, '获取签到数据失败')
 				})
 			},
-
-			// 签入签出
-			sign(num) {
-				let that = this
+			// 简单验证合法性
+			simpleJudge(num){
 				let end = new Date(this.signDatas.endTime).getTime()
+				let start = new Date(this.signDatas.startTime).getTime()
 				let now = new Date().getTime()
 				// 0签入 1签出
 				if (!this.isInRange) {
@@ -374,7 +373,17 @@
 						title: '您已签出'
 					})
 					return
-				}else if(now < end){
+				}else if(num == 1 && this.noSign1){
+					Toast({
+						title: '请先签入'
+					})
+					return
+				}else if((now > start) && num == 0){
+					Toast({
+						title:'培训已经开始，不能签入'
+					})
+					return
+				}else if((now < end) && num == 1){
 					Toast({
 						title:'培训还未结束，不能签出'
 					})
@@ -385,16 +394,24 @@
 					})
 					return
 				}
+				return true
+			},
+
+			// 签入签出
+			sign(num) {
+				let that = this
+				
+				if(!this.simpleJudge(num)) return
 				
 				let address = uni.getStorageSync('userAddress')
 
 				let params = {
-					"chapterdId": this.signDatas.chapterList[0].chapterId,
+					"chapterdId": this.signDatas.chapterList?this.signDatas.chapterList[0].chapterId:'',
 					"compId": uni.getStorageSync('userBasicInfo').compId,
 					"refId": this.signDatas.courseId,
-					"coursePeriodId": this.signDatas.periodList[0].periodId,
-					"numEvent": this.signDatas.courseName,
-					"refName": this.signDatas.courseName,
+					"coursePeriodId": this.signDatas.periodList?this.signDatas.periodList[0].periodId:'',
+					"numEvent": this.signDatas.id,
+					"refName": this.signDatas.name,
 					"place": this.addressTxt,
 					"signonApp": 0,
 					"latitude": address.latitude,
@@ -459,6 +476,7 @@
 											} else if (num == 1) {
 												that.noSign2 = false
 												that.signOutTime = getCurrentDate('onlyHours')
+												uni.setStorageSync('TrainingId',this.signDatas.id)
 												uni.showModal({
 													title:'提示',
 													content:'签出成功，是否立即进行考试？',
@@ -467,16 +485,20 @@
 													confirmColor:'#38A6FD',
 													success:res=>{
 														if(res.confirm){
+															// uni.navigateTo({
+															// 	url:'/pages/exam/examInfo?trainintId='+this.signDatas.id
+															// })
 															uni.navigateTo({
-																url:'../exam/list'
-															})
-														}else if(res.cancel){
-															uni.showModal({
-																title:'提示',
-																content:'可在现场培训的在线考试进行考试',
-																confirmText:'我知道了'
+																url:'./examBegin'
 															})
 														}
+														// else if(res.cancel){
+														// 	uni.showModal({
+														// 		title:'提示',
+														// 		content:'可在现场培训的在线考试进行考试',
+														// 		confirmText:'我知道了'
+														// 	})
+														// }
 													}
 												})
 											}
@@ -512,10 +534,10 @@
 			getOldSignDatas() {
 				this.oldSignData = []
 				let params = {
-					"chapterdId": this.signDatas.chapterList[0].chapterId,
+					"chapterdId": this.signDatas.chapterList?this.signDatas.chapterList[0].chapterId:'',
 					"compId": uni.getStorageSync('userBasicInfo').compId,
 					"refId": this.signDatas.courseId,
-					"coursePeriodId": this.signDatas.periodList[0].periodId,
+					"coursePeriodId": this.signDatas.periodList?this.signDatas.periodList[0].periodId:'',
 					"numEvent": this.signDatas.courseName,
 					"refName": this.signDatas.courseName,
 					"signonApp": 0,

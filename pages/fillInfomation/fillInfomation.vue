@@ -96,7 +96,8 @@
 					nickname: this.name,
 					sex: this.gender,
 					userNo: getUserLoginInfo('userNo'),
-					userType:1
+					userType:1,
+					compId:0
 				}
 
 				if (!this.name) {
@@ -121,8 +122,7 @@
 					uni.hideLoading()
 					if (res.data.code == 200) {
 						console.log('基本信息修改成功：', res)
-						app.userBasicInfo = obj
-						uni.setStorageSync('loginUserBasicInfo')
+						uni.setStorageSync('loginUserBasicInfo',obj)
 						uni.navigateTo({
 							url: '../documentRegistration/idCardRegister'
 						})

@@ -8,7 +8,7 @@
 			</view>
 			<view class="article-subtitle flex-between">
 				<view class="article-from">
-					来源：{{data.bloggerNickname}}
+					来源：{{data.bloggerNickname?data.bloggerNickname:'未知用户'}}
 				</view>
 				<view class="article-time">
 					{{data.gmtModified}}

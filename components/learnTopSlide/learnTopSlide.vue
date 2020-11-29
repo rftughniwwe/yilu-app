@@ -103,7 +103,9 @@
 			})
 		},
 		updated() {
-			this.AnquanNum = this.AnquanType>=0?this.AnquanType:uni.getStorageSync('anquanTab')
+			console.log('zzzzzz',this.AnquanType)
+			console.log('222222222222',uni.getStorageSync('anquanTab'))
+			this.AnquanNum = uni.getStorageSync('anquanTab')
 			this.JixuNum = uni.getStorageSync('jixuTab')?uni.getStorageSync('jixuTab'):0
 		},
 		methods: {

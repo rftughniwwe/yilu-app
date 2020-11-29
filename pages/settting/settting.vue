@@ -14,6 +14,16 @@
 					</view>
 				</view>
 			</view>
+			<view class="item flex-between" @click="fillInfomation">
+				<view class="head">
+					完善信息
+				</view>
+				<view class="right-content">
+					<view class="right-arrow-img">
+						<image src="../../static/right-arrow.png" mode=""></image>
+					</view>
+				</view>
+			</view>
 			<view class="item flex-between" @click="goEditPassword">
 				<view class="head">
 					修改密码
@@ -111,6 +121,12 @@
 				removeAppStorage()
 				uni.reLaunch({
 					url:'../login/normalLogin'
+				})
+			},
+			// 完善信息
+			fillInfomation(){
+				uni.navigateTo({
+					url:'../fillInfomation/fillInfomation'
 				})
 			}
 		}

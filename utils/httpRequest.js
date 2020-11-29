@@ -7,6 +7,8 @@ import {
 const BASE_URL = 'http://172.168.1.229'
 // 图片上传
 const BASE_URL2 = 'http://172.168.1.229:8730'
+export const base_url3 = 'http://172.168.1.229:8720'
+
 
 // 身份证OCR地址
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
@@ -39,6 +41,8 @@ function httpRequest(options, url_type) {
 		base_url = BASE_URL+':8740'
 	}else if(url_type == 4){
 		base_url = BASE_URL+':8700'
+	}else if(url_type == 5){
+		base_url = BASE_URL+':8760'
 	}
 	getNetworkType().then((res) => {
 		if (res) {
@@ -170,7 +174,7 @@ function requestQrCodeUrl(url){
 	return new Promise((resolve,reject)=>{
 		uni.request({
 			url:url,
-			method:'GET',
+			method:'POST',
 			success: (res) => {
 				resolve(res)
 			},

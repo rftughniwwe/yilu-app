@@ -125,53 +125,6 @@ const login = () => {
 		return
 		// #endif
 		
-		// #ifdef MP-WEIXIN
-		uni.showLoading({
-			title: 'Loading...'
-		});
-		wx.login({
-			success: res => {
-
-				const ipInfo = uni.getStorageSync('IPInfo');
-				console.log('ipinfo', ipInfo)
-				uni.hideLoading(); // 发送 res.code 到后台换取 openId, sessionKey, unionId
-				let _now = new Date();
-				let pdata = {
-					code: res.code,
-					timestamp: _now.getTime(),
-					sign: md5.hexMD5(res.code + _now.getTime())
-				};
-				uni.showLoading({
-					title: 'Loading...'
-				});
-				pdata.city = ipInfo.city
-				pdata.province = ipInfo.pro
-				pdata.loginIp = ipInfo.ip
-				pdata.os = uni.getStorageSync('systemType');
-				pdata.browser = 'mp-weixin'
-				apis.login(pdata).then(res => {
-					if (!res.nickname) {
-						res.nickname = res.mobile.substr(0, 4) + '****' + res.mobile.substr(-4);
-					}
-					uni.setStorage({
-						'key': 'userToken',
-						'data': res.token,
-						success: () => {}
-					});
-					uni.setStorage({
-						'key': 'userInfo',
-						'data': res,
-						success: () => {
-							resolve(res);
-						}
-					});
-				}).catch(msg => {
-					uni.hideLoading();
-					reject(msg);
-				});
-			}
-		});
-		// #endif
 	});
 	return promise;
 };

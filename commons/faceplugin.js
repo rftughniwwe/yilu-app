@@ -8,8 +8,8 @@ export default function useFacePlugin(options) {
 		livenessArray: ["Mouth", "HeadLeft", "HeadRight", "HeadLeftOrRight", "HeadUp", "HeadDown"], // 动作列表
 		livenessCount: options.count || 0, // 动作个数，0个则是无动作
 		isLivenessRandom: options.random || false, // 是否随机选择
-		textColor: '#F6A623', //可选参数
-		roundColor: '#FFA800', //可选参数
+		textColor: '#ffaa00', //可选参数
+		roundColor: '#ffaa00', //可选参数
 		backgroundColor: '#2F2F33', //可选参数
 		isSound: true, //可选参数
 		visibleSoundBtn: true, //可选参数
@@ -31,8 +31,4 @@ export default function useFacePlugin(options) {
 			}
 		});
 	})
-
-
-
-
 }

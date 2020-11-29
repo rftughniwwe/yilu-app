@@ -35,91 +35,76 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
-	
+	import {
+		getExamIdByTraingId
+	} from '@/commons/api/apis.js'
+	import {
+		scanCodeReturn,
+		getNotRealTime
+	} from '@/utils/util.js'
+	import Toast from '@/commons/showToast.js'
+
 	export default {
 		data() {
-			return {};
+			return {
+				examData: {}
+			};
 		},
 		onLoad() {
-
+			this.getExamId()
 		},
 		methods: {
 			signinNow() {
+				let sT = getNotRealTime('start')
+				let eT = getNotRealTime('end')
+				console.log('st',sT)
+				console.log('et',eT)
 				// 插件扫码
 				let obj = {
-					"code": 200,
-					"msg": "",
-					"data": {
-						"lon": "121.508961", 				//经度
-						"trainIntro": "<p>测试培训</p>", 	//培训介绍
-						"type": 1, 							//1：签入；2：签出
-						"courseName": "演示课程-直播", 		//课程名称
-						"teacher": "李老师", 				//讲师姓名				
-						"name": "测试123123", 				//培训名称
-						"limit": 500, 						//打卡限制范围
-						"startTime": "2020-11-28 15:42:00", //培训开始时间 
-						"id": 10, 							//培训ID
-						"endTime": "2020-11-28 15:35:00", 	//培训结束时间 
-						"periodList": [ 					//课时集合ID
-							{
-								"periodId": "1321284834970796034", //课时id
-								"periodName": "1-1-1" 		//课时名称
-							},
-							{
-								"periodId": "1321287274973593602",
-								"periodName": "1-1-2"
-							},
-							{
-								"periodId": "1322134961365118978",
-								"periodName": "1-1-3"
-							},
-							{
-								"periodId": "1322142743178964993",
-								"periodName": "1-1-4"
-							}
-						],
-						"chapterList": [ 					//章节集合
-							{
-								"chapterId": "1322142743178964993", //章节ID
-								"chapterName": "1-1-4" 		//章节名称
-							}
-						],
-						"addr": "漕河泾浦江科技广场21号楼B座", //培训地址   
-						"courseId": "1273525324477759489", 	//课程ID
-						"lat": "31.10006", 					//纬度
-						"teacherIntro": "<p>测试讲师</p>" 	//讲师介绍
-					}
+					"teacher": '王老师',
+					"name": "驾驶员资格证",
+					"limit": 500,
+					"lon": "121.506292",
+					"startTime": sT,
+					"trainIntro": "<p>测试介绍</p>",
+					"id": 11,
+					"endTime": eT,
+					"addr": "浦江科技广场21号楼5",
+					"type": 1,
+					"lat": "31.0991625",
+					"teacherIntro": "<p>介绍</p>"
 				}
-
-				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				// mpaasScanModule.mpaasScan({
-				// 	'type': 'qr',
-				// 	'scanType': ['qrCode', 'barCode'],
-				// 	'hideAlbum': true
-				// }, (res) => {
-					
-				// 	uni.navigateTo({
-				// 		url: './courseDetails' + obj.data
-				// 	})
-				// })
 
 				// 系统扫码
 				uni.scanCode({
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
-					success: res => {
+					success: resp => {
 						uni.showLoading({
-							title:'解析中...'
+							title: '解析中...'
 						})
-						requestQrCodeUrl(res.result).then((res)=>{
-							uni.hideLoading()
-							uni.setStorageSync('scanData',res.data.data)
-							console.log('解析结果',res)
-							
-						},(err)=>{
-							uni.hideLoading()
-							request_err(err,'解析二维码失败')
+						
+						// 测试用数据
+						uni.hideLoading()
+						uni.setStorageSync('scanData', obj)
+						uni.navigateTo({
+							url: '../onSiteTraining/courseDetails'
 						})
+						
+						// 实际数据
+						// requestQrCodeUrl(resp.result).then((res) => {
+						// 	scanCodeReturn(res)
+						// 	if (res.data.code == 200) {
+						// 		uni.navigateTo({
+						// 			url: '../onSiteTraining/courseDetails'
+						// 		})
+						// 	} else {
+						// 		request_success(res)
+						// 	}
+						// }, (err) => {
+						// 	uni.hideLoading()
+						// 	request_err(err, '解析二维码失败')
+						// })
 					},
 					fail: err => {
 						console.log('扫描失败', err)
@@ -132,13 +117,36 @@
 					url: '../user/learningMaterials/learningMaterials'
 				})
 			},
+
+			// 根据培训场次获取试卷ID
+			getExamId() {
+				let trainingid = uni.getStorageSync('TrainingId')
+				if (!trainingid) return
+				console.log('培训场次id', trainingid)
+				getExamIdByTraingId(trainingid).then(res => {
+					console.log('根据培训场次获取试卷:', res)
+					if (res.data.code == 200) {
+						this.examData = res.data.data
+					} else {
+						request_success(res)
+					}
+				})
+			},
+
 			// 前往在线考试
 			goOnlineExam() {
+				// if (!this.examData || !this.examData.id) {
+				// 	Toast({
+				// 		title: '你没有在线考试'
+				// 	})
+				// 	return
+				// }
+				// let d = encodeURIComponent(JSON.stringify(this.examData))
 				// uni.navigateTo({
-				// 	url: './examBegin'
-				// })
+				// 	url: '/pages/exam/examInfo?examdatas=' + d
+				// });
 				uni.navigateTo({
-					url:'../exam/list'
+					url:'/pages/onSiteTraining/examBegin'
 				})
 			}
 		}

@@ -6,7 +6,7 @@
 			<view :class="type === 2?'no-padding':'learn-top-bar'">
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
 					<view class="left-select">
-						<picker class="flex-between" :range="typeArrStr" :value="type"  @change="bindPickerChange">
+						<picker class="flex-between" :range="typeArrStr" :value="type" @change="bindPickerChange">
 							<view class="topic">
 								{{typeArrStr.length>0?typeArrStr[type]:'安全教育'}}
 							</view>
@@ -25,7 +25,7 @@
 			<!-- 继续教育和安全教育 -->
 			<view v-show="type !== 2" class="learning-teach">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
-					<learnTopSlide :type='type' :AnquanType="AnquanType"/>
+					<learnTopSlide :type='type' :AnquanType="AnquanType" />
 				</view>
 
 				<view class="top-img-content">
@@ -227,7 +227,9 @@
 	import course from '@/components/course/course.vue'
 	import {
 		getCurrentDate,
-		LEARNING_MODE_DATA
+		LEARNING_MODE_DATA,
+		scanCodeReturn,
+		getNotRealTime
 	} from '../../utils/util.js'
 	import {
 		httpRequest,
@@ -247,7 +249,7 @@
 				typeArrStr: [],
 				isHideSafetyModal: true,
 				selfLearnType: 1,
-				AnquanType: -1,
+				AnquanType: 0,
 				date: '',
 				isFullScreen: false
 			};
@@ -273,7 +275,7 @@
 					if (data.num === 0) {
 						this.isHideSafetyModal = false
 					}
-					this.type = data.num?data.num:0
+					this.type = data.num ? data.num : 0
 					this.chooseTypePager = true
 				}
 			})
@@ -285,8 +287,7 @@
 			// 安全教育中第一次选择subtitle变化
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
-				console.log(',,,,,',data.index)
-				this.AnquanType = data.index
+				this.AnquanType = data.index < 0 ? 0 : data.index
 			})
 
 
@@ -304,33 +305,56 @@
 			},
 			// 扫描二维码
 			scanCode() {
-				// let mpaasScanModule = uni.requireNativePlugin("Mpaas-Scan-Module")
-				// mpaasScanModule.mpaasScan({
-				// 	'type': 'qr',
-				// 	'scanType': ['qrCode', 'barCode'],
-				// 	'hideAlbum': true
-				// }, (res) => {
-				// 	uni.navigateTo({
-				// 		url: '../onSiteTraining/courseDetails'
-				// 	})
-				// })
+				let sT = getNotRealTime('start')
+				let eT = getNotRealTime('end')
+				console.log('st',sT)
+				console.log('et',eT)
+				// 插件扫码
+				let obj = {
+					"teacher": '王老师',
+					"name": "ceshi",
+					"limit": 500,
+					"lon": "121.506292",
+					"startTime": sT,
+					"trainIntro": "<p>测试介绍</p>",
+					"id": 11,
+					"endTime": eT,
+					"addr": "浦江科技广场21号楼5",
+					"type": 1,
+					"lat": "31.0991625",
+					"teacherIntro": "<p>介绍</p>"
+				}
+				
 				uni.scanCode({
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
-					success: res => {
-						console.log('扫描结果：',res.result)
-						uni.showLoading({
-							title:'解析中...'
+					success: resp => {
+						
+						// 测试用数据
+						uni.setStorageSync('scanData', obj)
+						uni.navigateTo({
+							url: '../onSiteTraining/courseDetails'
 						})
-						requestQrCodeUrl(res.result).then((res)=>{
-							uni.hideLoading()
-							uni.setStorageSync('scanData',res.data.data)
-							console.log('解析结果',res)
-							
-						},(err)=>{
-							uni.hideLoading()
-							request_err(err,'解析二维码失败')
-						})
+						
+						// console.log('扫描结果：', resp.result)
+						// uni.showLoading({
+						// 	title: '解析中...'
+						// })
+
+						// requestQrCodeUrl(resp.result).then((res) => {
+						// 	scanCodeReturn(res)
+						// 	if (res.data.code == 200) {
+						// 		uni.navigateTo({
+						// 			url: '../onSiteTraining/courseDetails'
+						// 		})
+						// 	} else {
+						// 		request_success(res)
+						// 	}
+						// }, (err) => {
+						// 	uni.hideLoading()
+						// 	request_err(err, '解析二维码失败')
+						// })
+
 					},
 					fail: err => {
 						console.log('扫描失败', err)
@@ -350,16 +374,16 @@
 				// 主项
 				uni.setStorageSync('selectedLearningType', item)
 				// 子项
-				if(e.target.value == 0){
+				if (e.target.value == 0) {
 					let tab = uni.getStorageSync('anquanTab')
 					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
-				}else if(e.target.value == 1){
+				} else if (e.target.value == 1) {
 					let tab = uni.getStorageSync('jixuTab')
 					// uni.setStorageSync('LearningSubType', item.listSub)
 					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
 				}
-				
-				
+
+
 				// app.globalData.LearningSubType = item.listSub
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
@@ -371,12 +395,12 @@
 					uni.navigateTo({
 						url: '../onSiteTraining/onSiteTraining'
 					})
-				}else if (num == 2){
+				} else if (num == 2) {
 					// uni.navigateTo({
 					// 	url:'../user/myCourse'
 					// })
 					uni.navigateTo({
-						url:'../course/list/list'
+						url: '../course/list/list'
 					})
 				}
 				// 需判断是否付费
@@ -478,6 +502,7 @@
 		width: 100%;
 		height: 260rpx;
 		border-radius: 20rpx;
+
 		image {
 			width: 100%;
 			height: 300rpx;
@@ -699,47 +724,55 @@
 			font-size: 30rpx;
 		}
 	}
-	.notice-card{
+
+	.notice-card {
 		border-radius: 8rpx;
 		box-shadow: 0px 0px 18rpx rgba(234, 234, 234, 0.63);
 		margin: 40rpx 0;
 		background-color: #FFFFFF;
 		padding: 30rpx 24rpx;
 	}
-	.notice-cover{
+
+	.notice-cover {
 		width: 25%;
 		border-radius: 8rpx;
 		background-color: #eaeaea;
 		height: 206rpx;
 		margin-right: 30rpx;
-		image{
+
+		image {
 			border-radius: 8rpx;
 			width: 100%;
 			height: 100%;
-			
+
 		}
 	}
-	.notice-desc{
+
+	.notice-desc {
 		width: 70%;
-		.notice-title{
+
+		.notice-title {
 			color: #333333;
 			font-size: 32rpx;
 			font-weight: bold;
 			letter-spacing: 2rpx;
 			margin-bottom: 10rpx;
 		}
-		.notice-time{
+
+		.notice-time {
 			color: #333333;
 			font-size: 24rpx;
 			margin-bottom: 40rpx;
 		}
-		.teacher{
-			.xxx{
+
+		.teacher {
+			.xxx {
 				color: #999;
 				font-size: 24rpx;
 			}
 		}
-		.join-room{
+
+		.join-room {
 			border-radius: $uni-border-radius-half-circle;
 			border: none;
 			background: rgba(60, 167, 255, 0.1);
@@ -749,11 +782,14 @@
 			padding: 12rpx 24rpx;
 		}
 	}
-	.swiper-item,.swiper-item-wrap{
+
+	.swiper-item,
+	.swiper-item-wrap {
 		border-radius: 20rpx;
 	}
-	.swiper-item{
-		image{
+
+	.swiper-item {
+		image {
 			border-radius: 20rpx;
 		}
 	}

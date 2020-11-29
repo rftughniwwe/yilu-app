@@ -8,13 +8,13 @@
 		<view class="top-content flex-evenly">
 			<view class="score">
 				<view class="score-txt">
-					99分
+					5分
 				</view>
 				<view class="subheading zzz">
 					得分
 				</view>
 				<view class="subheading">
-					试卷总分：100分
+					试卷总分：10分
 				</view>
 			</view>
 
@@ -27,17 +27,17 @@
 			</view>
 			<view class="items">
 				<view class="head">
-					考试科目：<text class="ttt">货运资格证</text>
+					考试科目：<text class="ttt">道路危险货物运输</text>
 				</view>
 			</view>
 			<view class="items">
 				<view class="head">
-					考试用时：<text class="ttt">99分钟22秒</text>
+					考试用时：<text class="ttt">4分钟22秒</text>
 				</view>
 			</view>
 			<view class="items">
 				<view class="head">
-					考试成绩：<text class="ttt">59分</text>
+					考试成绩：<text class="ttt">5分</text>
 				</view>
 			</view>
 			<view class="items">

@@ -4,30 +4,30 @@
 		<view class="detail-content">
 			<view class="title-content">
 				<view class="topic header">
-					道路货物运输驾驶员安全培训基础
+					道路危险货物运输
 				</view>
 				<view class="exam-subject flex-row-start">
 					<image src="../../static/exam-subject.png" mode=""></image>
 					<view class="top-txt">
-						考试科目：驾驶员资格证
+						考试科目：安全作业
 					</view>
 				</view>
 				<view class="exam-count flex-row-start">
 					<image src="../../static/exam-count.png" mode=""></image>
 					<view class="top-txt">
-						试题数量：<text class="red-color">90</text>题
+						试题数量：<text class="red-color">10</text>题
 					</view>
 				</view>
 				<view class="exam-time flex-row-start">
 					<image src="../../static/exam-time.png" mode=""></image>
 					<view class="top-txt">
-						考试时间：<text class="red-color">90</text>分钟
+						考试时间：<text class="red-color">10</text>分钟
 					</view>
 				</view>
 				<view class="exam-fraction flex-row-start">
 					<image src="../../static/exam-fraction.png" mode=""></image>
 					<view class="top-txt">
-						合格标注：满分<text class="red-color">100</text>分，及格<text class="red-color">80</text>分
+						合格标注：满分<text class="red-color">10</text>分，及格<text class="red-color">8</text>分
 					</view>
 				</view>
 			</view>
@@ -73,6 +73,17 @@
 
 <script>
 	import primaryBtn from '@/components/primaryBtn/primaryBtn.vue'
+	
+	import useFacePlugin from '../../commons/faceplugin.js'
+	import {
+		faceVerification,
+		getExamDetails
+	} from '@/commons/api/apis.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	
 	export default {
 		data() {
 			return {
@@ -84,9 +95,29 @@
 		},
 		methods:{
 			goExam(){
-				uni.navigateTo({
-					url:'../examQuestion/examQuestion'
+				
+				useFacePlugin({}).then(res=>{
+					// 人脸验证
+					uni.showLoading({
+						title: '验证中...'
+					})
+					faceVerification(res).then(res => {
+						console.log('考试前的人脸验证：', res)
+						uni.hideLoading()
+						if (res.data.code == 200) {
+							uni.navigateTo({
+								url:'/pages/examQuestion/examQuestion'
+							})
+						} else {
+							request_success(res)
+						}
+					}, err => {
+						uni.hideLoading()
+						request_err(err, '人脸验证失败，稍后重试')
+					})
 				})
+				
+				
 			}
 		}
 	}

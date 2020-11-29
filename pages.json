@@ -1,5 +1,13 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		
+		{
+			// 默认进入的页面
+			"path": "pages/login/normalLogin",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
 		{
 			"path": "pages/documentRegistration/driverLicense",
 			"style": {
@@ -13,19 +21,11 @@
 			}
 		},
 		{
-			// 默认进入的页面
-			"path": "pages/login/normalLogin",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			"path": "pages/onSiteTraining/signInPage",
 			"style": {
 				"enablePullDownRefresh": true,
 				"navigationStyle": "custom"
 			}
-		
 		},
 		{
 			// 主页
@@ -344,10 +344,7 @@
 			"path": "pages/exam/startExam",
 			"style": {}
 		},
-		{
-			"path": "pages/exam/examInfo",
-			"style": {}
-		},
+		
 		{
 			"path": "pages/exam/result",
 			"style": {
@@ -363,9 +360,14 @@
 			"style": {}
 		},
 		{
+			"path": "pages/exam/examInfo",
+			"style": {}
+		},
+		{
 			"path": "pages/exam/list",
 			"style": {}
 		}
+		
     ],
 	"tabBar": {
 		"color": "#999999",
