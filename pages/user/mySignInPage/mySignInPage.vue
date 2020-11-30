@@ -16,7 +16,7 @@
 		<view class="main-content">
 			<view class="item flex-between">
 				<view class="cover-content">
-					<image src="../../../static/banner2.png" mode=""></image>
+					<image src="../../../static/learning-banner2.png" mode=""></image>
 				</view>
 				<view class="sign-desc">
 					<view class="sign-topic text-overflow2">
@@ -37,7 +37,7 @@
 			</view>
 			<view class="item flex-between">
 				<view class="cover-content">
-					<image src="../../../static/banner2.png" mode=""></image>
+					<image src="../../../static/learning-banner2.png" mode=""></image>
 				</view>
 				<view class="sign-desc">
 					<view class="sign-topic text-overflow2">

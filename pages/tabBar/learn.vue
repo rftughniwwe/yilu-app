@@ -50,7 +50,7 @@
 					</view>
 					<view class="notice-card flex-between">
 						<view class="notice-cover">
-							<image src="../../static/banner2.png" mode=""></image>
+							<image src="../../static/learning-banner2.png" mode=""></image>
 						</view>
 						<view class="notice-desc">
 							<view class="notice-title text-overflow2">
@@ -287,7 +287,6 @@
 			// 安全教育中第一次选择subtitle变化
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
-				this.AnquanType = data.index < 0 ? 0 : data.index
 			})
 
 
@@ -331,29 +330,29 @@
 					success: resp => {
 						
 						// 测试用数据
-						uni.setStorageSync('scanData', obj)
-						uni.navigateTo({
-							url: '../onSiteTraining/courseDetails'
-						})
+						// uni.setStorageSync('scanData', obj)
+						// uni.navigateTo({
+						// 	url: '../onSiteTraining/courseDetails'
+						// })
 						
-						// console.log('扫描结果：', resp.result)
-						// uni.showLoading({
-						// 	title: '解析中...'
-						// })
+						console.log('扫描结果：', resp.result)
+						uni.showLoading({
+							title: '解析中...'
+						})
 
-						// requestQrCodeUrl(resp.result).then((res) => {
-						// 	scanCodeReturn(res)
-						// 	if (res.data.code == 200) {
-						// 		uni.navigateTo({
-						// 			url: '../onSiteTraining/courseDetails'
-						// 		})
-						// 	} else {
-						// 		request_success(res)
-						// 	}
-						// }, (err) => {
-						// 	uni.hideLoading()
-						// 	request_err(err, '解析二维码失败')
-						// })
+						requestQrCodeUrl(resp.result).then((res) => {
+							scanCodeReturn(res)
+							if (res.data.code == 200) {
+								uni.navigateTo({
+									url: '../onSiteTraining/courseDetails'
+								})
+							} else {
+								request_success(res)
+							}
+						}, (err) => {
+							uni.hideLoading()
+							request_err(err, '解析二维码失败')
+						})
 
 					},
 					fail: err => {

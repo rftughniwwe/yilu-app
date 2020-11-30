@@ -85,26 +85,26 @@
 						})
 						
 						// 测试用数据
-						uni.hideLoading()
-						uni.setStorageSync('scanData', obj)
-						uni.navigateTo({
-							url: '../onSiteTraining/courseDetails'
-						})
+						// uni.hideLoading()
+						// uni.setStorageSync('scanData', obj)
+						// uni.navigateTo({
+						// 	url: '../onSiteTraining/courseDetails'
+						// })
 						
 						// 实际数据
-						// requestQrCodeUrl(resp.result).then((res) => {
-						// 	scanCodeReturn(res)
-						// 	if (res.data.code == 200) {
-						// 		uni.navigateTo({
-						// 			url: '../onSiteTraining/courseDetails'
-						// 		})
-						// 	} else {
-						// 		request_success(res)
-						// 	}
-						// }, (err) => {
-						// 	uni.hideLoading()
-						// 	request_err(err, '解析二维码失败')
-						// })
+						requestQrCodeUrl(resp.result).then((res) => {
+							scanCodeReturn(res)
+							if (res.data.code == 200) {
+								uni.navigateTo({
+									url: '../onSiteTraining/courseDetails'
+								})
+							} else {
+								request_success(res)
+							}
+						}, (err) => {
+							uni.hideLoading()
+							request_err(err, '解析二维码失败')
+						})
 					},
 					fail: err => {
 						console.log('扫描失败', err)

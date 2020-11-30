@@ -10,7 +10,7 @@
 			{{timecountdown?timecountdown:'00:00:00'}}
 		</view>
 		<view class="current-count">
-			<text class="currTxt">{{datas.current}}</text>/{{datas.total}}
+			<text class="currTxt">{{tab}}</text>/{{datas.total}}
 		</view>
 	</view>
 </template>
@@ -24,16 +24,19 @@
 		data() {
 			return {
 				timer: null,
-				timecountdown: ''
+				timecountdown: '',
+				tab: 1
 			};
 		},
 		props: ['datas'],
 		created() {
-			console.log('this', this.datas)
+			
 			this.countDown(this.datas.time)
+			uni.$on('swiperChange',(res)=>{
+				this.tab = res.current+1
+			})
 		},
 		updated() {
-
 		},
 		beforeDestroy() {
 			clearInterval(this.timer)
@@ -59,12 +62,12 @@
 							success: (res) => {
 								if (res.confirm) {
 									uni.redirectTo({
-										url:'../../pages/onSiteTraining/examResult'
+										url: '../../pages/onSiteTraining/examResult'
 									})
 								}
 							}
 						})
-						
+
 						return
 					}
 					t--

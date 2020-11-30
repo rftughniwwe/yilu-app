@@ -46,7 +46,7 @@
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {
 				console.log('token获取成功：', res)
-				uni.setStorageSync('ocr_token', res.data.data)
+				uni.setStorageSync('ocr_token', res.data.data) 
 			}, (err) => {
 				console.log('获取token失败:', err)
 			})

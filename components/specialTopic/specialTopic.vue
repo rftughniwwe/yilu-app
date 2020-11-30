@@ -2,7 +2,7 @@
 <template>
 <view class="main">
 		<view class="topic-item" @click="goSpeacialDetail">
-			<image src="../../static/banner.png" mode=""></image>
+			<image src="../../static/learning-banner2.png" mode=""></image>
 			<view class="btm-content flex-between">
 				<view class="title-time">
 					<view class="titile">

@@ -4,11 +4,11 @@
 		<view class="top-content">
 			<view class="topic flex-row-start">
 				<view class="header-img">
-					<image src="../../../static/banner2.png" mode=""></image>
+					<image src="../../../static/learning-banner2.png" mode=""></image>
 				</view>
 				<view class="right-content">
 					<view class="topic-txt text-overflow2">
-						安全教育学习安全教育学习安全教育学习安全教育学习
+						安全教育学习
 					</view>
 					<view class="tongji">
 						共2次卡，学习总时长2小时

@@ -4,10 +4,13 @@ import {
 } from './util.js'
 
 
-const BASE_URL = 'http://172.168.1.229'
+// const BASE_URL = 'http://172.168.1.229'
+const BASE_URL = 'http://47.101.131.157:8880'
+
 // 图片上传
-const BASE_URL2 = 'http://172.168.1.229:8730'
-export const base_url3 = 'http://172.168.1.229:8720'
+// const BASE_URL2 = 'http://172.168.1.229:8730'
+
+const BASE_URL2 = 'http://47.101.131.157:8880'
 
 
 // 身份证OCR地址
@@ -30,20 +33,21 @@ const BD_OCR_SECRET = '9oPaR15FGH1XA3oN1R8hQ3LuV20e5MUE'
 // 请求
 function httpRequest(options, url_type) {
 
-	let base_url = ''
+	let base_url = BASE_URL
+
+	// if (url_type == 1) {
+	// 	// 登录注册地址
+	// 	base_url = BASE_URL + ':8720'
+	// } else if (url_type == 2) {
+	// 	base_url = BASE_URL + ':8730'
+	// } else if (url_type == 3) {
+	// 	base_url = BASE_URL + ':8740'
+	// } else if (url_type == 4) {
+	// 	base_url = BASE_URL + ':8700'
+	// } else if (url_type == 5) {
+	// 	base_url = BASE_URL + ':8760'
+	// }
 	
-	if(url_type == 1){
-		// 登录注册地址
-		base_url = BASE_URL+':8720'
-	}else if(url_type == 2){
-		base_url = BASE_URL+':8730'
-	}else if(url_type == 3){
-		base_url = BASE_URL+':8740'
-	}else if(url_type == 4){
-		base_url = BASE_URL+':8700'
-	}else if(url_type == 5){
-		base_url = BASE_URL+':8760'
-	}
 	getNetworkType().then((res) => {
 		if (res) {
 			uni.request({
@@ -81,7 +85,7 @@ function getAcceessToken(key, secret) {
 					icon: 'none'
 				})
 			}
-		},1)
+		}, 1)
 	})
 }
 
@@ -130,7 +134,7 @@ function getQualification(options) {
 			fail: (err) => {
 				reject(err)
 			}
-		},1)
+		}, 1)
 	})
 }
 
@@ -170,11 +174,11 @@ function uploadImage(url, fileType = 'picFile', filePath, params) {
 }
 
 // 请求二维码地址
-function requestQrCodeUrl(url){
-	return new Promise((resolve,reject)=>{
+function requestQrCodeUrl(url) {
+	return new Promise((resolve, reject) => {
 		uni.request({
-			url:url,
-			method:'POST',
+			url: url,
+			method: 'POST',
 			success: (res) => {
 				resolve(res)
 			},
@@ -183,7 +187,7 @@ function requestQrCodeUrl(url){
 			}
 		})
 	})
-	
+
 }
 
 module.exports = {

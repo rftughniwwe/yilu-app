@@ -59,7 +59,7 @@
 					<view class="topic text-overflow2">
 						危化品运输车安全行车注意事项, 你必须了解！危化品运输车安全行车注意事项, 你必须了解！
 					</view>
-					<view class="cover flex-evenly" :style="{'background':'url(../../../static/banner.png)'}">
+					<view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}">
 						<image src="../../../static/pause-video.png" mode=""></image>
 					</view>
 				</view>
@@ -67,7 +67,7 @@
 					<view class="topic text-overflow2">
 						危化品运输车安全行车注意事项, 你必须了解！危化品运输车安全行车注意事项, 你必须了解！
 					</view>
-					<view class="cover flex-evenly" :style="{'background':'url(../../../static/banner.png)'}">
+					<view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}">
 						<image src="../../../static/pause-video.png" mode=""></image>
 					</view>
 				</view>

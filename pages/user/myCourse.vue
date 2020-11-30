@@ -32,51 +32,6 @@
 						</view>
 					</view>
 				</view>
-
-			<!-- 	<view class="course-item" @click="goPreview">
-					<view class="title text-overflow-ellipsis">
-						五月安全培训危货
-					</view>
-					<view class="subtitle">
-						2020/09/09 19:30-20:30
-					</view>
-					<view class="img-content">
-						<image src="../../static/banner.png" mode=""></image>
-						<view class="tags">
-							预告
-						</view>
-					</view>
-				</view>
-				
-				<view class="course-item">
-					<view class="title text-overflow-ellipsis">
-						五月安全培训危货
-					</view>
-					<view class="subtitle">
-						2020/09/09 19:30-20:30
-					</view>
-					<view class="img-content">
-						<image src="../../static/banner.png" mode=""></image>
-						<view class="tags">
-							直播中
-						</view>
-					</view>
-				</view>
-				<view class="course-item">
-					<view class="title text-overflow-ellipsis">
-						五月安全培训危货
-					</view>
-					<view class="subtitle">
-						2020/09/09 19:30-20:30
-					</view>
-					<view class="img-content">
-						<image src="../../static/banner.png" mode=""></image>
-						<view class="tags">
-							回放
-						</view>
-					</view>
-				</view>
-		 -->
 			</template>
 			<template v-else>
 				<EmptyData type='serach'/>

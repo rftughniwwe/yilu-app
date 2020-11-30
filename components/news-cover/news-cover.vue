@@ -3,7 +3,7 @@
 	<view class="main" @click="goArticleDetails">
 		<view v-if="position==='left'" class="topic-left-content">
 			<view class="left" :style="{'fontSize':globalSize+'rpx'}">
-				{{datas.title}}
+				{{datas.title || '未知'}}
 			</view>
 			<view class="right">
 				<image :src="datas.blogImg" mode=""></image>
@@ -14,32 +14,6 @@
 				<text>{{datas.bloggerNickname?datas.bloggerNickname:'未知用户'}}</text>
 			</view>
 		</view>
-		<!-- <view v-if="position==='text'" class="topic-top-content">
-			<view class="left only-text" :style="{'fontSize':globalSize+'rpx'}">
-				自我测评是否疲劳驾驶和缓解劳的方法自我测评是否疲劳驾驶和缓解劳的方法自我测评是否疲劳驾驶和缓解劳的方法
-			</view>
-			<view class="form-time flex-between">
-				<image class="top-img" src="../../static/top.png" mode=""></image>
-				<text>央视新闻</text>
-			</view>
-		</view>
-		<view v-if="position==='right'||position==='moreimg'" class="topic-top-content">
-			<view class="left" :style="{'fontSize':globalSize+'rpx'}">
-				自我测评是否疲劳驾驶和缓解劳的方法自我测评是否疲劳驾驶和缓解劳的方法自我测评是否疲劳驾驶和缓解劳的方法
-			</view>
-			<view v-if="position==='right'" class="bottom">
-				<image src="../../static/banner2.png" mode=""></image>
-			</view>
-			<view v-else class="more-img flex-between">
-				<image src="../../static/banner2.png" mode=""></image>
-				<image src="../../static/banner2.png" mode=""></image>
-				<image src="../../static/banner2.png" mode=""></image>
-			</view>
-			<view class="form-time flex-between">
-				<image class="top-img" src="../../static/top.png" mode=""></image>
-				<text>央视新闻</text>
-			</view>
-		</view> -->
 	</view>
 </template>
 

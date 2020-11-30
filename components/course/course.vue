@@ -3,7 +3,7 @@
 	<view class="main">
 		<view class="item-content flex-between">
 			<view class="img-content">
-				<image src="../../static/banner.png" mode=""></image>
+				<image src="../../static/learning-banner2.png" mode=""></image>
 			</view>
 			<view class="right-content flex-column-between">
 				<view class="title text-overflow2">

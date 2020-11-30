@@ -263,28 +263,28 @@
 					onlyFromCamera: true,
 					success: res => {
 						// 测试用数据
-						uni.setStorageSync('scanData', obj)
-						uni.navigateTo({
-							url: '../onSiteTraining/courseDetails'
-						})
+						// uni.setStorageSync('scanData', obj)
+						// uni.navigateTo({
+						// 	url: '../onSiteTraining/courseDetails'
+						// })
 					
-						// console.log('扫描结果：', res)
-						// uni.showLoading({
-						// 	title: '解析中...'
-						// })
-						// requestQrCodeUrl(res.result).then((resp) => {
-						// 	scanCodeReturn(resp)
-						// 	if (resp.data.code == 200) {
-						// 		uni.navigateTo({
-						// 			url:'../onSiteTraining/courseDetails'
-						// 		})
-						// 	} else {
-						// 		request_success(resp)
-						// 	}
-						// }, (err) => {
-						// 	uni.hideLoading()
-						// 	request_err(err, '解析二维码失败')
-						// })
+						console.log('扫描结果：', res)
+						uni.showLoading({
+							title: '解析中...'
+						})
+						requestQrCodeUrl(res.result).then((resp) => {
+							scanCodeReturn(resp)
+							if (resp.data.code == 200) {
+								uni.navigateTo({
+									url:'../onSiteTraining/courseDetails'
+								})
+							} else {
+								request_success(resp)
+							}
+						}, (err) => {
+							uni.hideLoading()
+							request_err(err, '解析二维码失败')
+						})
 					},
 					fail: err => {
 						console.log('扫描失败', err)
@@ -393,7 +393,7 @@
 
 	.item-img {
 		border-radius: $uni-border-radius-base;
-		background-image: url(../../static/banner2.png);
+		background-image: url(../../static/learning-banner2.png);
 		background-size: 100% 100%;
 		width: 400rpx;
 		height: 214rpx;

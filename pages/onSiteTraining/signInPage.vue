@@ -488,7 +488,7 @@
 															// uni.navigateTo({
 															// 	url:'/pages/exam/examInfo?trainintId='+this.signDatas.id
 															// })
-															uni.navigateTo({
+															uni.redirectTo({
 																url:'./examBegin'
 															})
 														}

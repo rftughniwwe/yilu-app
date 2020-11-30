@@ -14,40 +14,46 @@
 		</view>
 
 		<view v-show="content=='1'" class="article-content" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
-			<view class="flex-between editor" @click="selectedItem(1)">
-				<view v-show="showRemove" class="circle-point">
-					<view class="point-content flex-between" :style="{'border-color':selectedArr == '1'?'#F45B5A':'#BFBFBF'}">
-						<image v-show="selectedArr == '1'" src="../../static/selected.png" mode=""></image>
+			<template v-if="false">
+
+				<view class="flex-between editor" @click="selectedItem(1)">
+					<view v-show="showRemove" class="circle-point">
+						<view class="point-content flex-between" :style="{'border-color':selectedArr == '1'?'#F45B5A':'#BFBFBF'}">
+							<image v-show="selectedArr == '1'" src="../../static/selected.png" mode=""></image>
+						</view>
 					</view>
+					<!-- <view class="right"> -->
+					<newCover position='left' :datas='{}' />
+					<!-- </view> -->
 				</view>
-				<!-- <view class="right"> -->
-				<newCover position='left' />
-				<!-- </view> -->
-			</view>
-			<view class="flex-between editor" @click="selectedItem(2)">
-				<view v-show="showRemove" class="circle-point">
-					<view class="point-content flex-between" :style="{'border-color':selectedArr == '2'?'#F45B5A':'#BFBFBF'}">
-						<image v-show="selectedArr == '2'" src="../../static/selected.png" mode=""></image>
+				<view class="flex-between editor" @click="selectedItem(2)">
+					<view v-show="showRemove" class="circle-point">
+						<view class="point-content flex-between" :style="{'border-color':selectedArr == '2'?'#F45B5A':'#BFBFBF'}">
+							<image v-show="selectedArr == '2'" src="../../static/selected.png" mode=""></image>
+						</view>
 					</view>
+					<newCover position='text' :datas='{}' />
 				</view>
-				<newCover position='text' />
-			</view>
-			<view class="flex-between editor" @click="selectedItem(3)">
-				<view v-show="showRemove" class="circle-point">
-					<view class="point-content flex-between" :style="{'border-color':selectedArr == '3'?'#F45B5A':'#BFBFBF'}">
-						<image v-show="selectedArr == '3'" src="../../static/selected.png" mode=""></image>
+				<view class="flex-between editor" @click="selectedItem(3)">
+					<view v-show="showRemove" class="circle-point">
+						<view class="point-content flex-between" :style="{'border-color':selectedArr == '3'?'#F45B5A':'#BFBFBF'}">
+							<image v-show="selectedArr == '3'" src="../../static/selected.png" mode=""></image>
+						</view>
 					</view>
+					<newCover position='moreimg' :datas='{}' />
 				</view>
-				<newCover position='moreimg' />
-			</view>
-			<view class="flex-between editor" @click="selectedItem(4)">
-				<view v-show="showRemove" class="circle-point">
-					<view class="point-content flex-between" :style="{'border-color':selectedArr == '4'?'#F45B5A':'#BFBFBF'}">
-						<image v-show="selectedArr == '4'" src="../../static/selected.png" mode=""></image>
+				<view class="flex-between editor" @click="selectedItem(4)">
+					<view v-show="showRemove" class="circle-point">
+						<view class="point-content flex-between" :style="{'border-color':selectedArr == '4'?'#F45B5A':'#BFBFBF'}">
+							<image v-show="selectedArr == '4'" src="../../static/selected.png" mode=""></image>
+						</view>
 					</view>
+					<newCover position='right' :datas='{}' />
 				</view>
-				<newCover position='right' />
-			</view>
+			</template>
+			<template v-else>
+				<EmptyData/>
+			</template>
 		</view>
 		<view v-show="showRemove" class="remove-content flex-around">
 			<view class="remvoe-all">
@@ -65,6 +71,8 @@
 	import specialTopic from '@/components/specialTopic/specialTopic.vue'
 	import newCover from '@/components/news-cover/news-cover.vue'
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	
 	export default {
 		data() {
 			return {
@@ -79,8 +87,8 @@
 			learnTopSlide,
 			specialTopic,
 			newCover,
-			uniNavBar
-
+			uniNavBar,
+			EmptyData
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
@@ -109,7 +117,7 @@
 			},
 			// 删除
 			removeContent() {
-				if(this.showRemove){
+				if (this.showRemove) {
 					this.selectedArr = ''
 				}
 				this.showRemove = !this.showRemove

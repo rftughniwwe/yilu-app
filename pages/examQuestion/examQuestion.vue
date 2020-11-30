@@ -2,10 +2,10 @@
 <template>
 	<view class="container">
 		<view class="topic-content">
-			<examTopContent :datas='topDatas' />
+			<examTopContent :datas='topDatas'/>
 		</view>
 		<view class="swiper-contnet">
-			<examSwpier :options='options' />
+			<examSwpier :options='options'/>
 		</view>
 		<view class="bottom-content">
 			<questionBottom @answerSheet='answerSheet' @complete='completeExam' />
@@ -320,7 +320,6 @@
 						]
 					},
 				]
-				
 			};
 		},
 		components: {
@@ -339,6 +338,7 @@
 				title: '练习题'
 			})
 			this.setTopData()
+			
 		},
 		methods: {
 			setTopData() {

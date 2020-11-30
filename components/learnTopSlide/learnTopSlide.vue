@@ -14,7 +14,7 @@
 					{{item.categoryName}}
 				</view>
 			</view>
-			
+
 			<view class="flex-evenly" v-if="type ==2">
 				<view @click="selfChagneTab(1)" class="items" :class="selfLearnType===1?'selected-item':''">
 					课程
@@ -43,7 +43,7 @@
 			return {
 				// 默认选中第一个tab
 				AnquanNum: 0,
-				JixuNum:0,
+				JixuNum: 0,
 				otherTab: 0,
 				datas: [{
 						"id": "1080387575940304898",
@@ -91,41 +91,39 @@
 				]
 			};
 		},
-		props: ['type', 'AnquanType','selfLearnType', 'tabArr'],
+		props: ['type', 'AnquanType', 'selfLearnType', 'tabArr'],
 		created() {
-			this.AnquanNum = this.AnquanType>=0?this.AnquanType:uni.getStorageSync('anquanTab')
-			this.JixuNum = uni.getStorageSync('jixuTab')?uni.getStorageSync('jixuTab'):0
+			// this.AnquanNum = this.AnquanType > 0 ? this.AnquanType : uni.getStorageSync('anquanTab')
+			this.JixuNum = uni.getStorageSync('jixuTab') ? uni.getStorageSync('jixuTab') : 0
 			uni.$on('closeModalMask', (data) => {
-				this.selfNum = data.index
+				uni.setStorageSync('anquanTab', data.index)
+				this.AnquanNum = data.index
 			})
 			uni.pageScrollTo({
-				selector:'selected-item'
+				selector: 'selected-item'
 			})
 		},
 		updated() {
-			console.log('zzzzzz',this.AnquanType)
-			console.log('222222222222',uni.getStorageSync('anquanTab'))
 			this.AnquanNum = uni.getStorageSync('anquanTab')
-			this.JixuNum = uni.getStorageSync('jixuTab')?uni.getStorageSync('jixuTab'):0
+			this.JixuNum = uni.getStorageSync('jixuTab') ? uni.getStorageSync('jixuTab') : 0
 		},
 		methods: {
 			// 安全教育学习教育改变事件
 			chagneTab(e, item) {
-				if(this.type==0){
-					uni.setStorageSync('anquanTab',e)
+				if (this.type == 0) {
+					uni.setStorageSync('anquanTab', e)
 					this.AnquanNum = e
-				}else if(this.type==1){
-					uni.setStorageSync('jixuTab',e)
+				} else if (this.type == 1) {
+					uni.setStorageSync('jixuTab', e)
 					this.JixuNum = e
 				}
 				uni.setStorageSync('LearningSubTypeSubItem', item)
-				console.log('选择的子模块：',item)
+				console.log('选择的子模块：', item)
 			},
 			selfChagneTab(num) {
 				uni.$emit('selfChange', {
 					tab: num
 				})
-				this.selfNum = num
 			},
 			otherChangeTab(num) {
 				this.otherTab = num

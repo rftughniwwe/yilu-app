@@ -82,15 +82,15 @@
 								userNo: resp.data.data.userNo,
 								userToken: resp.data.data.token
 							})
-							uni.setStorage({
-								'key': 'userToken',
-								'data': resp.data.data.token,
-								success: () => {
-									auth.getUserInfo((data) => {
-										uni.$emit('_userLogin', data)
-									})
-								}
-							});
+							// uni.setStorage({
+							// 	'key': 'userToken',
+							// 	'data': resp.data.data.token,
+							// 	success: () => {
+							// 		auth.getUserInfo((data) => {
+							// 			uni.$emit('_userLogin', data)
+							// 		})
+							// 	}
+							// });
 							this.routePage(resp.data.data.userNo)
 						} else {
 							uni.showModal({

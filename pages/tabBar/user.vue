@@ -250,6 +250,7 @@
 		.phone {
 			color: #FFFFFF;
 			// font-size: 26rpx;
+			margin-left: 20rpx;
 		}
 	}
 

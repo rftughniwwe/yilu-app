@@ -1,8 +1,8 @@
 <!-- 做题swpier -->
 <template>
 	<view class="main">
-		<swiper  class='swiper' :indicator-dots='false'>
-			<template v-for="(item,index) in datas">
+		<swiper  class='swiper' :indicator-dots='false' @change="itemChange">
+			<template v-for="(item,index) in datas" >
 				<swiper-item>
 					<view class="topic">
 						{{item.count}}.{{item.title}}
@@ -23,7 +23,8 @@
 		data() {
 			return {
 				datas: [],
-				singleItem:-1
+				singleItem:-1,
+				currnet:0
 			};
 		},
 		components:{
@@ -39,6 +40,10 @@
 		methods: {
 			clickItem(index){
 				this.singleItem = index
+			},
+			itemChange(e){
+				console.log('eeee啊',e)
+				uni.$emit('swiperChange',{current:e.target.current})
 			}
 		}
 	}
