@@ -36,7 +36,8 @@
 	} from '@/commons/ResponseTips.js'
 	import {
 		faceVerification,
-		getExamDetails
+		getExamDetails,
+		getExamIdByTraingId
 	} from '@/commons/api/apis.js'
 	import {
 		getUserLoginInfo
@@ -47,22 +48,48 @@
 			return {
 				examData: {},
 				gradeExamId: '',
-				examId: ''
 			};
 		},
 		onLoad(options) {
-			this.examData = options.examdatas ? JSON.parse(decodeURIComponent(options.examdatas)) : {}
-			this.examId = options.trainintId || uni.getStorageSync('TrainingId')
-			this.getExamInfoData()
+			console.log('options:',options)
+			if(options.id){
+				this.getExamId(options.id)
+			}else{
+				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
+			}
+			
 			// if(options.gradeExamId) {
 			// 	this.gradeExamId = options.gradeExamId
 			// }
 			// this.getData(options.id)
 		},
+		onShow() {
+			let i = uni.getStorageSync('TrainingId')
+			this.getExamId(i)
+		},
 		comments: {
 			primaryBtn
 		},
 		methods: {
+			// 根据培训场次获取试卷ID
+			getExamId(id) {
+				console.log('培训场次id', id)
+				uni.showLoading({
+					title:'加载中...'
+				})
+				getExamIdByTraingId(id).then(res => {
+					uni.hideLoading()
+					console.log('resssss',res)
+					if (res.data.code == 200) {
+						this.examData = res.data.data
+						this.getExamInfoData()
+					} else {
+						request_success(res)
+					}
+				})
+			},
+			
+			
 			// 开始考试
 			startExam() {
 				if (!auth.isLogin()) {
@@ -107,11 +134,11 @@
 
 			// 获取试卷数据
 			getExamInfoData() {
-				let id = this.examId
+				let id = this.examData.id
 				getExamDetails(id).then(res => {
 					console.log("获取的试卷数据：", res)
 					if (res.data.code == 200) {
-
+						this.examData = res.data.data || {}
 					} else {
 						request_success(res)
 					}

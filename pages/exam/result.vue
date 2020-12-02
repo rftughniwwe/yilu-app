@@ -2,8 +2,6 @@
 
 <template>
 	<view>
-
-
 		<view class="nav">
 			<uni-nav-bar statusBar="true" class="nav-bar-zw" @clickLeft="close()" background-color="#2388ec" color="#fff" left-icon="back" title="考试成绩"></uni-nav-bar>
 			<uni-nav-bar statusBar="true" class="nav-bar" @clickLeft="close()" background-color="#2388ec" color="#fff" left-icon="back" title="考试成绩"></uni-nav-bar>
@@ -69,10 +67,18 @@
 		onLoad(options) {
 			this.examData = uni.getStorageSync('userexam-result')
 		},
+		onBackPress() {
+			setTimeout(()=>{
+				uni.switchTab({
+					url:'../tabBar/learn'
+				})
+			},300)
+			return true
+		},
 		methods: {
 			close() {
-				uni.navigateTo({
-					url:'../onSiteTraining/onSiteTraining'
+				uni.switchTab({
+					url:'../tabBar/index'
 				})
 			},
 			openExplain() {

@@ -18,11 +18,10 @@
         },
         /* 模块配置 */
         "modules" : {
-            "Maps" : {},
             "VideoPlayer" : {},
-            "Payment" : {},
+            "Maps" : {},
             "Geolocation" : {},
-            "Contacts" : {}
+            "Payment" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -40,17 +39,14 @@
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
-                    "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
                     "<uses-permission android:name=\"android.permission.INTERNET\"/>",
                     "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
-                    "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
                     "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
                     "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
-                    "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ],
@@ -61,7 +57,13 @@
             /* SDK配置 */
             "sdkConfigs" : {
                 "ad" : {},
-                "geolocation" : {},
+                "geolocation" : {
+                    "amap" : {
+                        "__platform__" : [ "ios", "android" ],
+                        "appkey_ios" : "a30aed841a7efbe89641dfd127b97f83",
+                        "appkey_android" : "fa130574b0b837ce672a9d7cb7df301c"
+                    }
+                },
                 "maps" : {
                     "amap" : {
                         "appkey_ios" : "a30aed841a7efbe89641dfd127b97f83",
@@ -69,6 +71,11 @@
                     }
                 },
                 "payment" : {
+                    "weixin" : {
+                        "__platform__" : [ "ios", "android" ],
+                        "appid" : "wx0a5198d46d4b8575",
+                        "UniversalLinks" : ""
+                    },
                     "alipay" : {
                         "__platform__" : [ "ios", "android" ]
                     }
@@ -110,7 +117,7 @@
                 }
             },
             "splashscreen" : {
-                "androidStyle" : "default",
+                "androidStyle" : "common",
                 "android" : {
                     "hdpi" : "C:/Users/90975/Desktop/启动图标/480的.png",
                     "xhdpi" : "C:/Users/90975/Desktop/启动图标/720的.png",

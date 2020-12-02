@@ -224,7 +224,8 @@
 		getSystemInfo,
 		getUserLoginInfo,
 		getCurrentDate,
-		dateWeek
+		dateWeek,
+		removeAppStorage
 	} from '@/utils/util.js'
 	import {
 		request_err,
@@ -251,7 +252,7 @@
 				signOutTime: '',
 				oldSignData: [],
 				isOldData: false,
-				todayweek:{},
+				todayweek: {},
 			};
 		},
 		components: {
@@ -352,7 +353,7 @@
 				})
 			},
 			// 简单验证合法性
-			simpleJudge(num){
+			simpleJudge(num) {
 				let end = new Date(this.signDatas.endTime).getTime()
 				let start = new Date(this.signDatas.startTime).getTime()
 				let now = new Date().getTime()
@@ -373,24 +374,29 @@
 						title: '您已签出'
 					})
 					return
-				}else if(num == 1 && this.noSign1){
+				} else if (num == 1 && this.noSign1) {
 					Toast({
 						title: '请先签入'
 					})
 					return
-				}else if((now > start) && num == 0){
+				}else if(now < start -((60*1000)*10)){
 					Toast({
-						title:'培训已经开始，不能签入'
+						title: '培训还未开始，请稍后'
 					})
 					return
-				}else if((now < end) && num == 1){
+				} else if (now > end + (30 * (60 * 1000))) {
 					Toast({
-						title:'培训还未结束，不能签出'
+						title: '培训已结束，不能签出'
 					})
 					return
-				}else if(now > end + (30*(60*1000))){
+				} else if ((now > start) && num == 0) {
 					Toast({
-						title:'培训已结束，不能签出'
+						title: '培训已经开始，不能签入'
+					})
+					return
+				} else if ((now < end) && num == 1) {
+					Toast({
+						title: '培训还未结束，不能签出'
 					})
 					return
 				}
@@ -400,16 +406,15 @@
 			// 签入签出
 			sign(num) {
 				let that = this
-				
-				if(!this.simpleJudge(num)) return
-				
-				let address = uni.getStorageSync('userAddress')
 
+				if (!this.simpleJudge(num)) return
+
+				let address = uni.getStorageSync('userAddress')
 				let params = {
-					"chapterdId": this.signDatas.chapterList?this.signDatas.chapterList[0].chapterId:'',
+					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
 					"compId": uni.getStorageSync('userBasicInfo').compId,
 					"refId": this.signDatas.courseId,
-					"coursePeriodId": this.signDatas.periodList?this.signDatas.periodList[0].periodId:'',
+					"coursePeriodId": this.signDatas.periodList ? this.signDatas.periodList[0].periodId : '',
 					"numEvent": this.signDatas.id,
 					"refName": this.signDatas.name,
 					"place": this.addressTxt,
@@ -425,7 +430,6 @@
 					"userNo": getUserLoginInfo('userNo')
 				}
 
-
 				// 签入签出
 				// 人脸采集
 				useFacePlugin({
@@ -433,7 +437,9 @@
 					random: true
 				}).then((res) => {
 
-
+					uni.showLoading({
+						title: num == 0 ? '签入中...' : '签出中...'
+					})
 					// base64转图片
 					base64ToPath(res).then(path => {
 
@@ -450,9 +456,7 @@
 							}
 
 							console.log('签入签出参数：', params)
-							uni.showLoading({
-								title: num == 0 ? '签入中...' : '签出中...'
-							})
+
 							// 人脸验证
 							faceVerification(res).then(resp => {
 								uni.hideLoading()
@@ -470,27 +474,27 @@
 												that.noSign1 = false
 												that.signInTime = getCurrentDate('onlyHours')
 												Toast({
-													title:'签入成功',
+													title: '签入成功',
 													icon: 'success'
 												})
 											} else if (num == 1) {
 												that.noSign2 = false
 												that.signOutTime = getCurrentDate('onlyHours')
-												uni.setStorageSync('TrainingId',this.signDatas.id)
+												uni.setStorageSync('TrainingId', that.signDatas.id)
 												uni.showModal({
-													title:'提示',
-													content:'签出成功，是否立即进行考试？',
-													cancelText:'稍后',
-													confirmText:'前往考试',
-													confirmColor:'#38A6FD',
-													success:res=>{
-														if(res.confirm){
-															// uni.navigateTo({
-															// 	url:'/pages/exam/examInfo?trainintId='+this.signDatas.id
-															// })
-															uni.redirectTo({
-																url:'./examBegin'
+													title: '提示',
+													content: '签出成功，是否立即进行考试？',
+													cancelText: '稍后',
+													confirmText: '前往考试',
+													confirmColor: '#38A6FD',
+													success: res => {
+														if (res.confirm) {
+															uni.navigateTo({
+																url: '/pages/exam/examInfo?id=' + that.signDatas.id
 															})
+															// uni.redirectTo({
+															// 	url:'./examBegin'
+															// })
 														}
 														// else if(res.cancel){
 														// 	uni.showModal({
@@ -502,7 +506,19 @@
 													}
 												})
 											}
-											
+
+										} else if (_res.data.code == 301) {
+											uni.showToast({
+												title: '登录过期',
+												icon: 'none',
+												duration: 1000
+											})
+											removeAppStorage()
+											setTimeout(() => {
+												uni.reLaunch({
+													url: '../login/normalLogin'
+												})
+											}, 1000)
 										} else {
 											request_success(_res)
 										}
@@ -534,11 +550,11 @@
 			getOldSignDatas() {
 				this.oldSignData = []
 				let params = {
-					"chapterdId": this.signDatas.chapterList?this.signDatas.chapterList[0].chapterId:'',
+					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
 					"compId": uni.getStorageSync('userBasicInfo').compId,
 					"refId": this.signDatas.courseId,
-					"coursePeriodId": this.signDatas.periodList?this.signDatas.periodList[0].periodId:'',
-					"numEvent": this.signDatas.courseName,
+					"coursePeriodId": this.signDatas.periodList ? this.signDatas.periodList[0].periodId : '',
+					"numEvent": this.signDatas.id,
 					"refName": this.signDatas.courseName,
 					"signonApp": 0,
 					"statusId": 1,
@@ -700,7 +716,7 @@
 
 	.mapz {
 		width: 690rpx;
-		height: 400rpx;
+		height: 350rpx;
 	}
 
 	.tab-bar {
@@ -711,7 +727,7 @@
 		border-top: 2rpx solid #DDDDDD;
 		padding: 10rpx 0;
 		background-color: #FFFFFF;
-		z-index: 9988;
+		z-index: 9998;
 	}
 
 	.tab-sign,

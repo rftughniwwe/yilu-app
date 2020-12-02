@@ -395,12 +395,12 @@
 						url: '../onSiteTraining/onSiteTraining'
 					})
 				} else if (num == 2) {
-					// uni.navigateTo({
-					// 	url:'../user/myCourse'
-					// })
 					uni.navigateTo({
-						url: '../course/list/list'
+						url:'../user/myCourse'
 					})
+					// uni.navigateTo({
+					// 	url: '../course/list/list'
+					// })
 				}
 				// 需判断是否付费
 				// uni.showModal({

@@ -63,6 +63,11 @@
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 		},
+		onBackPress() {
+			uni.switchTab({
+				url: '../tabBar/index'
+			})
+		},
 		methods: {
 			// 返回
 			navigate() {

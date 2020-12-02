@@ -237,7 +237,7 @@ function getUserLoginInfo(str) {
 	if (str == 'userNo') {
 		return user.userNo
 	} else if (str == 'token') {
-		return user.token
+		return user.userToken
 	}
 	console.log('ERROR:你得传点什么')
 }

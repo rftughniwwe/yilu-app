@@ -106,6 +106,21 @@
 		onUnload() {
 			clearInterval(this.time)
 			// clearTimeout(this.timer)
+			this.submit()
+		},
+		onBackPress() {
+			uni.showModal({
+				title:'提示',
+				content:'退出将自动交卷，确定退出？',
+				confirmText:'确定',
+				cancelText:'取消',
+				success:res=>{
+					if(res.confirm){
+						this.submit()
+					}
+				},
+			})
+			return true
 		},
 		methods: {
 			to(index) {
@@ -150,9 +165,9 @@
 						e.recordId = this.recordId;
 						uni.setStorageSync('userexam-result', e);
 						
-						uni.navigateTo({
+						uni.redirectTo({
 							url: '/pages/exam/gradeResult'
-						});
+						})
 					})
 				} else {
 					const d = {
@@ -163,9 +178,9 @@
 						e.recordId = this.recordId;
 						uni.setStorageSync('userexam-result', e);
 						
-						uni.navigateTo({
+						uni.redirectTo({
 							url: '/pages/exam/result'
-						});
+						})
 					})
 				}
 			},

@@ -268,6 +268,8 @@ export function  cancelSubscribe(options){
 export function signInOut(params){
 	params.compId = compId
 	params.userId = userNum
+	let t = getUserLoginInfo('token')
+	console.log('token:::',t)
 	return new Promise((resolve,reject)=>{
 		httpRequest({
 			url:'/course/auth/face/sign/log/signSave',
@@ -332,6 +334,7 @@ export function getExamIdByTraingId(id){
 				resolve(res)
 			},
 			fail:err=>{
+				uni.hideLoading()
 				request_err(err,'获取试卷失败')
 			}
 		},5)

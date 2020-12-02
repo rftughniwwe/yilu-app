@@ -240,8 +240,8 @@
 			scanCode() {
 				let sT = getNotRealTime('start')
 				let eT = getNotRealTime('end')
-				console.log('st',sT)
-				console.log('et',eT)
+				console.log('st', sT)
+				console.log('et', eT)
 				// 插件扫码
 				let obj = {
 					"teacher": '王老师',
@@ -257,17 +257,17 @@
 					"lat": "31.0991625",
 					"teacherIntro": "<p>介绍</p>"
 				}
-				
+
 				uni.scanCode({
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
 					success: res => {
 						// 测试用数据
-						// uni.setStorageSync('scanData', obj)
-						// uni.navigateTo({
-						// 	url: '../onSiteTraining/courseDetails'
-						// })
-					
+						// 	uni.setStorageSync('scanData', obj)
+						// 	uni.navigateTo({
+						// 		url: '../onSiteTraining/courseDetails'
+						// 	})
+
 						console.log('扫描结果：', res)
 						uni.showLoading({
 							title: '解析中...'
@@ -276,7 +276,7 @@
 							scanCodeReturn(resp)
 							if (resp.data.code == 200) {
 								uni.navigateTo({
-									url:'../onSiteTraining/courseDetails'
+									url: '../onSiteTraining/courseDetails'
 								})
 							} else {
 								request_success(resp)

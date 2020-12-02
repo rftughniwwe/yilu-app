@@ -89,10 +89,10 @@ const request = (params, cb) => {
           reject(result);
 		  console.log(result);
           if (!!result.msg) {
-            uni.showToast({
-              title: result.msg,
-              icon: 'none'
-            });
+            // uni.showToast({
+            //   title: result.msg,
+            //   icon: 'none'
+            // });
           }
         }
       },

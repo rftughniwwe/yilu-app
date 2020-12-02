@@ -53,6 +53,14 @@
 		onLoad() {
 			this.getExamId()
 		},
+		onBackPress() {
+			setTimeout(()=>{
+				uni.reLaunch({
+					url:'../tabBar/learn'
+				})
+			},300)
+			return true
+		},
 		methods: {
 			signinNow() {
 				let sT = getNotRealTime('start')
@@ -121,12 +129,11 @@
 			// 根据培训场次获取试卷ID
 			getExamId() {
 				let trainingid = uni.getStorageSync('TrainingId')
-				if (!trainingid) return
 				console.log('培训场次id', trainingid)
 				getExamIdByTraingId(trainingid).then(res => {
 					console.log('根据培训场次获取试卷:', res)
 					if (res.data.code == 200) {
-						this.examData = res.data.data
+						this.examData = res.data.data || {}
 					} else {
 						request_success(res)
 					}
@@ -141,13 +148,13 @@
 				// 	})
 				// 	return
 				// }
-				// let d = encodeURIComponent(JSON.stringify(this.examData))
-				// uni.navigateTo({
-				// 	url: '/pages/exam/examInfo?examdatas=' + d
-				// });
+				let d = encodeURIComponent(JSON.stringify(this.examData))
 				uni.navigateTo({
-					url:'/pages/onSiteTraining/examBegin'
-				})
+					url: '/pages/exam/examInfo?examdatas=' + d
+				});
+				// uni.navigateTo({
+				// 	url:'/pages/onSiteTraining/examBegin'
+				// })
 			}
 		}
 	}

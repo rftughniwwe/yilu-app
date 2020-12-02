@@ -107,10 +107,10 @@
 			// 获取身份证信息
 			getIDCardInfo(){
 				getIdCardInfo().then(res=>{
-					console.log('获取身份证信息：',res)
+					
 					if(res.data.code == 200){
-						this.idCardinfo.id = res.data.data.idcardNum
-						this.idCardinfo.name = res.data.data.name
+						console.log('获取身份证信息a a a ：',res)
+						this.idCardinfo = res.data.data
 					}else {
 						request_success(res)
 					}
@@ -127,10 +127,11 @@
 					title: '加载中...',
 					mask: true,
 				});
+				console.log('获取的身份证信息：',uni.getStorageSync('userInfo').userNo)
 				let faceData = await auth.getFaceData({
-					userNo: uni.getStorageSync('userStorage').userNo
+					userNo: uni.getStorageSync('userInfo').userNo
 				})
-				console.log('获取的身份证信息：',this.idCardinfo)
+				console.log('zzzzzz：',faceData)
 				const orderNo = (new Date).getTime();
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
@@ -142,12 +143,13 @@
 						webankAppId: faceData.wbappid,
 						orderNo: orderNo,
 						name: this.idCardinfo.name,
-						idNo: this.idCardinfo.id,
+						idNo: this.idCardinfo.idcardNum,
 						userId: userId,
 						version: '1.0.0',
 						sign: nonce
 					},
 					success: (res) => {
+						console.log('应该是查询该身份的人脸信息',res)
 						if(res&& res.data && res.data.result && !res.data.result.faceId) {
 							uni.showModal({
 							    title: '提示',
@@ -156,7 +158,7 @@
 							});
 							return;
 						}
-						console.log('应该是查询该身份的人脸信息',res)
+						
 						
 						uni.hideLoading()
 						

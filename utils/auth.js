@@ -9,11 +9,11 @@ const getUserInfo = cb => {
 		noLoading: true
 	}).then(res => {
 		res.token = userToken;
-
+		
 		if (!res.nickname) {
 			res.nickname = res.mobile.substr(0, 4) + '****' + res.mobile.substr(-4);
 		}
-
+		console.log('userinfo???',res)
 		uni.setStorage({
 			'key': 'userInfo',
 			'data': res,
@@ -109,13 +109,12 @@ const login = () => {
 		const ipInfo = uni.getStorageSync('IPInfo');
 		// #ifdef H5 || APP-PLUS
 		if (uni.getStorageSync('userToken')) {
-			console.log('login11')
 			getUserInfo(res => {
 				resolve(res)
 			})
 		} else {
 			uni.navigateTo({
-				url: '/pages/login3/login'
+				url: '/pages/login/normalLogin'
 			});
 		}
 

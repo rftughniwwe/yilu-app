@@ -35,6 +35,8 @@
 	import {
 		getIdCardInfo
 	} from '@/commons/api/apis.js'
+	import auth from "@/utils/auth";
+
 
 	export default {
 		components: {
@@ -87,6 +89,15 @@
 									userNo:res.data.data.userNo,
 									userToken:res.data.data.token
 								})
+								uni.setStorage({
+									'key': 'userToken',
+									'data': res.data.data.token,
+									success: () => {
+										auth.getUserInfo((data) => {
+											uni.$emit('_userLogin', data)
+										})
+									}
+								});
 								this.codeLogin(res.data.data.userNo)
 							}else {
 								console.log('注册错误：',res)
@@ -106,6 +117,7 @@
 					},1)
 				}
 			},
+			
 			// 验证码登录
 			codeLogin(num) {
 				let that = this

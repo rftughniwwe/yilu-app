@@ -17,7 +17,7 @@
 		</view>
 		<view class="course-contnt">
 			<template v-if="courseData && courseData.length > 0">
-				
+
 				<view class="course-item" v-for="(item,index) in courseData" :key='index' @click="goPreview(item.id)">
 					<view class="title text-overflow-ellipsis">
 						{{item.courseName?item.courseName:'未知'}}
@@ -34,7 +34,7 @@
 				</view>
 			</template>
 			<template v-else>
-				<EmptyData type='serach'/>
+				<EmptyData type='serach' />
 			</template>
 		</view>
 	</view>
@@ -52,18 +52,19 @@
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import {
 		LIVE_STATUS,
-		getLearningTypeInfo
+		getLearningTypeInfo,
+		getUserLoginInfo
 	} from '@/utils/util.js'
-	
+
 	export default {
 		data() {
 			return {
 				tab: 0,
 				courseData: [],
-				live_status:[]
+				live_status: []
 			};
 		},
-		components:{
+		components: {
 			EmptyData
 		},
 		onLoad() {
@@ -89,22 +90,24 @@
 				uni.showLoading({
 					title: '加载中...'
 				})
+				let params = {
+					liveStatus: tab == 1 ? tab : 2,
+					courseCategory: tab == 2 ? tab : 1,
+					lecturerUserNo: compId,
+					categoryId1: categoryId1,
+					categoryId2: categoryId2
+				}
+				console.log('params',params)
 				httpRequest({
 					url: '/course/api/course/courselist',
 					method: 'POST',
-					data: {
-						liveStatus: tab,
-						courseCategory: 2,
-						lecturerUserNo: 18,
-						categoryId1: categoryId1,
-						categoryId2: categoryId2
-					},
+					data: params,
 					success: (res) => {
 						uni.hideLoading()
-						console.log('课程数据',res)
+						console.log('课程数据:', res)
 						if (res.data.code == 200) {
 							this.courseData = res.data.data
-							
+
 						} else {
 							request_success(res)
 						}
@@ -121,7 +124,7 @@
 			},
 			goPreview(id) {
 				uni.navigateTo({
-					url: './coursePreview?id='+id
+					url: './coursePreview?id=' + id
 				})
 			}
 		}

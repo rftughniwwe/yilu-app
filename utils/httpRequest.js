@@ -1,8 +1,8 @@
 import {
 	getNetworkType,
-	isLogin
+	isLogin,
+	getUserLoginInfo
 } from './util.js'
-
 
 // const BASE_URL = 'http://172.168.1.229'
 const BASE_URL = 'http://47.101.131.157:8880'
@@ -47,6 +47,7 @@ function httpRequest(options, url_type) {
 	// } else if (url_type == 5) {
 	// 	base_url = BASE_URL + ':8760'
 	// }
+	let t = getUserLoginInfo('token')
 	
 	getNetworkType().then((res) => {
 		if (res) {
@@ -58,7 +59,9 @@ function httpRequest(options, url_type) {
 				// 非必选
 				method: options.method || 'GET',
 				data: options.data || {},
-				header: options.header || {},
+				header: options.header || {
+					"token":t
+				},
 				timeout: 10000,
 				sslVerify: false,
 				complete: options.complete || function() {}

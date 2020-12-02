@@ -77,20 +77,21 @@
 
 					faceLogin(res).then((resp) => {
 						uni.hideLoading()
+						console.log('登录：',resp)
 						if (resp.data.code == 200) {
 							setAppStorage({
 								userNo: resp.data.data.userNo,
 								userToken: resp.data.data.token
 							})
-							// uni.setStorage({
-							// 	'key': 'userToken',
-							// 	'data': resp.data.data.token,
-							// 	success: () => {
-							// 		auth.getUserInfo((data) => {
-							// 			uni.$emit('_userLogin', data)
-							// 		})
-							// 	}
-							// });
+							uni.setStorage({
+								'key': 'userToken',
+								'data': resp.data.data.token,
+								success: () => {
+									auth.getUserInfo((data) => {
+										uni.$emit('_userLogin', data)
+									})
+								}
+							});
 							this.routePage(resp.data.data.userNo)
 						} else {
 							uni.showModal({
@@ -122,8 +123,8 @@
 			// 跳转页面
 			routePage(num) {
 				let that = this
-				let userInfoComplete = uni.getStorageSync('userCompleteInfo');
-				console.log('userinfo', userInfoComplete)
+				// let userInfoComplete = uni.getStorageSync('userCompleteInfo');
+				// console.log('userinfo', userInfoComplete)
 				// if(userInfoComplete == 1){
 				// 	// 1：已经完善，跳主页
 				// 	uni.reLaunch({

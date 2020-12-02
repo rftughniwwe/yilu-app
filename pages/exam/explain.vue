@@ -118,6 +118,14 @@
 				return total;
 			}
 		},
+		// onBackPress() {
+		// 	setTimeout(()=>{
+		// 		uni.switchTab({
+		// 			url:'../tabBar/learn'
+		// 		})
+		// 	},300)
+		// 	return true
+		// },
 		onLoad(options) {
 			if(options.recordId) {
 				this.getData(options.recordId)
@@ -157,9 +165,9 @@
 					success: (res) => {
 						console.log(res)
 						if (res.confirm) {
-							uni.reLaunch({
-								url: '/pages/index/index'
-							});
+							uni.switchTab({
+								url:'../tabBar/index'
+							})
 						}
 					}
 				});
