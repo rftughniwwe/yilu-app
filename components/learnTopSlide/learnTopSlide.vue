@@ -97,14 +97,13 @@
 			this.JixuNum = uni.getStorageSync('jixuTab') ? uni.getStorageSync('jixuTab') : 0
 			uni.$on('closeModalMask', (data) => {
 				uni.setStorageSync('anquanTab', data.index)
-				this.AnquanNum = data.index
+				this.AnquanNum = data.index == -1 ? 0 : data.index
 			})
 			uni.pageScrollTo({
 				selector: 'selected-item'
 			})
 		},
 		updated() {
-			this.AnquanNum = uni.getStorageSync('anquanTab')
 			this.JixuNum = uni.getStorageSync('jixuTab') ? uni.getStorageSync('jixuTab') : 0
 		},
 		methods: {

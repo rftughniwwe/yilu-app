@@ -37,7 +37,11 @@
 			closeModal(num,item){
 				uni.setStorageSync('isHideSafetyModal',true)
 				// 设置二级分类
-				uni.setStorageSync('LearningSubTypeSubItem',item)
+				if(num == -1){
+					uni.setStorageSync('LearningSubTypeSubItem',this.datas[0])
+				}else {
+					uni.setStorageSync('LearningSubTypeSubItem',item)
+				}
 				// app.LearningSubType = item
 				console.log('第一次选择的子分类：',item)
 				uni.$emit('closeModalMask',{index:num})

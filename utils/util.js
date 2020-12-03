@@ -79,7 +79,7 @@ const LEARNING_MODE_DATA = [{
 	}
 ]
 
-const LIVE_STATUS = ['未开播', '正在直播', '待回放', '待转存', '回放']
+const LIVE_STATUS = ['回放', '直播']
 
 
 // 获取网络状态
@@ -228,7 +228,7 @@ function removeAppStorage(options) {
 	// 用户基本信息
 	uni.removeStorageSync('userBasicInfo')
 	// 用户签出后的现场培训id
-	uni.removeStorageSync('TrainingId')
+	// uni.removeStorageSync('TrainingId')
 }
 
 // 获取用户登录信息

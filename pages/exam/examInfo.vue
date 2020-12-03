@@ -101,6 +101,14 @@
 					setTimeout(auth.login, 1000)
 					return;
 				}
+				if(!this.examData){
+					uni.showToast({
+						title: '你没有考试',
+						icon: 'none',
+						duration: 1500
+					});
+					return;
+				}
 				// 人脸采集
 				useFacePlugin({}).then(res => {
 					// 人脸验证

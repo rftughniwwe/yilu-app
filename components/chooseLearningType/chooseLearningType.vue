@@ -69,6 +69,7 @@
 			selectItem(num, item) {
 				console.log('选择：', item)
 				uni.setStorageSync('selectedLearningType', item)
+				uni.setStorageSync('LearningSubTypeSubItem',item.listSub[0])
 				this.num = num
 			}
 		}

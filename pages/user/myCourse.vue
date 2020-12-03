@@ -5,9 +5,9 @@
 			<view @click="chooseTab(0)" :class="tab==0?'selected-items':'item'">
 				全部
 			</view>
-			<view @click="chooseTab(1)" :class="tab==1?'selected-items':'item'">
+			<!-- <view @click="chooseTab(1)" :class="tab==1?'selected-items':'item'">
 				未开始
-			</view>
+			</view> -->
 			<view @click="chooseTab(2)" :class="tab==2?'selected-items':'item'">
 				直播中
 			</view>
@@ -18,7 +18,7 @@
 		<view class="course-contnt">
 			<template v-if="courseData && courseData.length > 0">
 
-				<view class="course-item" v-for="(item,index) in courseData" :key='index' @click="goPreview(item.id)">
+				<view class="course-item" v-for="(item,index) in courseData" :key='index' @click="goPreview(item)">
 					<view class="title text-overflow-ellipsis">
 						{{item.courseName?item.courseName:'未知'}}
 					</view>
@@ -28,7 +28,7 @@
 					<view class="img-content">
 						<image :src="item.courseLogo" mode=""></image>
 						<view class="tags">
-							{{live_status[item.liveStatus-1]}}
+							{{live_status[item.courseCategory-1]}}
 						</view>
 					</view>
 				</view>
@@ -61,7 +61,9 @@
 			return {
 				tab: 0,
 				courseData: [],
-				live_status: []
+				live_status: [],
+				pageSize:10,
+				pageCurrent:1
 			};
 		},
 		components: {
@@ -71,15 +73,16 @@
 			this.getMyCourse()
 			this.live_status = LIVE_STATUS
 		},
+		onUnload() {
+			uni.hideLoading()
+		},
 		methods: {
 			// 获取我的课程
 			getMyCourse() {
-				// 选择的一级分类
-				let categoryId1 = getLearningTypeInfo().categoryId1
-				// 选择的二级分类
-				let categoryId2 = getLearningTypeInfo().categoryId2
-				// 所属公司ID
-				let compId = getLearningTypeInfo().compId
+				let categoryId1 = uni.getStorageSync('selectedLearningType').id
+				// 学习模块中选择的二级分类
+				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
+				let compId = uni.getStorageSync('userBasicInfo').compId
 				let tab = this.tab
 				if (!categoryId1 || !categoryId2 || !compId) {
 					Toast({
@@ -91,11 +94,12 @@
 					title: '加载中...'
 				})
 				let params = {
-					liveStatus: tab == 1 ? tab : 2,
 					courseCategory: tab == 2 ? tab : 1,
-					lecturerUserNo: compId,
+					compId: compId,
 					categoryId1: categoryId1,
-					categoryId2: categoryId2
+					categoryId2: categoryId2,
+					pageSize:this.pageSize,
+					pageCurrent:this.pageCurrent
 				}
 				console.log('params：',params)
 				httpRequest({
@@ -107,7 +111,6 @@
 						console.log('课程数据:', res)
 						if (res.data.code == 200) {
 							this.courseData = res.data.data
-
 						} else {
 							request_success(res)
 						}
@@ -122,10 +125,14 @@
 				this.tab = e
 				this.getMyCourse()
 			},
-			goPreview(id) {
+			goPreview(item) {
+				// let d = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
-					url: './coursePreview?id=' + id
-				})
+					url: '/pages/course/view/view?id=' + item.id
+				});
+				// uni.navigateTo({
+				// 	url: './coursePreview?item=' + d
+				// })
 			}
 		}
 	}
@@ -135,7 +142,12 @@
 	.tab-content {
 		background-color: #EBEFF2;
 		padding: 30rpx;
-
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		z-index: 9998;
+		border-bottom: 2rpx solid #F1F1F1;
 		.item {
 			border-radius: 8rpx;
 			background-color: #FFFFFF;
@@ -158,6 +170,7 @@
 	}
 
 	.course-contnt {
+		margin-top: 120rpx;
 		padding: 0 30rpx 30rpx;
 		background-color: #FFFFFF;
 	}
@@ -189,7 +202,6 @@
 			image {
 				width: 100%;
 				height: 100%;
-				border: 2rpx solid #eaeaea;
 			}
 
 			.tags {

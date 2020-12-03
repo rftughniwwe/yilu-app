@@ -40,7 +40,9 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
-	
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 	export default {
 		name: "verifyFace",
 		data() {
@@ -127,11 +129,28 @@
 					title: '加载中...',
 					mask: true,
 				});
-				console.log('获取的身份证信息：',uni.getStorageSync('userInfo').userNo)
+				let _token = getUserLoginInfo('token')
+				let _userNo = getUserLoginInfo('userNo')
+				console.log('1111111111')
+				if(!uni.getStorageSync('userInfo')){
+					uni.showToast({
+						title:'登录过期，请重新登录',
+						icon:'none',
+						duration:1000
+					})
+					setTimeout(()=>{
+						uni.reLaunch({
+							url:'../login/normalLogin'
+						})
+					},1000)
+					
+					return
+				}
+				console.log('222222222',uni.getStorageSync('userStorage'))
 				let faceData = await auth.getFaceData({
-					userNo: uni.getStorageSync('userInfo').userNo
+					userNo: uni.getStorageSync('userStorage').userNo
 				})
-				console.log('zzzzzz：',faceData)
+				console.log('3333333333333')
 				const orderNo = (new Date).getTime();
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
@@ -245,6 +264,9 @@
 								});
 							}
 						});
+					},
+					fail: (err) => {
+						console.log('aaaaaaa',res)
 					}
 				})
 			},

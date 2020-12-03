@@ -266,9 +266,9 @@
 			this.getSignInData()
 			this.todayweek = dateWeek()
 			// 每十秒获取一次位置信息
-			// this.timer = setInterval(() => {
-			// 	this.getLocationFun()
-			// }, 10000)
+			this.timer = setInterval(() => {
+				this.getLocationFun()
+			}, 10000)
 		},
 		onShow() {
 			this.getLocationFun()
@@ -282,6 +282,7 @@
 		},
 		onUnload() {
 			clearInterval(this.timer)
+			uni.hideLoading()
 		},
 		methods: {
 			// 获取位置
@@ -291,7 +292,7 @@
 				// })
 				uni.stopPullDownRefresh()
 				uni.getLocation({
-					type: 'gcj02',
+					// type: 'gcj02',
 					geocode: true,
 					success: res => {
 						// uni.hideLoading()
@@ -437,9 +438,6 @@
 					random: true
 				}).then((res) => {
 
-					uni.showLoading({
-						title: num == 0 ? '签入中...' : '签出中...'
-					})
 					// base64转图片
 					base64ToPath(res).then(path => {
 
@@ -456,7 +454,9 @@
 							}
 
 							console.log('签入签出参数：', params)
-
+							uni.showLoading({
+								title: num == 0 ? '签入中...' : '签出中...'
+							})
 							// 人脸验证
 							faceVerification(res).then(resp => {
 								uni.hideLoading()

@@ -130,6 +130,7 @@
 			getExamId() {
 				let trainingid = uni.getStorageSync('TrainingId')
 				console.log('培训场次id', trainingid)
+				if(!trainingid) return
 				getExamIdByTraingId(trainingid).then(res => {
 					console.log('根据培训场次获取试卷:', res)
 					if (res.data.code == 200) {
@@ -142,12 +143,12 @@
 
 			// 前往在线考试
 			goOnlineExam() {
-				// if (!this.examData || !this.examData.id) {
-				// 	Toast({
-				// 		title: '你没有在线考试'
-				// 	})
-				// 	return
-				// }
+				if (!this.examData || !this.examData.id) {
+					Toast({
+						title: '你没有在线考试'
+					})
+					return
+				}
 				let d = encodeURIComponent(JSON.stringify(this.examData))
 				uni.navigateTo({
 					url: '/pages/exam/examInfo?examdatas=' + d

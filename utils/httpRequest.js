@@ -9,7 +9,6 @@ const BASE_URL = 'http://47.101.131.157:8880'
 
 // 图片上传
 // const BASE_URL2 = 'http://172.168.1.229:8730'
-
 const BASE_URL2 = 'http://47.101.131.157:8880'
 
 
@@ -47,6 +46,7 @@ function httpRequest(options, url_type) {
 	// } else if (url_type == 5) {
 	// 	base_url = BASE_URL + ':8760'
 	// }
+	
 	let t = getUserLoginInfo('token')
 	
 	getNetworkType().then((res) => {

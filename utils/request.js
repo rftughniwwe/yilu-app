@@ -1,10 +1,15 @@
 import config from "../config/index";
 import { login, logout } from "./auth";
+import {
+	getUserLoginInfo
+} from './util.js'
 const createHttp = {
   post: (url, params) => {
     const token = uni.getStorageSync('userToken') || '';
+	let t = getUserLoginInfo('token')
     const baseUrl = config.baseUrl
     // console.log(baseUrl + url)
+	console.log('params啊',params)
     const data = {
       method: 'POST',
       url: baseUrl + url,
@@ -20,6 +25,7 @@ const createHttp = {
   },
   put: (url, params) => {
     const token = uni.getStorageSync('userToken') || '';
+	let t = getUserLoginInfo('token')
     const baseUrl = config.baseUrl
     // console.log(baseUrl + url)
     const data = {
@@ -70,8 +76,8 @@ const request = (params, cb) => {
 			duration:1500
 		  });
 		  setTimeout(()=>{
-			  uni.navigateTo({
-			  	url:'/pages/login3/login'
+			  uni.reLaunch({
+			  	url:'/pages/login/normalLogin'
 			  })
 		  },1500)
 		  return

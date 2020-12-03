@@ -45,7 +45,7 @@
 			<text>讲师：</text>
 			<text class="c_333">{{courseInfo.lecturer.lecturerName}}</text>
 			<attention-btn :isAttention="courseInfo.isAttentionLecturer" :lecturerUserNo="courseInfo.lecturerUserNo"></attention-btn>
-			<button type="primary" class="fr sign_btn" @tap="sign()">签到</button>
+			<button type="primary" class="fr sign_btn" @tap="faceVerify()">签到</button>
 		</view>
 
 		<view class="h5px"></view>
@@ -92,6 +92,17 @@
 	import likeBtn from "@/components/likebtn/likebtn";
 	import attentionBtn from "@/components/attentionBtn/attentionBtn";
 	import ActivityPanel from "@/components/activity/ActivityPanel";
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	import {
+		faceVerification,
+		getExamDetails,
+		getExamIdByTraingId
+	} from '@/commons/api/apis.js'
+	import useFacePlugin from '@/commons/faceplugin.js'
+	
 	export default {
 		data() {
 			return {
@@ -263,14 +274,43 @@
 					this.isFree = !!res.isPay
 				});
 			},
+			
+			// 自己的人脸验证
+			faceVerify(){
+				// 人脸采集
+				useFacePlugin({}).then(res => {
+					// 人脸验证
+					uni.showLoading({
+						title: '验证中...'
+					})
+					faceVerification(res).then(res => {
+						console.log('看直播时的人脸验证：', res)
+						uni.hideLoading()
+						if (res.data.code == 200) {
+							uni.showToast({
+								title:'签到成功',
+								icon:'none'
+							})
+							uni.setStorageSync(this.signName, true);
+						} else {
+							request_success(res)
+						}
+					}, err => {
+						uni.hideLoading()
+						request_err(err, '人脸验证失败，稍后重试')
+					})
+				}, err => {
+					request_err(err, '人脸采集失败，稍后重试')
+				})
+			},
 
 			selectVideo(e) {
-				if (!uni.getStorageSync('userInfo')) {
-					console.log('没登录')
-					uni.navigateTo({
-						url:'../../login3/login'
-					})
-				}
+				// if (!uni.getStorageSync('userInfo')) {
+				// 	console.log('没登录')
+				// 	uni.navigateTo({
+				// 		url:'../../login3/login'
+				// 	})
+				// }
 				this.isFaceContras = e.isFaceContras;
 				let videoInfo = e;
 				if (this.isFaceContras == 1) {
@@ -398,6 +438,7 @@
 					courseId: this.courseId,
 					pageCurrent: page
 				}).then(res => {
+					console.log('列表。。。。。',res)
 					this.chapterList = this.chapterList.concat(res.list)
 					if (res.pageCurrent === res.totalPage) {
 						this.loaddingEnd = false

@@ -128,6 +128,7 @@
 			// 跳转课程详情
 			goDetail(e) {
 				let id = e.currentTarget.dataset.id;
+				console.log('iiiiiiiiii',id)
 				if (this.map.courseCategory == '1') {
 					uni.navigateTo({
 						url: '/pages/course/view/view?id=' + id
@@ -149,6 +150,7 @@
 					this.totalPage = res.totalPage
 					this.courseList = this.courseList.concat(res.list)
 					const idList = res.list.map(e => e.id);
+					console.log('reszzzzzzzz',res)
 					getCourseListMark({
 						courseIds: idList
 					}).then(res => {

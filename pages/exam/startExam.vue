@@ -66,7 +66,15 @@
 	import {
 		toZhDigit
 	} from '@/utils/util.js'
-
+	import useFacePlugin from '@/commons/faceplugin.js'
+	import {
+		faceVerification
+	} from '@/commons/api/apis.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	
 	export default {
 		data() {
 			return {
@@ -106,6 +114,7 @@
 		onUnload() {
 			clearInterval(this.time)
 			// clearTimeout(this.timer)
+			uni.hideLoading()
 			this.submit()
 		},
 		onBackPress() {
@@ -155,35 +164,53 @@
 			},
 			submit() {
 				clearInterval(this.time)
-				// clearTimeout(this.timer)
-				if (this.isGradeExam) {
-					const d = {
-						id: this.recordId
-					}
-					gradeApis.submitExam(d).then((e) => {
-						e.examId = this.examId;
-						e.recordId = this.recordId;
-						uni.setStorageSync('userexam-result', e);
-						
-						uni.redirectTo({
-							url: '/pages/exam/gradeResult'
-						})
+				
+				useFacePlugin({}).then((res)=>{
+					uni.showLoading({
+						title:'验证中...'
 					})
-				} else {
-					const d = {
-						recordId: this.recordId
-					}
-					examApis.examFinish(d).then((e) => {
-						e.examId = this.examId;
-						e.recordId = this.recordId;
-						uni.setStorageSync('userexam-result', e);
-						
-						uni.redirectTo({
-							url: '/pages/exam/result'
-						})
+					faceVerification(res).then(resp => {
+						console.log('交卷人脸识别：', resp)
+						uni.hideLoading()
+						if (resp.data.code == 200) {
+							if (this.isGradeExam) {
+								const d = {
+									id: this.recordId
+								}
+								gradeApis.submitExam(d).then((e) => {
+									e.examId = this.examId;
+									e.recordId = this.recordId;
+									uni.setStorageSync('userexam-result', e);
+									
+									uni.redirectTo({
+										url: '/pages/exam/gradeResult'
+									})
+								})
+							} else {
+								const d = {
+									recordId: this.recordId
+								}
+								examApis.examFinish(d).then((e) => {
+									e.examId = this.examId;
+									e.recordId = this.recordId;
+									uni.setStorageSync('userexam-result', e);
+									
+									uni.redirectTo({
+										url: '/pages/exam/result'
+									})
+								})
+							}
+						} else {
+							request_success(res)
+						}
+					}, err => {
+						uni.hideLoading()
+						request_err(err, '人脸验证失败，稍后重试')
 					})
-				}
+				})
+				
 			},
+			
 			userSubmitFn() {
 				uni.showModal({
 					title: '提示',
