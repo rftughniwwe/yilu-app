@@ -1,0 +1,120 @@
+.buy_panel{
+  height: 104rpx;
+}
+.img_box {
+  width: 100%;
+  height: 369rpx;
+}
+.course_img {
+  width: 100%;
+  height: 369rpx;
+  justify-content: 
+}
+.course_msg {
+  padding: 20rpx;
+}
+.course_title {
+  width: 605rpx;
+}
+.vip_price {
+  padding: 0 3px;
+  background: #CA9E70;
+}
+.teacher_box {
+  height: 73rpx;
+  line-height: 73rpx;
+  padding: 0 20rpx;
+}
+.red_border {
+  height: 30px;
+  border: 1rpx solid #D51423;
+  color: #D51423;
+  padding: 0 5rpx;
+  margin-right: 4px;
+}
+.tabs {
+  height: 94rpx;
+  line-height: 94rpx;
+  display: flex;
+  padding: 0 60rpx;
+}
+.tab {
+  overflow: hidden;
+  margin-right: 60rpx;
+}
+.active {
+  border-bottom: 1px solid #2488EC;
+  color: #2488EC;
+}
+.course_brief {
+  min-height: 200px;
+  overflow: hidden;
+}
+.course_brief img{
+  width: 100%;
+}
+.col {
+  display: inline-block;
+  width: 3px;
+  height: 25rpx;
+  background: #000;
+  position: absolute;
+  top: 50%;
+  margin-top: -12rpx;
+  margin-right: 30rpx;
+}
+.text_box {
+  padding: 0 30rpx;
+  line-height: 40rpx;
+}
+.chapter_title {
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+}
+.play_img {
+  width: 25rpx;
+  height: 25rpx;
+  vertical-align: middle;
+}
+.buy_btn {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 104rpx;
+  line-height: 104rpx;
+  color: #fff;
+  font-size: 33rpx;
+  background: #2488EC;
+  border-radius: 0;
+  text-align: center;
+}
+.buy_btn.disabled{
+  background: #ddd;
+  color:#888;
+}
+.no_play {
+  width: 32rpx;
+  height: 32rpx;
+  vertical-align:sub;
+}
+.h5px {
+  height: 5px;
+  background: rgba(247, 245, 248, 1);
+}
+.p20_0 {
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+}
+.live_status {
+  position: absolute;
+  right: 10rpx;
+  top: 20rpx;
+}
+.o_hide {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.c_333{
+  color: #333;
+}

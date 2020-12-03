@@ -98,8 +98,6 @@
 							<image src="../../static/join-now2.png" mode=""></image>
 						</view>
 					</view>
-
-
 				</view>
 			</view>
 

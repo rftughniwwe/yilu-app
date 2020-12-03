@@ -117,11 +117,11 @@
                 }
             },
             "splashscreen" : {
-                "androidStyle" : "common",
+                "androidStyle" : "default",
                 "android" : {
                     "hdpi" : "C:/Users/90975/Desktop/启动图标/480的.png",
                     "xhdpi" : "C:/Users/90975/Desktop/启动图标/720的.png",
-                    "xxhdpi" : "C:/Users/90975/Desktop/启动图标/1080.png"
+                    "xxhdpi" : "C:/Users/90975/Desktop/启动图标/1080.9.png"
                 }
             }
         },

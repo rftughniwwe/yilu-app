@@ -97,7 +97,7 @@
 					categoryId1: categoryId1,
 					categoryId2: categoryId2
 				}
-				console.log('params',params)
+				console.log('params：',params)
 				httpRequest({
 					url: '/course/api/course/courselist',
 					method: 'POST',

@@ -375,7 +375,7 @@
 		"backgroundColor": "#FFFFFF",
 		"list": [{
 				"pagePath": "pages/tabBar/index",
-				"text": "咨询",
+				"text": "资讯",
 				"iconPath": "./static/index-news-no.png",
 				"selectedIconPath": "./static/index-news.png"
 			},
