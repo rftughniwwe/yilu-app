@@ -1,8 +1,8 @@
 <!-- 学习资料 -->
 <template>
 	<view>
-		
-		<view class="wrap-top-tab-bar" >
+
+		<view class="wrap-top-tab-bar">
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
@@ -10,34 +10,23 @@
 
 		<view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
 			<view v-show="num=='0'">
-				<template v-if="filesData && filesData.length >0">
-					<view class="item-block flex-row-start">
-						<image class="pdf-docx-img" src="../../../static/files-PDF.png" mode=""></image>
+				<template v-if="filesData.list && filesData.list.length >0">
+					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index' >
+						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
 						<view class="file-content text-overflow2">
 							<view class="title">
-								驾驶员安全教育.pdf
+								{{item.name}}
 							</view>
-							<view class="file-size">
+							<!-- <view class="file-size">
 								999MB
-							</view>
+							</view> -->
 						</view>
 						<view class="action-content flex-between">
 							<image class="preview-img" src="../../../static/preview-file.png" mode=""></image>
-							<image class="download-img" src="../../../static/download.png" mode=""></image>
+							<image class="download-img" src="../../../static/download.png" mode="" @click="downloadFile(item)"></image>
 						</view>
 					</view>
-					<view class="item-block flex-row-start">
-						<image class="file-img" src="../../../static/files-img.png" mode=""></image>
-						<view class="file-content">
-							<view class="title">
-								驾驶员安全教育
-							</view>
-							<view class="file-size">
-								999MB
-							</view>
-						</view>
-					</view>
-					<view class="item-block flex-row-start">
+					<!-- <view class="item-block flex-row-start">
 						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
 						<view class="file-content">
 							<view class="title">
@@ -47,30 +36,25 @@
 								999MB
 							</view>
 						</view>
-					</view>
+					</view> -->
 				</template>
 				<template v-else>
-					<EmptyData type='serach'/>
+					<EmptyData type='serach' />
 				</template>
-				
+
 			</view>
 			<view v-show="num=='1'">
-				<view class="video-item">
+				<!-- <view class="video-item">
 					<view class="topic text-overflow2">
 						危化品运输车安全行车注意事项, 你必须了解！危化品运输车安全行车注意事项, 你必须了解！
 					</view>
 					<view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}">
 						<image src="../../../static/pause-video.png" mode=""></image>
 					</view>
-				</view>
-				<view class="video-item">
-					<view class="topic text-overflow2">
-						危化品运输车安全行车注意事项, 你必须了解！危化品运输车安全行车注意事项, 你必须了解！
-					</view>
-					<view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}">
-						<image src="../../../static/pause-video.png" mode=""></image>
-					</view>
-				</view>
+				</view> -->
+				<template>
+					<EmptyData type='serach' />
+				</template>
 			</view>
 		</view>
 	</view>
@@ -91,54 +75,65 @@
 	import {
 		getLearningTypeInfo
 	} from '@/utils/util.js'
-	
+
 	export default {
 		data() {
 			return {
 				tabArr: ['文件', '视频'],
 				num: '0',
 				isFullScreen: false,
-				filesData:[]
+				filesData: {}
 			};
 		},
 		components: {
 			learnTopSlide,
 			uniNavBar
 		},
-		onLoad() {
+		onLoad(options) {
+			let id = options.trainid ? options.trainid : uni.getStorageSync('TrainingId')
+			if (id) {
+				this.getaccessoryList(id)
+			} else {
+				Toast({
+					title: '你没有学习资料'
+				})
+			}
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			this.getaccessoryList()
+
+		},
+		onUnload() {
+			uni.hideLoading()
 		},
 		methods: {
 			// 获取现场培训学习资料
-			getaccessoryList(){
+			getaccessoryList(id) {
 				// 选择的一级分类
-				let categoryId1 = getLearningTypeInfo().categoryId1
+				// let categoryId1 = getLearningTypeInfo().categoryId1
 				// 选择的二级分类
-				let categoryId2 = getLearningTypeInfo().categoryId2
+				// let categoryId2 = getLearningTypeInfo().categoryId2
 				// 所属公司ID
-				let compId = getLearningTypeInfo().compId
-				
+				// let compId = getLearningTypeInfo().compId
+
 				httpRequest({
-					url:'/course/auth/course/accessory/accessoryList',
-					method:'POST',
-					data:{
-						  "categoryId1": categoryId1,
-						  "categoryId2": categoryId2,
-						  "lecturerUserNo": compId
+					url: '/user/pc/tb/train/learn/attach/list',
+					method: 'POST',
+					data: {
+						"trainId": id,
+						"pageSize":10,
+						"pageCurrent":1
 					},
-					success:res=>{
-						console.log('学习资料：',res)
-						if(res.data.code==200){
+					success: res => {
+						console.log('学习资料：', res)
+						if (res.data.code == 200) {
 							this.filesData = res.data.data
-						}else {
+						} else {
 							request_success(res)
 						}
 					},
-					fail:err=>{
-						request_err(err,'获取学习资料失败')
+					fail: err => {
+						request_err(err, '获取学习资料失败')
 					}
-				},2)
+				}, 1)
 			},
 			tabSelected(data) {
 				this.num = data.tab
@@ -146,6 +141,35 @@
 			goBack() {
 				uni.navigateBack({
 					delta: 1
+				})
+			},
+			previewFile(){
+				let path = item.savePath
+				let splitLength = path.split('.').length
+				let suffix = path.split('.')[splitLength-1]
+			},
+			downloadFile(item){
+				let path = item.savePath
+				uni.showLoading({
+					title:'下载中...'
+				})
+				uni.downloadFile({
+					url:path,
+					timeout:20000,
+					success: (res) => {
+						uni.hideLoading()
+						console.log('下载成功：',res)
+						uni.showToast({
+							title:'下载成功'
+						})
+					},
+					fail: () => {
+						uni.hideLoading()
+						uni.showToast({
+							title:'下载失败',
+							icon:'none'
+						})
+					}
 				})
 			}
 		}
@@ -208,15 +232,18 @@
 			height: 148rpx;
 		}
 	}
-	.file-content{
+
+	.file-content {
 		width: 75%;
 	}
-	.preview-img{
+
+	.preview-img {
 		width: 38rpx;
 		height: 40rpx;
 		margin-right: 60rpx;
 	}
-	.download-img{
+
+	.download-img {
 		width: 50rpx;
 		height: 50rpx;
 	}

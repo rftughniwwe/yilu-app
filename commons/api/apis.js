@@ -111,7 +111,7 @@ export function faceLogin(res) {
 			fail: err => {
 				reject(err)
 			}
-		}, 1)
+		}, 1,true)
 	})
 
 }
@@ -176,7 +176,7 @@ export function getIdCardInfo(num) {
 }
 
 // 签到根据时间选择获取统计数据
-export function getSignOnDateTime() {
+export function getSignOnDateTime(date) {
 
 
 	return new Promise((resolve, reject) => {
@@ -187,6 +187,7 @@ export function getSignOnDateTime() {
 				"categoryId1": categoryId1,
 				"categoryId2": categoryId2,
 				"compId": compId,
+				"dateTime":date,
 				"userId": userNum,
 			},
 			success: res => {
@@ -209,11 +210,8 @@ export function getMonthSummaryData(options) {
 				"categoryId1": categoryId1,
 				"categoryId2": categoryId2,
 				"compId": compId,
-				"dateTime": "",
-				"month": options.month,
+				"dateTime": options.month,
 				"userId": userNum,
-				"weekEnd": "",
-				"weekStart": ""
 			},
 			success:res=>{
 				resolve(res)

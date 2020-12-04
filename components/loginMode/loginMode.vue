@@ -87,9 +87,9 @@
 								'key': 'userToken',
 								'data': resp.data.data.token,
 								success: () => {
-									auth.getUserInfo((data) => {
-										uni.$emit('_userLogin', data)
-									})
+									// auth.getUserInfo((data) => {
+									// 	uni.$emit('_userLogin', data)
+									// })
 								}
 							});
 							this.routePage(resp.data.data.userNo)

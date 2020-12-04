@@ -9,7 +9,6 @@ const createHttp = {
 	let t = getUserLoginInfo('token')
     const baseUrl = config.baseUrl
     // console.log(baseUrl + url)
-	console.log('params啊',params)
     const data = {
       method: 'POST',
       url: baseUrl + url,

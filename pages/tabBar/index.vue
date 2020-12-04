@@ -116,7 +116,6 @@
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-
 			this.getIndexInfomation()
 			this.getUserInfo()
 			// this.getLearningOptions()
@@ -169,6 +168,7 @@
 					success: resp => {
 						uni.hideLoading()
 						uni.stopPullDownRefresh()
+						console.log('首页数据：',resp)
 						if (resp.data.code == 200) {
 							this.newsArr = resp.data.data.list
 						} else {

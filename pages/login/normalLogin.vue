@@ -103,9 +103,9 @@
 									'key': 'userToken',
 									'data': res.data.data.token,
 									success: () => {
-										auth.getUserInfo((data) => {
-											uni.$emit('_userLogin', data)
-										})
+										// auth.getUserInfo((data) => {
+										// 	uni.$emit('_userLogin', data)
+										// })
 									}
 								});
 								// let userInfoComplete = uni.getStorageSync('userCompleteInfo');
@@ -163,7 +163,7 @@
 								title: '登录失败'
 							})
 						}
-					}, 1)
+					}, 1,true)
 					// uni.navigateTo({	
 					// 	url: '../fillInfomation/fillInfomation'
 					// })

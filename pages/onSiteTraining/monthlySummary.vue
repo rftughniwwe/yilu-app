@@ -211,7 +211,9 @@
 				let date = new Date()
 				let initYear = date.getFullYear()
 				let initMonth = date.getMonth() +1
-				let month = initYear+'-'+initMonth
+				let day = date.getDate()
+				let month = initYear+'-'+initMonth+'-'+day
+				console.log('month:',month)
 				getMonthSummaryData({month:month}).then(res=>{
 					console.log('月汇总数据',res)
 					if(res.data.code == 200){

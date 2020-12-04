@@ -110,11 +110,16 @@
 
 		<view v-show="tab==2" class="statis-wrap">
 			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
-			<view class="date-topic flex-row-start">
-				<view class="header">
-					{{todayweek.date}}
-				</view>
-				<image src="../../static/date.png" mode=""></image>
+			<view class="">
+				<picker mode="date" :value="todayweek.date" @change="dateChange">
+					<view class="date-topic flex-row-start">
+						<view class="header">
+							{{todayweek.date}}
+						</view>
+						<image src="../../static/date.png" mode=""></image>
+					</view>
+				</picker>
+				
 			</view>
 			<view class="subtitle-s">
 				{{todayweek.week}}
@@ -167,14 +172,17 @@
 							<view v-for="(item,index) in tongJiSign.list" :key='index' class="item flex-between">
 								<view class="head flex-row-start">
 									<view class="circle">
-
+									
 									</view>
 									<view class="record-txt">
-										{{item.name?item.name:'未知'}}
+										{{item.refName?item.refName:'未知'}}
 									</view>
 								</view>
+								<view class="record-txt middle-type">
+									{{item.signonType =='1'?'签出':'签入'}}
+								</view>
 								<view class="time-content">
-									{{item.time?item.time:'未知'}}
+									{{item.gmtCreate?item.gmtCreate:'未知'}}
 								</view>
 							</view>
 						</template>
@@ -263,8 +271,8 @@
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.signDatas = uni.getStorageSync('scanData')
-			this.getSignInData()
 			this.todayweek = dateWeek()
+			this.getSignInData()
 			// 每十秒获取一次位置信息
 			this.timer = setInterval(() => {
 				this.getLocationFun()
@@ -342,10 +350,17 @@
 
 			// 获取签到数据
 			getSignInData() {
-				getSignOnDateTime().then(res => {
-					console.log('获取签到数据：', res)
+				let date = this.todayweek.date
+				console.log('date',date)
+				getSignOnDateTime(date).then(res => {
+					console.log('获取签到统计数据：', res)
 					if (res.data.code == 200) {
-						this.tongJiSign = res.data.data
+						
+						let _data = res.data.data
+						_data.list.forEach((item,index)=>{
+							_data.list[index].gmtCreate = item.gmtCreate.split('T')[1]
+						})
+						this.tongJiSign = _data
 					} else {
 						request_success(res)
 					}
@@ -473,6 +488,7 @@
 											if (num == 0) {
 												that.noSign1 = false
 												that.signInTime = getCurrentDate('onlyHours')
+												uni.setStorageSync('TrainingId', that.signDatas.id)
 												Toast({
 													title: '签入成功',
 													icon: 'success'
@@ -610,6 +626,14 @@
 				uni.navigateTo({
 					url: './monthlySummary'
 				})
+			},
+			
+			// 日期改变事件
+			dateChange(e){
+				console.log('eeeeeee',e)
+				let d = e.detail.value
+				this.todayweek = dateWeek(d)
+				this.getSignInData()
 			}
 		}
 	}
@@ -755,7 +779,7 @@
 
 	.statis-wrap {
 		background-color: #CEE5FE;
-		height: 100vh;
+		min-height: 100vh;
 		padding: 40rpx 30rpx;
 	}
 
@@ -798,7 +822,7 @@
 		border-radius: 20rpx;
 		position: relative;
 		padding: 40rpx 30rpx;
-		margin: 60rpx 0 30rpx;
+		margin: 60rpx 0 100rpx;
 	}
 
 	.today-learning {
@@ -851,6 +875,8 @@
 	.time-content {
 		font-size: 28rpx;
 		color: #333333;
+		width: 40%;
+		text-align: right;
 	}
 
 	.triangle-up {
@@ -870,7 +896,13 @@
 			height: 38rpx;
 		}
 	}
-
+	.head{
+		width: 40%;
+	}
+	.middle-type{
+		width: 20%;
+		text-align: center;
+	}
 	.no-data {
 		text-align: center;
 		color: #999999;

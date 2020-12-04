@@ -121,8 +121,16 @@
 			},
 			// 前往学习资料
 			goLearningMaterials() {
+				let trainingid = uni.getStorageSync('TrainingId')
+				console.log('培训场次id', trainingid)
+				if (!trainingid) {
+					Toast({
+						title: '你没有学习资料'
+					})
+					return
+				}
 				uni.navigateTo({
-					url: '../user/learningMaterials/learningMaterials'
+					url: '../user/learningMaterials/learningMaterials?trainid='+trainingid
 				})
 			},
 

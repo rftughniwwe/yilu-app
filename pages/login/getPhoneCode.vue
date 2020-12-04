@@ -83,7 +83,7 @@
 						},
 						success: (res) => {
 							uni.hideLoading()
-							console.log("注册/登录成功:", res)
+							console.log("注册/登录回调:", res)
 							if (res.data.code == 200) {
 								setAppStorage({
 									userNo:res.data.data.userNo,
@@ -93,9 +93,9 @@
 									'key': 'userToken',
 									'data': res.data.data.token,
 									success: () => {
-										auth.getUserInfo((data) => {
-											uni.$emit('_userLogin', data)
-										})
+										// auth.getUserInfo((data) => {
+										// 	uni.$emit('_userLogin', data)
+										// })
 									}
 								});
 								this.codeLogin(res.data.data.userNo)
@@ -114,7 +114,7 @@
 								title: '注册登录失败'
 							})
 						}
-					},1)
+					},1,true)
 				}
 			},
 			
