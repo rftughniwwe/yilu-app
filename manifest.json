@@ -10,6 +10,7 @@
         "usingComponents" : true,
         "nvueCompiler" : "uni-app",
         "compilerVersion" : 3,
+        "runmode" : "liberate",
         "splashscreen" : {
             "alwaysShowBeforeRender" : false,
             "waiting" : false,

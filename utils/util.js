@@ -414,6 +414,22 @@ const toZhDigit = (digit) => {
 		return result;
 	}
 }
+// 获取随机题目
+function getRandomQuestions(count) {
+	let num = count > 10 ? 10 : count
+	let amount = Math.floor(num * 0.2) 
+	let begin = amount
+	let end = (num - amount) + 1
+	let random = 0
+	function getrandom(){
+		random =  Math.floor(Math.random() * end)
+	}
+	if(random < begin){
+		getrandom()
+		return
+	}
+	return random
+}
 module.exports = {
 	getNetworkType,
 	isLogin,
@@ -434,5 +450,6 @@ module.exports = {
 	dateWeek,
 	toZhDigit,
 	scanCodeReturn,
-	getNotRealTime
+	getNotRealTime,
+	getRandomQuestions
 }

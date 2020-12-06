@@ -20,10 +20,11 @@
 						</view>
 						<view class="sheetItemProblem">
 							<template v-for="(problem, tindex) in item.problemList">
-								<div v-if="problem.problemType == 6" style="height:0px; font-size: 0px;;" >
+								<div v-if="problem.problemType == 6" style="height:0px; font-size: 0px;;">
 									{{ problem.childrenList.length }}
 								</div>
-								<view @click="to(problem.index)" :class="['sheetItemProblemItem', (problem.value&&problem.value.length) ? 'active' : '']" v-if="problem.problemType != 6">
+								<view @click="to(problem.index)" :class="['sheetItemProblemItem', (problem.value&&problem.value.length) ? 'active' : '']"
+								 v-if="problem.problemType != 6">
 									{{tindex + 1}}
 								</view>
 								<view :class="['sheetItemProblemItem',  (child.value&&child.value.length) ? 'active' : '']" v-else v-for="(child, cindex) in problem.childrenList"
@@ -64,7 +65,8 @@
 	import auth from "@/utils/auth";
 	import * as gradeApis from '@/commons/api/grade.js'
 	import {
-		toZhDigit
+		toZhDigit,
+		getRandomQuestions
 	} from '@/utils/util.js'
 	import useFacePlugin from '@/commons/faceplugin.js'
 	import {
@@ -74,7 +76,7 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
-	
+
 	export default {
 		data() {
 			return {
@@ -88,7 +90,8 @@
 				isVerifyFace: false,
 				faceContrast: 0, // 活体认证次数
 				constrastTimes: null, // 认证时间点
-				answerTimeText: ''
+				answerTimeText: '',
+				submitFlag: false
 			};
 		},
 		components: {
@@ -97,6 +100,7 @@
 		onLoad(options) {
 			this.examId = options.id;
 			this.getData(options.id, options.gradeExamId || '')
+
 			setInterval(() => {
 				this.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
 			}, 5000)
@@ -115,23 +119,32 @@
 			clearInterval(this.time)
 			// clearTimeout(this.timer)
 			uni.hideLoading()
-			this.submit()
+			if (this.submitFlag) {
+				this.submit(true)
+			}
+
 		},
 		onBackPress() {
-			uni.showModal({
-				title:'提示',
-				content:'退出将自动交卷，确定退出？',
-				confirmText:'确定',
-				cancelText:'取消',
-				success:res=>{
-					if(res.confirm){
-						this.submit()
-					}
-				},
-			})
+				uni.showModal({
+					title: '提示',
+					content: '退出将自动交卷，确定退出？',
+					confirmText: '确定',
+					cancelText: '取消',
+					success: res => {
+						if (res.confirm) {
+							this.submit()
+						}
+					},
+				})
 			return true
 		},
 		methods: {
+			// 获取随机人脸认证
+			getRandomFaceVerify() {
+				console.log('data:', this.examData.titleList.length)
+				let num = getRandomQuestions(this.examData.titleList.length)
+				console.log('随机数：', num)
+			},
 			to(index) {
 				this.current = index - 1;
 				this.swiperIndex = index;
@@ -147,7 +160,7 @@
 							if (p.id == d.problemId) {
 								p.value = d.userAnswer;
 							}
-							if(p.childrenList && p.childrenList.length) {
+							if (p.childrenList && p.childrenList.length) {
 								e.childrenList.forEach((c) => {
 									if (c.id == d.problemId) {
 										c.value = d.userAnswer;
@@ -161,56 +174,90 @@
 			},
 			swiperChange(e) {
 				this.swiperIndex = e.detail.current + 1;
+				console.log('当前题目：', this.swiperIndex)
 			},
-			submit() {
+			submit(flag) {
 				clearInterval(this.time)
-				
-				useFacePlugin({}).then((res)=>{
-					uni.showLoading({
-						title:'验证中...'
-					})
-					faceVerification(res).then(resp => {
-						console.log('交卷人脸识别：', resp)
-						uni.hideLoading()
-						if (resp.data.code == 200) {
-							if (this.isGradeExam) {
-								const d = {
-									id: this.recordId
-								}
-								gradeApis.submitExam(d).then((e) => {
-									e.examId = this.examId;
-									e.recordId = this.recordId;
-									uni.setStorageSync('userexam-result', e);
-									
-									uni.redirectTo({
-										url: '/pages/exam/gradeResult'
+
+				if(!flag){
+					useFacePlugin({}).then((res) => {
+						uni.showLoading({
+							title: '验证中...'
+						})
+						faceVerification(res).then(resp => {
+							console.log('交卷人脸识别：', resp)
+							uni.hideLoading()
+							if (resp.data.code == 200) {
+								this.submitFlag = true
+								if (this.isGradeExam) {
+									const d = {
+										id: this.recordId
+									}
+									gradeApis.submitExam(d).then((e) => {
+										e.examId = this.examId;
+										e.recordId = this.recordId;
+										uni.setStorageSync('userexam-result', e);
+					
+										uni.redirectTo({
+											url: '/pages/exam/gradeResult'
+										})
 									})
-								})
+								} else {
+									const d = {
+										recordId: this.recordId
+									}
+									examApis.examFinish(d).then((e) => {
+										e.examId = this.examId;
+										e.recordId = this.recordId;
+										uni.setStorageSync('userexam-result', e);
+					
+										uni.redirectTo({
+											url: '/pages/exam/result'
+										})
+									})
+								}
 							} else {
-								const d = {
-									recordId: this.recordId
-								}
-								examApis.examFinish(d).then((e) => {
-									e.examId = this.examId;
-									e.recordId = this.recordId;
-									uni.setStorageSync('userexam-result', e);
-									
-									uni.redirectTo({
-										url: '/pages/exam/result'
-									})
-								})
+								request_success(res)
 							}
-						} else {
-							request_success(res)
-						}
-					}, err => {
-						uni.hideLoading()
-						request_err(err, '人脸验证失败，稍后重试')
+						}, err => {
+							uni.hideLoading()
+							request_err(err, '人脸验证失败，稍后重试')
+						})
 					})
-				})
+				}else {
+					this.submitFlag = true
+					if (this.isGradeExam) {
+						const d = {
+							id: this.recordId
+						}
+						gradeApis.submitExam(d).then((e) => {
+							e.examId = this.examId;
+							e.recordId = this.recordId;
+							uni.setStorageSync('userexam-result', e);
+										
+							uni.redirectTo({
+								url: '/pages/exam/gradeResult'
+							})
+						})
+					} else {
+						const d = {
+							recordId: this.recordId
+						}
+						examApis.examFinish(d).then((e) => {
+							e.examId = this.examId;
+							e.recordId = this.recordId;
+							uni.setStorageSync('userexam-result', e);
+										
+							uni.redirectTo({
+								url: '/pages/exam/result'
+							})
+						})
+					}
+				}
 				
+
 			},
-			
+
 			userSubmitFn() {
 				uni.showModal({
 					title: '提示',
@@ -229,7 +276,7 @@
 				const settime = () => {
 					this.answerTime--;
 					if (this.answerTime <= 0) {
-						this.submit(false);
+						this.submit(true);
 						clearInterval(this.time)
 						uni.showModal({
 							title: '提示',
@@ -238,12 +285,12 @@
 						});
 					}
 					this.answerTimeText = adds(parseInt(this.answerTime / 60)) + ':' + adds(parseInt(this.answerTime % 60));
-					 
-					 
-					 this.checkContrast({
-						currentTime: this.totalTime - this.answerTime,
-						duration: this.totalTime
-					  })
+
+					// 第三方设置人脸检测时间
+					// this.checkContrast({
+					// currentTime: this.totalTime - this.answerTime,
+					// duration: this.totalTime
+					//  })
 				}
 				this.time = setInterval(settime, 1000);
 				settime();
@@ -251,26 +298,26 @@
 			// 活体认证
 			checkContrast(playObj) {
 				/* console.log(playObj, this.constrastTimes, this.faceContrast ) */
-				 if(this.isFaceContras === 0) {
-				        return;
-				      }
+				if (this.isFaceContras === 0) {
+					return;
+				}
 				if (playObj.duration === 0) {
 					return
 				}
-				
-				const d = (playObj.duration / (this.faceContrast-1))
-				  if (!this.constrastTimes) {
+
+				const d = (playObj.duration / (this.faceContrast - 1))
+				if (!this.constrastTimes) {
 					// 判断是否已经生成验证时间点
 					const times = [0];
 					for (let i = 0; i < this.faceContrast - 2; i++) {
-					  const randomTime = (d * (i + 1)) + ((16)* (1 + (-2 * Math.random()))) 
-					  times.push(randomTime);
+						const randomTime = (d * (i + 1)) + ((16) * (1 + (-2 * Math.random())))
+						times.push(randomTime);
 					}
 					times.push(playObj.duration - 30)
 					this.constrastTimes = times;
-				  }
-				  
-				  
+				}
+
+
 				const currentContrastTime = this.constrastTimes[0] // 获得当前认证时间点
 				// console.log(this.faceContrast, playObj.currentTime, currentContrastTime, this.isVerifyFace)
 				if (playObj.currentTime > currentContrastTime && !this.isVerifyFace) { // 需要活体认证''
@@ -287,16 +334,16 @@
 					// })
 				}
 			},
-			
+
 			faceFn() {
 				uni.$on("verifyFaceErr:" + this.recordId, () => {
-					setTimeout(()=> {
-						this.isVerifyFace  = false;
+					setTimeout(() => {
+						this.isVerifyFace = false;
 					}, 3000)
 				})
 				uni.$on("verifyFace:" + this.recordId, () => {
-					this.isVerifyFace  = false;
-					this.constrastTimes.splice(0,1);
+					this.isVerifyFace = false;
+					this.constrastTimes.splice(0, 1);
 				})
 			},
 			async getData(id = '', gradeExamId = '') {
@@ -304,7 +351,7 @@
 					uni.showToast({
 						title: '请先登录！',
 						icon: 'none',
-						duration:1500
+						duration: 1500
 					});
 					setTimeout(auth.login, 1500)
 					return;
@@ -320,13 +367,13 @@
 						return parseInt((new Date(n).getTime() / 1000));
 					}
 					this.answerTime = parseInt(dateToTime(res.endTime) - dateToTime(res.beginTime))
-					this.totalTime = this.answerTime 
+					this.totalTime = this.answerTime
 					this.initTime();
 				} else {
 					res = await examApis.getAuthExamViewInfo({
 						examId: id || ''
 					})
-					
+
 				}
 				if (res && res.id) {
 					if (gradeExamId) { // 班级考试的
@@ -363,18 +410,18 @@
 							}
 						}
 					}
-					
+
 					this.answerTime = record.answerTime;
 					this.totalTime = this.answerTime
 					this.initTime();
-					
+
 					uni.setNavigationBarTitle({
 						title: res.examName
 					});
 					let total = 0;
-					if(res.isFaceContras == 1) {
+					if (res.isFaceContras == 1) {
 						this.constrastTimes = '';
-						this.faceContrast = res.faceContrasCount ;
+						this.faceContrast = res.faceContrasCount;
 						this.faceFn();
 					}
 					this.isFaceContras = res.isFaceContras;
@@ -385,7 +432,7 @@
 							if (p.problemContent) {
 								p.problemContent = p.problemContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto" ');
 							}
-							
+
 							if (p.optionList && p.optionList.length) {
 								p.optionList.forEach((o) => {
 									if (o.optionContent && o.optionContent.replace) {
@@ -412,13 +459,13 @@
 							}
 						})
 					})
-					
-					
+
+
 					if (!res.titleList || !res.titleList.length) {
 						res.titleList = record.titleList || [];
 					}
-					
-					
+
+
 					let index = 1;
 					// 设置用户的答案显示 
 					res.titleList.forEach((e, tindex) => {
@@ -477,13 +524,13 @@
 							}
 						})
 					})
-					
+
 					// 因为3级问题的 app会出展示不出来 所以要这个改成2级问题
 					let arr = [];
-					res.titleList.forEach(t=>{
-						if(t && t.problemList && t.problemList.length) {
+					res.titleList.forEach(t => {
+						if (t && t.problemList && t.problemList.length) {
 							t.problemList.forEach(p => {
-								if(p.childrenList && p.childrenList.length) {
+								if (p.childrenList && p.childrenList.length) {
 									t.problemList = p.childrenList;
 								}
 							})
@@ -493,6 +540,7 @@
 					res.titleList = arr;
 					this.total = total
 					this.examData = res;
+					// this.getRandomFaceVerify()
 				}
 			}
 		}

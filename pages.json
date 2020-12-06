@@ -367,7 +367,15 @@
 			"path": "pages/exam/list",
 			"style": {}
 		}
-		
+        ,{
+            "path" : "pages/playVideo/playVideo",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#999999",

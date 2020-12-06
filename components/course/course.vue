@@ -1,20 +1,20 @@
 <!-- 课程item -->
 <template>
-	<view class="main">
+	<view class="main" @click="itemClick(datas)">
 		<view class="item-content flex-between">
 			<view class="img-content">
-				<image src="../../static/learning-banner2.png" mode=""></image>
+				<image :src="datas.courseLogo || ''" mode=""></image>
 			</view>
 			<view class="right-content flex-column-between">
 				<view class="title text-overflow2">
-					道路危险货物运输管理课程(上)道路危险货物运输管理课程(上)道路危险货物运输管理课程(上)道路危险货物运输管理课程(上)道路危险货物运输管理课程(上)
+					{{datas.courseName || '未知'}}
 				</view>
 				<view class="time-from">
 					<view class="time">
-						09月25日 09：30-20：00
+						{{datas.startTime || '未知'}}
 					</view>
 					<view class="from">
-						老师：张成功
+						老师：{{datas.lecturerName || '未知'}}
 					</view>
 				</view>
 			</view>
@@ -26,8 +26,17 @@
 	export default {
 		data() {
 			return {
-
+				datas:{}
 			};
+		},
+		props:['data'],
+		created() {
+			this.datas = this.data?this.data:{}
+		},
+		methods:{
+			itemClick(item){
+				this.$emit('courseClick',{item:item})
+			}
 		}
 	}
 </script>
@@ -50,9 +59,11 @@
 	}
 	.img-content{
 		width:40%;
+		height: 170rpx;
+		background-color: #999999;
 		image{
 			width: 100%;
-			height: 170rpx;
+			height: 100%;
 		}
 	}
 	.right-content{

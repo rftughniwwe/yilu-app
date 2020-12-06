@@ -130,7 +130,6 @@
 			// 上拉加载更多
 			loadData() {
 				this.getIndexInfomation()
-
 			},
 			// 获取用户信息
 			getUserInfo() {
@@ -163,7 +162,9 @@
 					url: '/community/api/blog/list',
 					method: 'POST',
 					data: {
-						articleType: '2'
+						articleType: '2',
+						pageCurrent:1,
+						pageSize:10
 					},
 					success: resp => {
 						uni.hideLoading()

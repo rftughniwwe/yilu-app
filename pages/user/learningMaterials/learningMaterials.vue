@@ -22,7 +22,7 @@
 							</view> -->
 						</view>
 						<view class="action-content flex-between">
-							<image class="preview-img" src="../../../static/preview-file.png" mode=""></image>
+							<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
 							<image class="download-img" src="../../../static/download.png" mode="" @click="downloadFile(item)"></image>
 						</view>
 					</view>
@@ -82,7 +82,8 @@
 				tabArr: ['文件', '视频'],
 				num: '0',
 				isFullScreen: false,
-				filesData: {}
+				filesData: {},
+				videoSrc:''
 			};
 		},
 		components: {
@@ -143,10 +144,21 @@
 					delta: 1
 				})
 			},
-			previewFile(){
+			previewFile(item){
 				let path = item.savePath
 				let splitLength = path.split('.').length
 				let suffix = path.split('.')[splitLength-1]
+				if(suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8'){
+					uni.navigateTo({
+						url:'../../playVideo/playVideo?video='+this.path
+					})
+				}else {
+					uni.showToast({
+						title:'该文件暂不支持预览',
+						icon:'none'
+					})
+				}
+				
 			},
 			downloadFile(item){
 				let path = item.savePath

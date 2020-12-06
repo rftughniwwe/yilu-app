@@ -11,6 +11,7 @@
 				搜索
 			</view>
 		</view>
+
 		<view v-if="showModel === 'normal'" class="normal-serach">
 			<view class="hot-serach flex-row-start">
 				<view class="title-txt">
@@ -20,8 +21,9 @@
 			</view>
 			<view class="history-hot">
 				<template v-if="hotSearch && hotSearch.length > 0">
-					<view v-for="(item,index) in hotSearch" :key='index' class="item-block">
+					<view v-for="(item,index) in hotSearch" :key='index' class="item-block" @click="hotSerachContent(item)">
 						{{item.name}}
+
 					</view>
 				</template>
 				<template v-else>
@@ -36,8 +38,8 @@
 			</view>
 			<view class="history-hot">
 				<template v-if="historySearch && historySearch.length > 0">
-					<view v-for="(item,index) in historySearch" :key='index' class="item-block">
-						{{item.name}}
+					<view v-for="(item,index) in historySearch" :key='index' class="item-block" @click="historySearchContent(item)">
+						{{item.name==''?'全部':item.name}}
 					</view>
 				</template>
 				<template v-else>
@@ -46,6 +48,8 @@
 
 			</view>
 		</view>
+
+
 		<view v-if="showModel === 'article'" class="article-serach">
 			<view class="tab-content flex-around">
 				<view :class="tab===1?'tab-selected':''" @click="checkoutTab(1)">
@@ -55,22 +59,28 @@
 					课程
 				</view>
 			</view>
-			<view v-show="tab===1" class="news-content">
-				<template v-if="newsArr && newsArr.length > 0">
-					<view v-for="(items,index) in newsArr" :key='index'>
-						<newCover @GoArticleDetails='goDetails' position='left' :datas='items'></newCover>
-					</view>
-				</template>
-				<template v-else>
-					<EmptyData type='serach'/>
-				</template>
+			<view class="serach-content">
+				<view v-show="tab===1" class="news-content">
+					<template v-if="newsArr && newsArr.length > 0">
+						<view v-for="(items,index) in newsArr" :key='index'>
+							<newCover @GoArticleDetails='goDetails' position='left' :datas='items'></newCover>
+						</view>
+					</template>
+					<template v-else>
+						<EmptyData type='serach' />
+					</template>
 
-			</view>
-			<view v-show="tab===2" class="course-content">
-				<course></course>
-				<course></course>
-				<course></course>
-				<course></course>
+				</view>
+				<view v-show="tab===2" class="course-content">
+					<template v-if="courseArr && courseArr.length > 0">
+						<view v-for="(item,index) in courseArr" :key='index'>
+							<course :data='item' @courseClick='itemClick'></course>
+						</view>
+					</template>
+					<template v-else>
+						<EmptyData type='serach'/>
+					</template>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -90,7 +100,9 @@
 		clearHistorySearch
 	} from '@/commons/api/apis.js'
 	import {
-		getUserLoginInfo
+		getUserLoginInfo,
+		getLearningTypeInfo,
+		LEARNING_MODE_DATA
 	} from '@/utils/util.js'
 	import {
 		request_err,
@@ -107,16 +119,17 @@
 				hotSearch: [],
 				historySearch: [],
 				userNo: '',
-				newsArr: []
+				newsArr: [],
+				courseArr:[]
 			};
 		},
 		onLoad(options) {
 			// this.showModel = options.model
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			this.getHotSearchData()
 		},
 		onShow() {
 			this.userNo = getUserLoginInfo('userNo')
+			this.getHistoryData()
 		},
 		components: {
 			course,
@@ -178,6 +191,7 @@
 						Toast({
 							title: "清除成功"
 						})
+						this.getHistoryData()
 					} else {
 						Toast({
 							title: res.data.msg
@@ -191,25 +205,29 @@
 					})
 				})
 			},
-			// 搜索
+			// 搜索文章
 			serachContent() {
 				let val = this.serachVal
 				uni.showLoading({
 					title: '搜索中...'
 				})
 				httpRequest({
-					url: '/community/api/blog/search/list',
+					url: '/community/api/blog/searchListByTitle',
 					method: 'POST',
 					data: {
 						"articleType": 2,
-						"title": val
+						"title": val,
+						"userNo": this.userNo,
+						"pageCurrent": 1,
+						"pageSize": 10
 					},
 					success: res => {
 						uni.hideLoading()
 						this.showModel = 'article'
-						console.log('zxczxczxczxczxc', res)
+						console.log('搜索结果：', res)
+						this.serachCourse()
 						if (res.data.code == 200) {
-							this.newsArr = res.data.data.list
+							this.newsArr = res.data.data
 						} else {
 							request_success(res)
 						}
@@ -220,6 +238,46 @@
 					}
 				}, 3)
 			},
+			// 搜索课程
+			serachCourse() {
+				let id = getLearningTypeInfo().categoryId1 || LEARNING_MODE_DATA[2].id
+				let val = this.serachVal
+				httpRequest({
+					url: '/course/api/course/searchCourseList',
+					method: 'POST',
+					data: {
+						"category_id1": id,
+						"courseName": val
+					},
+					success:res=>{
+						console.log('搜索课程结果：',res)
+						if (res.data.code == 200) {
+							this.courseArr = res.data.data
+						} else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						request_err(err,'获取课程失败')
+					}
+
+				}, 2)
+			},
+			// 搜索课程点击
+			itemClick(e){
+				console.log('课程点击：',e)
+			},
+			// 热门搜索点击
+			hotSerachContent(item) {
+				this.serachVal = item.name
+				this.serachContent()
+			},
+			// 历史搜索点击
+			historySearchContent(item) {
+				this.serachVal = item.name
+				this.serachContent()
+			},
+
 			// 前往咨询详情
 			goDetails(e) {
 				let id = e.newsId
@@ -241,8 +299,13 @@
 
 <style lang="scss">
 	.top-search-content {
-
 		border-bottom: 1px solid #eee;
+		position: fixed;
+		top: 0;
+		background-color: #FFFFFF;
+		left: 0;
+		right: 0;
+		z-index: 9999;
 
 		image {
 			width: 30rpx;
@@ -276,6 +339,7 @@
 
 	.normal-serach {
 		padding: 20rpx $uni-spacing-row-lg;
+		margin-top: 200rpx;
 
 		.hot-serach {
 
@@ -329,10 +393,20 @@
 		border-bottom: 3rpx solid #eee;
 		color: #333333;
 		font-size: 34rpx;
+		position: fixed;
+		top: 180rpx;
+		left: 0;
+		background-color: #FFFFFF;
+		right: 0;
+		z-index: 9998;
 
 		view {
 			padding: 30rpx 4rpx 30rpx 2rpx;
 		}
+	}
+
+	.serach-content {
+		margin-top: 290rpx;
 	}
 
 	.news-content,

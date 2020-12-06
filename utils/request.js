@@ -8,16 +8,15 @@ const createHttp = {
     const token = uni.getStorageSync('userToken') || '';
 	let t = getUserLoginInfo('token')
     const baseUrl = config.baseUrl
-    // console.log(baseUrl + url)
     const data = {
       method: 'POST',
       url: baseUrl + url,
       data: params
     };
 
-    if (token) {
+    if (t) {
       data.header = {
-        token: token
+        token: t
       };
     }
     return request(data);
@@ -26,16 +25,16 @@ const createHttp = {
     const token = uni.getStorageSync('userToken') || '';
 	let t = getUserLoginInfo('token')
     const baseUrl = config.baseUrl
-    // console.log(baseUrl + url)
+    
     const data = {
       method: 'put',
       url: baseUrl + url,
       data: params
     };
 
-    if (token) {
+    if (t) {
       data.header = {
-        token: token
+        token: t
       };
     }
     return request(data);
@@ -51,7 +50,6 @@ const request = (params, cb) => {
       });
     }
 	
-	// console.log(params);
     uni.request({
       ...params,
       success: res => {
@@ -70,7 +68,7 @@ const request = (params, cb) => {
             'data': null
           });
 		  uni.showToast({
-		    title: '登录过期',
+		    title: '登录过期，请重新登录',
 		    icon: 'none',
 			duration:1500
 		  });
