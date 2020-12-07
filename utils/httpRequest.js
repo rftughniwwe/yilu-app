@@ -44,6 +44,8 @@ function httpRequest(options, url_type, isToken) {
 	// 	base_url = BASE_URL + ':8700'
 	// } else if (url_type == 5) {
 	// 	base_url = BASE_URL + ':8760'
+	// } else if (url_type == 6) {
+	// 	base_url = BASE_URL + ':8710'
 	// }
 
 	let t = getUserLoginInfo('token')

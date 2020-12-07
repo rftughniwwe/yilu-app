@@ -311,6 +311,24 @@ function scanCodeReturn(resp) {
 	console.log('解析结果', resp)
 	uni.setStorageSync('scanData', resp.data.data)
 }
+// 获取随机题目
+function getRandomQuestions(count) {
+	let num = count < 10 ? 10 : count
+	let amount = Math.floor(num * 0.2) //4
+	let begin = amount			//4
+	let end = (num - amount) + 1 //17
+	let random = 0
+	getrandom()
+	function getrandom(){
+		random = Math.floor(Math.random() * end)
+		if(random <= begin){
+			getrandom()
+		}
+		return
+	}
+	
+	return random
+}
 
 
 // 第三方
@@ -414,22 +432,7 @@ const toZhDigit = (digit) => {
 		return result;
 	}
 }
-// 获取随机题目
-function getRandomQuestions(count) {
-	let num = count > 10 ? 10 : count
-	let amount = Math.floor(num * 0.2) 
-	let begin = amount
-	let end = (num - amount) + 1
-	let random = 0
-	function getrandom(){
-		random =  Math.floor(Math.random() * end)
-	}
-	if(random < begin){
-		getrandom()
-		return
-	}
-	return random
-}
+
 module.exports = {
 	getNetworkType,
 	isLogin,

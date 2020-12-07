@@ -385,7 +385,12 @@
 						title: '您已签入'
 					})
 					return
-				} else if (num == 1 && !this.noSign2) {
+				} else if(num == 1 && this.signDatas.type == 1){
+					Toast({
+						title: '请扫签出码进行签出'
+					})
+					return
+				}else if (num == 1 && !this.noSign2) {
 					Toast({
 						title: '您已签出'
 					})
@@ -578,7 +583,7 @@
 					"userNo": getUserLoginInfo('userNo')
 				}
 				uni.stopPullDownRefresh()
-				console.log('ccccc:', params)
+				console.log('获取回显数据参数:', params)
 				getOldSignData(params).then(res => {
 					console.log('签到信息：', res)
 					if (res.data.code == 200) {

@@ -232,7 +232,7 @@
 		}, {
 			"path": "pages/user/learningMaterials/learningMaterials",
 			"style": {
-				"navigationStyle": "custom",
+				"navigationBarTitleText": "学习资料",
 				"enablePullDownRefresh": false
 			}
 
@@ -372,6 +372,15 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/allNews/allNews",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "资讯",
                 "enablePullDownRefresh": false
             }
             

@@ -5,7 +5,7 @@
 			<image src="../../static/arrow-left.png" mode="" @click="goBack"></image>
 			<view class="middle-serach-content flex-row-start">
 				<image src="../../static/serach-img.png" mode=""></image>
-				<input type="text" value="" v-model="serachVal" placeholder="搜索" placeholder-class="placeStyle" />
+				<input type="text" value="" v-model="serachVal" focus placeholder="搜索" placeholder-class="placeStyle" />
 			</view>
 			<view class="serach-btn" @click="serachContent">
 				搜索
@@ -23,7 +23,6 @@
 				<template v-if="hotSearch && hotSearch.length > 0">
 					<view v-for="(item,index) in hotSearch" :key='index' class="item-block" @click="hotSerachContent(item)">
 						{{item.name}}
-
 					</view>
 				</template>
 				<template v-else>
@@ -130,6 +129,7 @@
 		onShow() {
 			this.userNo = getUserLoginInfo('userNo')
 			this.getHistoryData()
+			this.getHotSearchData()
 		},
 		components: {
 			course,
@@ -280,9 +280,9 @@
 
 			// 前往咨询详情
 			goDetails(e) {
-				let id = e.newsId
+				let item = e.item
 				uni.navigateTo({
-					url: '../aiticlePage/aiticlePage?id=' + id
+					url: `../aiticlePage/aiticlePage?id=${item.id}&coverImg=${item.blogImg}`
 				})
 			},
 			checkoutTab(e) {

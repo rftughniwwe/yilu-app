@@ -15,12 +15,12 @@
 		</view>
 		<view class="banner-content" :style="{'margin-top':isFullScreen?'194rpx':'142rpx'}">
 			<swiper class="swiper-content" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="600" circular="true">
-				<swiper-item>
+				<swiper-item v-for="(item,index) in bannerDatas" :key='index'>
 					<view class="swiper-item">
-						<image src="../../static/index-banner1.png" mode=""></image>
+						<image :src="item.advImg" mode=""></image>
 					</view>
 				</swiper-item>
-				<swiper-item>
+			<!-- 	<swiper-item>
 					<view class="swiper-item">
 						<image src="../../static/index-banner2.png" mode=""></image>
 					</view>
@@ -29,13 +29,16 @@
 					<view class="swiper-item">
 						<image src="../../static/index-banner3.png" mode=""></image>
 					</view>
-				</swiper-item>
+				</swiper-item> -->
 			</swiper>
 		</view>
 		<view class="news-content">
 			<template v-if="newsArr && newsArr.length > 0">
 				<view v-for="(items,index) in newsArr" :key='index'>
 					<newCover @GoArticleDetails='goDetails' position='left' :datas='items'></newCover>
+				</view>
+				<view class="load-more" @click="loadMoreData">
+					显示更多
 				</view>
 			</template>
 			<template v-else>
@@ -58,25 +61,30 @@
 			</view>
 			<view class="scroll-content">
 				<scroll-view class="scroll-content-items" scroll-x="true">
-					<view class="item-img">
-						<view class="title">
-							专题专题专题专题专题专题
+					<template v-if="topicdata && topicdata.length > 0">
+						<view v-for="(item,index) in topicdata" class="item-img" :style="{backgroundImage:`url(${item.coverPic})`}" @click="topicClick(item)">
+							<view class="title">
+								{{item.labelName}}
+							</view>
 						</view>
-					</view>
-					<view class="item-img">
+					</template>
+					<template v-else>
+						<EmptyData type='serach' />
+					</template>
+					<!-- <view class="item-img">
 						<view class="title">
 							专2题专题2专题2专题2专题2专题2
 						</view>
-					</view>
+					</view> -->
 				</scroll-view>
-				<newCover position='text'></newCover>
-				<newCover position='right'></newCover>
+				<!-- <newCover position='text'></newCover>
+				<newCover position='right'></newCover> -->
 			</view>
 		</view>
 		<!-- <loadingData v-if="reachBtm"></loadingData> -->
-		<view class="refresh" @click="refreshHandle">
+		<!-- <view class="refresh" @click="refreshHandle">
 			<image src="../../static/refresh.png" mode=""></image>
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -106,7 +114,9 @@
 		data() {
 			return {
 				isFullScreen: false,
-				newsArr: []
+				newsArr: [],
+				bannerDatas:[],
+				topicdata:[]
 			};
 		},
 		components: {
@@ -118,15 +128,24 @@
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.getIndexInfomation()
 			this.getUserInfo()
+			this.getSwpierBanner()
+			this.getTopic()
 			// this.getLearningOptions()
 		},
 		onReachBottom() {
-			this.loadData()
+			// this.loadData()
 		},
 		onPullDownRefresh() {
 			this.getIndexInfomation()
+			this.getTopic()
 		},
 		methods: {
+			topicClick(item){
+				let obj = encodeURIComponent(JSON.stringify(item))
+				uni.navigateTo({
+					url:'../specialTopic/specialTopicDetail?item='+obj
+				})
+			},
 			// 上拉加载更多
 			loadData() {
 				this.getIndexInfomation()
@@ -148,14 +167,19 @@
 					}
 				}, err => {
 					console.log('获取用户基本信息失败')
-
 				})
+			},
+			loadMoreData(){
+				uni.navigateTo({
+					url:'../allNews/allNews'
+				})
+				// this.getIndexInfomation()
+				// 跳转新闻页
 			},
 			// 获取主页数据
 			getIndexInfomation() {
-
 				uni.showLoading({
-					title: '加载中...',
+					title: '加载资讯中...',
 					mask: true
 				})
 				httpRequest({
@@ -164,14 +188,15 @@
 					data: {
 						articleType: '2',
 						pageCurrent:1,
-						pageSize:10
+						pageSize:3
 					},
 					success: resp => {
 						uni.hideLoading()
 						uni.stopPullDownRefresh()
 						console.log('首页数据：',resp)
 						if (resp.data.code == 200) {
-							this.newsArr = resp.data.data.list
+							let list = resp.data.data.list
+							this.newsArr = list
 						} else {
 							Toast({
 								title: resp.data.msg
@@ -179,14 +204,44 @@
 						}
 					},
 					fail: err => {
-						uni.stopPullDownRefresh()
 						uni.hideLoading()
+						uni.stopPullDownRefresh()
 						console.log(err)
 						Toast({
 							title: '加载数据失败'
 						})
 					}
 				}, 3)
+			},
+			getTopic(){
+				uni.showLoading({
+					title:'加载专题中...'
+				})
+				httpRequest({
+					url:'/community/pc/label/list',
+					method:'POST',
+					data:{
+						labelType:3,
+						pageCurrent: 1,
+						pageSize: 3,
+					},
+					success:res=>{
+						console.log('Topic:',res)
+						uni.hideLoading()
+						uni.stopPullDownRefresh()
+						if(res.data.code == 200){
+							let list = res.data.data.list
+							this.topicdata = list
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						uni.hideLoading()
+						uni.stopPullDownRefresh()
+						request_err(err,'获取数据失败')
+					}
+				},3)
 			},
 			// 获取学习选项
 			getLearningOptions() {
@@ -212,6 +267,28 @@
 				// }, 2)
 			},
 
+			getSwpierBanner(){
+				httpRequest({
+					url:'/system/pc/adv/list',
+					method:'POST',
+					data:{
+						advLocation:1,
+						mobileTerminalCategory:1
+					},
+					success:res=>{
+						console.log('banner:',res)
+						if(res.data.code == 200){
+							this.bannerDatas = res.data.data.list
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						request_err(err,'获取数据失败')
+					}
+				},6)
+			},
+			
 			refreshHandle() {
 				this.getIndexInfomation()
 			},
@@ -223,9 +300,9 @@
 			},
 			// 前往咨询详情
 			goDetails(e) {
-				let id = e.newsId
+				let item = e.item
 				uni.navigateTo({
-					url: '../aiticlePage/aiticlePage?id=' + id
+					url: `../aiticlePage/aiticlePage?id=${item.id}&coverImg=${item.blogImg}`
 				})
 			},
 			goSpeacialTopic() {
@@ -394,7 +471,6 @@
 
 	.item-img {
 		border-radius: $uni-border-radius-base;
-		background-image: url(../../static/learning-banner2.png);
 		background-size: 100% 100%;
 		width: 400rpx;
 		height: 214rpx;
@@ -439,5 +515,12 @@
 			width: 133rpx;
 			height: 133rpx;
 		}
+	}
+	.load-more{
+		padding: 30rpx 0;
+		text-align: center;
+		color: $uni-color-primary;
+		font-size: 30rpx;
+		background-color: #FFFFFF;
 	}
 </style>

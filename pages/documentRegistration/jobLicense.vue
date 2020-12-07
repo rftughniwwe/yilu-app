@@ -24,10 +24,10 @@
 						从业资格类别
 					</view>
 					<view class="input-content">
-						<input type="text" maxlength="10" v-model="cardjobType" value="" placeholder="请填写" />
-						<!-- <picker mode="selector" :range="jobTypeData" @change="jobTypeChange">
+						<!-- <input type="text" maxlength="10" v-model="cardjobType" value="" placeholder="请填写" /> -->
+						<picker mode="selector" :range="jobTypeData" @change="jobTypeChange">
 							<view :class="cardjobType?'picker-text-normal':'picker-text'">{{cardjobType?cardjobType:'请选择类别'}}</view>
-						</picker> -->
+						</picker>
 					</view>
 				</view>
 
@@ -94,7 +94,7 @@
 				cardjobType: '',
 				validBeginDate: '',
 				validEndDate: '',
-				jobTypeData: ['111', '222'],
+				jobTypeData: ['危险品驾驶员', '危险品押运员'],
 				tempPath: '../../static/allow-job.png',
 				tempPath_upload:'',
 				flag:false

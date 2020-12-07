@@ -45,7 +45,7 @@ export function queryUnitName(name) {
 export function getHotSearchData() {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: "/course/api/tbHotSearch/list",
+			url: "/course/api/tbHotSearch/selectlist",
 			method: "POST",
 			success: res => {
 				resolve(res)

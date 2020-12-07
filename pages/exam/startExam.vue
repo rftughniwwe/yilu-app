@@ -91,7 +91,8 @@
 				faceContrast: 0, // 活体认证次数
 				constrastTimes: null, // 认证时间点
 				answerTimeText: '',
-				submitFlag: false
+				submitFlag: false,
+				faceVerifyCount: -1
 			};
 		},
 		components: {
@@ -114,6 +115,7 @@
 			// if(this.time === '' && this.answerTime) {
 			// 	this.timer = setTimeout(this.initTime, 3000)
 			// }
+			console.log('西八')
 		},
 		onUnload() {
 			clearInterval(this.time)
@@ -125,25 +127,25 @@
 
 		},
 		onBackPress() {
-				uni.showModal({
-					title: '提示',
-					content: '退出将自动交卷，确定退出？',
-					confirmText: '确定',
-					cancelText: '取消',
-					success: res => {
-						if (res.confirm) {
-							this.submit()
-						}
-					},
-				})
+			uni.showModal({
+				title: '提示',
+				content: '退出将自动交卷，确定退出？',
+				confirmText: '确定',
+				cancelText: '取消',
+				success: res => {
+					if (res.confirm) {
+						this.submit()
+					}
+				},
+			})
 			return true
 		},
 		methods: {
 			// 获取随机人脸认证
 			getRandomFaceVerify() {
-				console.log('data:', this.examData.titleList.length)
-				let num = getRandomQuestions(this.examData.titleList.length)
+				let num = getRandomQuestions(this.total)
 				console.log('随机数：', num)
+				this.faceVerifyCount = num
 			},
 			to(index) {
 				this.current = index - 1;
@@ -175,11 +177,65 @@
 			swiperChange(e) {
 				this.swiperIndex = e.detail.current + 1;
 				console.log('当前题目：', this.swiperIndex)
+				if (this.swiperIndex == this.faceVerifyCount) {
+					useFacePlugin({}).then((res) => {
+						uni.showLoading({
+							title: '验证中...',
+							mask: true
+						})
+
+						faceVerification(res).then(resp => {
+							console.log('随机题目人脸识别：', resp)
+							uni.hideLoading()
+							if (resp.data.code == 200) {
+								// 识别成功
+							} else {
+								// request_success(res)
+								uni.showToast({
+									title: resp.data.msg,
+									duration: 1500,
+									icon:'none'
+								})
+								// if (this.isGradeExam) {
+								// 	const d = {
+								// 		id: this.recordId
+								// 	}
+								// 	gradeApis.submitExam(d).then((e) => {
+								// 		e.examId = this.examId;
+								// 		e.recordId = this.recordId;
+								// 		uni.setStorageSync('userexam-result', e);
+
+								// 		uni.redirectTo({
+								// 			url: '/pages/exam/gradeResult'
+								// 		})
+								// 	})
+								// } else {
+								// 	const d = {
+								// 		recordId: this.recordId
+								// 	}
+								// 	examApis.examFinish(d).then((e) => {
+								// 		e.examId = this.examId;
+								// 		e.recordId = this.recordId;
+								// 		uni.setStorageSync('userexam-result', e);
+
+								// 		uni.redirectTo({
+								// 			url: '/pages/exam/result'
+								// 		})
+								// 	})
+								// }
+							}
+						}, err => {
+							uni.hideLoading()
+							request_err(err, '人脸验证失败，稍后重试')
+						})
+					})
+				}
+
 			},
 			submit(flag) {
 				clearInterval(this.time)
 
-				if(!flag){
+				if (!flag) {
 					useFacePlugin({}).then((res) => {
 						uni.showLoading({
 							title: '验证中...'
@@ -196,8 +252,9 @@
 									gradeApis.submitExam(d).then((e) => {
 										e.examId = this.examId;
 										e.recordId = this.recordId;
+										console.log('交卷：',e)
 										uni.setStorageSync('userexam-result', e);
-					
+
 										uni.redirectTo({
 											url: '/pages/exam/gradeResult'
 										})
@@ -209,8 +266,9 @@
 									examApis.examFinish(d).then((e) => {
 										e.examId = this.examId;
 										e.recordId = this.recordId;
+										console.log('交卷2：',e)
 										uni.setStorageSync('userexam-result', e);
-					
+
 										uni.redirectTo({
 											url: '/pages/exam/result'
 										})
@@ -224,7 +282,7 @@
 							request_err(err, '人脸验证失败，稍后重试')
 						})
 					})
-				}else {
+				} else {
 					this.submitFlag = true
 					if (this.isGradeExam) {
 						const d = {
@@ -233,8 +291,9 @@
 						gradeApis.submitExam(d).then((e) => {
 							e.examId = this.examId;
 							e.recordId = this.recordId;
+							console.log('交卷3：',e)
 							uni.setStorageSync('userexam-result', e);
-										
+
 							uni.redirectTo({
 								url: '/pages/exam/gradeResult'
 							})
@@ -246,15 +305,16 @@
 						examApis.examFinish(d).then((e) => {
 							e.examId = this.examId;
 							e.recordId = this.recordId;
+							console.log('交卷4：',e)
 							uni.setStorageSync('userexam-result', e);
-										
+
 							uni.redirectTo({
 								url: '/pages/exam/result'
 							})
 						})
 					}
 				}
-				
+
 
 			},
 
@@ -378,15 +438,14 @@
 				if (res && res.id) {
 					if (gradeExamId) { // 班级考试的
 						this.recordId = res.id
-						if (res.examStatus === 2) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
-							record = await gradeApis.continueExam({
-								id: res.id
-							})
-							if (record.code === 200) {
-								record = record;
-								res.titleList = record.titleList
-							}
-						} else {
+						// if (res.examStatus === 2) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
+						// 	record = await gradeApis.continueExam({
+						// 		id: res.id
+						// 	})
+						if (record.code === 200) {
+							record = record;
+							res.titleList = record.titleList
+						} else{
 							record = await gradeApis.beginExam({
 								id: res.id
 							})
@@ -397,18 +456,18 @@
 						}
 					} else {
 						this.recordId = res.recordId
-						if (res.recordId) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
-							record = await examApis.recordExam({
-								recordId: res.recordId
-							})
-						} else {
-							record = await examApis.examexamOnline({
-								examId: id
-							})
-							if (record && record.recordId) {
-								this.recordId = record.recordId;
-							}
+						// if (res.recordId) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
+						// 	record = await examApis.recordExam({
+						// 		recordId: res.recordId
+						// 	})
+						// } else {
+						record = await examApis.examexamOnline({
+							examId: id
+						})
+						if (record && record.recordId) {
+							this.recordId = record.recordId;
 						}
+						// }
 					}
 
 					this.answerTime = record.answerTime;
@@ -540,7 +599,7 @@
 					res.titleList = arr;
 					this.total = total
 					this.examData = res;
-					// this.getRandomFaceVerify()
+					this.getRandomFaceVerify()
 				}
 			}
 		}

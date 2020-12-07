@@ -22,7 +22,8 @@
             "VideoPlayer" : {},
             "Maps" : {},
             "Geolocation" : {},
-            "Payment" : {}
+            "Payment" : {},
+            "Share" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -83,6 +84,12 @@
                 },
                 "push" : {
                     "unipush" : {}
+                },
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wx0a5198d46d4b8575",
+                        "UniversalLinks" : ""
+                    }
                 }
             },
             "icons" : {

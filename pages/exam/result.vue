@@ -40,7 +40,7 @@
 					交卷时间：{{ examData.endTime }}
 				</view>
 				<view class="examText">
-					考试用时：{{ examData.answerTime }}分钟
+					考试用时：{{ examData.answerTime<1?examData.answerTime+1:examData.answerTime }}分钟
 				</view>
 			</view>
 			<view class="footer">
@@ -66,6 +66,7 @@
 		},
 		onLoad(options) {
 			this.examData = uni.getStorageSync('userexam-result')
+			console.log('zxczxczxzxc',this.examData)
 		},
 		onBackPress() {
 			setTimeout(()=>{

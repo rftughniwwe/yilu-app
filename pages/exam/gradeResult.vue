@@ -75,7 +75,7 @@
 				this.examData = res;
 				this.examData.recordId = data.recordId;
 				this.examData.examName = this.examData.gradeExamName
-				console.log(this.examData)
+				console.log('zxczxczxc',this.examData)
 			})
 		},
 		methods: {

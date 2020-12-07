@@ -32,7 +32,7 @@
 		},
 		methods:{
 			goArticleDetails(){
-				this.$emit('GoArticleDetails',{'newsId':this.datas.id})
+				this.$emit('GoArticleDetails',{'item':this.datas})
 			}
 		}
 	}

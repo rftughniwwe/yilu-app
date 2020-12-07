@@ -1,10 +1,10 @@
 <!-- 专题详情页 -->
 <template>
 	<view class="main">
-		<topTabBar text='none' />
-		<view class="banner-content">
+		<topTabBar text='none' :isCollectTopicId='item.id' @clickCollect='topicCollection'  @onTopicShare='onShareClick' />
+		<view class="banner-content" :style='{backgroundImage:`url(${item.coverPic})`}'>
 			<view class="title">
-				驾驶疲劳
+				{{item.labelName}}
 			</view>
 		</view>
 		<scroll-view scroll-y="true">
@@ -13,7 +13,7 @@
 					导读
 				</view>
 				<view class="guide-content">
-					疲劳驾驶极易引起交通事故，是指驾驶人在长时间连续行车后，产生生理机能和心理机能的失调，而在客观上出现驾驶技能下降的现象。驾驶人睡眠质量差或不足，长时间驾驶车辆，容易缺乏内源氧出现疲劳。
+					{{item.content}}
 				</view>
 			</view>
 			<view class="related-article">
@@ -23,40 +23,159 @@
 						相关文章
 					</view>
 				</view>
-				<newsCover @GoArticleDetails='goArticleDetails' position='text'/>
-				<newsCover @GoArticleDetails='goArticleDetails' position='left'/>
-				<newsCover @GoArticleDetails='goArticleDetails' position='moreimg'/>
+				<template v-if="articleData && articleData.length > 0">
+					<view v-for="(item,index) in articleData">
+						<newsCover @GoArticleDetails='goArticleDetails' position='left' :datas='item'/>
+					</view>
+				</template>
+				<template v-else>
+					<EmptyData type='serach'/>
+				</template>
 			</view>
 		</scroll-view>
+		<uni-popup ref="sharepopup" type="bottom">
+			<share-btn :sharedataTemp="sharedata"></share-btn>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
 	import topTabBar from '@/components/topTabBar/topTabBar.vue'
 	import newsCover from '@/components/news-cover/news-cover.vue'
-	
+	import {
+		httpRequest,
+	} from '@/utils/httpRequest.js'
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	import Toast from '@/commons/showToast.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
+	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	import shareBtn from '@/components/share-btn/share-btn.vue'
 	export default {
 		data() {
 			return {
-
+				item: {},
+				articleData:[],
+				sharedata:{}
 			};
 		},
 		components: {
 			topTabBar,
-			newsCover
+			newsCover,
+			shareBtn,
+			uniPopup
 		},
-		methods:{
-			goArticleDetails(){
+		onLoad(options) {
+			this.item = JSON.parse(decodeURIComponent(options.item)) || {}
+			this.getArticle()
+		},
+		methods: {
+			onShareClick() {
+				this.sharedata = {
+					type: 0,
+					strShareUrl: "http://www.baidu.com",
+					strShareTitle: this.item.labelName,
+					strShareSummary: this.item.content,
+					strShareImageUrl: this.item.coverPic
+				}
+				 this.$refs.sharepopup.open()
+			},
+			goArticleDetails(e) {
+				let item = e.item
 				uni.navigateTo({
-					url:'../aiticlePage/aiticlePage'
+					url: `../aiticlePage/aiticlePage?id=${item.id}&coverImg=${item.blogImg}`
 				})
+			},
+			getArticle() {
+				uni.showLoading({
+					title:'加载中'
+				})
+				httpRequest({
+					url:'/community/api/blog/list',
+					method:'POST',
+					data:{
+						tagsName:this.item.labelName,
+						articleType: 2,
+					},
+					success:res=>{
+						uni.hideLoading()
+						console.log('zzz',res)
+						if(res.data.code ==200){
+							this.articleData = res.data.data.list
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						uni.hideLoading()
+						request_err(err,'获取数据失败')
+					}
+				},3)
+			},
+			topicCollection(e){
+				let c = e.collect
+				if(c){
+					httpRequest({
+						url: '/community/api/labelUserRecord/save',
+						method: 'POST',
+						data: {
+							labelId:this.item.id,
+							userIp:'127.0.0.1',
+							opType: 1,
+							userNo: getUserLoginInfo('userNo'),
+							userTerminal:'android'
+						},
+						success:res=>{
+							console.log('收藏专题：',res)
+							if(res.data.code == 200){
+								uni.showToast({
+									title:'专题收藏成功',
+									icon:'none'
+								})
+							}else {
+								request_success(res)
+							}
+						},
+						fail:err=>{
+							request_err(err,'专题收藏失败')
+						}
+					},3)
+				}else {
+					httpRequest({
+						url: '/community/api/labelUserRecord/deleteLabelRecord',
+						method: 'DELETE',
+						data: {
+							labelId:this.item.id,
+							opType: 1,
+							userNo: getUserLoginInfo('userNo'),
+						},
+						success:res=>{
+							console.log('取消收藏专题：',res)
+							if(res.data.code == 200){
+								uni.showToast({
+									title:'取消收藏成功',
+									icon:'none'
+								})
+							}else {
+								request_success(res)
+							}
+						},
+						fail:err=>{
+							request_err(err,'取消收藏失败')
+						}
+					},3)
+				}
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
-	
 	.banner-content {
 		width: 100%;
 		height: 445rpx;
@@ -64,7 +183,8 @@
 		background-size: 100% 100%;
 		position: relative;
 	}
-	.title{
+
+	.title {
 		position: absolute;
 		bottom: 0;
 		left: 0;
@@ -73,17 +193,19 @@
 		color: #FFFFFF;
 		font-size: 40rpx;
 	}
-	.guide-title{
+
+	.guide-title {
 		color: #333333;
 		// margin-bottom: 30rpx;
 		font-size: 38rpx;
 		font-weight: bold;
 	}
-	.guide{
+
+	.guide {
 		border-bottom: 20rpx solid #F8F8F8;
 		padding: 50rpx $uni-spacing-row-lg;
-		
-		.guide-content{
+
+		.guide-content {
 			color: #666;
 			font-size: 32rpx;
 			padding: 20rpx 0;
@@ -91,10 +213,12 @@
 			letter-spacing: 3rpx;
 		}
 	}
-	.related-article{
+
+	.related-article {
 		padding: 50rpx $uni-spacing-row-lg;
-		.title-article{
-			image{
+
+		.title-article {
+			image {
 				width: 30rpx;
 				height: 30rpx;
 				margin-right: 30rpx;

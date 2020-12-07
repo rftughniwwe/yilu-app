@@ -1,7 +1,8 @@
 import config from "../config/index";
 import { login, logout } from "./auth";
 import {
-	getUserLoginInfo
+	getUserLoginInfo,
+	removeAppStorage
 } from './util.js'
 const createHttp = {
   post: (url, params) => {
@@ -72,6 +73,7 @@ const request = (params, cb) => {
 		    icon: 'none',
 			duration:1500
 		  });
+		  removeAppStorage()
 		  setTimeout(()=>{
 			  uni.reLaunch({
 			  	url:'/pages/login/normalLogin'

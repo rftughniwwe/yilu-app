@@ -2,13 +2,14 @@
 <template>
 	<view>
 
-		<view class="wrap-top-tab-bar">
+		<!-- <view class="wrap-top-tab-bar">
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
-		</view>
+		</view> -->
 
-		<view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
+		<!-- <view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> -->
+		<view class="container">
 			<view v-show="num=='0'">
 				<template v-if="filesData.list && filesData.list.length >0">
 					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index' >
@@ -246,7 +247,7 @@
 	}
 
 	.file-content {
-		width: 75%;
+		width: 65%;
 	}
 
 	.preview-img {

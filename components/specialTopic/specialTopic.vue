@@ -1,20 +1,19 @@
 <!-- 专题组件 -->
 <template>
 <view class="main">
-		<view class="topic-item" @click="goSpeacialDetail">
-			<image src="../../static/learning-banner2.png" mode=""></image>
+		<view class="topic-item" @click="goSpeacialDetail(data)">
+			<image :src="data.coverPic" mode=""></image>
 			<view class="btm-content flex-between">
 				<view class="title-time">
 					<view class="titile">
-						疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶疲劳驾驶
+						{{data.labelName}}
 					</view>
 					<view class="time">
-						2020年09月06日
+						{{data.gmtCreate}}
 					</view>
 				</view>
-				<view :class="selected?'collected':'collect-btn'"  @click.stop="collecteClick">
-					
-					{{selected?'已收藏':'收藏'}}
+				<view :class="data.collectType==1?'collected':'collect-btn'"  @click.stop="collecteClick(data)">
+					{{data.collectType==1?'已收藏':'收藏'}}
 				</view>
 			</view>
 		</view>
@@ -28,15 +27,15 @@
 				
 			};
 		},
-		props:['selected'],
+		props:['selected','data'],
 		methods:{
 			// 收藏按钮点击
-			collecteClick(){
-				this.$emit('clickCollectBtn')
+			collecteClick(item){
+				this.$emit('clickCollectBtn',{item:item})
 			},
 			// 跳转
-			goSpeacialDetail(){
-				this.$emit('goSpecialTopicDetail')
+			goSpeacialDetail(data){
+				this.$emit('goSpecialTopicDetail',{item:data})
 			}
 		}
 	}
