@@ -2,17 +2,17 @@
 <template>
 	<view>
 
-		<!-- <view class="wrap-top-tab-bar">
+		<view class="wrap-top-tab-bar">
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
-		</view> -->
+		</view>
 
-		<!-- <view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> -->
-		<view class="container">
+		<view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
+		<!-- <view class="container"> -->
 			<view v-show="num=='0'">
 				<template v-if="filesData.list && filesData.list.length >0">
-					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index' >
+					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index' v-if="item.type == 2">
 						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
 						<view class="file-content text-overflow2">
 							<view class="title">
@@ -27,17 +27,6 @@
 							<image class="download-img" src="../../../static/download.png" mode="" @click="downloadFile(item)"></image>
 						</view>
 					</view>
-					<!-- <view class="item-block flex-row-start">
-						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
-						<view class="file-content">
-							<view class="title">
-								驾驶员安全教育.doc
-							</view>
-							<view class="file-size">
-								999MB
-							</view>
-						</view>
-					</view> -->
 				</template>
 				<template v-else>
 					<EmptyData type='serach' />
@@ -45,15 +34,23 @@
 
 			</view>
 			<view v-show="num=='1'">
-				<!-- <view class="video-item">
-					<view class="topic text-overflow2">
-						危化品运输车安全行车注意事项, 你必须了解！危化品运输车安全行车注意事项, 你必须了解！
-					</view>
-					<view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}">
-						<image src="../../../static/pause-video.png" mode=""></image>
-					</view>
-				</view> -->
-				<template>
+				
+				<template v-if="filesData.list && filesData.list.length >0">
+					 
+					 <view class="video-item" v-for="(item,index) in filesData.list" :key='index' v-if="item.type == 1">
+					 	<view class="topic text-overflow2">
+					 		{{item.name}}
+					 	</view>
+					 	<!-- <view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}" @click="previewFile(item)"> -->
+						<view class="cover flex-evenly" @click="previewFile(item)">
+					 		<image src="../../../static/pause-video.png" mode=""></image>
+					 	</view>
+					 </view>
+					 <!-- <view v-else>
+					 	<EmptyData type='serach' />
+					 </view> -->
+				</template>
+				<template v-else>
 					<EmptyData type='serach' />
 				</template>
 			</view>
@@ -115,7 +112,9 @@
 				// let categoryId2 = getLearningTypeInfo().categoryId2
 				// 所属公司ID
 				// let compId = getLearningTypeInfo().compId
-
+				uni.showLoading({
+					title:'加载中...'
+				})
 				httpRequest({
 					url: '/user/pc/tb/train/learn/attach/list',
 					method: 'POST',
@@ -125,6 +124,7 @@
 						"pageCurrent":1
 					},
 					success: res => {
+						uni.hideLoading()
 						console.log('学习资料：', res)
 						if (res.data.code == 200) {
 							this.filesData = res.data.data
@@ -133,6 +133,7 @@
 						}
 					},
 					fail: err => {
+						uni.hideLoading()
 						request_err(err, '获取学习资料失败')
 					}
 				}, 1)
@@ -149,14 +150,50 @@
 				let path = item.savePath
 				let splitLength = path.split('.').length
 				let suffix = path.split('.')[splitLength-1]
+				console.log('path:',path)
 				if(suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8'){
 					uni.navigateTo({
 						url:'../../playVideo/playVideo?video='+this.path
 					})
+				}else if(suffix == 'doc' || suffix == 'xls' || suffix == 'ppt' || suffix == 'pdf' || suffix == 'docx' || suffix == 'xlsx' || suffix == 'pptx'){
+					uni.downloadFile({
+						url:path,
+						timeout:20000,
+						success: (res) => {
+							uni.hideLoading()
+							console.log('下载成功：',res)
+							if(res.statusCode === 200){
+								uni.openDocument({
+									filePath:res.tempFilePath,
+									success:(x)=> {
+										console.log('打开文档成功')
+									},
+									fail:err=>{
+										console.log('打开失败？',err)
+									}
+								})
+							}else {
+								Toast({
+									title:'下载文件失败'
+								})
+							}
+							
+							// uni.saveFile({
+							// 	tempFilePath:res
+							// })
+						},
+						fail: () => {
+							uni.hideLoading()
+							uni.showToast({
+								title:'下载失败',
+								icon:'none'
+							})
+						}
+					})
+					
 				}else {
-					uni.showToast({
-						title:'该文件暂不支持预览',
-						icon:'none'
+					Toast({
+						title:'该文件暂不支持预览'
 					})
 				}
 				
@@ -164,22 +201,35 @@
 			downloadFile(item){
 				let path = item.savePath
 				uni.showLoading({
-					title:'下载中...'
+					title:'保存中...'
 				})
 				uni.downloadFile({
 					url:path,
 					timeout:20000,
 					success: (res) => {
-						uni.hideLoading()
 						console.log('下载成功：',res)
-						uni.showToast({
-							title:'下载成功'
+						uni.saveFile({
+							tempFilePath:res.tempFilePath,
+							success:resp=>{
+								uni.hideLoading()
+								uni.showToast({
+									title:'保存成功:'+resp.savedFilePath,
+									icon:'none'
+								})
+							},
+							fail:err=>{
+								uni.hideLoading()
+								uni.showToast({
+									title:'保存失败',
+									icon:'none'
+								})
+							}
 						})
 					},
 					fail: () => {
 						uni.hideLoading()
 						uni.showToast({
-							title:'下载失败',
+							title:'保存失败',
 							icon:'none'
 						})
 					}
@@ -239,7 +289,7 @@
 		width: 100%;
 		height: 308rpx;
 		background-size: 100% 100%;
-
+		background-color: #DFDFDF;
 		image {
 			width: 148rpx;
 			height: 148rpx;

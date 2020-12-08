@@ -1,6 +1,6 @@
 <template>
 	<view class="user-name" :style="{'color':color?color:'#333'}">
-		{{user.nickname?user.nickname:'未知用户'}}
+		{{nicknamez?nicknamez:'未知用户'}}
 	</view>
 </template>
 
@@ -8,14 +8,17 @@
 	export default {
 		data() {
 			return {
-				user:{}
+				nicknamez:''
 			};
 		},
-		props:['color'],
+		props:['color','name'],
 		created() {
 			let userinfo = uni.getStorageSync('userBasicInfo')
-			this.user = userinfo
+			this.nicknamez = userinfo.nickname
 			console.log('userinfo',userinfo)
+			if(this.name){
+				this.nicknamez = this.name
+			}
 		},
 		updated(){
 			let userinfo = uni.getStorageSync('userBasicInfo')

@@ -21,66 +21,6 @@
 				03月22日
 			</view>
 		</view>
-		<view class="item" @click="newsDetail">
-			<view class="img">
-				<image src="../../../static/system-news.png" mode=""></image>
-				<view class="buble">
-					1
-				</view>
-			</view>
-			<view class="middle-content">
-				<view class="topic">
-					系统消息
-					
-				</view>
-				<view class="subtitle">
-					消息内容消息内容消息内容消息内容
-				</view>
-			</view>
-			<view class="time">
-				03月22日
-			</view>
-		</view>
-		<view class="item" @click="newsDetail">
-			<view class="img">
-				<image src="../../../static/system-news.png" mode=""></image>
-				<view class="buble">
-					1
-				</view>
-			</view>
-			<view class="middle-content">
-				<view class="topic">
-					系统消息
-					
-				</view>
-				<view class="subtitle">
-					消息内容消息内容消息内容消息内容
-				</view>
-			</view>
-			<view class="time">
-				03月22日
-			</view>
-		</view>
-		<view class="item" @click="newsDetail">
-			<view class="img">
-				<image src="../../../static/system-news.png" mode=""></image>
-				<view class="buble">
-					1
-				</view>
-			</view>
-			<view class="middle-content">
-				<view class="topic">
-					系统消息
-					
-				</view>
-				<view class="subtitle">
-					消息内容消息内容消息内容消息内容
-				</view>
-			</view>
-			<view class="time">
-				03月22日
-			</view>
-		</view>
 	</view>
 </template>
 

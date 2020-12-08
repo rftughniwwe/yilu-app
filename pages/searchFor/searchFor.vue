@@ -264,8 +264,10 @@
 				}, 2)
 			},
 			// 搜索课程点击
-			itemClick(e){
-				console.log('课程点击：',e)
+			itemClick(item){
+				uni.navigateTo({
+					url: '/pages/course/view/view?id=' + item.id
+				});
 			},
 			// 热门搜索点击
 			hotSerachContent(item) {

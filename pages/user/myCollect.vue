@@ -8,25 +8,31 @@
 		</view>
 
 		<view v-show="content=='0'" class="main-content" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
-			<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' />
-			<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' />
-			<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' />
+			<template v-if="topicCollect && topicCollect.length > 0">
+				<view v-for="(item,index) in topicCollect" :key='index'>
+					<specialTopic @clickCollectBtn='collect' @goSpecialTopicDetail='routeJump' selected='true' :data='item' />
+				</view>
+			</template>
+			<template v-else>
+				<EmptyData type='serach' />
+			</template>
+
 		</view>
 
 		<view v-show="content=='1'" class="article-content" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
-			<template v-if="false">
+			<template v-if="articleCollect && articleCollect.length > 0">
 
-				<view class="flex-between editor" @click="selectedItem(1)">
+				<view class="flex-between editor" v-for="(item,index) in articleCollect" :key='index' @click="selectedItem(index+1)">
 					<view v-show="showRemove" class="circle-point">
 						<view class="point-content flex-between" :style="{'border-color':selectedArr == '1'?'#F45B5A':'#BFBFBF'}">
 							<image v-show="selectedArr == '1'" src="../../static/selected.png" mode=""></image>
 						</view>
 					</view>
 					<!-- <view class="right"> -->
-					<newCover position='left' :datas='{}' />
+					<newCover @GoArticleDetails='goDetails' position='left' :datas='item' />
 					<!-- </view> -->
 				</view>
-				<view class="flex-between editor" @click="selectedItem(2)">
+				<!-- <view class="flex-between editor" @click="selectedItem(2)">
 					<view v-show="showRemove" class="circle-point">
 						<view class="point-content flex-between" :style="{'border-color':selectedArr == '2'?'#F45B5A':'#BFBFBF'}">
 							<image v-show="selectedArr == '2'" src="../../static/selected.png" mode=""></image>
@@ -49,10 +55,10 @@
 						</view>
 					</view>
 					<newCover position='right' :datas='{}' />
-				</view>
+				</view> -->
 			</template>
 			<template v-else>
-				<EmptyData/>
+				<EmptyData type='serach'/>
 			</template>
 		</view>
 		<view v-show="showRemove" class="remove-content flex-around">
@@ -72,7 +78,17 @@
 	import newCover from '@/components/news-cover/news-cover.vue'
 	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
-	
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	import {
+		httpRequest,
+	} from '@/utils/httpRequest.js'
+
 	export default {
 		data() {
 			return {
@@ -80,7 +96,9 @@
 				content: '0',
 				isFullScreen: false,
 				showRemove: false,
-				selectedArr: ''
+				selectedArr: '',
+				topicCollect: [],
+				articleCollect:[]
 			};
 		},
 		components: {
@@ -92,16 +110,105 @@
 		},
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			this.getAllCollection()
+			this.getAllCollectionArticle()
 		},
 		methods: {
+			goDetails(e) {
+				let item = e.item
+				uni.navigateTo({
+					url: `../aiticlePage/aiticlePage?id=${item.id}&coverImg=${item.blogImg}`
+				})
+			},
+			getAllCollection() {
+				uni.showLoading({
+					title:'加载中'
+				})
+				httpRequest({
+					url: '/community/api/labelUserRecord/selectLabellist',
+					method: 'POST',
+					data: {
+						"opType": 1,
+						"statusId": 1,
+						"userNo": getUserLoginInfo('userNo')
+					},
+					success: res => {
+						uni.hideLoading()
+						console.log('zz', res)
+						if (res.data.code == 200) {
+							let list = res.data.data
+							list.forEach((i,index)=>{
+								list[index].collectType = 1
+							})
+							this.topicCollect = list
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+					}
+				})
+			},
+			getAllCollectionArticle(){
+				httpRequest({
+					url: '/community/auth/blog/user/record/collection/list',
+					method: 'POST',
+					data: {
+						articleType: 2,
+						opType: 1,
+						userNo: getUserLoginInfo('userNo')
+					},
+					success: res => {
+						console.log('zzzzzzzz',res)
+						if (res.data.code == 200) {
+							let list = res.data.data.list
+							this.articleCollect = list
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						request_err(err, '查询是否收藏失败')
+					}
+				}, 3)
+			},
 			tabSelected(data) {
 				this.selectedArr = ''
 				this.content = data.tab
 				this.showRemove = false
 			},
-			// 点击了已收藏按钮，应该取消收藏
-			collect() {
-				console.log('取消收藏')
+			// 收藏按钮点击
+			collect(e) {
+				let item = e.item
+				if(item.collectType == 1){
+					httpRequest({
+						url: '/community/api/labelUserRecord/deleteLabelRecord',
+						method: 'DELETE',
+						data: {
+							labelId: item.id,
+							opType: 1,
+							userNo: getUserLoginInfo('userNo'),
+						},
+						success: res => {
+							console.log('取消收藏专题：', res)
+							if (res.data.code == 200) {
+								this.getAllCollection()
+								uni.showToast({
+									title: '取消收藏成功',
+									icon: 'none',
+									duration: 1500
+								})
+			
+							} else {
+								request_success(res)
+							}
+						},
+						fail: err => {
+							request_err(err, '取消收藏失败')
+						}
+					}, 3)
+				}
 			},
 			// 跳转
 			routeJump() {

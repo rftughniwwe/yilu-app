@@ -1,6 +1,6 @@
 <template>
 	<view class="main" :style="{'width':width,'height':height}">
-		<image :src="headimg" mode="aspectFit"></image>
+		<image :src="headimg" mode=""></image>
 	</view>
 </template>
 

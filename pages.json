@@ -232,7 +232,8 @@
 		}, {
 			"path": "pages/user/learningMaterials/learningMaterials",
 			"style": {
-				"navigationBarTitleText": "学习资料",
+				// "navigationBarTitleText": "学习资料",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": false
 			}
 

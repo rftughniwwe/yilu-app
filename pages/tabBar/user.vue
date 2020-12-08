@@ -11,11 +11,15 @@
 			<view class="user-info-content flex-between" @click="goEditorPage">
 				<view class="user-head-img-info flex-row-start">
 					<view class="user-img-circle">
-						<userHeadImg width='150rpx' height='150rpx' />
+						<!-- <userHeadImg width='150rpx' height='150rpx' /> -->
+						<view class="zzzzzzzzzz">
+							<image :src="headimg" mode=""></image>
+						</view>
 					</view>
 					<view class="user-name-phone ">
-						<view class="name" :style="{'fontSize':globalSize+'rpx'}">
-							<userName color='#FFF'/>
+						<view class="name user-name" :style="{'fontSize':globalSize+'rpx'}">
+							<!-- <userName color='#FFF'/> -->
+							{{username?username:'未知'}}
 						</view>
 						<view class="phone" :style="{'fontSize':(globalSize-8)+'rpx'}">
 							{{mobile}}
@@ -119,7 +123,9 @@
 			return {
 				isFullScreen: false,
 				globalSize:34,
-				mobile:''
+				mobile:'',
+				headimg:'',
+				username:''
 			};
 		},
 		components: {
@@ -129,6 +135,8 @@
 		onLoad() {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.mobile = uni.getStorageSync('userBasicInfo').mobile
+			this.headimg = uni.getStorageSync('userBasicInfo').headImgUrl
+			this.username = uni.getStorageSync('userBasicInfo').nickname
 		},
 		onShow() {
 			this.globalSize = uni.getStorageSync('globalFontSize')
@@ -310,5 +318,23 @@
 	.item {
 		border-bottom: 2rpx solid #EEEEEE;
 		padding: 28rpx 0;
+	}
+	.zzzzzzzzzz{
+		border-radius: $uni-border-radius-circle;
+		background-image: url(../../static/user2.png);
+		background-size: 100% 100%;
+		background-color: #eeeeee;
+		width:98rpx;
+		height:98rpx;
+		image{
+			width: 100%;
+			height: 100%;
+			border-radius: $uni-border-radius-circle;
+		}
+	}
+	.user-name {
+		font-size: 36rpx;
+		color: #333333;
+		margin-left: 20rpx;
 	}
 </style>

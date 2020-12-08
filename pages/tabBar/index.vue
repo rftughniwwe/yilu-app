@@ -138,6 +138,7 @@
 		onPullDownRefresh() {
 			this.getIndexInfomation()
 			this.getTopic()
+			this.getSwpierBanner()
 		},
 		methods: {
 			topicClick(item){
