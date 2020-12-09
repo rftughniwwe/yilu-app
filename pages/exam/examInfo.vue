@@ -42,7 +42,10 @@
 	import {
 		getUserLoginInfo
 	} from '@/utils/util.js'
-
+	import {
+		httpRequest
+	}  from '@/utils/httpRequest.js'
+	
 	export default {
 		data() {
 			return {
@@ -109,6 +112,30 @@
 					});
 					return;
 				}
+				uni.showLoading({
+					title:'查询中...'
+				})
+				httpRequest({
+					url:'/exam/auth/user/exam/record/examCount',
+					method:'POST',
+					data:{
+						examId:this.examData.id
+					},
+					success:res=>{
+						uni.hideLoading()
+						if(res.data.code == 200){
+							this.siaudghfs()
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						uni.hideLoading()
+						request_err(err,'查询考试失败')
+					}
+				},5)
+			},
+			siaudghfs(){
 				// 人脸采集
 				useFacePlugin({}).then(res => {
 					// 人脸验证
@@ -136,10 +163,7 @@
 				}, err => {
 					request_err(err, '人脸采集失败，稍后重试')
 				})
-
-
 			},
-
 			// 获取试卷数据
 			getExamInfoData() {
 				let id = this.examData.id

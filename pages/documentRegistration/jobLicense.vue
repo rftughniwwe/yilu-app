@@ -97,11 +97,13 @@
 				jobTypeData: ['危险品驾驶员', '危险品押运员'],
 				tempPath: '../../static/allow-job.png',
 				tempPath_upload:'',
-				flag:false
+				flag:false,
+				idcardnum:''
 			};
 		},
 		onLoad(options) {
 			this.text = `请上传${options.name || '本人'}的从业资格证，并录入信息`
+			this.idcardnum = options.idCardNum
 		},
 		components: {
 			Toast,
@@ -148,10 +150,6 @@
 								title: "上传失败，请重试"
 							})
 						})
-						
-						
-						
-						
 					},
 					fail(err) {
 						console.log(err)
@@ -251,7 +249,8 @@
 					name:this.cardName,
 					qualificationNum:this.cardId,
 					qualificationSubjecton:this.cardjobType,
-					drivingFront:this.tempPath_upload
+					drivingFront:this.tempPath_upload,
+					idcard:this.idcardnum
 				}
 			},
 		

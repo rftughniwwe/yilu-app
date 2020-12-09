@@ -211,7 +211,8 @@
 		}, {
 			"path": "pages/user/myCourse",
 			"style": {
-				"navigationBarTitleText": "我的课程",
+				// "navigationBarTitleText": "我的课程",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": false
 			}
 
@@ -232,8 +233,8 @@
 		}, {
 			"path": "pages/user/learningMaterials/learningMaterials",
 			"style": {
-				// "navigationBarTitleText": "学习资料",
-				"navigationStyle": "custom",
+				"navigationBarTitleText": "学习资料",
+				// "navigationStyle": "custom",
 				"enablePullDownRefresh": false
 			}
 

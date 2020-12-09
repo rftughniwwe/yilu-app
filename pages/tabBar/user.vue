@@ -36,7 +36,7 @@
 				<view class="my-course" @click="goMyCourse">
 					<image src="../../static/user-my-course.png" mode=""></image>
 					<view class="" :style="{'fontSize':globalSize+'rpx'}">
-						我的课程
+						我的培训
 					</view>
 				</view>
 				<view class="my-sign-in" @click="goMySign">
@@ -174,7 +174,7 @@
 			// 前往我的课程页面
 			goMyCourse(){
 				uni.navigateTo({
-					url:'../user/myCourse'
+					url:'../user/myCourse?formUser='+true
 				})
 			},
 			// 前往我的收藏
@@ -324,8 +324,8 @@
 		background-image: url(../../static/user2.png);
 		background-size: 100% 100%;
 		background-color: #eeeeee;
-		width:98rpx;
-		height:98rpx;
+		width:150rpx;
+		height:150rpx;
 		image{
 			width: 100%;
 			height: 100%;

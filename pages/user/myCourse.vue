@@ -1,21 +1,28 @@
 <!-- 我的课程 -->
 <template>
 	<view>
-		<view class="tab-content">
+		<view class="wrap-top-tab-bar">
+			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
+				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
+			</uni-nav-bar>
+		</view>
+		<view v-if="num==0" class="tab-content" :style="{'marginTop':isFullScreen?'154rpx':'100rpx'}">
 			<view @click="chooseTab(0)" :class="tab==0?'selected-items':'item'">
 				全部
 			</view>
-			<!-- <view @click="chooseTab(1)" :class="tab==1?'selected-items':'item'">
+			<view @click="chooseTab(1)" :class="tab==1?'selected-items':'item'">
 				未开始
-			</view> -->
+			</view>
 			<view @click="chooseTab(2)" :class="tab==2?'selected-items':'item'">
 				直播中
 			</view>
-			<view @click="chooseTab(5)" :class="tab==5?'selected-items':'item'">
-				回放
+		</view>
+		<view v-if="num==1" class="tab-content"  :style="{'marginTop':isFullScreen?'154rpx':'100rpx'}">
+			<view @click="chooseTab(3)" class="selected-items">
+				全部
 			</view>
 		</view>
-		<view class="course-contnt">
+		<view class="course-contnt"  :style="{'marginTop':isFullScreen?'264rpx':'200rpx'}">
 			<template v-if="courseData && courseData.length > 0">
 
 				<view class="course-item" v-for="(item,index) in courseData" :key='index' @click="goPreview(item)">
@@ -59,24 +66,45 @@
 	export default {
 		data() {
 			return {
+				tabArr: ['课程直播', '课程回放'],
 				tab: 0,
+				num: 0,
 				courseData: [],
+				isFullScreen: false,
 				live_status: [],
-				pageSize:10,
-				pageCurrent:1
+				pageSize: 10,
+				pageCurrent: 1,
+				isFormUser: false
 			};
 		},
 		components: {
 			EmptyData
 		},
-		onLoad() {
+		onLoad(options) {
 			this.getMyCourse()
 			this.live_status = LIVE_STATUS
+			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			if (options.formUser) {
+				this.isFormUser = options.formUser || false
+				uni.setNavigationBarTitle({
+					title: '我的培训'
+				})
+			}
+
 		},
 		onUnload() {
 			uni.hideLoading()
 		},
 		methods: {
+			goBack() {
+				uni.navigateBack({
+					delta: 1
+				})
+			},
+			tabSelected(data) {
+				this.num = data.tab
+				this.getMyCourse()
+			},
 			// 获取我的课程
 			getMyCourse() {
 				let categoryId1 = uni.getStorageSync('selectedLearningType').id
@@ -93,15 +121,50 @@
 				uni.showLoading({
 					title: '加载中...'
 				})
-				let params = {
-					courseCategory: tab == 2 ? tab : 1,
-					compId: compId,
-					categoryId1: categoryId1,
-					categoryId2: categoryId2,
-					pageSize:this.pageSize,
-					pageCurrent:this.pageCurrent
+				let params = {}
+
+				if (this.num == 0) {
+					if (tab == 0) {
+						params = {
+							courseCategory: 2,
+							compId: compId,
+							categoryId1: categoryId1,
+							categoryId2: categoryId2,
+							pageSize: this.pageSize,
+							pageCurrent: this.pageCurrent
+						}
+					} else {
+						params = {
+							courseCategory: 2,
+							liveStatus: tab,
+							compId: compId,
+							categoryId1: categoryId1,
+							categoryId2: categoryId2,
+							pageSize: this.pageSize,
+							pageCurrent: this.pageCurrent
+						}
+					}
+				} else {
+					params = {
+						courseCategory: 1,
+						compId: compId,
+						categoryId1: categoryId1,
+						categoryId2: categoryId2,
+						pageSize: this.pageSize,
+						pageCurrent: this.pageCurrent
+					}
 				}
-				console.log('params：',params)
+
+				// let params = {
+				// 	courseCategory: tab == 2 ? tab : 1,
+				// 	liveStatus:
+				// 	compId: compId,
+				// 	categoryId1: categoryId1,
+				// 	categoryId2: categoryId2,
+				// 	pageSize:this.pageSize,
+				// 	pageCurrent:this.pageCurrent
+				// }
+				console.log('params：', params)
 				httpRequest({
 					url: '/course/api/course/courselist',
 					method: 'POST',
@@ -148,6 +211,7 @@
 		top: 0;
 		z-index: 9998;
 		border-bottom: 2rpx solid #F1F1F1;
+
 		.item {
 			border-radius: 8rpx;
 			background-color: #FFFFFF;

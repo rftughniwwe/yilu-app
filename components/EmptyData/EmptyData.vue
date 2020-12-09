@@ -2,7 +2,8 @@
 <template>
 	<view class="container">
 		<view class="img-content">
-			<image src="../../static/serach-no-data.png" mode=""></image>
+			<image v-if="type =='serach'" src="../../static/serach-no-data.png" mode=""></image>
+			<image v-else-if="type == 'chat'" src="../../static/chat-no-data.png" mode=""></image>
 		</view>
 	</view>
 </template>
@@ -11,10 +12,13 @@
 	export default {
 		data() {
 			return {
-				
+				showType:''
 			};
 		},
-		props:['type','text']
+		props:['type','text'],
+		created() {
+			this.showType = this.type
+		}
 	}
 </script>
 

@@ -2,29 +2,29 @@
 	<view class="main">
 		<view class="items-block">
 			<view class="time">
-				10月30日 12：01
+				{{msgData.gmtCreate}}
 			</view>
 			<view class="news-content-wrap">
 				<view class="news-title flex-row-start">
 					<image src="../../../static/class-img.png" mode=""></image>
 					<view class="topic text-overflow2">
-						上课通知
+						{{msgData.msgTitle}}
 					</view>
 				</view>
-				<view class="news-content text-overflow2">
-					您好，您在19:30有一节安全教育课，请提前30分钟检查上课设备，并准时进入教室人脸识别打卡!
+				<view class="news-content">
+					<rich-text :nodes="msgData.msgText"></rich-text>
 				</view>
-				<view class="look-more flex-between">
+				<!-- <view class="look-more flex-between">
 					<view class="look-more-titile">
 						查看详情
 					</view>
 					<view class="right-arrow-img">
 						<image src="../../../static/right-arrow.png" mode=""></image>
 					</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
-		<view class="items-block">
+		<!-- <view class="items-block">
 			<view class="time">
 				10月30日 12：01
 			</view>
@@ -71,16 +71,32 @@
 					</view>
 				</view>
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 
 <script>
+	import {
+		messageInfo
+	} from '@/commons/api/user.js'
 	export default {
 		data() {
 			return {
-
+				msgData:{}
 			};
+		},
+		onLoad(options) {
+			this.getMsgInfo(options.id)
+		},
+		methods:{
+			getMsgInfo(id){
+				messageInfo({
+					id:id
+				}).then(res=>{
+					console.log('消息详情：',res)
+					this.msgData = res
+				})
+			}
 		}
 	}
 </script>

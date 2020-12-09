@@ -9,7 +9,7 @@
 		</view>
 		<class-list class="classList" @triggerchange="selectCB" :showPrice="showPrice" :filterData="map"></class-list>
 		<view class="course_list">
-			<view v-for="(item, index) in courseList" :key="index" @tap="goDetail" :data-id="item.id" data-type class="result_item">
+			<view v-for="(item, index) in courseList" :key="index" @tap="goDetail(item)" data-type class="result_item">
 				<view class="img_box">
 					<image :src="item.courseLogo" class="result_img"></image>
 				</view>
@@ -126,9 +126,9 @@
 			},
 
 			// 跳转课程详情
-			goDetail(e) {
-				let id = e.currentTarget.dataset.id;
-				console.log('iiiiiiiiii',id)
+			goDetail(item) {
+				let id = item.id;
+				uni.setStorageSync('courseInfoData',item)
 				if (this.map.courseCategory == '1') {
 					uni.navigateTo({
 						url: '/pages/course/view/view?id=' + id

@@ -78,8 +78,8 @@
 					</view>
 					<view class="input-content xxxxx">
 						<!-- <input type="text" maxlength="40" v-model="cardAddress" value="" placeholder="请填写证件地址" /> -->
-						<textarea value="" placeholder="" v-model="cardAddress"  placeholder="请填写证件地址" auto-height/>
-					</view>
+						<textarea value="" placeholder="" v-model="cardAddress" placeholder="请填写证件地址" auto-height />
+						</view>
 				</view>
 				<view class="info-item flex-between">
 					<view class="header">
@@ -160,6 +160,26 @@
 			this.queryIdCardInfo()
 		},
 		methods: {
+			setIdCardInfo(){
+				httpRequest({
+					url: '/user/auth/user/ext/update',
+					method: 'post',
+					data: {
+						userNo: getUserLoginInfo('userNo'),
+						idCardName: this.cardName,
+						idCardNo: this.cardId
+					},
+					success: res => {
+						console.log('修改身份证号：',res)
+						if (res.data.code == 200) {
+							uni.setStorageSync('userBasicInfo', res.data.data)
+						}
+					},
+					fail: err => {
+						console.log('错误', err)
+					}
+				}, 1)
+			},
 			// 下一步
 			goNextPager() {
 				let data = this.judgeData()
@@ -241,8 +261,8 @@
 						uni.hideLoading()
 						console.log('保存成功：', res)
 						if (res.data.code == 200) {
+							this.setIdCardInfo()
 							this.getCompanyById(data.cardId)
-
 						} else {
 							Toast({
 								title: res.data.msg
@@ -312,7 +332,7 @@
 						})
 						setTimeout(() => {
 							uni.navigateTo({
-								url: `./driverLicense`
+								url: `./driverLicense?idCardNum=`+data.cardId
 							})
 						}, 1500)
 					} else {

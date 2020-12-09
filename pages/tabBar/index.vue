@@ -189,7 +189,7 @@
 					data: {
 						articleType: '2',
 						pageCurrent:1,
-						pageSize:3
+						pageSize:6
 					},
 					success: resp => {
 						uni.hideLoading()

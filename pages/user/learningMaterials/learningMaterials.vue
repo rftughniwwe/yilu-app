@@ -2,17 +2,17 @@
 <template>
 	<view>
 
-		<view class="wrap-top-tab-bar">
+	<!-- 	<view class="wrap-top-tab-bar">
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
-		</view>
+		</view> -->
 
-		<view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
-		<!-- <view class="container"> -->
+		<!-- <view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> -->
+		<view class="container">
 			<view v-show="num=='0'">
 				<template v-if="filesData.list && filesData.list.length >0">
-					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index' v-if="item.type == 2">
+					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index'>
 						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
 						<view class="file-content text-overflow2">
 							<view class="title">
@@ -33,7 +33,7 @@
 				</template>
 
 			</view>
-			<view v-show="num=='1'">
+			<!-- <view v-show="num=='1'">
 				
 				<template v-if="filesData.list && filesData.list.length >0">
 					 
@@ -41,19 +41,15 @@
 					 	<view class="topic text-overflow2">
 					 		{{item.name}}
 					 	</view>
-					 	<!-- <view class="cover flex-evenly" :style="{'background':'url(../../../static/learning-banner2.png)'}" @click="previewFile(item)"> -->
 						<view class="cover flex-evenly" @click="previewFile(item)">
 					 		<image src="../../../static/pause-video.png" mode=""></image>
 					 	</view>
 					 </view>
-					 <!-- <view v-else>
-					 	<EmptyData type='serach' />
-					 </view> -->
 				</template>
 				<template v-else>
 					<EmptyData type='serach' />
 				</template>
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>

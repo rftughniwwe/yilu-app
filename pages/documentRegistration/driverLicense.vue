@@ -124,7 +124,8 @@
 				cardBeginDate: '',
 				cardEndDate: '',
 				carTypeData: ['a1', 'a2', 'a1和a2'],
-				idCardInfo: {}
+				idCardInfo: {},
+				idCardNum:''
 			};
 		},
 		components: {
@@ -134,6 +135,7 @@
 		},
 		onLoad(options) {
 			this.idCardInfo = options.idCard
+			this.idCardNum = options.idCardNum
 			this.text = `请上传${ options.name || '本人'}的身份证正反面照片`
 			this.queryInfo()
 		},
@@ -274,7 +276,7 @@
 						console.log('res',res)
 						if(res.data.code == 200){
 							uni.navigateTo({
-								url: './jobLicense'
+								url: './jobLicense?idCardNum='+this.idCardNum
 							})
 						}else {
 							Toast({
@@ -388,7 +390,8 @@
 					indateEnd:this.cardEndDate,
 					indateStart:this.cardBeginDate,
 					name:this.cardName,
-					cardFirstAllow:this.cardFirstAllow
+					cardFirstAllow:this.cardFirstAllow,
+					idcard:this.idCardNum
 				}
 			},
 			// 准驾车型改变事件

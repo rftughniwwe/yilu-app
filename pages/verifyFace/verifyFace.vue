@@ -132,20 +132,20 @@
 				let _token = getUserLoginInfo('token')
 				let _userNo = getUserLoginInfo('userNo')
 				console.log('1111111111')
-				if(!uni.getStorageSync('userInfo')){
-					uni.showToast({
-						title:'登录过期，请重新登录',
-						icon:'none',
-						duration:1000
-					})
-					setTimeout(()=>{
-						uni.reLaunch({
-							url:'../login/normalLogin'
-						})
-					},1000)
+				// if(!uni.getStorageSync('userInfo')){
+				// 	uni.showToast({
+				// 		title:'登录过期，请重新登录',
+				// 		icon:'none',
+				// 		duration:1000
+				// 	})
+				// 	setTimeout(()=>{
+				// 		uni.reLaunch({
+				// 			url:'../login/normalLogin'
+				// 		})
+				// 	},1000)
 					
-					return
-				}
+				// 	return
+				// }
 				console.log('222222222',uni.getStorageSync('userStorage'))
 				let faceData = await auth.getFaceData({
 					userNo: uni.getStorageSync('userStorage').userNo
@@ -155,6 +155,7 @@
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
 				const nonce = faceData.nonce;
+			
 				uni.request({
 					method: 'POST',
 					url: 'https://idasc.webank.com/api/server/getfaceid', //仅为示例，并非真实接口地址。
@@ -236,29 +237,49 @@
 									delta: 1
 								});
 							}
+							let courseInfo = uni.getStorageSync('courseInfoData')
+							let comid = uni.getStorageSync('userBasicInfo').compId
 							if (this.type == 2) {
 								auth.faceSignLog({
-									userNo: this.userInfo.userNo,
-									signType: this.signType,
+									courseType:1,
+									numEvent:courseInfo.trainId,
+									refName:courseInfo.courseName,
+									signonApp:courseInfo.courseName,
+									statusId:1,
+									compId:comid,
+									startTime:courseInfo.startTime,
+									endTime:courseInfo.endTime,
+									
+									userNo: _userNo,
+									signonType: this.signType,
 									refId: this.refId,
 									longitude: this.longitude,
 									latitude: this.latitude,
 									place: this.place,
-									userImageBase64: result.res.userImageString,
+									userImage: result.res.userImageString,
 									faceContrasResult: 'Success',
 								}).then(() => {
 									fn();
 								});
 							} else {
 								auth.faceUserLog({
-									userNo: this.userInfo.userNo,
+									courseType:1,
+									numEvent:courseInfo.trainId,
+									refName:courseInfo.courseName,
+									signonApp:courseInfo.courseName,
+									statusId:1,
+									compId:comid,
+									startTime:courseInfo.startTime,
+									endTime:courseInfo.endTime,
+									
+									userNo: _userNo,
 									category: this.signType,
 									refId: this.refId,
 									longitude: this.longitude,
 									latitude: this.latitude,
 									place: this.place,
-									userImageBase64: result.res.userImageString,
-									faceContrastResult: 'Success',
+									userImage: result.res.userImageString,
+									faceContrasResult: 'Success',
 								}).then(() => {
 									fn();
 								});

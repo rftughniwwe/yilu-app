@@ -45,7 +45,7 @@
 			<text>讲师：</text>
 			<text class="c_333">{{courseInfo.lecturer.lecturerName}}</text>
 			<attention-btn :isAttention="courseInfo.isAttentionLecturer" :lecturerUserNo="courseInfo.lecturerUserNo"></attention-btn>
-			<button type="primary" class="fr sign_btn" @tap="faceVerify()">签到</button>
+			<button type="primary" class="fr sign_btn" @tap="sign()">签到</button>
 		</view>
 
 		<view class="h5px"></view>
