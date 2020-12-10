@@ -18,7 +18,7 @@
 				<view v-if="imgArr && imgArr.length > 0" v-for="(item,index) in imgArr" :key="index" class="upload-item uploaded">
 					<image class="xxx" :src="item" mode=""></image>
 					<view class="remove-img flex-evenly" @click="removeImg(index)">
-						<image src="../../static/x.svg" mode=""></image>
+						<image src="../../static/close-img.png" mode=""></image>
 					</view>
 				</view>
 				<view class="upload-item increase flex-evenly" @click="chooseImage">
@@ -135,16 +135,17 @@
 }
 .remove-img{
 	position: absolute;
-	right: -8rpx;
-	top: -26rpx;
-	width: 60rpx;
-	height: 60rpx;
-	background-color: #FFFFFF;
+	right: 0;
+	top: 0;
+	background-color: #FFF;
+	opacity: .8;
 	border-radius: 50%;
-	border: 2rpx solid #eee;
+	padding: 10rpx;
+	z-index: 9999;
+	// border: 2rpx solid #eee;
 	image{
-		width: 50rpx;
-		height: 50rpx;
+		width: 30rpx;
+		height: 30rpx;
 	}
 }
 </style>

@@ -129,7 +129,7 @@
 			goDetail(item) {
 				let id = item.id;
 				uni.setStorageSync('courseInfoData',item)
-				if (this.map.courseCategory == '1') {
+				if (item.courseCategory == '1') {
 					uni.navigateTo({
 						url: '/pages/course/view/view?id=' + id
 					});

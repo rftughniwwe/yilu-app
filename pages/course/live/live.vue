@@ -86,13 +86,13 @@
 						<view v-for="(item, index2) in item.periodList" :key="index2" class="pdl30 pdr40 h60 o_hide p_relative"
 						 :data-vInfo="item">
 							<view class="period_panel font25" v-if="item.liveStatus == 1">
-								<image src="../../../static/images/no_vid.svg" class="play_img no_play"></image>
+								<image src="../../../static/no_vid.svg" class="play_img no_play"></image>
 								<text v-if="item.isFree" class="c_blue">(免费)</text>
 								<text>{{item.periodName}}</text>
 								<text class="live_status mgr20">未开播</text>
 							</view>
 							<view class="period_panel font25" v-else-if="item.liveStatus == 2" @tap="openLive">
-								<image src="../../../static/images/no_play.svg" class="play_img"></image>
+								<image src="../../../static/no_play.svg" class="play_img"></image>
 								<text v-if="item.isFree" class="c_blue">(免费)</text>
 								<text>{{item.periodName}}</text>
 								<view class="live_status mgr20">
@@ -101,7 +101,7 @@
 								</view>
 							</view>
 							<view class="period_panel font25" v-else-if="item.liveStatus == 5" :data-vinfo="item" @tap="selectVideo(item)">
-								<image src="../../../static/images/no_play.svg" class="play_img"></image>
+								<image src="../../../static/no_play.svg" class="play_img"></image>
 								<text v-if="item.isFree" class="c_blue">(免费)</text>
 								<text>{{item.periodName}}</text>
 								<view class="live_status mgr20">
@@ -109,7 +109,7 @@
 								</view>
 							</view>
 							<view class="period_panel font25" v-else>
-								<image src="../../../static/images/no_vid.svg" class="play_img no_play"></image>
+								<image src="../../../static/no_vid.svg" class="play_img no_play"></image>
 								<text v-if="item.isFree" class="c_blue">(免费)</text>
 								<text>{{item.periodName}}</text>
 								<view class="live_status mgr20">
@@ -135,9 +135,9 @@
 
 <script>
 	// pages/course/view/view.js
-	import * as apis from "@/api/course";
-	import * as config from "@/config";
-	import * as auth from "@/api/user";
+	import * as apis from "@/commons/api/course";
+	// import * as config from "@/config";
+	import * as auth from "@/commons/api/user";
 	import {
 		getUserInfo,
 		login
@@ -147,7 +147,9 @@
 	import attentionBtn from "@/components/attentionBtn/attentionBtn";
 	import floatTab from "@/components/floatTab/floatTab";
 	import ActivityPanel from "@/components/activity/ActivityPanel";
-
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 	export default {
 		data() {
 			return {
@@ -202,12 +204,12 @@
 			}
 			this.courseId = courseId
 			this.signName = courseId +':'+ (new Date()).getTime();
-			if (uni.getStorageSync('userInfo')) {
+			// if (uni.getStorageSync('userInfo')) {
 				this.userInfo = uni.getStorageSync('userInfo')
 				this.getUserCourse(courseId);
-			} else {
-				this.getCourse(courseId);
-			}
+			// } else {
+			// 	this.getCourse(courseId);
+			// }
 			this.getChapterList(1);
 
 		},
@@ -279,6 +281,7 @@
 				apis.courseInfo({
 					courseId: id
 				}).then(res => {
+					console.log('111111111111111',res)
 					res.introduce = res.introduce.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
 					this.courseInfo = res
 				});
@@ -292,7 +295,7 @@
 				auth.courseInfo({
 					courseId: id
 				}).then(res => {
-					console.log(res);
+					console.log('2222222222222',res);
 					res.introduce = res.introduce.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
 					this.courseInfo = res
 					this.isFree = !!res.isPay
@@ -306,6 +309,7 @@
 			selectVideo(e) {
 
 				let videoInfo = e;
+				console.log('eeeeee',e)
 				if (!e.id) {
 					videoInfo = e.currentTarget.dataset.vinfo
 				}
@@ -402,13 +406,13 @@
 			openLive() {
 
 				// 开始直播
-				if (!this.isFree && !this.courseInfo.isFreePeriod) {
-					uni.showToast({
-						title: '该课程非免费开放,您没有观看权限',
-						icon: 'none'
-					});
-					return false;
-				}
+				// if (!this.isFree && !this.courseInfo.isFreePeriod) {
+				// 	uni.showToast({
+				// 		title: '该课程非免费开放,您没有观看权限',
+				// 		icon: 'none'
+				// 	});
+				// 	return false;
+				// }
 				this.isFaceContras = this.courseInfo.isFaceContras;
 				if (this.isFaceContras == 1) {
 					if (!uni.getStorageSync(this.signName)) {
@@ -427,12 +431,14 @@
 					periodId: this.courseInfo.periodId,
 					isPc: 1
 				}).then(res => {
+					
 					let liveUrl = res.liveUrl
 					// 欢拓直播进入直播间
 					// liveState = (0: 正在直播；1:直播回放)
 					if (res.livePlatform === 2) {
+						let userno = getUserLoginInfo('userNo')
 						const website = uni.getStorageSync('website')
-						liveUrl = website.domain + `/watchH5?token=${res.liveParam}&courseno=` + this.courseInfo.courseNo + '&refId=' + this.courseInfo.periodId + '&userNo=' + this.userInfo.userNo
+						liveUrl = website.domain + `/watchH5?token=${res.liveParam}&courseno=` + this.courseInfo.id + '&refId=' + this.courseInfo.periodId + '&userNo=' + userno
 					}
 					uni.setStorageSync('liveData', {
 						liveUrl: liveUrl,

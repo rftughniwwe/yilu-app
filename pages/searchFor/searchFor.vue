@@ -265,9 +265,17 @@
 			},
 			// 搜索课程点击
 			itemClick(item){
-				uni.navigateTo({
-					url: '/pages/course/view/view?id=' + item.id
-				});
+				let id = item.id;
+				uni.setStorageSync('courseInfoData',item)
+				if (item.courseCategory == '1') {
+					uni.navigateTo({
+						url: '/pages/course/view/view?id=' + id
+					});
+				} else {
+					uni.navigateTo({
+						url: '/pages/course/live/live?id=' + id
+					});
+				}
 			},
 			// 热门搜索点击
 			hotSerachContent(item) {

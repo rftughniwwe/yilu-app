@@ -43,34 +43,37 @@
 					</swiper>
 					<!-- <image src="../../static/anquan-top-img.png" mode=""></image> -->
 				</view>
-				<view class="online-notice">
+
+				<view class="online-notice" v-if="courseDatas && courseDatas.length > 0">
 					<view class="top-tips flex-row-start">
 						<image src="../../static/shuxian.png" mode=""></image>
 						直播中
 					</view>
 					<view class="notice-card flex-between">
 						<view class="notice-cover">
-							<image src="../../static/learning-banner2.png" mode=""></image>
+							<image :src="courseDatas[0].courseLogo" mode=""></image>
 						</view>
 						<view class="notice-desc">
 							<view class="notice-title text-overflow2">
-								道路危险货物运输管理（上）
+								{{courseDatas[0].courseName}}
 							</view>
 							<view class="notice-time">
-								时间：2020-12-12 20:00
+								时间：{{courseDatas[0].startTime}}
 							</view>
 							<view class="notive-teacher-join flex-between">
 								<view class="teacher">
-									<view class="xxx">老师：王带锤</view>
-									<view class="xxx">9999人参与</view>
+									<view class="xxx">老师：{{courseDatas[0].lecturerName}}</view>
+									<!-- <view class="xxx">9999人参与</view> -->
 								</view>
-								<view class="join-room">
+								<view class="join-room" @click="goCourse(courseDatas[0])">
 									进入直播间
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
+
+
 				<view class="learning-center">
 					<view class="top-tips flex-row-start">
 						<image src="../../static/shuxian.png" mode=""></image>
@@ -249,7 +252,8 @@
 				selfLearnType: 1,
 				AnquanType: 0,
 				date: '',
-				isFullScreen: false
+				isFullScreen: false,
+				courseDatas:[]
 			};
 		},
 		components: {
@@ -266,6 +270,7 @@
 
 			this.typeArr = LEARNING_MODE_DATA
 			this.setOptions(LEARNING_MODE_DATA)
+			this.getMyCoursedata()
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
 
@@ -286,6 +291,10 @@
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
 			})
+			
+			uni.$on('tabbarChange',()=>{
+				this.getMyCoursedata()
+			})
 
 
 		},
@@ -293,7 +302,44 @@
 			this.date = getCurrentDate('month')
 		},
 		methods: {
-
+			getMyCoursedata() {
+				let categoryId1 = uni.getStorageSync('selectedLearningType').id
+				// 学习模块中选择的二级分类
+				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
+				let compId = uni.getStorageSync('userBasicInfo').compId
+				
+				let params = {
+					courseCategory: 2,
+					liveStatus:2,
+					compId: compId,
+					categoryId1: categoryId1,
+					categoryId2: categoryId2,
+					pageSize: 10,
+					pageCurrent: 1
+				}
+				uni.showLoading({
+					title:'获取课程中...'
+				})
+				httpRequest({
+					url: '/course/api/course/courselist',
+					method: 'POST',
+					data: params,
+					success: (res) => {
+						uni.hideLoading()
+						console.log('z课程数据:', res)
+						if (res.data.code == 200) {
+							this.courseDatas = res.data.data
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						request_err(err, '获取课程失败')
+					}
+				}, 2)
+			},
+			
 			setOptions(data) {
 				let d = data
 				d.forEach((item, index) => {
@@ -304,8 +350,8 @@
 			scanCode() {
 				let sT = getNotRealTime('start')
 				let eT = getNotRealTime('end')
-				console.log('st',sT)
-				console.log('et',eT)
+				console.log('st', sT)
+				console.log('et', eT)
 				// 插件扫码
 				let obj = {
 					"teacher": '王老师',
@@ -321,18 +367,18 @@
 					"lat": "31.0991625",
 					"teacherIntro": "<p>介绍</p>"
 				}
-				
+
 				uni.scanCode({
 					scanType: ['qrCode'],
 					onlyFromCamera: true,
 					success: resp => {
-						
+
 						// 测试用数据
 						// uni.setStorageSync('scanData', obj)
 						// uni.navigateTo({
 						// 	url: '../onSiteTraining/courseDetails'
 						// })
-						
+
 						console.log('扫描结果：', resp.result)
 						uni.showLoading({
 							title: '解析中...'
@@ -394,7 +440,7 @@
 					})
 				} else if (num == 2) {
 					uni.navigateTo({
-						url:'../user/myCourse'
+						url: '../user/myCourse'
 					})
 					// uni.navigateTo({
 					// 	url: '../course/list/list'
@@ -418,6 +464,21 @@
 
 				// 	}
 				// })
+			},
+			goCourse(item){
+				let id = item.id;
+				uni.setStorageSync('courseInfoData',item)
+				if (item.courseCategory == '1') {
+					console.log('111111111')
+					uni.navigateTo({
+						url: '/pages/course/view/view?id=' + id
+					});
+				} else {
+					console.log('22222222')
+					uni.navigateTo({
+						url: '/pages/course/live/live?id=' + id
+					});
+				}
 			},
 			selfLearningChange(e) {
 				console.log('zxc', e)

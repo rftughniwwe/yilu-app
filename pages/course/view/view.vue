@@ -540,7 +540,7 @@
 					// 	uni.$emit("verifyFace:" + this.courseId)
 					// }, 2000)
 					uni.navigateTo({
-						url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1'
+						url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=3'
 					})
 				}
 
@@ -564,6 +564,10 @@
 			nextVideo: function() {
 				this.playstatu = false
 				this.getPlayTime()
+				uni.navigateTo({
+					url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1'
+				})
+			
 			},
 			// 显示加速列表
 			showbei: function() {

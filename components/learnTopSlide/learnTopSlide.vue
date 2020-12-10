@@ -118,6 +118,7 @@
 				}
 				uni.setStorageSync('LearningSubTypeSubItem', item)
 				console.log('选择的子模块：', item)
+				uni.$emit('tabbarChange',{})
 			},
 			selfChagneTab(num) {
 				uni.$emit('selfChange', {

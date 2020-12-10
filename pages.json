@@ -377,7 +377,19 @@
                 "enablePullDownRefresh": false
             }
             
-        }
+        },
+		{
+			"path": "pages/course/live/live",
+			"style": {
+				"pageOrientation": "auto",
+				"resizable": "auto"
+			}
+		},
+		{
+			"path": "pages/webview/webview",
+			"style": {}
+		}
+		// 第三方
         ,{
             "path" : "pages/allNews/allNews",
             "style" :                                                                                    

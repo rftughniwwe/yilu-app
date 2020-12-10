@@ -21,7 +21,7 @@
 				当前操作需要先进行活体认证!
 			</view>
 			<!--  #ifdef  APP-PLUS -->
-				<button class="start_btn" type="primary" @tap="handleLoadCamera">重新认证</button>
+			<button class="start_btn" type="primary" @tap="handleLoadCamera">重新认证</button>
 			<!-- #endif -->
 			<!--  #ifdef  MP-WEIXIN -->
 			<button class="start_btn" type="primary" @tap="handleLoadCamera">开始认证</button>
@@ -43,6 +43,13 @@
 	import {
 		getUserLoginInfo
 	} from '@/utils/util.js'
+	import {
+		base64ToPath
+	} from '../../js_sdk/gsq-image-tools/image-tools/index.js'
+	import {
+		uploadImage
+	} from '@/utils/httpRequest.js'
+
 	export default {
 		name: "verifyFace",
 		data() {
@@ -57,7 +64,7 @@
 				num: 0,
 				time: -1,
 				bgc: '#fff',
-				idCardinfo:{}
+				idCardinfo: {}
 			}
 		},
 		onLoad: function(options) {
@@ -70,7 +77,7 @@
 			this.type = options.type || 1
 			this.refId = options.refId || 1
 			this.signType = options.signType || '';
-			this.signName= options.signName || '';
+			this.signName = options.signName || '';
 
 			this.userInfo = uni.getStorageSync('userInfo')
 			this.periodNo = scene
@@ -78,24 +85,24 @@
 			let fn = () => {
 				var That = this;
 				uni.getLocation({
-				    type: 'wgs84',
+					type: 'wgs84',
 					geocode: true,
-				    success: function (res) {
+					success: function(res) {
 						That.longitude = res.longitude;
 						That.latitude = res.latitude;
 						let place = ''
-						if(res.address ) {
+						if (res.address) {
 							const a = res.address;
-							a.country && (place+=a.country);
-							a.province && (place+=a.province);
-							a.city && (place+=a.city);
-							a.district && (place+=a.district);
-							a.street && (place+=a.street);
-							a.streetNum	 && (place+=a.streetNum);
+							a.country && (place += a.country);
+							a.province && (place += a.province);
+							a.city && (place += a.city);
+							a.district && (place += a.district);
+							a.street && (place += a.street);
+							a.streetNum && (place += a.streetNum);
 						}
 						That.place = place;
 						That.getData();
-				    }
+					}
 				});
 			}
 			if (uni.getStorageSync('userInfo')) {
@@ -103,27 +110,27 @@
 				fn();
 			}
 			this.getIDCardInfo()
-			
+
 		},
 		methods: {
 			// 获取身份证信息
-			getIDCardInfo(){
-				getIdCardInfo().then(res=>{
-					
-					if(res.data.code == 200){
-						console.log('获取身份证信息a a a ：',res)
+			getIDCardInfo() {
+				getIdCardInfo().then(res => {
+
+					if (res.data.code == 200) {
+						console.log('获取身份证信息a a a ：', res)
 						this.idCardinfo = res.data.data
-					}else {
+					} else {
 						request_success(res)
 					}
-				},err=>{
-					request_err(err,'获取身份失败')
+				}, err => {
+					request_err(err, '获取身份失败')
 				})
 			},
 			toError() {
 				uni.$emit("verifyFaceErr:" + this.refId)
 			},
-			
+
 			async getData() {
 				uni.showLoading({
 					title: '加载中...',
@@ -143,10 +150,10 @@
 				// 			url:'../login/normalLogin'
 				// 		})
 				// 	},1000)
-					
+
 				// 	return
 				// }
-				console.log('222222222',uni.getStorageSync('userStorage'))
+				console.log('222222222', uni.getStorageSync('userStorage'))
 				let faceData = await auth.getFaceData({
 					userNo: uni.getStorageSync('userStorage').userNo
 				})
@@ -155,7 +162,7 @@
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
 				const nonce = faceData.nonce;
-			
+
 				uni.request({
 					method: 'POST',
 					url: 'https://idasc.webank.com/api/server/getfaceid', //仅为示例，并非真实接口地址。
@@ -169,19 +176,19 @@
 						sign: nonce
 					},
 					success: (res) => {
-						console.log('应该是查询该身份的人脸信息',res)
-						if(res&& res.data && res.data.result && !res.data.result.faceId) {
+						console.log('应该是查询该身份的人脸信息', res)
+						if (res && res.data && res.data.result && !res.data.result.faceId) {
 							uni.showModal({
-							    title: '提示',
+								title: '提示',
 								showCancel: false,
-							    content: res.data.msg,
+								content: res.data.msg,
 							});
 							return;
 						}
-						
-						
+
+
 						uni.hideLoading()
-						
+
 						// 人脸对比
 						const face = uni.requireNativePlugin('DC-WBFaceService');
 						face.startWbFaceVerifyService({
@@ -213,19 +220,19 @@
 							}
 						}, result => {
 							console.debug('人脸验证：', result)
-							if(result.scene != 'wb_face_callback_verify_result' || (result.res && !result.res.success)) {
+							if (result.scene != 'wb_face_callback_verify_result' || (result.res && !result.res.success)) {
 								uni.showModal({
-								    title: '提示',
+									title: '提示',
 									showCancel: false,
-								    content: '人脸验证失败！请重新验证或者验证身体证号和真实名字是否正确',
-								    success: function (res) {
-										
+									content: '人脸验证失败！请重新验证或者验证身体证号和真实名字是否正确',
+									success: function(res) {
+
 									}
 								});
 								this.toError();
 								return;
 							}
-							
+
 							let fn = () => {
 								uni.hideLoading()
 								uni.showToast({
@@ -239,55 +246,90 @@
 							}
 							let courseInfo = uni.getStorageSync('courseInfoData')
 							let comid = uni.getStorageSync('userBasicInfo').compId
-							if (this.type == 2) {
-								auth.faceSignLog({
-									courseType:1,
-									numEvent:courseInfo.trainId,
-									refName:courseInfo.courseName,
-									signonApp:courseInfo.courseName,
-									statusId:1,
-									compId:comid,
-									startTime:courseInfo.startTime,
-									endTime:courseInfo.endTime,
-									
-									userNo: _userNo,
-									signonType: this.signType,
-									refId: this.refId,
-									longitude: this.longitude,
-									latitude: this.latitude,
-									place: this.place,
-									userImage: result.res.userImageString,
-									faceContrasResult: 'Success',
-								}).then(() => {
-									fn();
-								});
-							} else {
-								auth.faceUserLog({
-									courseType:1,
-									numEvent:courseInfo.trainId,
-									refName:courseInfo.courseName,
-									signonApp:courseInfo.courseName,
-									statusId:1,
-									compId:comid,
-									startTime:courseInfo.startTime,
-									endTime:courseInfo.endTime,
-									
-									userNo: _userNo,
-									category: this.signType,
-									refId: this.refId,
-									longitude: this.longitude,
-									latitude: this.latitude,
-									place: this.place,
-									userImage: result.res.userImageString,
-									faceContrasResult: 'Success',
-								}).then(() => {
-									fn();
-								});
-							}
+							uni.showLoading({
+								title: '处理中...'
+							})
+							console.log('courseInfo', courseInfo)
+							base64ToPath(result.res.userImageString).then((path) => {
+								uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
+									let face_img = JSON.parse(_resp.data)
+									let params = {}
+									if (this.signType == 3) {
+										params = {
+											courseType: 1,
+											numEvent: courseInfo.trainId,
+											refName: courseInfo.courseName,
+											signonApp: 0,
+											statusId: 1,
+											compId: comid,
+											startTime: courseInfo.startTime,
+											endTime: courseInfo.endTime,
+											userNo: _userNo,
+											refId: this.refId,
+											longitude: this.longitude,
+											latitude: this.latitude,
+											place: this.place,
+											userImage: face_img.data,
+											faceContrasResult: 'Success',
+										}
+									} else {
+										params = {
+											courseType: 1,
+											numEvent: courseInfo.trainId,
+											refName: courseInfo.courseName,
+											signonApp: 0,
+											statusId: 1,
+											compId: comid,
+											startTime: courseInfo.startTime,
+											endTime: courseInfo.endTime,
+											userNo: _userNo,
+											signonType: this.signType,
+											refId: this.refId,
+											longitude: this.longitude,
+											latitude: this.latitude,
+											place: this.place,
+											userImage: face_img.data,
+											faceContrasResult: 'Success',
+										}
+									}
+									// if (this.type == 2) {
+									auth.faceSignLog(params).then(() => {
+										fn();
+									});
+									// } else {
+									// 	auth.faceUserLog({
+									// 		courseType: 1,
+									// 		numEvent: courseInfo.trainId,
+									// 		refName: courseInfo.courseName,
+									// 		signonApp: 0,
+									// 		statusId: 1,
+									// 		compId: comid,
+									// 		startTime: courseInfo.startTime,
+									// 		endTime: courseInfo.endTime,
+									// 		userNo: _userNo,
+									// 		signonType: this.signType,
+									// 		refId: this.refId,
+									// 		longitude: this.longitude,
+									// 		latitude: this.latitude,
+									// 		place: this.place,
+									// 		userImage: face_img.data,
+									// 		faceContrasResult: 'Success',
+									// 	}).then(() => {
+									// 		fn();
+									// 	});
+									// }
+								}, error => {
+									console.log('上传人脸图片失败：', error)
+								})
+							}).catch(error => {
+								console.error('转换失败', error)
+							})
+
+
 						});
 					},
 					fail: (err) => {
-						console.log('aaaaaaa',res)
+						console.log('aaaaaaa', res)
 					}
 				})
 			},
@@ -310,10 +352,10 @@
 			},
 			handleLoadCamera() {
 				// #ifdef APP-PLUS
-					this.getData();
+				this.getData();
 				// #endif
 				// #ifdef MP-WEIXIN
-					this.startCamera = 1
+				this.startCamera = 1
 				// #endif
 			},
 			handlestart() {
@@ -332,7 +374,7 @@
 			},
 			startTiming(int) {
 				const colors = ['#32e', '#f00', '#29e', '#2e5', '#ea2', '#0ff']
-				this.time = 3-int
+				this.time = 3 - int
 				this.bgc = colors[int]
 				if (int === 3) {
 					int = 0
@@ -351,7 +393,7 @@
 				this.cameraContext.stopRecord({
 					compressed: true,
 					success: (res) => {
-						this.tempVideoPath =  res.tempVideoPath
+						this.tempVideoPath = res.tempVideoPath
 						uni.getFileSystemManager().readFile({
 							filePath: res.tempVideoPath,
 							encoding: 'base64',
@@ -395,21 +437,41 @@
 						});
 					}
 					if (this.type === 2) {
-						auth.faceSignLog({
-							userNo: this.userInfo.userNo,
-							signType: this.signType,
-							refId: this.refId,
-							faceContrasResult: 'Success',
-						}).then(() => {
+						let params = {}
+						if (this.signType == 3) {
+							params = {
+								userNo: this.userInfo.userNo,
+								refId: this.refId,
+								faceContrasResult: 'Success',
+							}
+						} else {
+							params = {
+								userNo: this.userInfo.userNo,
+								signType: this.signType,
+								refId: this.refId,
+								faceContrasResult: 'Success',
+							}
+						}
+						auth.faceSignLog(params).then(() => {
 							fn();
 						});
 					} else {
-						auth.faceUserLog({
-							userNo: this.userInfo.userNo,
-							category: this.signType,
-							refId: this.refId,
-							faceContrasResult: 'Success',
-						}).then(() => {
+						let params = {}
+						if (this.signType == 3) {
+							params = {
+								userNo: this.userInfo.userNo,
+								refId: this.refId,
+								faceContrasResult: 'Success',
+							}
+						} else {
+							params = {
+								userNo: this.userInfo.userNo,
+								signType: this.signType,
+								refId: this.refId,
+								faceContrasResult: 'Success',
+							}
+						}
+						auth.faceUserLog(params).then(() => {
 							fn();
 						});
 					}

@@ -73,8 +73,7 @@
 				isFullScreen: false,
 				live_status: [],
 				pageSize: 10,
-				pageCurrent: 1,
-				isFormUser: false
+				pageCurrent: 1
 			};
 		},
 		components: {
@@ -84,12 +83,12 @@
 			this.getMyCourse()
 			this.live_status = LIVE_STATUS
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			if (options.formUser) {
-				this.isFormUser = options.formUser || false
-				uni.setNavigationBarTitle({
-					title: '我的培训'
-				})
-			}
+			// if (options.formUser) {
+			// 	this.isFormUser = options.formUser || false
+			// 	uni.setNavigationBarTitle({
+			// 		title: '我的培训'
+			// 	})
+			// }
 
 		},
 		onUnload() {
@@ -190,9 +189,20 @@
 			},
 			goPreview(item) {
 				// let d = encodeURIComponent(JSON.stringify(item))
-				uni.navigateTo({
-					url: '/pages/course/view/view?id=' + item.id
-				});
+				uni.setStorageSync('courseInfoData',item)
+				console.log('zzzzzzz',item)
+				if(item.courseCategory == 1){
+					console.log('111111111')
+					uni.navigateTo({
+						url: '/pages/course/view/view?id=' + item.id
+					});
+				}else {
+					console.log('2222222222')
+					uni.navigateTo({
+						url:'/pages/course/live/live?id='+item.id
+					})
+				}
+				
 				// uni.navigateTo({
 				// 	url: './coursePreview?item=' + d
 				// })
