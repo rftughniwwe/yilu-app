@@ -34,6 +34,15 @@
 
 <script>
 	import primaryBtn from '@/components/primaryBtn/primaryBtn.vue'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
+	import {
+		httpRequest,
+		uploadImage
+	} from '@/utils/httpRequest.js'
+	
+	
 	export default {
 		data() {
 			return {
@@ -43,6 +52,9 @@
 		},
 		components:{
 			primaryBtn
+		},
+		onUnload() {
+			uni.hideLoading()
 		},
 		methods:{
 			chooseImage(){
@@ -58,19 +70,41 @@
 					count:1,
 					success:(res)=> {
 						let tempFile = res.tempFilePaths[0]
-						this.imgArr.push(tempFile)
+						this.uploadImagezz(tempFile)
+						
 					},
 					fail:(err)=> {
 						console.log('选择失败')
 					}
 				})
 			},
+			uploadImagezz(path){
+				uni.showLoading({
+					title:'上传图片中...',
+					mask:true
+				})
+				uploadImage('/course/api/upload/pic', 'picFile', path, {}).then(res=>{
+					uni.hideLoading()
+					uni.showToast({
+						title:'上传成功',
+						icon:'none',
+						duration:1000
+					})
+					let img = JSON.parse(res.data).data
+					console.log('iiiii',img)
+					this.imgArr.push(img)
+				},err=>{
+					uni.hideLoading()
+					console.log('上传图片失败')
+				})
+			},
+			
 			removeImg(index){
-				
 				this.imgArr.splice(index,1)
 			},
 			submit(){
 				let content = this.contents
+				console.log('imgs',this.imgArr)
 				if(!content){
 					uni.showToast({
 						title:'请填写内容',
@@ -78,7 +112,56 @@
 					})
 					return
 				}
-				
+				let userno = getUserLoginInfo('userNo')
+				let p = {
+					backContent:this.contents,
+					backPics:this.imgArr,
+					userNo:userno
+				}
+				let a = ''
+				if(this.imgArr.length <= 1){
+					a = this.imgArr[0]
+				}else {
+					this.imgArr.forEach((item,index)=>{
+						if(index == 0){
+							a = a + item
+						}else {
+							a = a +',' + item
+						}
+						
+					})
+				}
+				p.backPics = a
+				console.log('ppp',p)
+				httpRequest({
+					url:'/user/pc/tb/feedback/save',
+					method:'POST',
+					data:p,
+					success:res=>{
+						console.log('反馈成功：',res)
+						if(res.data.code == 200){
+							uni.showToast({
+								title:'反馈成功',
+								icon:'none',
+								duration:1000
+							})
+							setTimeout(()=>{
+								uni.navigateBack({
+									delta:1
+								})
+							},1000)
+						}else {
+							uni.showToast({
+								title:'反馈失败，请重试',
+								icon:'none'
+							})
+						}
+					},
+					fail:err=>{
+						console.log('反馈失败：',err)
+						
+					}
+				},1)
 			}
 		}
 	}

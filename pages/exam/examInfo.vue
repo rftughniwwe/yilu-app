@@ -27,8 +27,9 @@
 <script>
 	import * as examApis from "@/commons/api/exam";
 	import * as gradeApis from "@/commons/api/grade";
+	import * as auth from '@/commons/api/user.js'
 	import primaryBtn from '../../components/primaryBtn/primaryBtn.vue'
-	import auth from "@/utils/auth";
+	import _auth from "@/utils/auth"
 	import useFacePlugin from '@/commons/faceplugin.js'
 	import {
 		request_err,
@@ -43,24 +44,29 @@
 		getUserLoginInfo
 	} from '@/utils/util.js'
 	import {
-		httpRequest
-	}  from '@/utils/httpRequest.js'
-	
+		httpRequest,
+		uploadImage
+	} from '@/utils/httpRequest.js'
+	import {
+		base64ToPath
+	} from '../../js_sdk/gsq-image-tools/image-tools/index.js'
+
 	export default {
 		data() {
 			return {
 				examData: {},
 				gradeExamId: '',
+				trainingid: ''
 			};
 		},
 		onLoad(options) {
-			console.log('options:',options)
-			if(options.id){
+			console.log('options:', options)
+			if (options.id) {
 				this.getExamId(options.id)
-			}else{
+			} else {
 				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
 			}
-			
+
 			// if(options.gradeExamId) {
 			// 	this.gradeExamId = options.gradeExamId
 			// }
@@ -68,6 +74,7 @@
 		},
 		onShow() {
 			let i = uni.getStorageSync('TrainingId')
+			this.trainingid = i
 			this.getExamId(i)
 		},
 		comments: {
@@ -78,11 +85,11 @@
 			getExamId(id) {
 				console.log('培训场次id', id)
 				uni.showLoading({
-					title:'加载中...'
+					title: '加载中...'
 				})
 				getExamIdByTraingId(id).then(res => {
 					uni.hideLoading()
-					console.log('resssss',res)
+					console.log('resssss', res)
 					if (res.data.code == 200) {
 						this.examData = res.data.data
 						this.getExamInfoData()
@@ -91,20 +98,20 @@
 					}
 				})
 			},
-			
-			
+
+
 			// 开始考试
 			startExam() {
-				if (!auth.isLogin()) {
+				if (!_auth.isLogin()) {
 					uni.showToast({
 						title: '请先登录！',
 						icon: 'none',
 						duration: 1000
 					});
-					setTimeout(auth.login, 1000)
+					setTimeout(_auth.login, 1000)
 					return;
 				}
-				if(!this.examData){
+				if (!this.examData) {
 					uni.showToast({
 						title: '你没有考试',
 						icon: 'none',
@@ -113,46 +120,56 @@
 					return;
 				}
 				uni.showLoading({
-					title:'查询中...'
+					title: '查询中...'
 				})
+				let userno = getUserLoginInfo('userNo')
 				httpRequest({
-					url:'/exam/auth/user/exam/record/examCount',
-					method:'POST',
-					data:{
-						examId:this.examData.id
+					url: '/exam/auth/user/exam/record/examCount',
+					method: 'POST',
+					data: {
+						examId: this.examData.id,
+						userNo: userno
 					},
-					success:res=>{
+					success: res => { 
 						uni.hideLoading()
-						if(res.data.code == 200){
+						console.log('00000', res)
+						if (res.data.code == 200) {
+							console.log('1111111')
 							this.siaudghfs()
-						}else {
+						} else {
 							request_success(res)
 						}
 					},
-					fail:err=>{
+					fail: err => {
 						uni.hideLoading()
-						request_err(err,'查询考试失败')
+						request_err(err, '查询考试失败')
 					}
-				},5)
+				}, 5)
 			},
-			siaudghfs(){
-				// 人脸采集
-				useFacePlugin({}).then(res => {
-					// 人脸验证
+			siaudghfs() {
+				useFacePlugin({}).then(base64 => {
 					uni.showLoading({
 						title: '验证中...'
 					})
-					faceVerification(res).then(res => {
-						console.log('考试前的人脸验证：', res)
+					faceVerification(base64).then(res => {
 						uni.hideLoading()
+						console.log('rlyz:', res)
 						if (res.data.code == 200) {
-							let url = '/pages/exam/startExam?id=' + this.examData.id;
-							if (this.gradeExamId) {
-								url += '&gradeExamId=' + this.gradeExamId
-							}
-							uni.navigateTo({
-								url: url
-							});
+							uni.showLoading({
+								title: '上传中...'
+							})
+							base64ToPath(base64).then(_rep => {
+								console.log('toPath', _rep)
+								uploadImage('/course/api/upload/pic', 'picFile', _rep, {}).then(_resp => {
+									console.log("upload img", _resp)
+									let face_img = JSON.parse(_resp.data)
+									this.iuywsertkfjg(face_img)
+								}, err => {
+									uni.hideLoading()
+								})
+							}, err => {
+								uni.hideLoading()
+							})
 						} else {
 							request_success(res)
 						}
@@ -164,11 +181,44 @@
 					request_err(err, '人脸采集失败，稍后重试')
 				})
 			},
-			// 获取试卷数据
+
+			iuywsertkfjg(img) {
+				let userno = getUserLoginInfo('userNo')
+				let comid = uni.getStorageSync('userBasicInfo').compId
+				console.log('9527')
+				let params = {
+					courseType: 3,
+					numEvent: this.trainingid,
+					refName: '考试',
+					signonApp: 0,
+					statusId: 1,
+					compId: comid,
+					startTime: this.examData.beginTime,
+					endTime: this.examData.endTime,
+					userNo: userno,
+					signonType: 0,
+					refId: this.examData.id,
+					longitude: '',
+					latitude: '',
+					place: '',
+					userImage: img.data,
+					faceContrasResult: 'Success',
+				}
+				console.log('pppp', params)
+				auth.faceSignLog(params).then(() => {
+					let url = '/pages/exam/startExam?id=' + this.examData.id;
+					// if (this.gradeExamId) {
+					// 	url += '&gradeExamId=' + this.gradeExamId
+					// }
+					uni.navigateTo({
+						url: url
+					});
+				});
+			},
+
 			getExamInfoData() {
 				let id = this.examData.id
 				getExamDetails(id).then(res => {
-					console.log("获取的试卷数据：", res)
 					if (res.data.code == 200) {
 						this.examData = res.data.data || {}
 					} else {
@@ -181,7 +231,7 @@
 
 			async getData(id) {
 				let fn = "getExamViewInfo"
-				if (auth.isLogin()) {
+				if (_auth.isLogin()) {
 					fn = "getAuthExamViewInfo"
 				}
 				let res = '';

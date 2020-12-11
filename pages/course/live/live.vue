@@ -303,7 +303,7 @@
 			},
 			sign() {
 				uni.navigateTo({
-					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName+ '&signType=2&type=2'
+					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName+ '&signType=2&type=2&faceSignType=0'
 				})
 			},
 			selectVideo(e) {

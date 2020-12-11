@@ -510,12 +510,9 @@
 													confirmColor: '#38A6FD',
 													success: res => {
 														if (res.confirm) {
-															uni.navigateTo({
+															uni.reLaunch({
 																url: '/pages/exam/examInfo?id=' + that.signDatas.id
 															})
-															// uni.redirectTo({
-															// 	url:'./examBegin'
-															// })
 														}
 														// else if(res.cancel){
 														// 	uni.showModal({

@@ -64,7 +64,8 @@
 				num: 0,
 				time: -1,
 				bgc: '#fff',
-				idCardinfo: {}
+				idCardinfo: {},
+				faceSignType:''
 			}
 		},
 		onLoad: function(options) {
@@ -78,7 +79,7 @@
 			this.refId = options.refId || 1
 			this.signType = options.signType || '';
 			this.signName = options.signName || '';
-
+			this.faceSignType = options.faceSignType || ''
 			this.userInfo = uni.getStorageSync('userInfo')
 			this.periodNo = scene
 			this.courseId = options.courseId || ''
@@ -274,7 +275,7 @@
 										}
 									} else {
 										params = {
-											courseType: 1,
+											courseType: this.signType,
 											numEvent: courseInfo.trainId,
 											refName: courseInfo.courseName,
 											signonApp: 0,
@@ -283,7 +284,7 @@
 											startTime: courseInfo.startTime,
 											endTime: courseInfo.endTime,
 											userNo: _userNo,
-											signonType: this.signType,
+											signonType: this.faceSignType,
 											refId: this.refId,
 											longitude: this.longitude,
 											latitude: this.latitude,
@@ -292,32 +293,24 @@
 											faceContrasResult: 'Success',
 										}
 									}
-									// if (this.type == 2) {
-									auth.faceSignLog(params).then(() => {
-										fn();
-									});
-									// } else {
-									// 	auth.faceUserLog({
-									// 		courseType: 1,
-									// 		numEvent: courseInfo.trainId,
-									// 		refName: courseInfo.courseName,
-									// 		signonApp: 0,
-									// 		statusId: 1,
-									// 		compId: comid,
-									// 		startTime: courseInfo.startTime,
-									// 		endTime: courseInfo.endTime,
-									// 		userNo: _userNo,
-									// 		signonType: this.signType,
-									// 		refId: this.refId,
-									// 		longitude: this.longitude,
-									// 		latitude: this.latitude,
-									// 		place: this.place,
-									// 		userImage: face_img.data,
-									// 		faceContrasResult: 'Success',
-									// 	}).then(() => {
-									// 		fn();
-									// 	});
-									// }
+									if (this.type == 2) {
+										auth.faceSignLog(params).then(() => {
+											fn();
+										});
+									} else {
+										auth.faceUserLog({
+											userNo: _userNo,
+											category: this.signType,
+											refId: this.refId,
+											longitude: this.longitude,
+											latitude: this.latitude,
+											place: this.place,
+											userImageBase64: result.res.userImageString,
+											faceContrastResult: 'Success',
+										}).then(() => {
+											fn();
+										});
+									}
 								}, error => {
 									console.log('上传人脸图片失败：', error)
 								})

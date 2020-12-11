@@ -62,11 +62,12 @@
 <script>
 	import * as examApis from "@/commons/api/exam";
 	import problemItem from "@/components/exam/problemItem";
-	import auth from "@/utils/auth";
+	import _auth from "@/utils/auth";
 	import * as gradeApis from '@/commons/api/grade.js'
 	import {
 		toZhDigit,
-		getRandomQuestions
+		getRandomQuestions,
+		getUserLoginInfo
 	} from '@/utils/util.js'
 	import useFacePlugin from '@/commons/faceplugin.js'
 	import {
@@ -76,7 +77,15 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
-
+	import {
+		base64ToPath
+	} from '../../js_sdk/gsq-image-tools/image-tools/index.js'
+	import {
+		httpRequest,
+		uploadImage
+	} from '@/utils/httpRequest.js'
+	import * as auth from '@/commons/api/user.js'
+	
 	export default {
 		data() {
 			return {
@@ -115,7 +124,6 @@
 			// if(this.time === '' && this.answerTime) {
 			// 	this.timer = setTimeout(this.initTime, 3000)
 			// }
-			console.log('西八')
 		},
 		onUnload() {
 			clearInterval(this.time)
@@ -178,60 +186,174 @@
 				this.swiperIndex = e.detail.current + 1;
 				console.log('当前题目：', this.swiperIndex)
 				if (this.swiperIndex == this.faceVerifyCount) {
-					useFacePlugin({}).then((res) => {
-						uni.showLoading({
-							title: '验证中...',
-							mask: true
-						})
-
-						faceVerification(res).then(resp => {
-							console.log('随机题目人脸识别：', resp)
-							uni.hideLoading()
-							if (resp.data.code == 200) {
-								// 识别成功
-							} else {
-								// request_success(res)
-								uni.showToast({
-									title: resp.data.msg,
-									duration: 1500,
-									icon:'none'
-								})
-								// if (this.isGradeExam) {
-								// 	const d = {
-								// 		id: this.recordId
-								// 	}
-								// 	gradeApis.submitExam(d).then((e) => {
-								// 		e.examId = this.examId;
-								// 		e.recordId = this.recordId;
-								// 		uni.setStorageSync('userexam-result', e);
-
-								// 		uni.redirectTo({
-								// 			url: '/pages/exam/gradeResult'
-								// 		})
-								// 	})
-								// } else {
-								// 	const d = {
-								// 		recordId: this.recordId
-								// 	}
-								// 	examApis.examFinish(d).then((e) => {
-								// 		e.examId = this.examId;
-								// 		e.recordId = this.recordId;
-								// 		uni.setStorageSync('userexam-result', e);
-
-								// 		uni.redirectTo({
-								// 			url: '/pages/exam/result'
-								// 		})
-								// 	})
-								// }
-							}
-						}, err => {
-							uni.hideLoading()
-							request_err(err, '人脸验证失败，稍后重试')
-						})
-					})
+					this.faceVierhudghr(true)
 				}
 
 			},
+			
+			faceVierhudghr(middleVerify){
+				useFacePlugin({}).then((res) => {
+					uni.showLoading({
+						title: '验证中...',
+						mask: true
+					})
+				
+					faceVerification(res).then(resp => {
+						uni.hideLoading()
+						if (resp.data.code == 200) {
+							// 识别成功
+							if(middleVerify){
+								this.middleVerifyFace(res)
+							}else{
+								this.aikujsfbhnsjdkef(res)
+							}
+						} else {
+							// request_success(res)
+							uni.showToast({
+								title: resp.data.msg,
+								duration: 1500,
+								icon:'none'
+							})
+							uni.showModal({
+								title:'提示',
+								content:'认证失败，请重试？',
+								confirmText:'重试',
+								showCancel:false,
+								success:res=>{
+									if(res.confirm){
+										this.faceVierhudghr()
+									}
+								}
+							})
+							// if (this.isGradeExam) {
+							// 	const d = {
+							// 		id: this.recordId
+							// 	}
+							// 	gradeApis.submitExam(d).then((e) => {
+							// 		e.examId = this.examId;
+							// 		e.recordId = this.recordId;
+							// 		uni.setStorageSync('userexam-result', e);
+				
+							// 		uni.redirectTo({
+							// 			url: '/pages/exam/gradeResult'
+							// 		})
+							// 	})
+							// } else {
+							// 	const d = {
+							// 		recordId: this.recordId
+							// 	}
+							// 	examApis.examFinish(d).then((e) => {
+							// 		e.examId = this.examId;
+							// 		e.recordId = this.recordId;
+							// 		uni.setStorageSync('userexam-result', e);
+				
+							// 		uni.redirectTo({
+							// 			url: '/pages/exam/result'
+							// 		})
+							// 	})
+							// }
+						}
+					}, err => {
+						uni.hideLoading()
+						request_err(err, '人脸验证失败，稍后重试')
+					})
+				})
+			},
+			middleVerifyFace(base64){
+				uni.showLoading({
+					title:'上传中...'
+				})
+				base64ToPath(base64).then(_rep=>{
+					uploadImage('/course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
+						let face_img = JSON.parse(_resp.data)
+						this.xixixixix(face_img)
+					},err=>{
+						uni.hideLoading()
+					})
+				},err=>{
+					uni.hideLoading()
+				})
+			},
+			aikujsfbhnsjdkef(base64,signOut){
+				uni.showLoading({
+					title:'上传中...'
+				})
+				base64ToPath(base64).then(_rep=>{
+					uploadImage('/course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
+						let face_img = JSON.parse(_resp.data)
+						this.iuywsertkfjg(face_img,signOut)
+					},err=>{
+						uni.hideLoading()
+					})
+				},err=>{
+					uni.hideLoading()
+				})
+			},
+			xixixixix(img){
+				let userno = getUserLoginInfo('userNo')
+				let comid = uni.getStorageSync('userBasicInfo').compId
+				let i = uni.getStorageSync('TrainingId')
+				let params = {
+					courseType: 3,
+					numEvent: i,
+					refName: '考试',
+					signonApp: 0,
+					statusId: 1,
+					compId: comid,
+					userNo: userno,
+					refId: this.examId,
+					longitude: '',
+					latitude: '',
+					place: '',
+					userImage: img.data,
+					faceContrasResult: 'Success',
+				}
+				httpRequest({
+					url:'/course/api/middleFaceLog/save',
+					method:'POST',
+					data:params,
+					success:res=>{
+						console.log('nnn',res)
+						if(res.data.code == 200){
+							console.log('保存成功')
+						}
+					},
+					fail:err=>{
+						console.log('保存失败')
+					}
+				},2)
+			},
+			iuywsertkfjg(img,signOut) {
+				let userno = getUserLoginInfo('userNo')
+				let comid = uni.getStorageSync('userBasicInfo').compId
+				let i = uni.getStorageSync('TrainingId')
+				let params = {
+					courseType: 3,
+					numEvent: i,
+					refName: '考试',
+					signonApp: 0,
+					statusId: 1,
+					compId: comid,
+					userNo: userno,
+					signonType: signOut?1:0,
+					refId: this.examId,
+					longitude: '',
+					latitude: '',
+					place: '',
+					userImage: img.data,
+					faceContrasResult: 'Success',
+				}
+				auth.faceSignLog(params).then(() => {
+					// let url = '/pages/exam/startExam?id=' + this.examData.id;
+					// if (this.gradeExamId) {
+					// 	url += '&gradeExamId=' + this.gradeExamId
+					// }
+					// uni.navigateTo({
+					// 	url: url
+					// });
+				});
+			},
+			
 			submit(flag) {
 				clearInterval(this.time)
 
@@ -245,6 +367,7 @@
 							uni.hideLoading()
 							if (resp.data.code == 200) {
 								this.submitFlag = true
+								this.aikujsfbhnsjdkef(res,true)
 								if (this.isGradeExam) {
 									const d = {
 										id: this.recordId
@@ -254,7 +377,6 @@
 										e.recordId = this.recordId;
 										console.log('交卷：',e)
 										uni.setStorageSync('userexam-result', e);
-
 										uni.redirectTo({
 											url: '/pages/exam/gradeResult'
 										})
@@ -275,7 +397,11 @@
 									})
 								}
 							} else {
-								request_success(res)
+								uni.showToast({
+									title:res.data.msg,
+									icon:'none',
+									duration:1500
+								})
 							}
 						}, err => {
 							uni.hideLoading()
@@ -355,7 +481,6 @@
 				this.time = setInterval(settime, 1000);
 				settime();
 			},
-			// 活体认证
 			checkContrast(playObj) {
 				/* console.log(playObj, this.constrastTimes, this.faceContrast ) */
 				if (this.isFaceContras === 0) {
@@ -380,8 +505,9 @@
 
 				const currentContrastTime = this.constrastTimes[0] // 获得当前认证时间点
 				// console.log(this.faceContrast, playObj.currentTime, currentContrastTime, this.isVerifyFace)
-				if (playObj.currentTime > currentContrastTime && !this.isVerifyFace) { // 需要活体认证''
-					this.isVerifyFace = true;
+				// 需要活体认证''
+				// if (playObj.currentTime > currentContrastTime && !this.isVerifyFace) { 
+				// 	this.isVerifyFace = true;
 					// uni.$emit("verifyFace:" + this.recordId);
 					// uni.showToast({
 					// 	title: '人工识别'
@@ -392,7 +518,7 @@
 					// uni.navigateTo({
 					// 	url: '/pages/verifyFace/verifyFace?refId=' + this.recordId + '&signType=3'
 					// })
-				}
+				// }
 			},
 
 			faceFn() {
@@ -407,13 +533,13 @@
 				})
 			},
 			async getData(id = '', gradeExamId = '') {
-				if (!auth.isLogin()) {
+				if (!_auth.isLogin()) {
 					uni.showToast({
 						title: '请先登录！',
 						icon: 'none',
 						duration: 1500
 					});
-					setTimeout(auth.login, 1500)
+					setTimeout(_auth.login, 1500)
 					return;
 				}
 				let record = {};

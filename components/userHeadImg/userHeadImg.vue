@@ -17,6 +17,8 @@
 			let headurl = uni.getStorageSync('userBasicInfo').headImgUrl
 			if(this.url){
 				this.headimg = this.url
+			}else if(this.url == 'default'){
+				this.headimg = '../../static/user2.png'
 			}else {
 				this.headimg = headurl
 			}

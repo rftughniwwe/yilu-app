@@ -112,10 +112,14 @@
 
 				<view v-show="selfLearnType === 1" class="tab-course">
 					<!-- 课程 -->
-					<course />
-					<course />
-					<course />
-					<course />
+					<template v-if="autoLearning && autoLearning.length > 0">
+						<view v-for="(item,index) in autoLearning" :key='index'>
+							<course :data='item' @courseClick='courseItemClick' />
+						</view>
+					</template>
+					<template v-else>
+						<EmptyData type='serach' />
+					</template>
 				</view>
 				<view v-show="selfLearnType === 2" class="tab-exercise flex-between">
 					<!-- 练习 -->
@@ -141,24 +145,24 @@
 					<view class="overview-content">
 						<view class="overview">
 							<view class="learning-time">
-								<text class="big-text">学习总时长：666</text>小时
+								<text class="big-text">学习总时长：{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}</text>小时
 							</view>
 							<view class="flex-between">
 								<view class="total-answer">
 									<view class="top">
-										<text class="big-text">77</text>道
+										<text class="big-text">{{autoLearningStati.questionCount?autoLearningStati.questionCount:0}}</text>道
 									</view>
 									累计答题
 								</view>
 								<view class="correct-rate middle-correct">
 									<view class="top">
-										<text class="big-text">77</text>%
+										<text class="big-text">{{autoLearningStati.accuracy?autoLearningStati.accuracy:0}}</text>
 									</view>
 									正确率
 								</view>
 								<view class="total-date">
 									<view class="top">
-										<text class="big-text">666</text>
+										<text class="big-text">{{autoLearningStati.dateCount?autoLearningStati.dateCount:0}}</text>
 									</view>
 									累计天数
 								</view>
@@ -178,9 +182,10 @@
 					</view>
 					<view class="details-info">
 						<view class="first-item flex-row-start">
-							<image src="../../static/camera.png" mode=""></image>
+							<!-- <image src="../../static/camera.png" mode=""></image> -->
+							<userHeadImg width='80rpx' height='80rpx' />
 							<view class="wzc">
-								王大锤
+								<userName />
 							</view>
 						</view>
 						<view class="items flex-between">
@@ -188,7 +193,7 @@
 								学习天数
 							</view>
 							<view class="tail">
-								10天
+								{{autoLearningStati.dateCount?autoLearningStati.dateCount:0}}
 							</view>
 
 						</view>
@@ -197,7 +202,7 @@
 								学习总时长
 							</view>
 							<view class="tail">
-								30小时
+								{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}
 							</view>
 						</view>
 						<view class="items flex-between">
@@ -205,7 +210,7 @@
 								答题数量
 							</view>
 							<view class="tail">
-								22题
+								{{autoLearningStati.questionCount?autoLearningStati.questionCount:0}}
 							</view>
 						</view>
 					</view>
@@ -230,12 +235,17 @@
 		getCurrentDate,
 		LEARNING_MODE_DATA,
 		scanCodeReturn,
-		getNotRealTime
+		getNotRealTime,
+		getLearningTypeInfo,
+		getUserLoginInfo
 	} from '../../utils/util.js'
 	import {
 		httpRequest,
 		requestQrCodeUrl
 	} from '@/utils/httpRequest.js'
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	import userName from '@/components/userName/userName.vue'
+	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
 
 	const app = getApp()
 
@@ -253,24 +263,31 @@
 				AnquanType: 0,
 				date: '',
 				isFullScreen: false,
-				courseDatas:[]
+				courseDatas: [],
+				autoLearning: [],
+				autoLearningStati:{}
 			};
 		},
 		components: {
 			chooseLearningType,
 			learnTopSlide,
 			chooseLearningModeModal,
-			course
+			course,
+			EmptyData,
+			userName,
+			userHeadImg
 		},
 		onLoad() {
 			// 第一次进入学习页面显示选择模块
 			this.chooseTypePager = uni.getStorageSync('isShowChooseType')
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.type = uni.getStorageSync('teachType')
-
+			this.date = getCurrentDate('month')
 			this.typeArr = LEARNING_MODE_DATA
 			this.setOptions(LEARNING_MODE_DATA)
 			this.getMyCoursedata()
+			this.getAutoLearning()
+			this.getAutoLearningStati()
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
 
@@ -291,26 +308,91 @@
 			uni.$on('closeModalMask', (data) => {
 				this.isHideSafetyModal = true
 			})
-			
-			uni.$on('tabbarChange',()=>{
+
+			uni.$on('tabbarChange', () => {
 				this.getMyCoursedata()
 			})
 
 
 		},
 		onShow() {
-			this.date = getCurrentDate('month')
+			
 		},
 		methods: {
+			getAutoLearningStati() {
+				console.log('dddate',this.date)
+				let userNo = getUserLoginInfo('userNo')
+				let year = this.date.split('-')[0]
+				let month = this.date.split('-')[1]
+				let start = '01'
+				let end = new Date(year, month, 0).getDate()
+				let s_time = this.date + '-' + start
+				let e_time = this.date + '-' + end
+				console.log('s',s_time)
+				console.log('e',e_time)
+				httpRequest({
+					url: '/exam/api/tbCourQuestionPerson/questionCount',
+					method: 'POST',
+					data: {
+						"endTime": s_time,
+						"startTime": e_time,
+						"updateUser": userNo
+					},
+					success: res => {
+						console.log('自主学习统计数据：', res)
+						if (res.data.code == 200) {
+							this.autoLearningStati = res.data.data
+						} else {
+							console.log('获取自主学习统计数据失败：', res)
+						}
+					},
+					fail: err => {
+						console.log('获取自主学习统计数据失败：', err)
+					}
+				},5)
+			},
+			courseItemClick(e) {
+				let item = e.item
+				uni.setStorageSync('courseInfoData', item)
+				console.log('自主学习点击：', item)
+				if (item.courseCategory == 1) {
+					uni.navigateTo({
+						url: '/pages/course/view/view?id=' + item.id
+					});
+				} else {
+					uni.navigateTo({
+						url: '/pages/course/live/live?id=' + item.id
+					})
+				}
+			},
+			getAutoLearning() {
+				let id = getLearningTypeInfo().categoryId1
+				httpRequest({
+					url: '/course/api/course/independentlist',
+					method: 'POST',
+					data: {
+						categoryId1: id
+					},
+					success: res => {
+						console.log('自主学习课程：', res)
+						if (res.data.code == 200) {
+							this.autoLearning = res.data.data
+						}
+					},
+					fail: err => {
+						console.log('获取自主学习课程失败：', err)
+					}
+				}, 2)
+			},
 			getMyCoursedata() {
 				let categoryId1 = uni.getStorageSync('selectedLearningType').id
 				// 学习模块中选择的二级分类
 				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
 				let compId = uni.getStorageSync('userBasicInfo').compId
-				
+
 				let params = {
 					courseCategory: 2,
-					liveStatus:2,
+					liveStatus: 2,
 					compId: compId,
 					categoryId1: categoryId1,
 					categoryId2: categoryId2,
@@ -318,7 +400,7 @@
 					pageCurrent: 1
 				}
 				uni.showLoading({
-					title:'获取课程中...'
+					title: '获取课程中...'
 				})
 				httpRequest({
 					url: '/course/api/course/courselist',
@@ -339,7 +421,7 @@
 					}
 				}, 2)
 			},
-			
+
 			setOptions(data) {
 				let d = data
 				d.forEach((item, index) => {
@@ -465,9 +547,9 @@
 				// 	}
 				// })
 			},
-			goCourse(item){
+			goCourse(item) {
 				let id = item.id;
-				uni.setStorageSync('courseInfoData',item)
+				uni.setStorageSync('courseInfoData', item)
 				if (item.courseCategory == '1') {
 					console.log('111111111')
 					uni.navigateTo({
@@ -485,6 +567,7 @@
 			},
 			filterChange(e) {
 				this.date = e.detail.value
+				this.getAutoLearningStati()
 			},
 			goLeaderBoard() {
 				uni.navigateTo({
@@ -753,12 +836,7 @@
 
 	.first-item {
 		padding: 30rpx;
-
-		image {
-			width: 80rpx;
-			height: 80rpx;
-			margin-right: 20rpx;
-		}
+		margin-right: 20rpx;
 	}
 
 	.wzc {

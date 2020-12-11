@@ -14,37 +14,37 @@
 				<view class="top-two">
 					<view class="circle-img">
 						<image class="top-two-img" src="../../static/number-two.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' />
+						<userHeadImg width='112rpx' height='112rpx' :url="'default'"/>
 					</view>
 					<view class="name">
-						王五
+						{{datas && datas.length > 0?datas[1].name:'暂无人选'}}
 					</view>
 					<view class="totla-time">
-						3000小时
+						0
 					</view>
 				</view>
 				<view class="top-one">
 					<view class="circle-img">
 						<image class="top-one-img" src="../../static/number-one.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' />
+						<userHeadImg width='112rpx' height='112rpx' :url="'default'"/>
 					</view>
 					<view class="name">
-						张三
+						{{datas && datas.length > 0?datas[0].name:'暂无人选'}}
 					</view>
 					<view class="totla-time">
-						600小时
+						0
 					</view>
 				</view>
 				<view class="top-three">
 					<view class="circle-img">
 						<image class="top-three-img" src="../../static/number-three.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' />
+						<userHeadImg width='112rpx' height='112rpx' :url="'default'"/>
 					</view>
 					<view class="name">
-						李四
+						{{datas && datas.length > 0?datas[2].name:'暂无人选'}}
 					</view>
 					<view class="totla-time">
-						400小时
+						0
 					</view>
 				</view>
 			</view>

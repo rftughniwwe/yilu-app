@@ -34,8 +34,8 @@
 					<text class="font25 c_gold mgl20">{{courseInfo.courseDiscount ? '￥' + courseInfo.courseDiscount : '免费'}}</text>
 					<view @click="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">SVIP</view>
 				</view>
-				<view class="font41 c_red" v-else>免费<view style="display: inline-block;" @click="goVip" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
-				</view>
+				<!-- <view class="font41 c_red" v-else>免费<view style="display: inline-block;" @click="goVip" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
+				</view> -->
 			</view>
 		</view>
 		<view class="h5px" v-if="courseInfo.id"></view>
@@ -75,7 +75,7 @@
 		<!-- <float-tab :shareImg="true" coursetype="1" @hidevideo="changeVideoBox" @hideewm="changeVideoBox"></float-tab> -->
 		<view v-if="!isFree && showPrice" class="buy_panel">
 			<view v-if="!courseInfo.isPutaway" class="buy_btn disabled">课程已下架</view>
-			<view v-else @tap="buyCourse" :class="['buy_btn', isSeckill?'seckillBtn':'']"> {{ isSeckill?'立即秒杀':'立即购买' }}</view>
+			<!-- <view v-else @tap="buyCourse" :class="['buy_btn', isSeckill?'seckillBtn':'']"> {{ isSeckill?'立即秒杀':'立即购买' }}</view> -->
 		</view>
 	</view>
 </template>
@@ -230,7 +230,7 @@
 		methods: {
 			sign() {
 				uni.navigateTo({
-					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName + '&signType=1&type=2'
+					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName + '&signType=1&type=2&faceSignType=0'
 				})
 			},
 			startSeckill() {
@@ -503,7 +503,7 @@
 					return
 				}
 
-				console.log(this.faceContrast, this.constrastTimes, playObj)
+				console.log(this.faceContrast,'宁吗的洗白', this.constrastTimes, playObj)
 				const d = (playObj.duration / (this.faceContrast - 1))
 				if (!this.constrastTimes) {
 					// 判断是否已经生成验证时间点
@@ -540,14 +540,9 @@
 					// 	uni.$emit("verifyFace:" + this.courseId)
 					// }, 2000)
 					uni.navigateTo({
-						url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=3'
+						url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1'
 					})
 				}
-
-
-
-
-
 			},
 
 			// 播放
@@ -565,7 +560,7 @@
 				this.playstatu = false
 				this.getPlayTime()
 				uni.navigateTo({
-					url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1'
+					url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1&faceSignType=1'
 				})
 			
 			},
