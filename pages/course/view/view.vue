@@ -26,7 +26,7 @@
 			<view class="flex_row_between">
 				<like-btn :collectionId="courseInfo.id" :isCollection="courseInfo.isCollectionCourse" :courseCategory="courseInfo.courseCategory"></like-btn>
 				<text class="course_title font33 c_333">{{courseInfo.courseName || '正在加载...'}}</text>
-				<button class="share-btn" open-type="share">分享</button>
+				<button class="share-btn" open-type="share"></button>
 			</view>
 			<view class="mgt20" v-if="showPrice">
 				<view class="font41 c_red" v-if="!courseInfo.isFree">
@@ -44,7 +44,7 @@
 		<view class="teacher_box b_fff c_999 font25">
 			<text>讲师：</text>
 			<text class="c_333">{{courseInfo.lecturer.lecturerName}}</text>
-			<attention-btn :isAttention="courseInfo.isAttentionLecturer" :lecturerUserNo="courseInfo.lecturerUserNo"></attention-btn>
+			<!-- <attention-btn :isAttention="courseInfo.isAttentionLecturer" :lecturerUserNo="courseInfo.lecturerUserNo"></attention-btn> -->
 			<button type="primary" class="fr sign_btn" @tap="sign()">签到</button>
 		</view>
 
@@ -53,6 +53,7 @@
 			<view class="tabs font33 c_333">
 				<view v-if="isMinappAudit " :class="tab == 2 ? 'tab active' : 'tab'" @tap="changeTab" data-int="2">课程大纲</view>
 				<view :class="tab == 1 ? 'tab active' : 'tab'" @tap="changeTab" data-int="1">课程介绍</view>
+				<view :class="tab == 3 ? 'tab active' : 'tab'" @tap="changeTab" data-int="3">学习资料</view>
 			</view>
 			<view v-if="tab == 2 && isMinappAudit " class="course_brief font25 b_fff mgt30 pdb30">
 				<view v-for="(item, index) in chapterList" :key="index" class="c_333">
@@ -68,8 +69,30 @@
 				</view>
 				<view class="text_center c_333 font33" v-if="loaddingEnd">加载中...</view>
 			</view>
-			<view v-else class="course_brief font25 b_fff pd20">
+			<view v-else-if="tab == 1" class="course_brief font25 b_fff learningMat">
 				<rich-text :nodes="courseInfo.introduce"></rich-text>
+			</view>
+			<view v-else-if="tab == 3" class="course_brief font25 b_fff pd20">
+				<template v-if="filesData.list && filesData.list.length >0">
+					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index'>
+						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
+						<view class="file-content text-overflow2">
+							<view class="titlezxc">
+								{{item.name}}
+							</view>
+							<!-- <view class="file-size">
+								999MB
+							</view> -->
+						</view>
+						<view class="action-content flex-between">
+							<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
+							<image class="download-img" src="../../../static/download.png" mode="" @click="downloadFile(item)"></image>
+						</view>
+					</view>
+				</template>
+				<template v-else>
+					<EmptyData type='serach' />
+				</template>
 			</view>
 		</view>
 		<!-- <float-tab :shareImg="true" coursetype="1" @hidevideo="changeVideoBox" @hideewm="changeVideoBox"></float-tab> -->
@@ -90,7 +113,7 @@
 	} from "@/utils/auth";
 	import polyv from "@/utils/polyv";
 	import likeBtn from "@/components/likebtn/likebtn";
-	import attentionBtn from "@/components/attentionBtn/attentionBtn";
+	// import attentionBtn from "@/components/attentionBtn/attentionBtn";
 	import ActivityPanel from "@/components/activity/ActivityPanel";
 	import {
 		request_err,
@@ -102,7 +125,10 @@
 		getExamIdByTraingId
 	} from '@/commons/api/apis.js'
 	import useFacePlugin from '@/commons/faceplugin.js'
-	
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+
 	export default {
 		data() {
 			return {
@@ -141,13 +167,16 @@
 				pageCurrent: 1,
 				userInfo: "",
 				signName: '',
-				courseId: ""
+				courseId: "",
+				isVerifyFace: false,
+				randomtimes: 0,
+				filesData: []
 			};
 		},
 
 		components: {
 			likeBtn,
-			attentionBtn,
+			// attentionBtn,
 			// floatTab,
 			ActivityPanel
 		},
@@ -168,7 +197,6 @@
 		 */
 		onLoad: function(options) {
 			let courseId = '';
-
 			if (options.scene) {
 				courseId = decodeURIComponent(options.scene);
 			} else {
@@ -185,6 +213,28 @@
 			this.getCourse(courseId);
 
 			this.getChapterList(1);
+			this.getaccessoryList()
+			let coursesss = uni.getStorageSync('courseInfoData')
+
+			uni.$on('asifhbwsrei', (res) => {
+				if (res.verify) {
+					uni.setStorageSync('TrainingId', coursesss.trainId)
+					this.getaccessoryList()
+					uni.showModal({
+						title: '提示',
+						content: '签出成功，是否进行考试？',
+						confirmText: '前往考试',
+						cancelText: '暂不',
+						success: res => {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: '../../exam/examInfo?id=' + coursesss.trainId
+								})
+							}
+						}
+					})
+				}
+			})
 		},
 
 		/**
@@ -199,7 +249,20 @@
 		/**
 		 * 生命周期函数--监听页面显示
 		 */
-		onShow: function() {},
+		onShow: function() {
+			uni.$on('zxczxczxczxczxc', (res) => {
+				if (res.zxczxc) {
+					this.isVerifyFace = true
+					uni.showToast({
+						title: "完成验证"
+					})
+					this.constrastTimes.splice(0, 1);
+					// #ifdef MP-WEIXIN || APP-PLUS
+					this.videoContext.play()
+					// #endif
+				}
+			})
+		},
 
 		/**
 		 * 生命周期函数--监听页面隐藏
@@ -211,6 +274,7 @@
 		 */
 		onUnload: function() {
 			this.playstatu = false
+			uni.hideLoading()
 		},
 
 		/**
@@ -230,7 +294,8 @@
 		methods: {
 			sign() {
 				uni.navigateTo({
-					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName + '&signType=1&type=2&faceSignType=0'
+					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName +
+						'&signType=1&type=2&faceSignType=0'
 				})
 			},
 			startSeckill() {
@@ -274,9 +339,9 @@
 					this.isFree = !!res.isPay
 				});
 			},
-			
+
 			// 自己的人脸验证
-			faceVerify(){
+			faceVerify() {
 				// 人脸采集
 				useFacePlugin({}).then(res => {
 					// 人脸验证
@@ -288,8 +353,8 @@
 						uni.hideLoading()
 						if (res.data.code == 200) {
 							uni.showToast({
-								title:'签到成功',
-								icon:'none'
+								title: '签到成功',
+								icon: 'none'
 							})
 							uni.setStorageSync(this.signName, true);
 						} else {
@@ -363,16 +428,16 @@
 					this.isVerifyFace = false;
 				})
 
-				uni.$on("verifyFace:" + videoInfo.id, () => {
-					uni.showToast({
-						title: "完成验证"
-					})
-					this.isVerifyFace = false;
-					this.constrastTimes.splice(0, 1);
-					// #ifdef MP-WEIXIN || APP-PLUS
-					this.videoContext.play()
-					// #endif
-				})
+				// uni.$on("verifyFace:" + videoInfo.id, () => {
+				// 	uni.showToast({
+				// 		title: "完成验证"
+				// 	})
+				// 	this.isVerifyFace = false;
+				// 	this.constrastTimes.splice(0, 1);
+				// 	// #ifdef MP-WEIXIN || APP-PLUS
+				// 	this.videoContext.play()
+				// 	// #endif
+				// })
 				auth.getCourseSign({
 					periodId: videoInfo.id,
 					videoVid: vid
@@ -407,23 +472,23 @@
 					});
 				} else {
 					this.videoContext = polyvObject('#player').videoPlayer({
-							'width': '100%',
-							'height': '203px',
-							'forceH5': true,
-							'code': data.code,
-							'playsafe': data.token,
-							'ts': data.ts,
-							'sign': data.sign,
-							'vid': data.vid,
-							'viewerInfo': {
-								'viewerId': uni.getStorageSync('userStorage').userNo,
-								'viewerName': uni.getStorageSync('userBasicInfo').nickname
-							},
-							flashvars: {
-								skin_type: 'skin_blue',
-								ban_set_player: 'off'
-							}
-						})
+						'width': '100%',
+						'height': '203px',
+						'forceH5': true,
+						'code': data.code,
+						'playsafe': data.token,
+						'ts': data.ts,
+						'sign': data.sign,
+						'vid': data.vid,
+						'viewerInfo': {
+							'viewerId': uni.getStorageSync('userStorage').userNo,
+							'viewerName': uni.getStorageSync('userBasicInfo').nickname
+						},
+						flashvars: {
+							skin_type: 'skin_blue',
+							ban_set_player: 'off'
+						}
+					})
 				}
 			},
 			wxGetVideo(vid, res, videoInfo) {
@@ -438,7 +503,7 @@
 					courseId: this.courseId,
 					pageCurrent: page
 				}).then(res => {
-					console.log('列表。。。。。',res)
+					console.log('列表。。。。。', res)
 					this.chapterList = this.chapterList.concat(res.list)
 					if (res.pageCurrent === res.totalPage) {
 						this.loaddingEnd = false
@@ -452,7 +517,7 @@
 				if (!uni.getStorageSync('userInfo')) {
 					console.log('没登录')
 					uni.navigateTo({
-						url:'../../login3/login'
+						url: '../../login3/login'
 					})
 				}
 
@@ -477,7 +542,6 @@
 				// #endif
 				// this.playInfo.currentTime
 
-				console.log('this.faceContrast', this.faceContrast)
 				if (this.faceContrast) { // 校验认证信息
 					this.checkContrast(playInfo)
 				}
@@ -494,6 +558,21 @@
 					}, 3000)
 				}
 			},
+			randomTime(max) {
+				if (this.randomtimes > 30) return
+				let result = 0
+				let m = Math.floor(max) - 40
+				r()
+
+				function r() {
+					result = Math.floor(Math.random() * m)
+					if (result <= 30) {
+						result = 31
+					}
+				}
+				this.randomtimes = Math.floor(result)
+				return
+			},
 			// 活体认证
 			checkContrast(playObj) {
 				if (this.isFaceContras === 0) {
@@ -503,45 +582,45 @@
 					return
 				}
 
-				console.log(this.faceContrast,'宁吗的洗白', this.constrastTimes, playObj)
-				const d = (playObj.duration / (this.faceContrast - 1))
-				if (!this.constrastTimes) {
-					// 判断是否已经生成验证时间点
-					const times = [2];
-					for (let i = 0; i < this.faceContrast - 2; i++) {
-						const randomTime = (d * (i + 1)) + ((16) * (1 + (-2 * Math.random())))
-						times.push(randomTime);
+				// const d = (playObj.duration / (this.faceContrast - 1))
+				// if (!this.constrastTimes) {
+				// 	// 判断是否已经生成验证时间点
+				// 	const times = [2];
+				// 	for (let i = 0; i < this.faceContrast - 2; i++) {
+				// 		const randomTime = (d * (i + 1)) + ((16) * (1 + (-2 * Math.random())))
+				// 		times.push(randomTime);
+				// 	}
+				// 	times.push(playObj.duration - 4)
+				// 	this.constrastTimes = times;
+				// }
+
+				this.randomTime(playObj.duration)
+				// const currentContrastTime = this.constrastTimes[0] // 获得当前认证时间点
+				console.log(this.randomtimes, '----------', Math.floor(playObj.currentTime));
+				console.log('中兄次之乡村振兴', this.isVerifyFace);
+				if (Math.floor(playObj.currentTime) >= this.randomtimes) { // 需要活体认证''
+					if (!this.isVerifyFace) {
+						this.isVerifyFace = true;
+						// #ifdef H5
+						this.videoContext.j2s_pauseVideo();
+						// #endif
+
+						// #ifdef MP-WEIXIN || APP-PLUS
+						this.videoContext.pause && this.videoContext.pause()
+						// #endif
+
+						// uni.showToast({
+						// 	title: '人脸识别'
+						// })
+
+						// setTimeout(()=> {
+						// 	this.signName && uni.setStorageSync(this.signName, true);
+						// 	uni.$emit("verifyFace:" + this.courseId)
+						// }, 2000)
+						uni.navigateTo({
+							url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1&xiba=1'
+						})
 					}
-					times.push(playObj.duration - 4)
-					this.constrastTimes = times;
-				}
-
-
-				console.log(this.constrastTimes);
-				const currentContrastTime = this.constrastTimes[0] // 获得当前认证时间点
-
-				if (playObj.currentTime > currentContrastTime && !this.isVerifyFace) { // 需要活体认证''
-					this.isVerifyFace = true;
-					// #ifdef H5
-					this.videoContext.j2s_pauseVideo();
-					// #endif
-
-					// #ifdef MP-WEIXIN || APP-PLUS
-					console.log(this.videoContext);
-					this.videoContext.pause && this.videoContext.pause()
-					// #endif
-
-					// uni.showToast({
-					// 	title: '人脸识别'
-					// })
-
-					// setTimeout(()=> {
-					// 	this.signName && uni.setStorageSync(this.signName, true);
-					// 	uni.$emit("verifyFace:" + this.courseId)
-					// }, 2000)
-					uni.navigateTo({
-						url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1'
-					})
 				}
 			},
 
@@ -562,7 +641,7 @@
 				uni.navigateTo({
 					url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1&faceSignType=1'
 				})
-			
+
 			},
 			// 显示加速列表
 			showbei: function() {
@@ -575,8 +654,125 @@
 				this.bei = beisu
 				this.showjs = true
 			},
-			videoTimeUpdate: function(result) {
-				this.playInfo = result.detail
+			videoTimeUpdate: function(e) {
+				this.playInfo = e.detail
+			},
+			getaccessoryList() {
+				let id = uni.getStorageSync('TrainingId')
+				uni.showLoading({
+					title: '加载中...'
+				})
+				httpRequest({
+					url: '/user/pc/tb/train/learn/attach/list',
+					method: 'POST',
+					data: {
+						"trainId": id,
+						"pageSize": 10,
+						"pageCurrent": 1
+					},
+					success: res => {
+						uni.hideLoading()
+						console.log('学习资料：', res)
+						if (res.data.code == 200) {
+							this.filesData = res.data.data
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						request_err(err, '获取学习资料失败')
+					}
+				}, 1)
+			},
+			previewFile(item){
+				let path = item.savePath
+				let splitLength = path.split('.').length
+				let suffix = path.split('.')[splitLength-1]
+				console.log('path:',path)
+				if(suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8'){
+					uni.navigateTo({
+						url:'../../playVideo/playVideo?video='+this.path
+					})
+				}else if(suffix == 'doc' || suffix == 'xls' || suffix == 'ppt' || suffix == 'pdf' || suffix == 'docx' || suffix == 'xlsx' || suffix == 'pptx'){
+					uni.downloadFile({
+						url:path,
+						timeout:20000,
+						success: (res) => {
+							uni.hideLoading()
+							console.log('下载成功：',res)
+							if(res.statusCode === 200){
+								uni.openDocument({
+									filePath:res.tempFilePath,
+									success:(x)=> {
+										console.log('打开文档成功')
+									},
+									fail:err=>{
+										console.log('打开失败？',err)
+									}
+								})
+							}else {
+								Toast({
+									title:'下载文件失败'
+								})
+							}
+							
+							// uni.saveFile({
+							// 	tempFilePath:res
+							// })
+						},
+						fail: () => {
+							uni.hideLoading()
+							uni.showToast({
+								title:'下载失败',
+								icon:'none'
+							})
+						}
+					})
+					
+				}else {
+					Toast({
+						title:'该文件暂不支持预览'
+					})
+				}
+				
+			},
+			downloadFile(item){
+				let path = item.savePath
+				uni.showLoading({
+					title:'保存中...'
+				})
+				uni.downloadFile({
+					url:path,
+					timeout:20000,
+					success: (res) => {
+						console.log('下载成功：',res)
+						uni.saveFile({
+							tempFilePath:res.tempFilePath,
+							success:resp=>{
+								uni.hideLoading()
+								uni.showToast({
+									title:'保存成功:'+resp.savedFilePath,
+									icon:'none'
+								})
+							},
+							fail:err=>{
+								uni.hideLoading()
+								uni.showToast({
+									title:'保存失败',
+									icon:'none'
+								})
+							}
+						})
+					},
+					fail: () => {
+						uni.hideLoading()
+						uni.showToast({
+							title:'保存失败',
+							icon:'none'
+						})
+					}
+				})
 			}
 		}
 	};
@@ -584,6 +780,7 @@
 <style scoped>
 	/* pages/course/view/view.wxss */
 	@import "../../../static/css/detail.css";
+
 	.seckillBtn {
 		background-color: red;
 		color: #fff
@@ -642,5 +839,48 @@
 
 	.course_title {
 		margin-left: 10rpx;
+	}
+
+	.learningMat {
+		padding: 20rpx 30rpx;
+	}
+	.llltext{
+		text-align: center;
+		margin: 40rpx 0;
+	}
+	.item-block {
+		margin: 20rpx 0 40rpx;
+	
+		image {
+			margin-right: 30rpx;
+		}
+	
+		.pdf-docx-img {
+			width: 60rpx;
+			height: 73rpx;
+		}
+	
+		.file-img {
+			width: 65rpx;
+			height: 56rpx;
+		}
+	}
+	.file-content {
+		width: 65%;
+	}
+	.titlezxc {
+		color: #333333;
+		font-size: 30rpx;
+		margin-bottom: 6rpx;
+	}
+	.preview-img {
+		width: 38rpx;
+		height: 40rpx;
+		margin-right: 60rpx;
+	}
+	
+	.download-img {
+		width: 50rpx;
+		height: 50rpx;
 	}
 </style>

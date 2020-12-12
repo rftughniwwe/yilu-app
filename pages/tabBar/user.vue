@@ -140,6 +140,7 @@
 		},
 		onShow() {
 			this.globalSize = uni.getStorageSync('globalFontSize')
+			this.headimg = uni.getStorageSync('userBasicInfo').headImgUrl
 		},
 		methods:{
 			// 关于我们

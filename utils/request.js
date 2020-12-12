@@ -53,7 +53,6 @@ const request = (params, cb) => {
 				title: '加载中'
 			});
 		}
-		console.log('params:',params)
 		uni.request({
 			...params,
 			success: res => {

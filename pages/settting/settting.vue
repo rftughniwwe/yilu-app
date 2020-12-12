@@ -7,7 +7,7 @@
 				</view>
 				<view class="right-content flex-between">
 					<view class="head-img">
-						15777777777
+						{{phone}}
 					</view>
 					<view class="right-arrow-img">
 						<image src="../../static/right-arrow.png" mode=""></image>
@@ -85,11 +85,14 @@
 	export default {
 		data() {
 			return {
-
+				phone:''
 			};
 		},
 		components:{
 			primaryBtn
+		},
+		onLoad() {
+			this.phone = uni.getStorageSync('userBasicInfo').mobile
 		},
 		methods: {
 			// 前往修改密码

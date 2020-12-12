@@ -8,7 +8,7 @@
 				 @error="error"></camera>
 			</view>
 			<view v-if="time > 0" class="camera_time">{{time}}S</view>
-			<button v-else-if="time == 0" class="start_btn" type="primary" @tap="handlestart">重新认证</button>
+			<button v-else-if="time == 0" class="start_btn" type="primary" @tap="handlestart">开始认证</button>
 		</view>
 		<view v-else-if="startCamera == 2">
 			<view class="camera_tips cus">
@@ -21,7 +21,7 @@
 				当前操作需要先进行活体认证!
 			</view>
 			<!--  #ifdef  APP-PLUS -->
-			<button class="start_btn" type="primary" @tap="handleLoadCamera">重新认证</button>
+			<button class="start_btn" type="primary" @tap="handleLoadCamera">开始认证</button>
 			<!-- #endif -->
 			<!--  #ifdef  MP-WEIXIN -->
 			<button class="start_btn" type="primary" @tap="handleLoadCamera">开始认证</button>
@@ -65,7 +65,19 @@
 				time: -1,
 				bgc: '#fff',
 				idCardinfo: {},
-				faceSignType:''
+				faceSignType:'',
+				isFaceverify:false,
+				xiba:''
+			}
+		},
+		onBackPress() {
+			if(!this.isFaceverify){
+				uni.showToast({
+					title:'请进行人脸验证',
+					icon:'none',
+					duration:1500
+				})
+				return true
 			}
 		},
 		onLoad: function(options) {
@@ -80,6 +92,7 @@
 			this.signType = options.signType || '';
 			this.signName = options.signName || '';
 			this.faceSignType = options.faceSignType || ''
+			this.xiba = options.xiba || '0'
 			this.userInfo = uni.getStorageSync('userInfo')
 			this.periodNo = scene
 			this.courseId = options.courseId || ''
@@ -129,7 +142,9 @@
 				})
 			},
 			toError() {
+				this.isFaceverify = false 
 				uni.$emit("verifyFaceErr:" + this.refId)
+				uni.$emit("asifhbwsrei",{verify:false})
 			},
 
 			async getData() {
@@ -139,7 +154,6 @@
 				});
 				let _token = getUserLoginInfo('token')
 				let _userNo = getUserLoginInfo('userNo')
-				console.log('1111111111')
 				// if(!uni.getStorageSync('userInfo')){
 				// 	uni.showToast({
 				// 		title:'登录过期，请重新登录',
@@ -154,11 +168,9 @@
 
 				// 	return
 				// }
-				console.log('222222222', uni.getStorageSync('userStorage'))
 				let faceData = await auth.getFaceData({
 					userNo: uni.getStorageSync('userStorage').userNo
 				})
-				console.log('3333333333333')
 				const orderNo = (new Date).getTime();
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
@@ -220,7 +232,6 @@
 								manualCookie: true //是否由SDK内部处理sdk网络请求的cookie
 							}
 						}, result => {
-							console.debug('人脸验证：', result)
 							if (result.scene != 'wb_face_callback_verify_result' || (result.res && !result.res.success)) {
 								uni.showModal({
 									title: '提示',
@@ -233,7 +244,7 @@
 								this.toError();
 								return;
 							}
-
+							this.isFaceverify = true
 							let fn = () => {
 								uni.hideLoading()
 								uni.showToast({
@@ -250,7 +261,6 @@
 							uni.showLoading({
 								title: '处理中...'
 							})
-							console.log('courseInfo', courseInfo)
 							base64ToPath(result.res.userImageString).then((path) => {
 								uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
 									let face_img = JSON.parse(_resp.data)
@@ -295,7 +305,18 @@
 									}
 									if (this.type == 2) {
 										auth.faceSignLog(params).then(() => {
+											if(this.faceSignType == 1){
+												uni.$emit('asifhbwsrei',{verify:true})
+											}
+											if(this.xiba == 1){
+												uni.$emit('zxczxczxczxczxc',{zxczxc:true})
+											}
 											fn();
+										},err=>{
+											uni.showToast({
+												title:err.msg,
+												icon:'none'
+											})
 										});
 									} else {
 										auth.faceUserLog({
@@ -308,7 +329,18 @@
 											userImageBase64: result.res.userImageString,
 											faceContrastResult: 'Success',
 										}).then(() => {
+											if(this.faceSignType == 1){
+												uni.$emit('asifhbwsrei',{verify:true})
+											}
+											if(this.xiba == 1){
+												uni.$emit('zxczxczxczxczxc',{zxczxc:true})
+											}
 											fn();
+										},err=>{
+											uni.showToast({
+												title:err.msg,
+												icon:'none'
+											})
 										});
 									}
 								}, error => {

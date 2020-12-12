@@ -36,16 +36,16 @@
 				<view class="flex_row_between">
 					<like-btn :collectionId="courseInfo.id" :isCollection="courseInfo.isCollectionCourse" :courseCategory="courseInfo.courseCategory"></like-btn>
 					<text class="course_title font33 c_333">{{courseInfo.courseName}}</text>
-					<button class="share-btn" open-type="share">分享</button>
+					<button class="share-btn" open-type="share"></button>
 				</view>
 				<view class="mgt20" v-if="showPrice">
 					<view class="font41 c_red" v-if="!courseInfo.isFree">
 						<text class="font25">￥</text>{{courseInfo.courseOriginal || '加载中...'}}
-						<text class="font25 c_gold mgl20">{{courseInfo.courseDiscount ? '￥' + courseInfo.courseDiscount : '免费'}}</text>
-						<view @tap="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">SVIP</view>
+						<!-- <text class="font25 c_gold mgl20">{{courseInfo.courseDiscount ? '￥' + courseInfo.courseDiscount : '免费'}}</text>
+						<view @tap="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">SVIP</view> -->
 					</view>
-					<view class="font41 c_red" v-else>免费<view @tap="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
-					</view>
+					<!-- <view class="font41 c_red" v-else>免费<view @tap="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
+					</view> -->
 				</view>
 			</view>
 			<view class="h5px" v-if="courseInfo.id"></view>
@@ -54,7 +54,7 @@
 			<view class="teacher_box b_fff c_999 font25">
 				<text>讲师：</text>
 				<text v-if="courseInfo.lecturer" class="c_333">{{courseInfo.lecturer.lecturerName}}</text>
-				<attention-btn :isAttention="courseInfo.isAttentionLecturer" :lecturerUserNo="courseInfo.lecturerUserNo"></attention-btn>
+				<!-- <attention-btn :isAttention="courseInfo.isAttentionLecturer" :lecturerUserNo="courseInfo.lecturerUserNo"></attention-btn> -->
 				<button type="primary" class="fr sign_btn" @tap="sign()">签到</button>
 			</view>
 
@@ -125,10 +125,10 @@
 				</view>
 			</view>
 		</view>
-		<float-tab :shareImg="true" coursetype="1" ></float-tab>
+		<!-- <float-tab :shareImg="true" coursetype="1" ></float-tab> -->
 		<view v-if="!isFree && showPrice" class="buy_panel">
 			<view v-if="!courseInfo.isPutaway" class="buy_btn disabled">课程已下架</view>
-			<view v-else @tap="buyCourse" :class="['buy_btn', isSeckill?'seckillBtn':'']"> {{ isSeckill?'立即秒杀':'立即购买' }}</view>
+			<!-- <view v-else @tap="buyCourse" :class="['buy_btn', isSeckill?'seckillBtn':'']"> {{ isSeckill?'立即秒杀':'立即购买' }}</view> -->
 		</view>
 	</view>
 </template>
@@ -144,8 +144,6 @@
 	} from "@/utils/auth";
 	import polyv from "@/utils/polyv";
 	import likeBtn from "@/components/likebtn/likebtn";
-	import attentionBtn from "@/components/attentionBtn/attentionBtn";
-	import floatTab from "@/components/floatTab/floatTab";
 	import ActivityPanel from "@/components/activity/ActivityPanel";
 	import {
 		getUserLoginInfo
@@ -183,8 +181,6 @@
 
 		components: {
 			likeBtn,
-			attentionBtn,
-			floatTab,
 			ActivityPanel
 		},
 		props: {},

@@ -326,6 +326,7 @@
 		{
 			"path": "pages/verifyFace/verifyFace",
 			"style": {
+				// "navigationStyle": "custom",
 				"navigationBarTitleText": "人脸识别"
 			}
 		},
