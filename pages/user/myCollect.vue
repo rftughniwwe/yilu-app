@@ -22,50 +22,26 @@
 		<view v-show="content=='1'" class="article-content" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}">
 			<template v-if="articleCollect && articleCollect.length > 0">
 
-				<view class="flex-between editor" v-for="(item,index) in articleCollect" :key='index' @click="selectedItem(index+1)">
+				<view class="flex-between editor" v-for="(item,index) in articleCollect" :key='index' @click="selectedItem(index)">
 					<view v-show="showRemove" class="circle-point">
-						<view class="point-content flex-between" :style="{'border-color':selectedArr == '1'?'#F45B5A':'#BFBFBF'}">
-							<image v-show="selectedArr == '1'" src="../../static/selected.png" mode=""></image>
+						<view class="point-content flex-between" :style="{'border-color':selectItem == index?'#F45B5A':'#BFBFBF','background-color':selectItem == index?'#F45B5A':'#FFF'}">
+							<image v-show="selectItem == index" src="../../static/selected.png" mode=""></image>
 						</view>
 					</view>
 					<!-- <view class="right"> -->
 					<newCover @GoArticleDetails='goDetails' position='left' :datas='item' />
 					<!-- </view> -->
 				</view>
-				<!-- <view class="flex-between editor" @click="selectedItem(2)">
-					<view v-show="showRemove" class="circle-point">
-						<view class="point-content flex-between" :style="{'border-color':selectedArr == '2'?'#F45B5A':'#BFBFBF'}">
-							<image v-show="selectedArr == '2'" src="../../static/selected.png" mode=""></image>
-						</view>
-					</view>
-					<newCover position='text' :datas='{}' />
-				</view>
-				<view class="flex-between editor" @click="selectedItem(3)">
-					<view v-show="showRemove" class="circle-point">
-						<view class="point-content flex-between" :style="{'border-color':selectedArr == '3'?'#F45B5A':'#BFBFBF'}">
-							<image v-show="selectedArr == '3'" src="../../static/selected.png" mode=""></image>
-						</view>
-					</view>
-					<newCover position='moreimg' :datas='{}' />
-				</view>
-				<view class="flex-between editor" @click="selectedItem(4)">
-					<view v-show="showRemove" class="circle-point">
-						<view class="point-content flex-between" :style="{'border-color':selectedArr == '4'?'#F45B5A':'#BFBFBF'}">
-							<image v-show="selectedArr == '4'" src="../../static/selected.png" mode=""></image>
-						</view>
-					</view>
-					<newCover position='right' :datas='{}' />
-				</view> -->
 			</template>
 			<template v-else>
-				<EmptyData type='serach'/>
+				<EmptyData type='serach' />
 			</template>
 		</view>
 		<view v-show="showRemove" class="remove-content flex-around">
-			<view class="remvoe-all">
-				一键清空
+			<view class="remvoe-all" @click="removeAllCollection">
+				全部清空
 			</view>
-			<view class="delete" :style="{'color':selectedArr?'#F45B5A':'#999999'}">
+			<view class="delete" :style="{'color':selectItem!=-1?'#F45B5A':'#999999'}" @click="removeSingle">
 				删除
 			</view>
 		</view>
@@ -96,9 +72,11 @@
 				content: '0',
 				isFullScreen: false,
 				showRemove: false,
-				selectedArr: '',
+				selectedRemoveItem: '',
 				topicCollect: [],
-				articleCollect:[]
+				articleCollect: [],
+				selectItem: -1,
+				selectItemData: {}
 			};
 		},
 		components: {
@@ -115,14 +93,15 @@
 		},
 		methods: {
 			goDetails(e) {
+				if (this.showRemove) return
 				let item = e.item
 				uni.navigateTo({
-					url: `../aiticlePage/aiticlePage?id=${item.id}&coverImg=${item.blogImg}`
+					url: `../aiticlePage/aiticlePage?id=${item.blogId}&coverImg=${item.blogImg}`
 				})
 			},
 			getAllCollection() {
 				uni.showLoading({
-					title:'加载中'
+					title: '加载中'
 				})
 				httpRequest({
 					url: '/community/api/labelUserRecord/selectLabellist',
@@ -137,7 +116,7 @@
 						console.log('zz', res)
 						if (res.data.code == 200) {
 							let list = res.data.data
-							list.forEach((i,index)=>{
+							list.forEach((i, index) => {
 								list[index].collectType = 1
 							})
 							this.topicCollect = list
@@ -150,7 +129,7 @@
 					}
 				})
 			},
-			getAllCollectionArticle(){
+			getAllCollectionArticle() {
 				httpRequest({
 					url: '/community/auth/blog/user/record/collection/list',
 					method: 'POST',
@@ -160,7 +139,6 @@
 						userNo: getUserLoginInfo('userNo')
 					},
 					success: res => {
-						console.log('zzzzzzzz',res)
 						if (res.data.code == 200) {
 							let list = res.data.data.list
 							this.articleCollect = list
@@ -174,14 +152,14 @@
 				}, 3)
 			},
 			tabSelected(data) {
-				this.selectedArr = ''
+				this.selectedRemoveItem = ''
 				this.content = data.tab
 				this.showRemove = false
 			},
 			// 收藏按钮点击
 			collect(e) {
 				let item = e.item
-				if(item.collectType == 1){
+				if (item.collectType == 1) {
 					httpRequest({
 						url: '/community/api/labelUserRecord/deleteLabelRecord',
 						method: 'DELETE',
@@ -199,7 +177,7 @@
 									icon: 'none',
 									duration: 1500
 								})
-			
+
 							} else {
 								request_success(res)
 							}
@@ -211,9 +189,10 @@
 				}
 			},
 			// 跳转
-			routeJump() {
+			routeJump(e) {
+				let obj = encodeURIComponent(JSON.stringify(e.item))
 				uni.navigateTo({
-					url: '../specialTopic/specialTopicDetail'
+					url: '../specialTopic/specialTopicDetail?item=' + obj
 				})
 			},
 			// 返回 
@@ -225,16 +204,78 @@
 			// 删除
 			removeContent() {
 				if (this.showRemove) {
-					this.selectedArr = ''
+					this.selectedRemoveItem = ''
 				}
 				this.showRemove = !this.showRemove
 			},
 			// 选中项
 			selectedItem(num) {
 				if (this.showRemove) {
-
-					this.selectedArr = num
+					this.selectItem = num
+					this.selectItemData = this.articleCollect[num]
+					// this.selectedRemoveItem = num
 				}
+			},
+			removeSingle() {
+				if (this.selectItem == -1) return
+				httpRequest({
+					url: '/community/auth/blog/user/record/delete',
+					method: 'POST',
+					data: {
+						opType: 1,
+						userNo: getUserLoginInfo('userNo'),
+						weblogId: this.selectItemData.blogId
+					},
+					success: res => {
+						if (res.data.code == 200) {
+							this.selectItem = -1
+							uni.showToast({
+								title: '删除成功',
+								icon: 'none'
+							})
+							this.getAllCollectionArticle()
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						request_err(err, '删除失败')
+					}
+				}, 3)
+			},
+			removeAllCollection() {
+				uni.showModal({
+					title: '提示',
+					content: '确认删除全部文章？',
+					success: res => {
+						if (res.confirm) {
+							httpRequest({
+								url: '/community/api/blog/user/record/deleteList',
+								method: 'DELETE',
+								data: {
+									"articleType": 2,
+									"opType": 1,
+									"userNo": getUserLoginInfo('userNo')
+								},
+								success: res => {
+									if (res.data.code == 200) {
+										uni.showToast({
+											title: '删除成功',
+											icon: 'none',
+											duration:1500
+										})
+										this.getAllCollectionArticle()
+									} else {
+										request_success(res)
+									}
+								},
+								fail: err => {
+									request_err(err, '删除失败')
+								}
+							}, 3)
+						}
+					}
+				})
 			}
 		}
 	}
@@ -264,8 +305,7 @@
 		height: 42rpx;
 		border-radius: 50%;
 		background-color: #FFFFFF;
-		border: 2rpx solid #BFBFBF;
-		padding: 2rpx;
+		border: 1rpx solid #BFBFBF;
 
 		image {
 			width: 44rpx;

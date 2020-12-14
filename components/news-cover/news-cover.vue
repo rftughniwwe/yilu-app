@@ -10,8 +10,8 @@
 			</view>
 			<view class="form-time flex-between">
 				<!-- <image v-if="datas.isTop" class="top-img" src="../../static/top.png" mode=""></image> -->
-				<image class="head-user-img" :src="datas.bloggerUserImg" mode=""></image>
-				<text>{{datas.bloggerNickname?datas.bloggerNickname:'未知用户'}}</text>
+				<!-- <image class="head-user-img" :src="datas.bloggerUserImg" mode=""></image> -->
+				<text>{{datas.author?datas.author:'未知用户'}}</text>
 			</view>
 		</view>
 	</view>
@@ -41,6 +41,7 @@
 <style lang="scss">
 	.main {
 		border-bottom: 1px solid #eaeaea;
+		width: 100%;
 	}
 
 	.top-img {
@@ -61,7 +62,7 @@
 		padding: 20rpx 0;
 		position: relative;
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-around;
 		align-items: flex-start;
 
 		.form-time {
@@ -80,7 +81,7 @@
 		}
 
 		.left {
-			max-width: 65%;
+			max-width: 60%;
 			display: -webkit-box;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 2;
@@ -92,8 +93,9 @@
 
 
 		.right {
+			width: 35%;
 			image {
-				width: 225rpx;
+				width: 100%;
 				height: 144rpx;
 				border: 2rpx solid #eaeaea;
 			}
@@ -125,6 +127,7 @@
 			-webkit-line-clamp: 2;
 			overflow: hidden;
 			color: #333333;
+			width: 60%;
 		}
 
 		.bottom {

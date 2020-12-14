@@ -79,7 +79,8 @@
 							code: e,
 							mobile: this.phoneNum,
 							password: initialPwd,
-							repassword: initialPwd
+							repassword: initialPwd,
+							clientType:2
 						},
 						success: (res) => {
 							uni.hideLoading()

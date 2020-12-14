@@ -65,17 +65,20 @@
 				time: -1,
 				bgc: '#fff',
 				idCardinfo: {},
-				faceSignType:'',
-				isFaceverify:false,
-				xiba:''
+				faceSignType: '',
+				isFaceverify: false,
+				xiba: '',
+				lat:'',
+				longit:'',
+				signAddress:''
 			}
 		},
 		onBackPress() {
-			if(!this.isFaceverify){
+			if (!this.isFaceverify) {
 				uni.showToast({
-					title:'请进行人脸验证',
-					icon:'none',
-					duration:1500
+					title: '请进行人脸验证',
+					icon: 'none',
+					duration: 1500
 				})
 				return true
 			}
@@ -96,14 +99,15 @@
 			this.userInfo = uni.getStorageSync('userInfo')
 			this.periodNo = scene
 			this.courseId = options.courseId || ''
+			
 			let fn = () => {
 				var That = this;
 				uni.getLocation({
 					type: 'wgs84',
 					geocode: true,
 					success: function(res) {
-						That.longitude = res.longitude;
-						That.latitude = res.latitude;
+						That.longit = res.longitude;
+						That.lat = res.latitude;
 						let place = ''
 						if (res.address) {
 							const a = res.address;
@@ -114,11 +118,12 @@
 							a.street && (place += a.street);
 							a.streetNum && (place += a.streetNum);
 						}
-						That.place = place;
+						That.signAddress = place;
 						That.getData();
 					}
 				});
 			}
+			fn()
 			if (uni.getStorageSync('userInfo')) {
 				this.userInfo = uni.getStorageSync('userInfo')
 				fn();
@@ -142,9 +147,11 @@
 				})
 			},
 			toError() {
-				this.isFaceverify = false 
+				this.isFaceverify = false
 				uni.$emit("verifyFaceErr:" + this.refId)
-				uni.$emit("asifhbwsrei",{verify:false})
+				uni.$emit("asifhbwsrei", {
+					verify: false
+				})
 			},
 
 			async getData() {
@@ -264,58 +271,41 @@
 							base64ToPath(result.res.userImageString).then((path) => {
 								uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
 									let face_img = JSON.parse(_resp.data)
-									let params = {}
-									if (this.signType == 3) {
-										params = {
-											courseType: 1,
-											numEvent: courseInfo.trainId,
-											refName: courseInfo.courseName,
-											signonApp: 0,
-											statusId: 1,
-											compId: comid,
-											startTime: courseInfo.startTime,
-											endTime: courseInfo.endTime,
-											userNo: _userNo,
-											refId: this.refId,
-											longitude: this.longitude,
-											latitude: this.latitude,
-											place: this.place,
-											userImage: face_img.data,
-											faceContrasResult: 'Success',
-										}
-									} else {
-										params = {
-											courseType: this.signType,
-											numEvent: courseInfo.trainId,
-											refName: courseInfo.courseName,
-											signonApp: 0,
-											statusId: 1,
-											compId: comid,
-											startTime: courseInfo.startTime,
-											endTime: courseInfo.endTime,
-											userNo: _userNo,
-											signonType: this.faceSignType,
-											refId: this.refId,
-											longitude: this.longitude,
-											latitude: this.latitude,
-											place: this.place,
-											userImage: face_img.data,
-											faceContrasResult: 'Success',
-										}
+									let params = {
+										courseType: this.signType,
+										numEvent: courseInfo.trainId,
+										refName: courseInfo.courseName,
+										signonApp: 0,
+										statusId: 1,
+										compId: comid,
+										startTime: courseInfo.startTime,
+										endTime: courseInfo.endTime,
+										userNo: _userNo,
+										signonType: this.faceSignType,
+										refId: this.refId,
+										longitude: this.longit,
+										latitude: this.lat,
+										place: this.signAddress,
+										userImage: face_img.data,
+										faceContrasResult: 'Success',
 									}
 									if (this.type == 2) {
 										auth.faceSignLog(params).then(() => {
-											if(this.faceSignType == 1){
-												uni.$emit('asifhbwsrei',{verify:true})
+											if (this.faceSignType == 1) {
+												uni.$emit('asifhbwsrei', {
+													verify: true
+												})
 											}
-											if(this.xiba == 1){
-												uni.$emit('zxczxczxczxczxc',{zxczxc:true})
+											if (this.xiba == 1) {
+												uni.$emit('zxczxczxczxczxc', {
+													zxczxc: true
+												})
 											}
 											fn();
-										},err=>{
+										}, err => {
 											uni.showToast({
-												title:err.msg,
-												icon:'none'
+												title: err.msg,
+												icon: 'none'
 											})
 										});
 									} else {
@@ -323,23 +313,27 @@
 											userNo: _userNo,
 											category: this.signType,
 											refId: this.refId,
-											longitude: this.longitude,
-											latitude: this.latitude,
-											place: this.place,
+											longitude: this.longit,
+											latitude: this.lat,
+											place: this.signAddress,
 											userImageBase64: result.res.userImageString,
 											faceContrastResult: 'Success',
 										}).then(() => {
-											if(this.faceSignType == 1){
-												uni.$emit('asifhbwsrei',{verify:true})
+											if (this.faceSignType == 1) {
+												uni.$emit('asifhbwsrei', {
+													verify: true
+												})
 											}
-											if(this.xiba == 1){
-												uni.$emit('zxczxczxczxczxc',{zxczxc:true})
+											if (this.xiba == 1) {
+												uni.$emit('zxczxczxczxczxc', {
+													zxczxc: true
+												})
 											}
 											fn();
-										},err=>{
+										}, err => {
 											uni.showToast({
-												title:err.msg,
-												icon:'none'
+												title: err.msg,
+												icon: 'none'
 											})
 										});
 									}
@@ -463,39 +457,23 @@
 					}
 					if (this.type === 2) {
 						let params = {}
-						if (this.signType == 3) {
-							params = {
-								userNo: this.userInfo.userNo,
-								refId: this.refId,
-								faceContrasResult: 'Success',
-							}
-						} else {
-							params = {
-								userNo: this.userInfo.userNo,
-								signType: this.signType,
-								refId: this.refId,
-								faceContrasResult: 'Success',
-							}
+						params = {
+							userNo: this.userInfo.userNo,
+							signType: this.signType,
+							refId: this.refId,
+							faceContrasResult: 'Success',
 						}
 						auth.faceSignLog(params).then(() => {
 							fn();
 						});
 					} else {
-						let params = {}
-						if (this.signType == 3) {
-							params = {
-								userNo: this.userInfo.userNo,
-								refId: this.refId,
-								faceContrasResult: 'Success',
-							}
-						} else {
-							params = {
-								userNo: this.userInfo.userNo,
-								signType: this.signType,
-								refId: this.refId,
-								faceContrasResult: 'Success',
-							}
+						let params = {
+							userNo: this.userInfo.userNo,
+							signType: this.signType,
+							refId: this.refId,
+							faceContrasResult: 'Success',
 						}
+
 						auth.faceUserLog(params).then(() => {
 							fn();
 						});

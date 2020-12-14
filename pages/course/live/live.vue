@@ -75,12 +75,9 @@
 				<view class="tabs font33 c_333">
 					<view v-if="isMinappAudit " :class="tab == 2 ? 'tab active' : 'tab'" @tap="changeTab" data-int="2">课程大纲</view>
 					<view :class="tab == 1 ? 'tab active' : 'tab'" @tap="changeTab" data-int="1">课程介绍</view>
+					<view :class="tab == 3 ? 'tab active' : 'tab'" @tap="changeTab" data-int="3">学习资料</view>
 				</view>
 				<view v-if="tab == 2 && isMinappAudit" class="course_brief font25 b_fff mgt30 pdb30">
-					<!-- <view class="h94 p_relative pdl20">
-        <text class="col"></text>
-        <text class="font_b pdl20">点播课程大纲</text>
-      </view> -->
 					<view v-for="(item, index) in chapterList" :key="index" class="c_333">
 						<view class="chapter_title pdl30">{{item.chapterName}}</view>
 						<view v-for="(item, index2) in item.periodList" :key="index2" class="pdl30 pdr40 h60 o_hide p_relative"
@@ -120,8 +117,30 @@
 					</view>
 					<view class="text_center c_333 font33" v-if="loaddingEnd">加载中...</view>
 				</view>
-				<view v-else class="course_brief font25 b_fff pd20">
+				<view v-else-if="tab == 1" class="course_brief font25 b_fff pd20">
 					<rich-text :nodes="courseInfo.introduce"></rich-text>
+				</view>
+				<view v-else-if="tab == 3" class="course_brief font25 b_fff pd20">
+					<template v-if="filesData.list && filesData.list.length >0">
+						<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index'>
+							<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
+							<view class="file-content text-overflow2">
+								<view class="titlezxc">
+									{{item.name}}
+								</view>
+								<!-- <view class="file-size">
+									999MB
+								</view> -->
+							</view>
+							<view class="action-content flex-between">
+								<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
+								<image class="download-img" src="../../../static/download.png" mode="" @click="downloadFile(item)"></image>
+							</view>
+						</view>
+					</template>
+					<template v-else>
+						<EmptyData type='serach' />
+					</template>
 				</view>
 			</view>
 		</view>
@@ -148,6 +167,9 @@
 	import {
 		getUserLoginInfo
 	} from '@/utils/util.js'
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	import Toast from '@/commons/showToast.js'
+	
 	export default {
 		data() {
 			return {
@@ -175,13 +197,15 @@
 				courseId: "",
 				pageCurrent: 0,
 				signName: '',
-				totalPage: 0
+				totalPage: 0,
+				filesData: []
 			};
 		},
 
 		components: {
 			likeBtn,
-			ActivityPanel
+			ActivityPanel,
+			EmptyData
 		},
 		props: {},
 
@@ -258,11 +282,11 @@
 			handlePolyvError(error) {
 				console.log(error)
 			},
-			goVip() {
-				uni.navigateTo({
-					url: '../../vip/vip'
-				});
-			},
+			// goVip() {
+			// 	uni.navigateTo({
+			// 		url: '../../vip/vip'
+			// 	});
+			// },
 
 			changeTab(e) {
 				const int = e.currentTarget.dataset.int;
@@ -564,5 +588,42 @@
 
 	.course_title {
 		margin-left: 10rpx;
+	}
+	.item-block {
+		margin: 20rpx 0 40rpx;
+	
+		image {
+			margin-right: 30rpx;
+		}
+	
+		
+	}
+	.pdf-docx-img {
+		width: 60rpx;
+		height: 73rpx;
+		margin-right: 16rpx;
+	}
+		
+	.file-img {
+		width: 65rpx;
+		height: 56rpx;
+	}
+	.file-content {
+		width: 65%;
+	}
+	.titlezxc {
+		color: #333333;
+		font-size: 30rpx;
+		margin-bottom: 6rpx;
+	}
+	.preview-img {
+		width: 38rpx;
+		height: 40rpx;
+		margin-right: 60rpx;
+	}
+	
+	.download-img {
+		width: 50rpx;
+		height: 50rpx;
 	}
 </style>

@@ -28,15 +28,15 @@
 				<text class="course_title font33 c_333">{{courseInfo.courseName || '正在加载...'}}</text>
 				<button class="share-btn" open-type="share"></button>
 			</view>
-			<view class="mgt20" v-if="showPrice">
+			<!-- 	<view class="mgt20" v-if="showPrice">
 				<view class="font41 c_red" v-if="!courseInfo.isFree">
 					<text class="font25">￥</text>{{courseInfo.courseOriginal || '加载中...'}}
 					<text class="font25 c_gold mgl20">{{courseInfo.courseDiscount ? '￥' + courseInfo.courseDiscount : '免费'}}</text>
 					<view @click="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">SVIP</view>
 				</view>
-				<!-- <view class="font41 c_red" v-else>免费<view style="display: inline-block;" @click="goVip" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
-				</view> -->
-			</view>
+				<view class="font41 c_red" v-else>免费<view style="display: inline-block;" @click="goVip" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
+				</view>
+			</view> -->
 		</view>
 		<view class="h5px" v-if="courseInfo.id"></view>
 		<activity-panel v-if="courseInfo.id" @startSeckill="startSeckill" :courseInfo="courseInfo"></activity-panel>
@@ -58,11 +58,11 @@
 			<view v-if="tab == 2 && isMinappAudit " class="course_brief font25 b_fff mgt30 pdb30">
 				<view v-for="(item, index) in chapterList" :key="index" class="c_333">
 					<view class="chapter_title pdl30">{{item.chapterName}}</view>
-					<view v-for="(item, index2) in item.periodList" :key="index2" class="pdl30 pdr40 h60 o_hide" @tap="selectVideo(item)"
+					<view v-for="(item, index2) in item.periodList" :key="index2" class="pdl30 pdr40 h60 o_hide flex-row-start" @tap="selectVideo(item)"
 					 :data-vInfo="item">
-						<image v-if="item.videoVid" src="" class="play_img"></image>
-						<image v-else src="" class="play_img no_play"></image>
-						<text v-if="item.isFree" class="c_blue">(免费)</text>
+						<image v-if="item.videoVid" src="../../../static/no_play.svg" class="play_img"></image>
+						<image v-else src="../../../static/no_play.svg" class="play_img no_play"></image>
+						<!-- <text v-if="item.isFree" class="c_blue">(免费)</text> -->
 						<text class="c_999" v-if="!item.videoVid || !item.videoLength">(未更新)</text>
 						<text>{{item.periodName}}</text>
 					</view>
@@ -75,14 +75,11 @@
 			<view v-else-if="tab == 3" class="course_brief font25 b_fff pd20">
 				<template v-if="filesData.list && filesData.list.length >0">
 					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index'>
-						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
-						<view class="file-content text-overflow2">
-							<view class="titlezxc">
-								{{item.name}}
-							</view>
-							<!-- <view class="file-size">
-								999MB
-							</view> -->
+						<view class="pdf-docx-img">
+							<image class="sxdcfdiuh" src="../../../static/files-DOCX.png" mode=""></image>
+						</view>
+						<view class="file-content">
+							{{item.name}}
 						</view>
 						<view class="action-content flex-between">
 							<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
@@ -95,16 +92,18 @@
 				</template>
 			</view>
 		</view>
-		<!-- <float-tab :shareImg="true" coursetype="1" @hidevideo="changeVideoBox" @hideewm="changeVideoBox"></float-tab> -->
-		<view v-if="!isFree && showPrice" class="buy_panel">
-			<view v-if="!courseInfo.isPutaway" class="buy_btn disabled">课程已下架</view>
-			<!-- <view v-else @tap="buyCourse" :class="['buy_btn', isSeckill?'seckillBtn':'']"> {{ isSeckill?'立即秒杀':'立即购买' }}</view> -->
+		<view v-if="fromUser" class="goexam-btn" @click="goExamfromUser">
+			去考试
 		</view>
+		<!-- <float-tab :shareImg="true" coursetype="1" @hidevideo="changeVideoBox" @hideewm="changeVideoBox"></float-tab> -->
+		<!-- <view v-if="!isFree && showPrice" class="buy_panel">
+			<view v-if="!courseInfo.isPutaway" class="buy_btn disabled">课程已下架</view>
+			<view v-else @tap="buyCourse" :class="['buy_btn', isSeckill?'seckillBtn':'']"> {{ isSeckill?'立即秒杀':'立即购买' }}</view>
+		</view> -->
 	</view>
 </template>
 
 <script>
-	// pages/course/view/view.js
 	import * as apis from "@/commons/api/course";
 	import * as auth from "@/commons/api/user";
 	import {
@@ -113,7 +112,6 @@
 	} from "@/utils/auth";
 	import polyv from "@/utils/polyv";
 	import likeBtn from "@/components/likebtn/likebtn";
-	// import attentionBtn from "@/components/attentionBtn/attentionBtn";
 	import ActivityPanel from "@/components/activity/ActivityPanel";
 	import {
 		request_err,
@@ -128,6 +126,8 @@
 	import {
 		httpRequest
 	} from '@/utils/httpRequest.js'
+	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	import Toast from '@/commons/showToast.js'
 
 	export default {
 		data() {
@@ -170,7 +170,10 @@
 				courseId: "",
 				isVerifyFace: false,
 				randomtimes: 0,
-				filesData: []
+				filesData: [],
+				fromUser: false,
+				traningId: '',
+				userCourseDatas: {}
 			};
 		},
 
@@ -178,6 +181,7 @@
 			likeBtn,
 			// attentionBtn,
 			// floatTab,
+			EmptyData,
 			ActivityPanel
 		},
 		onShareAppMessage: function(res) {
@@ -197,8 +201,9 @@
 		 */
 		onLoad: function(options) {
 			let courseId = '';
+			let coursedatas = JSON.parse(decodeURIComponent(options.coursedata))
 			if (options.scene) {
-				courseId = decodeURIComponent(options.scene);
+				courseId = JSON.parse(decodeURIComponent(options.scene))
 			} else {
 				courseId = options.id;
 			}
@@ -206,20 +211,24 @@
 			if (!this.isMinappAudit) {
 				this.tab = 1;
 			}
-
+			if (coursedatas) {
+				this.userCourseDatas = coursedatas
+			}
 			this.signName = courseId + ':' + (new Date()).getTime();
-
+			this.fromUser = options.fromUser
 			this.courseId = courseId
+			this.traningId = options.trainingId || ''
 			this.getCourse(courseId);
 
 			this.getChapterList(1);
+			// 学习资料
 			this.getaccessoryList()
 			let coursesss = uni.getStorageSync('courseInfoData')
 
 			uni.$on('asifhbwsrei', (res) => {
 				if (res.verify) {
 					uni.setStorageSync('TrainingId', coursesss.trainId)
-					this.getaccessoryList()
+					// this.getaccessoryList()
 					uni.showModal({
 						title: '提示',
 						content: '签出成功，是否进行考试？',
@@ -250,6 +259,7 @@
 		 * 生命周期函数--监听页面显示
 		 */
 		onShow: function() {
+			this.getuserCourseinfo()
 			uni.$on('zxczxczxczxczxc', (res) => {
 				if (res.zxczxc) {
 					this.isVerifyFace = true
@@ -263,34 +273,6 @@
 				}
 			})
 		},
-
-		/**
-		 * 生命周期函数--监听页面隐藏
-		 */
-		onHide: function() {},
-
-		/**
-		 * 生命周期函数--监听页面卸载
-		 */
-		onUnload: function() {
-			this.playstatu = false
-			uni.hideLoading()
-		},
-
-		/**
-		 * 页面相关事件处理函数--监听用户下拉动作
-		 */
-		onPullDownRefresh: function() {},
-
-		/**
-		 * 页面上拉触底事件的处理函数
-		 */
-		onReachBottom: function() {},
-
-		/**
-		 * 用户点击右上角分享
-		 */
-		onShareAppMessage: function() {},
 		methods: {
 			sign() {
 				uni.navigateTo({
@@ -563,16 +545,23 @@
 				let result = 0
 				let m = Math.floor(max) - 40
 				r()
+				let i = 0
 
 				function r() {
 					result = Math.floor(Math.random() * m)
-					if (result <= 30) {
-						result = 31
+					i++
+					if (i >= 20) {
+						return
 					}
+					if (result <= 30) {
+						r()
+					}
+
 				}
 				this.randomtimes = Math.floor(result)
 				return
 			},
+
 			// 活体认证
 			checkContrast(playObj) {
 				if (this.isFaceContras === 0) {
@@ -657,8 +646,60 @@
 			videoTimeUpdate: function(e) {
 				this.playInfo = e.detail
 			},
+			getuserCourseinfo() {
+				if(!this.userCourseDatas) return
+				let obj = this.userCourseDatas
+				httpRequest({
+					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',
+					method: 'POST',
+					data: {
+						"idcard": obj.idcard,
+						"trainId": obj.id
+					},
+					success:res=>{
+						console.log('查询状态：',res)
+						if(res.data.code == 200){
+							
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						console.log('查询错误：',err)
+					}
+				},1)
+			},
+			// 去考试
+			goExamfromUser() {
+				let obj = this.userCourseDatas
+				if (obj.isPassExam == 1) {
+					uni.showToast({
+						title: '你该场次考试已经通过',
+						icon: 'none'
+					})
+					return
+				} else if (obj.isSignon == 0) {
+					uni.showToast({
+						title: '请先观看视频并签出',
+						icon: 'none'
+					})
+					return
+				}
+				let id = this.traningId
+				uni.navigateTo({
+					url: '../../exam/examInfo?id=' + id
+				})
+			},
 			getaccessoryList() {
-				let id = uni.getStorageSync('TrainingId')
+				console.log('zzz', this.traningId)
+				let id = this.traningId
+				if (!id) {
+					uni.showToast({
+						title: '获取学习资料失败',
+						icon: 'none'
+					})
+					return
+				}
 				uni.showLoading({
 					title: '加载中...'
 				})
@@ -685,38 +726,39 @@
 					}
 				}, 1)
 			},
-			previewFile(item){
+			previewFile(item) {
 				let path = item.savePath
 				let splitLength = path.split('.').length
-				let suffix = path.split('.')[splitLength-1]
-				console.log('path:',path)
-				if(suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8'){
+				let suffix = path.split('.')[splitLength - 1]
+				console.log('path:', path)
+				if (suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8') {
 					uni.navigateTo({
-						url:'../../playVideo/playVideo?video='+this.path
+						url: '../../playVideo/playVideo?video=' + this.path
 					})
-				}else if(suffix == 'doc' || suffix == 'xls' || suffix == 'ppt' || suffix == 'pdf' || suffix == 'docx' || suffix == 'xlsx' || suffix == 'pptx'){
+				} else if (suffix == 'doc' || suffix == 'xls' || suffix == 'ppt' || suffix == 'pdf' || suffix == 'docx' || suffix ==
+					'xlsx' || suffix == 'pptx') {
 					uni.downloadFile({
-						url:path,
-						timeout:20000,
+						url: path,
+						timeout: 20000,
 						success: (res) => {
 							uni.hideLoading()
-							console.log('下载成功：',res)
-							if(res.statusCode === 200){
+							console.log('下载成功：', res)
+							if (res.statusCode === 200) {
 								uni.openDocument({
-									filePath:res.tempFilePath,
-									success:(x)=> {
+									filePath: res.tempFilePath,
+									success: (x) => {
 										console.log('打开文档成功')
 									},
-									fail:err=>{
-										console.log('打开失败？',err)
+									fail: err => {
+										console.log('打开失败？', err)
 									}
 								})
-							}else {
+							} else {
 								Toast({
-									title:'下载文件失败'
+									title: '下载文件失败'
 								})
 							}
-							
+
 							// uni.saveFile({
 							// 	tempFilePath:res
 							// })
@@ -724,43 +766,43 @@
 						fail: () => {
 							uni.hideLoading()
 							uni.showToast({
-								title:'下载失败',
-								icon:'none'
+								title: '下载失败',
+								icon: 'none'
 							})
 						}
 					})
-					
-				}else {
+
+				} else {
 					Toast({
-						title:'该文件暂不支持预览'
+						title: '该文件暂不支持预览'
 					})
 				}
-				
+
 			},
-			downloadFile(item){
+			downloadFile(item) {
 				let path = item.savePath
 				uni.showLoading({
-					title:'保存中...'
+					title: '保存中...'
 				})
 				uni.downloadFile({
-					url:path,
-					timeout:20000,
+					url: path,
+					timeout: 20000,
 					success: (res) => {
-						console.log('下载成功：',res)
+						console.log('下载成功：', res)
 						uni.saveFile({
-							tempFilePath:res.tempFilePath,
-							success:resp=>{
+							tempFilePath: res.tempFilePath,
+							success: resp => {
 								uni.hideLoading()
 								uni.showToast({
-									title:'保存成功:'+resp.savedFilePath,
-									icon:'none'
+									title: '保存成功:' + resp.savedFilePath,
+									icon: 'none'
 								})
 							},
-							fail:err=>{
+							fail: err => {
 								uni.hideLoading()
 								uni.showToast({
-									title:'保存失败',
-									icon:'none'
+									title: '保存失败',
+									icon: 'none'
 								})
 							}
 						})
@@ -768,8 +810,8 @@
 					fail: () => {
 						uni.hideLoading()
 						uni.showToast({
-							title:'保存失败',
-							icon:'none'
+							title: '保存失败',
+							icon: 'none'
 						})
 					}
 				})
@@ -844,43 +886,72 @@
 	.learningMat {
 		padding: 20rpx 30rpx;
 	}
-	.llltext{
+
+	.llltext {
 		text-align: center;
 		margin: 40rpx 0;
 	}
+
 	.item-block {
 		margin: 20rpx 0 40rpx;
-	
+
 		image {
 			margin-right: 30rpx;
 		}
-	
-		.pdf-docx-img {
-			width: 60rpx;
-			height: 73rpx;
-		}
-	
-		.file-img {
-			width: 65rpx;
-			height: 56rpx;
-		}
 	}
+
+	.pdf-docx-img {
+		margin-right: 20rpx;
+		width: 10%;
+	}
+
+	.sxdcfdiuh {
+		width: 60rpx;
+		height: 73rpx;
+	}
+
+	.file-img {
+		width: 65rpx;
+		height: 56rpx;
+	}
+
 	.file-content {
-		width: 65%;
-	}
-	.titlezxc {
+		width: 75%;
 		color: #333333;
 		font-size: 30rpx;
 		margin-bottom: 6rpx;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
 	}
+
 	.preview-img {
 		width: 38rpx;
 		height: 40rpx;
-		margin-right: 60rpx;
+		margin-right: 40rpx;
 	}
-	
+
 	.download-img {
 		width: 50rpx;
 		height: 50rpx;
 	}
+
+	.goexam-btn {
+		width: 60%;
+		margin: 40rpx auto 20rpx;
+		border-radius: 9999rpx;
+		background-color: #2C9FFD;
+		text-align: center;
+		color: #FFFFFF;
+		padding: 20rpx 0;
+		font-size: 36rpx`;
+	}
+
+	.play_img {
+		margin-right: 10rpx;
+		color: #5CB6FF;
+	}
+
+	.action-content {}
 </style>

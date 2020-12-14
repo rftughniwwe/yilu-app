@@ -175,7 +175,7 @@
 			// 前往我的课程页面
 			goMyCourse(){
 				uni.navigateTo({
-					url:'../user/myCourse?formUser='+true
+					url:'../user/myTraining/myTraining'
 				})
 			},
 			// 前往我的收藏

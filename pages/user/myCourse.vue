@@ -17,12 +17,12 @@
 				直播中
 			</view>
 		</view>
-		<view v-if="num==1" class="tab-content"  :style="{'marginTop':isFullScreen?'154rpx':'100rpx'}">
+		<view v-if="num==1" class="tab-content" :style="{'marginTop':isFullScreen?'154rpx':'100rpx'}">
 			<view @click="chooseTab(3)" class="selected-items">
 				全部
 			</view>
 		</view>
-		<view class="course-contnt"  :style="{'marginTop':isFullScreen?'264rpx':'200rpx'}">
+		<view class="course-contnt" :style="{'marginTop':isFullScreen?'264rpx':'200rpx'}">
 			<template v-if="courseData && courseData.length > 0">
 
 				<view class="course-item" v-for="(item,index) in courseData" :key='index' @click="goPreview(item)">
@@ -189,20 +189,18 @@
 			},
 			goPreview(item) {
 				// let d = encodeURIComponent(JSON.stringify(item))
-				uni.setStorageSync('courseInfoData',item)
-				console.log('zzzzzzz',item)
-				if(item.courseCategory == 1){
-					console.log('111111111')
+				uni.setStorageSync('courseInfoData', item)
+				console.log('zzzzzzz', item)
+				if (item.courseCategory == 1) {
 					uni.navigateTo({
-						url: '/pages/course/view/view?id=' + item.id
+						url: '/pages/course/view/view?trainingId=' + item.trainId + '&id=' + item.id
 					});
-				}else {
-					console.log('2222222222')
+				} else {
 					uni.navigateTo({
-						url:'/pages/course/live/live?id='+item.id
+						url: '/pages/course/live/live?trainingId=' + item.trainId + '&id=' + item.id
 					})
 				}
-				
+
 				// uni.navigateTo({
 				// 	url: './coursePreview?item=' + d
 				// })

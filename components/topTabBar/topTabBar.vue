@@ -157,8 +157,7 @@
 	}
 
 	.middle-text {
-		font-size: 38rpx;
-		font-weight: bold;
+		font-size: 36rpx;
 		color: #333333;
 		width: 60%;
 		text-align: center;

@@ -1,14 +1,14 @@
 <!-- 文章详情页 -->
 <template>
 	<view class="main">
-		<topTabBar text="详情" @clickCollect='collectionClick' :articleId='articleId' @onShare='onShareClick' />
+		<topTabBar text="文章详情" @clickCollect='collectionClick' :articleId='articleId' @onShare='onShareClick' />
 		<view class="article-content">
 			<view class="article-topic">
 				{{data.summary}}
 			</view>
 			<view class="article-subtitle flex-between">
 				<view class="article-from">
-					来源：{{data.bloggerNickname?data.bloggerNickname:'未知用户'}}
+					来源：{{data.author?data.author:'未知用户'}}
 				</view>
 				<view class="article-time">
 					{{data.gmtModified}}

@@ -389,13 +389,22 @@
 		{
 			"path": "pages/webview/webview",
 			"style": {}
-		}
+		},
 		// 第三方
-        ,{
+        {
             "path" : "pages/allNews/allNews",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "资讯",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/myTraining/myTraining",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的培训",
                 "enablePullDownRefresh": false
             }
             

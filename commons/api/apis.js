@@ -103,7 +103,8 @@ export function faceLogin(res) {
 			url: '/user/api/baiduFaceAip/auth/facelogin',
 			method: 'POST',
 			data: {
-				base64: res
+				base64: res,
+				clientType:2
 			},
 			success: resp => {
 				resolve(resp)

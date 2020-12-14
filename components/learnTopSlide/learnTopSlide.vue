@@ -14,7 +14,7 @@
 					{{item.categoryName}}
 				</view>
 			</view>
-
+<!-- 自主学习 -->
 			<view class="flex-evenly" v-if="type ==2">
 				<view @click="selfChagneTab(1)" class="items" :class="selfLearnType===1?'selected-item':''">
 					课程
@@ -26,6 +26,7 @@
 					统计
 				</view>
 			</view>
+			<!-- 其他 -->
 			<view v-if="type == 3">
 				<view v-for="(item,index) in tabArr" class="itemss" :key='index' :class="otherTab===index?'selected-item':''"
 				 @click="otherChangeTab(index)">
@@ -93,7 +94,7 @@
 		},
 		props: ['type', 'AnquanType', 'selfLearnType', 'tabArr'],
 		created() {
-			// this.AnquanNum = this.AnquanType > 0 ? this.AnquanType : uni.getStorageSync('anquanTab')
+			this.AnquanNum = this.AnquanType > 0 ? this.AnquanType : uni.getStorageSync('anquanTab')
 			this.JixuNum = uni.getStorageSync('jixuTab') ? uni.getStorageSync('jixuTab') : 0
 			uni.$on('closeModalMask', (data) => {
 				uni.setStorageSync('anquanTab', data.index)

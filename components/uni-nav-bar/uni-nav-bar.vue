@@ -225,8 +225,8 @@
 	}
 
 	.uni-navbar--border {
-		border-bottom-width: 1rpx;
-		border-bottom-style: solid;
-		border-bottom-color: $uni-border-color;
+		// border-bottom-width: 1rpx;
+		// border-bottom-style: solid;
+		// border-bottom-color: $uni-border-color;
 	}
 </style>

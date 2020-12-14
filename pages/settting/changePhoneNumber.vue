@@ -94,7 +94,7 @@
 					data: {
 						code: code,
 						userNo: getUserLoginInfo('userNo'),
-						mobile:new_phone
+						newMobile:new_phone
 					},
 					success: res => {
 						uni.hideLoading()

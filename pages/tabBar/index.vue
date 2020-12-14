@@ -20,16 +20,6 @@
 						<image :src="item.advImg" mode=""></image>
 					</view>
 				</swiper-item>
-			<!-- 	<swiper-item>
-					<view class="swiper-item">
-						<image src="../../static/index-banner2.png" mode=""></image>
-					</view>
-				</swiper-item>
-				<swiper-item>
-					<view class="swiper-item">
-						<image src="../../static/index-banner3.png" mode=""></image>
-					</view>
-				</swiper-item> -->
 			</swiper>
 		</view>
 		<view class="news-content">
