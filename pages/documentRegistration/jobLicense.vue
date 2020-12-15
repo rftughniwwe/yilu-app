@@ -37,7 +37,7 @@
 						有效期起始日期
 					</view>
 					<view class="input-content">
-						<picker mode="date" @change="beginDateChange">
+						<picker mode="date" fields="day" @change="beginDateChange">
 							<view :class="validBeginDate?'picker-text-normal':'picker-text'">{{validBeginDate?validBeginDate:'请选择起始日期'}}</view>
 						</picker>
 					</view>
@@ -47,7 +47,7 @@
 						有效期结束日期
 					</view>
 					<view class="input-content">
-						<picker mode="date" @change="endDateChange" :start="validBeginDate">
+						<picker mode="date" fields="day" @change="endDateChange" :start="validBeginDate">
 							<view :class="validEndDate?'picker-text-normal':'picker-text'">{{validEndDate?validEndDate:'请选择结束日期'}}</view>
 						</picker>
 					</view>

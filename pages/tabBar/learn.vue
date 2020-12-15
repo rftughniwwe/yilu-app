@@ -388,8 +388,8 @@
 				let categoryId1 = uni.getStorageSync('selectedLearningType').id
 				// 学习模块中选择的二级分类
 				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
-				let compId = uni.getStorageSync('userBasicInfo').compId
-
+				let compId = uni.getStorageSync('userCompanyInfo').compId
+				
 				let params = {
 					courseCategory: 2,
 					liveStatus: 2,

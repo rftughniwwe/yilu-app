@@ -300,7 +300,7 @@
             "path" : "pages/user/mySignInPage/mySignInPage",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "我的签到",
                 "enablePullDownRefresh": false
             }
             

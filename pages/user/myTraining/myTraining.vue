@@ -86,7 +86,7 @@
 				let categoryId1 = uni.getStorageSync('selectedLearningType').id
 				// 学习模块中选择的二级分类
 				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
-				let compId = uni.getStorageSync('userBasicInfo').compId
+				let compId = uni.getStorageSync('userCompanyInfo').compId
 				let tab = this.tab
 				let userid = getUserLoginInfo('userNo')
 				if (!categoryId1 || !categoryId2 || !compId) {

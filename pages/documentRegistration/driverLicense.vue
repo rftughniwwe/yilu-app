@@ -47,7 +47,7 @@
 						初次领证日期
 					</view>
 					<view class="input-content">
-						<picker mode="date" @change="firstAllowChange">
+						<picker mode="date" fields="day" @change="firstAllowChange">
 							<view :class="cardFirstAllow?'picker-text-normal':'picker-text'">{{cardFirstAllow?cardFirstAllow:'请选择日期'}}</view>
 						</picker>
 					</view>
@@ -65,7 +65,7 @@
 						有效期起始日期
 					</view>
 					<view class="input-content">
-						<picker mode="date" @change="beginDateChange">
+						<picker mode="date" fields="day" @change="beginDateChange">
 							<view :class="cardBeginDate?'picker-text-normal':'picker-text'">{{cardBeginDate?cardBeginDate:'请选择起始日期'}}</view>
 						</picker>
 					</view>
@@ -75,7 +75,7 @@
 						有效期结束日期
 					</view>
 					<view class="input-content">
-						<picker mode="date" @change="endDateChange" :start="cardBeginDate">
+						<picker mode="date" fields="day" @change="endDateChange" :start="cardBeginDate">
 							<view :class="cardEndDate?'picker-text-normal':'picker-text'">{{cardEndDate?cardEndDate:'请选择结束日期'}}</view>
 						</picker>
 					</view>

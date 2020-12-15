@@ -186,6 +186,12 @@
 			},
 			// 前往我的订单
 			goMyOrder(){
+				uni.showToast({
+					title:'暂无订单',
+					icon:'none',
+					duration:1500
+				})
+				return
 				uni.navigateTo({
 					url:'../user/myOrder/myOrder'
 				})

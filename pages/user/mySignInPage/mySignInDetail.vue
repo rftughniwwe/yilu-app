@@ -17,7 +17,7 @@
 			</view>
 		</view>
 		<view class="step-content">
-			<uni-steps :options="[{title:'签入时间 2020-12-31 08:00',desc:'上海市浦东新区松林路357号-1楼'},{title:'签出时间 2020-12-31 18:00',desc:'上海市浦东新区松林路357号-1楼'}]" direction="column"></uni-steps>
+			<uni-steps :options="xibai" direction="column"></uni-steps>
 		</view>
 	</view>
 </template>
@@ -27,12 +27,40 @@
 	export default {
 		data() {
 			return {
-
+				obj:{},
+				xibai:[]
 			};
 		},
 		components:{
 			uniSteps
+		},
+		onLoad(options) {
+			let data = JSON.parse(decodeURIComponent(options.obj))
+			console.log('dataaaaaaa',data)
+			this.obj = data
+			this.setDatas()
+		},
+		methods:{
+			setDatas(){
+				let d = obj 
+				let temp_arr = []
+				
+				d.faceSignLogListVOS.forEach((item,index)=>{
+					let signType = item.signonType==0?'签入时间':'签出时间'
+					let signTime = item.gmtCreate
+					let title = signType + signTime
+					let address = item.place
+					let faceimg = item.userImage
+					temp_arr.push({
+						title:title,
+						desc:address,
+						headImg:faceimg
+					})
+				})
+				this.xibai = temp_arr
+			}
 		}
+		
 	}
 </script>
 
@@ -49,8 +77,8 @@
 		font-weight: bold;
 	}
 	.header-img{
-		width: 208rpx;
-		height: 182rpx;
+		width: 178rpx;
+		height: 202rpx;
 		border-radius: 4rpx;
 		background-color: #FFFFFF;
 		margin-right: 20rpx;

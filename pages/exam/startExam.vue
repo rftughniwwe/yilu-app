@@ -291,7 +291,7 @@
 			},
 			xixixixix(img){
 				let userno = getUserLoginInfo('userNo')
-				let comid = uni.getStorageSync('userBasicInfo').compId
+				let comid = uni.getStorageSync('userCompanyInfo').compId
 				let i = uni.getStorageSync('TrainingId')
 				let params = {
 					courseType: 3,
@@ -325,7 +325,7 @@
 			},
 			iuywsertkfjg(img,signOut) {
 				let userno = getUserLoginInfo('userNo')
-				let comid = uni.getStorageSync('userBasicInfo').compId
+				let comid = uni.getStorageSync('userCompanyInfo').compId
 				let i = uni.getStorageSync('TrainingId')
 				let params = {
 					courseType: 3,

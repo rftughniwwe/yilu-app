@@ -433,7 +433,7 @@
 				let address = uni.getStorageSync('userAddress')
 				let params = {
 					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
-					"compId": uni.getStorageSync('userBasicInfo').compId,
+					"compId": uni.getStorageSync('userCompanyInfo').compId,
 					"refId": this.signDatas.courseId,
 					"coursePeriodId": this.signDatas.periodList ? this.signDatas.periodList[0].periodId : '',
 					"numEvent": this.signDatas.id,
@@ -569,7 +569,7 @@
 				this.oldSignData = []
 				let params = {
 					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
-					"compId": uni.getStorageSync('userBasicInfo').compId,
+					"compId": uni.getStorageSync('userCompanyInfo').compId,
 					"refId": this.signDatas.courseId,
 					"coursePeriodId": this.signDatas.periodList ? this.signDatas.periodList[0].periodId : '',
 					"numEvent": this.signDatas.id,

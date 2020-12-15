@@ -59,7 +59,7 @@
 						出生年月
 					</view>
 					<view class="input-content">
-						<picker mode="date" @change="dateChange">
+						<picker mode="date" fields="day" @change="dateChange">
 							<view :class="cardBirthday?'picker-text-normal':'picker-text'">{{cardBirthday?cardBirthday:'请选择出生年月'}}</view>
 						</picker>
 					</view>
@@ -87,7 +87,7 @@
 					</view>
 					<view class="input-content">
 						<!-- <input type="text" v-model="cardUseday" value="" placeholder="请填写有效期" /> -->
-						<picker mode="date" @change="validDateChange">
+						<picker mode="date" fields="day" @change="validDateChange">
 							<view :class="cardUseday?'picker-text-normal':'picker-text'">{{cardUseday?cardUseday:'请选择有效期'}}</view>
 
 						</picker>

@@ -173,7 +173,9 @@
 				filesData: [],
 				fromUser: false,
 				traningId: '',
-				userCourseDatas: {}
+				userCourseDatas: {},
+				"isSignon": 0,
+				"isPassExam": 0,
 			};
 		},
 
@@ -201,25 +203,23 @@
 		 */
 		onLoad: function(options) {
 			let courseId = '';
-			let coursedatas = JSON.parse(decodeURIComponent(options.coursedata))
-			if (options.scene) {
-				courseId = JSON.parse(decodeURIComponent(options.scene))
-			} else {
-				courseId = options.id;
-			}
-
+			let coursedatas = {} 
+			courseId = options.id;
 			if (!this.isMinappAudit) {
 				this.tab = 1;
 			}
 			if (coursedatas) {
 				this.userCourseDatas = coursedatas
 			}
+			if(options.coursedata){
+				coursedatas = JSON.parse(decodeURIComponent(options.coursedata))
+			}
 			this.signName = courseId + ':' + (new Date()).getTime();
 			this.fromUser = options.fromUser
 			this.courseId = courseId
 			this.traningId = options.trainingId || ''
+			
 			this.getCourse(courseId);
-
 			this.getChapterList(1);
 			// 学习资料
 			this.getaccessoryList()
@@ -260,6 +260,7 @@
 		 */
 		onShow: function() {
 			this.getuserCourseinfo()
+			
 			uni.$on('zxczxczxczxczxc', (res) => {
 				if (res.zxczxc) {
 					this.isVerifyFace = true
@@ -299,9 +300,11 @@
 				uni.showLoading({
 					title: '加载中...'
 				});
+				console.log('course id',id)
 				apis.courseInfo({
 					courseId: id
 				}).then(res => {
+					console.log('????',res)
 					res.introduce = res.introduce.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
 					this.courseInfo = res
 					this.isFree = !!res.isFree
@@ -647,7 +650,7 @@
 				this.playInfo = e.detail
 			},
 			getuserCourseinfo() {
-				if(!this.userCourseDatas) return
+				if(!this.userCourseDatas.idcard || !this.userCourseDatas.id) return
 				let obj = this.userCourseDatas
 				httpRequest({
 					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',

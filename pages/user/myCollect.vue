@@ -96,7 +96,7 @@
 				if (this.showRemove) return
 				let item = e.item
 				uni.navigateTo({
-					url: `../aiticlePage/aiticlePage?id=${item.blogId}&coverImg=${item.blogImg}`
+					url: `../aiticlePage/aiticlePage?id=${item.id}&coverImg=${item.blogImg}`
 				})
 			},
 			getAllCollection() {
@@ -131,7 +131,7 @@
 			},
 			getAllCollectionArticle() {
 				httpRequest({
-					url: '/community/auth/blog/user/record/collection/list',
+					url: '/community/api/blog/userRecordlist',
 					method: 'POST',
 					data: {
 						articleType: 2,
@@ -139,8 +139,9 @@
 						userNo: getUserLoginInfo('userNo')
 					},
 					success: res => {
+						console.log('收藏文章：',res)
 						if (res.data.code == 200) {
-							let list = res.data.data.list
+							let list = res.data.data
 							this.articleCollect = list
 						} else {
 							request_success(res)

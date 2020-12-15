@@ -244,8 +244,14 @@
 									title: '提示',
 									showCancel: false,
 									content: '人脸验证失败！请重新验证或者验证身体证号和真实名字是否正确',
+									cancelText:'返回',
+									confirmText:'重试',
 									success: function(res) {
-
+										if(res.cancel){
+											uni.navigateBack({
+												delta:1
+											})
+										}
 									}
 								});
 								this.toError();
@@ -264,7 +270,7 @@
 								});
 							}
 							let courseInfo = uni.getStorageSync('courseInfoData')
-							let comid = uni.getStorageSync('userBasicInfo').compId
+							let comid = uni.getStorageSync('userCompanyInfo').compId
 							uni.showLoading({
 								title: '处理中...'
 							})
@@ -349,6 +355,9 @@
 					},
 					fail: (err) => {
 						console.log('aaaaaaa', res)
+						uni.navigateBack({
+							delta:1
+						})
 					}
 				})
 			},

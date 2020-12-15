@@ -33,15 +33,20 @@
 		data() {
 			return {
 				newsArr: [],
-				noMore: false
+				noMore: false,
+				pageCurrent: 1
 			};
 		},
 		onLoad() {
 			this.getIndexInfomation()
 		},
-		components:{
+		components: {
 			newCover,
 			EmptyData
+		},
+		onReachBottom() {
+			// this.pageCurrent += 1
+			// this.getIndexInfomation()
 		},
 		methods: {
 			goDetails(e) {
@@ -62,18 +67,24 @@
 					data: {
 						articleType: '2',
 						pageCurrent: 1,
-						pageSize: 10
+						pageSize: 200
 					},
 					success: resp => {
 						uni.hideLoading()
 						console.log('首页数据：', resp)
 						if (resp.data.code == 200) {
 							let list = resp.data.data.list
-							if(!list || list.length <= 0){
+							if (!list || list.length <= 0) {
 								this.noMore = true
+								uni.showToast({
+									title:'没有更多数据了',
+									icon:'none'
+								})
+							} else {
+								this.noMore = false
+								// let a = this.newsArr.concat(list)
+								this.newsArr = list
 							}
-							this.noMore = false
-							this.newsArr = list
 						} else {
 							Toast({
 								title: resp.data.msg
@@ -101,6 +112,7 @@
 		font-size: 30rpx;
 		background-color: #d6d6d6;
 	}
+
 	.news-content {
 		padding: 0 $uni-spacing-row-lg 40rpx;
 	}

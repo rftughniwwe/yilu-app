@@ -164,7 +164,7 @@ function toBase64(path, rallback) {
 }
 
 // 获取当前日期时间
-function getCurrentDate(str, delimiter, type) {
+function getCurrentDate(str, delimit = '-', type) {
 	let date = new Date()
 	let year = date.getFullYear()
 	let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
@@ -172,7 +172,6 @@ function getCurrentDate(str, delimiter, type) {
 	let hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
 	let min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
 	let sec = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
-	let delimit = delimiter ? delimiter : '-'
 
 	if (str === 'year') {
 		return `${year}`
@@ -256,7 +255,8 @@ function getLearningTypeInfo() {
 		obj.categoryId1 = uni.getStorageSync('selectedLearningType').id
 		// 学习模块中选择的二级分类
 		obj.categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
-		obj.compId = uni.getStorageSync('userBasicInfo').compId
+		// obj.compId = uni.getStorageSync('userBasicInfo').compId
+		obj.compId = uni.getStorageSync('userCompanyInfo').compId
 	} catch (err) {
 		console.log('获取ID失败')
 		Toast({

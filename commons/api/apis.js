@@ -104,7 +104,7 @@ export function faceLogin(res) {
 			method: 'POST',
 			data: {
 				base64: res,
-				clientType:2
+				clientType: 2
 			},
 			success: resp => {
 				resolve(resp)
@@ -112,7 +112,7 @@ export function faceLogin(res) {
 			fail: err => {
 				reject(err)
 			}
-		}, 1,true)
+		}, 1, true)
 	})
 
 }
@@ -188,7 +188,7 @@ export function getSignOnDateTime(date) {
 				"categoryId1": categoryId1,
 				"categoryId2": categoryId2,
 				"compId": compId,
-				"dateTime":date,
+				"dateTime": date,
 				"userId": userNum,
 			},
 			success: res => {
@@ -203,91 +203,102 @@ export function getSignOnDateTime(date) {
 
 // 获取签到月汇总数据
 export function getMonthSummaryData(options) {
-	return new Promise((resolve,reject)=>{
+	// 选择的一级分类
+	const categoryId1 = getLearningTypeInfo().categoryId1
+	// 选择的二级分类
+	const categoryId2 = getLearningTypeInfo().categoryId2
+	// 所属公司ID
+	const compId = getLearningTypeInfo().compId
+	// 用户ID
+	const userNum = getUserLoginInfo('userNo')
+	let params = {
+		"categoryId1": categoryId1,
+		"categoryId2": categoryId2,
+		"compId": compId,
+		"weekStart": options.weekStart,
+		"weekEnd":options.weekEnd,
+		"userId": userNum,
+	}
+	console.log('月汇总params:', params)
+	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: '/user/api/tbCourVideoStudyHistory/monthCount',
 			method: 'POST',
-			data: {
-				"categoryId1": categoryId1,
-				"categoryId2": categoryId2,
-				"compId": compId,
-				"dateTime": options.month,
-				"userId": userNum,
-			},
-			success:res=>{
+			data: params,
+			success: res => {
 				resolve(res)
 			},
-			fail:err=>{
-				request_err(err,'获取数据失败')
+			fail: err => {
+				request_err(err, '获取数据失败')
 			}
 		}, 1)
 	})
-	
+
 }
 
 // 添加课程预约提醒
-export function subscribeCourse(options){
-	return new Promise((resolve,reject)=>{
+export function subscribeCourse(options) {
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/user/api/user/msg/save',
-			data:options,
-			method:'POST',
-			success:res=>{
+			url: '/user/api/user/msg/save',
+			data: options,
+			method: 'POST',
+			success: res => {
 				uni.hideLoading()
 				resolve(res)
 			},
-			fail:err=>{
+			fail: err => {
 				uni.hideLoading()
-				request_err(err,'添加提醒失败')
+				request_err(err, '添加提醒失败')
 			}
-		},1)
+		}, 1)
 	})
 }
 
 // 取消课程预约提醒
-export function  cancelSubscribe(options){
-	return new Promise((resolve,reject)=>{
+export function cancelSubscribe(options) {
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/user/api/user/msg/delete',
-			data:options,
-			method:'DELETE',
-			success:res=>{
+			url: '/user/api/user/msg/delete',
+			data: options,
+			method: 'DELETE',
+			success: res => {
 				uni.hideLoading()
 				resolve(res)
 			},
-			fail:err=>{
+			fail: err => {
 				uni.hideLoading()
-				request_err(err,'添加提醒失败')
+				request_err(err, '添加提醒失败')
 			}
-		},1)
+		}, 1)
 	})
 }
 
 // 签入签出
-export function signInOut(params){
+export function signInOut(params) {
 	params.compId = compId
 	params.userId = userNum
 	let t = getUserLoginInfo('token')
-	console.log('token:::',t)
-	return new Promise((resolve,reject)=>{
+	console.log('token:::', t)
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/course/auth/face/sign/log/signSave',
-			method:'post',
-			data:params,
-			success:res=>{
+			url: '/course/auth/face/sign/log/signSave',
+			method: 'post',
+			data: params,
+			success: res => {
 				resolve(res)
 			},
-			fail:err=>{
+			fail: err => {
 				uni.hideLoading()
-				request_err(err,'签到失败')
+				request_err(err, '签到失败')
 			}
-		},2)
+		}, 2)
 	})
 }
 
 // 设置基本信息
-export function setUserInfomation(obj){
-	return new Promise((resolve,reject)=>{
+export function setUserInfomation(obj) {
+	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: '/user/api/user/perfect/basicInfo',
 			method: 'POST',
@@ -298,65 +309,94 @@ export function setUserInfomation(obj){
 			fail: (err) => {
 				reject(err)
 			}
-		},1)
+		}, 1)
 	})
 }
 
 // 获取签到回显数据
-export function getOldSignData(datas){
-	return new Promise((resolve)=>{
+export function getOldSignData(datas) {
+	return new Promise((resolve) => {
 		httpRequest({
-			url:'/course/auth/face/sign/log/signlist',
-			method:'POST',
-			data:datas,
-			success:res=>{
+			url: '/course/auth/face/sign/log/signlist',
+			method: 'POST',
+			data: datas,
+			success: res => {
 				resolve(res)
 			},
-			fail:err=>{
+			fail: err => {
 				request_err(err)
 			}
-		},2)
+		}, 2)
 	})
 }
 
 // 根据培训场次获取试卷ID
-export function getExamIdByTraingId(id){
-	
-	return new Promise((resolve,reject)=>{
+export function getExamIdByTraingId(id) {
+
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/exam/auth/exam/selectExamIdByTrainingId',
-			method:'POST',
-			data:{
-				"trainingid":id
+			url: '/exam/auth/exam/selectExamIdByTrainingId',
+			method: 'POST',
+			data: {
+				"trainingid": id
 			},
-			success:res=>{
+			success: res => {
 				resolve(res)
 			},
-			fail:err=>{
+			fail: err => {
 				uni.hideLoading()
-				request_err(err,'获取试卷失败')
+				request_err(err, '获取试卷失败')
 			}
-		},5)
+		}, 5)
 	})
 }
 
 // 获取试卷详情
-export function getExamDetails(examId){
+export function getExamDetails(examId) {
 	let userno = getUserLoginInfo('userNo')
-	return new Promise((resolve,reject)=>{
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'/exam/auth/exam/info',
-			method:'POST',
-			data:{
-				"examId":examId,
-				"userNo":userno
+			url: '/exam/auth/exam/info',
+			method: 'POST',
+			data: {
+				"examId": examId,
+				"userNo": userno
 			},
-			success:res=>{
+			success: res => {
 				resolve(res)
 			},
-			fail:err=>{
-				request_err(err,'获取试卷失败')
+			fail: err => {
+				request_err(err, '获取试卷失败')
 			}
-		},5)
+		}, 5)
 	})
+}
+
+// 服务单位信息
+export function getCompanyId() {
+	getIdCardInfo().then(res => {
+		let idCardNum = res.data.data.idcardNum
+		httpRequest({
+			url: '/user/api/compUser/selectCompByIdCard',
+			data: {
+				idCard: idCardNum
+			},
+			method: 'POST',
+			success: resp => {
+				console.log('查询服务单位：', resp)
+				if (resp.data.code == 200) {
+					// let info = uni.getStorageSync('userBasicInfo')
+					// info.compId = resp.data.data.compId
+					// uni.setStorageSync('userBasicInfo', info)
+					uni.setStorageSync('userCompanyInfo',resp.data.data)
+				} else {
+					request_success(resp)
+				}
+			},
+			fail: err => {
+				request_err(err, '查询服务单位失败')
+			}
+		}, 1)
+	})
+
 }

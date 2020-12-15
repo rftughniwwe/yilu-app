@@ -88,6 +88,7 @@
 			overflow: hidden;
 			margin-right: 20rpx;
 			color: #333333;
+			text-align: left;
 		}
 
 

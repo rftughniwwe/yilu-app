@@ -1,14 +1,6 @@
 <template>
-	<!--pages/course/view/view.wxml-->
 	<view class="detail_page b_fff">
 		<view class="polyv" v-if="liveStart">
-			<!--<live-polyv-->
-			<!--name="uni-app"-->
-			<!--@userBanned="handleUserBanned"-->
-			<!--@onError="handlePolyvError"-->
-			<!--id="plvMpDemoWatch"-->
-			<!--:hasAnswerCard="true"-->
-			<!--/>-->
 			<web-view :src="liveUrl"></web-view>
 		</view>
 		<view v-else>
@@ -41,11 +33,7 @@
 				<view class="mgt20" v-if="showPrice">
 					<view class="font41 c_red" v-if="!courseInfo.isFree">
 						<text class="font25">￥</text>{{courseInfo.courseOriginal || '加载中...'}}
-						<!-- <text class="font25 c_gold mgl20">{{courseInfo.courseDiscount ? '￥' + courseInfo.courseDiscount : '免费'}}</text>
-						<view @tap="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">SVIP</view> -->
 					</view>
-					<!-- <view class="font41 c_red" v-else>免费<view @tap="goVip" style="display: inline-block;" class="font25 mgl10 c_fff vip_price">超级会员更多优惠</view>
-					</view> -->
 				</view>
 			</view>
 			<view class="h5px" v-if="courseInfo.id"></view>
@@ -102,7 +90,7 @@
 								<text v-if="item.isFree" class="c_blue">(免费)</text>
 								<text>{{item.periodName}}</text>
 								<view class="live_status mgr20">
-									<text v-if="!item.videoVid || !item.videoLength || !item.playback" :data-vinfo="item" @tap="selectVideo(item)">查看回放</text>
+									<text v-if="!item.videoVid || !item.videoLength || !item.playback" :data-vinfo="item" >查看回放</text>
 								</view>
 							</view>
 							<view class="period_panel font25" v-else>
@@ -161,6 +149,9 @@
 		getUserInfo,
 		login
 	} from "@/utils/auth";
+	import {
+		getIdCardInfo
+	} from '@/commons/api/apis.js'
 	import polyv from "@/utils/polyv";
 	import likeBtn from "@/components/likebtn/likebtn";
 	import ActivityPanel from "@/components/activity/ActivityPanel";
@@ -169,6 +160,22 @@
 	} from '@/utils/util.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import Toast from '@/commons/showToast.js'
+	import {
+		base64ToPath
+	} from '../../../js_sdk/gsq-image-tools/image-tools/index.js'
+	import {
+		uploadImage
+	} from '@/utils/httpRequest.js'
+	import {
+		faceVerification,
+		getExamDetails,
+		getExamIdByTraingId
+	} from '@/commons/api/apis.js'
+	import useFacePlugin from '@/commons/faceplugin.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
 	
 	export default {
 		data() {
@@ -322,14 +329,15 @@
 				});
 			},
 			sign() {
+				console.log('课程星星呢；',this.courseInfo)
 				uni.navigateTo({
 					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signName=' + this.signName+ '&signType=2&type=2&faceSignType=0'
 				})
 			},
+			
 			selectVideo(e) {
 
 				let videoInfo = e;
-				console.log('eeeeee',e)
 				if (!e.id) {
 					videoInfo = e.currentTarget.dataset.vinfo
 				}
@@ -349,6 +357,13 @@
 				} else if (e.playback) {
 					// 欢拓直播间、回放
 					// liveState = (0: 直播 1: 回放)
+					// if (!uni.getStorageSync(this.signName)) {
+					// 	uni.showToast({
+					// 		title: '请先签到再来看直播',
+					// 		icon: 'none'
+					// 	});
+					// 	return;
+					// }
 					auth.getPlaybackUrl({
 						periodId: e.id,
 						isPc: 1
@@ -433,8 +448,8 @@
 				// 	});
 				// 	return false;
 				// }
-				this.isFaceContras = this.courseInfo.isFaceContras;
-				if (this.isFaceContras == 1) {
+				// this.isFaceContras = this.courseInfo.isFaceContras;
+				// if (this.isFaceContras == 1) {
 					if (!uni.getStorageSync(this.signName)) {
 						uni.showToast({
 							title: '请先签到再来看直播',
@@ -442,7 +457,7 @@
 						});
 						return;
 					}
-				}
+				// }
 				let isPc = 1;
 				// #ifdef MP-WEIXIN || APP-PLUS
 				isPc = 0
@@ -489,6 +504,114 @@
 				this.bei = beisu
 				this.showjs = false
 			},
+			
+			// 自己的人脸验证
+			faceVerify() {
+				// 人脸采集
+				useFacePlugin({}).then(res => {
+					// 人脸验证
+					uni.showLoading({
+						title: '验证中...'
+					})
+					faceVerification(res).then(_res => {
+						console.log('看直播时的人脸验证：', _res)
+						uni.hideLoading()
+						if (_res.data.code == 200) {
+							uni.showToast({
+								title: '验证成功',
+								icon: 'none'
+							})
+							this.faceSign(res)
+						} else {
+							request_success(_res)
+						}
+					}, err => {
+						uni.hideLoading()
+						request_err(err, '人脸验证失败，稍后重试')
+					})
+				}, err => {
+					request_err(err, '人脸采集失败，稍后重试')
+				})
+			},
+			faceSign(base64){
+				console.log('课程信息：',this.courseInfo)
+				return
+				base64ToPath(base64).then((path) => {
+					uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
+						let face_img = JSON.parse(_resp.data)
+						let params = {
+							courseType: this.signType,
+							numEvent: courseInfo.trainId,
+							refName: courseInfo.courseName,
+							signonApp: 0,
+							statusId: 1,
+							compId: comid,
+							startTime: courseInfo.startTime,
+							endTime: courseInfo.endTime,
+							userNo: _userNo,
+							signonType: this.faceSignType,
+							refId: this.refId,
+							longitude: this.longit,
+							latitude: this.lat,
+							place: this.signAddress,
+							userImage: face_img.data,
+							faceContrasResult: 'Success',
+						}
+						if (this.type == 2) {
+							auth.faceSignLog(params).then(() => {
+								if (this.faceSignType == 1) {
+									uni.$emit('asifhbwsrei', {
+										verify: true
+									})
+								}
+								if (this.xiba == 1) {
+									uni.$emit('zxczxczxczxczxc', {
+										zxczxc: true
+									})
+								}
+								fn();
+							}, err => {
+								uni.showToast({
+									title: err.msg,
+									icon: 'none'
+								})
+							});
+						} else {
+							auth.faceUserLog({
+								userNo: _userNo,
+								category: this.signType,
+								refId: this.refId,
+								longitude: this.longit,
+								latitude: this.lat,
+								place: this.signAddress,
+								userImageBase64: result.res.userImageString,
+								faceContrastResult: 'Success',
+							}).then(() => {
+								if (this.faceSignType == 1) {
+									uni.$emit('asifhbwsrei', {
+										verify: true
+									})
+								}
+								if (this.xiba == 1) {
+									uni.$emit('zxczxczxczxczxc', {
+										zxczxc: true
+									})
+								}
+								fn();
+							}, err => {
+								uni.showToast({
+									title: err.msg,
+									icon: 'none'
+								})
+							});
+						}
+					}, error => {
+						console.log('上传人脸图片失败：', error)
+					})
+				}).catch(error => {
+					console.error('转换失败', error)
+				})
+			}
 		}
 	};
 </script>

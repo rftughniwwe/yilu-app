@@ -3,9 +3,9 @@
 	<view>
 		<view class="top-content flex-between">
 			<view class="left-content flex-evenly">
-				<view class="week date">
+				<!-- <view class="week date">
 					周
-				</view>
+				</view> -->
 				<view class="month date selected-item">
 					月
 				</view>
@@ -21,7 +21,7 @@
 		<view class="item-block">
 			<view class="user-info item flex-row-start">
 				<userHeadImg width='80rpx' height='80rpx' />
-				<userName/>
+				<userName />
 			</view>
 
 			<view class="item flex-between" @click="learningClick(1)">
@@ -31,43 +31,28 @@
 				</view>
 				<view class="subtitle flex-between">
 					<view class="txt">
-						10天
+						{{datas.countList?datas.countList.length:0}}天
 					</view>
 					<image class="push-down-img" src="../../static/down-push-arrow.png" mode=""></image>
 				</view>
 
 			</view>
 			<view v-show="tab1">
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							2020-09-01(星期二)
-						</view>
-						<view class="txt">
-							1天
-						</view>
-					</view>
-				</view>
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							2020-09-01(星期二)
-						</view>
-						<view class="txt">
-							1天
+				<template v-if="datas.countList && datas.countList.length > 0">
+					<view class="details-items" v-for="(item,index) in datas.countList" :key='index'>
+						<view class="sigle-item flex-between">
+							<view class="head">
+								{{item.dat}}
+							</view>
+							<view class="txt">
+								1天
+							</view>
 						</view>
 					</view>
-				</view>
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							2020-09-01(星期二)
-						</view>
-						<view class="txt">
-							1天
-						</view>
-					</view>
-				</view>
+				</template>
+				<template v-else>
+					<view class="no-data">暂无数据</view>
+				</template>
 			</view>
 
 			<view class="item flex-between" @click="learningClick(2)">
@@ -76,42 +61,27 @@
 				</view>
 				<view class="subtitle flex-between">
 					<view class="txt">
-						100小时
+						{{datas.countStudyTime?datas.countStudyTime:0}}小时
 					</view>
 					<image class="push-down-img" src="../../static/down-push-arrow.png" mode=""></image>
 				</view>
 			</view>
 			<view v-show="tab2">
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							2020-09-01(星期二)
-						</view>
-						<view class="txt">
-							2小时
-						</view>
-					</view>
-				</view>
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							2020-09-01(星期二)
-						</view>
-						<view class="txt">
-							2小时
+				<template v-if="datas.countList && datas.countList.length > 0">
+					<view class="details-items" v-for="(item,index) in datas.countList" :key='index'>
+						<view class="sigle-item flex-between">
+							<view class="head">
+								{{item.dat}}
+							</view>
+							<view class="txt">
+								{{item.sum?item.sum:0}}分钟
+							</view>
 						</view>
 					</view>
-				</view>
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							2020-09-01(星期二)
-						</view>
-						<view class="txt">
-							2小时
-						</view>
-					</view>
-				</view>
+				</template>
+				<template v-else>
+					<view class="no-data">暂无数据</view>
+				</template>
 			</view>
 
 			<view class="item flex-between" @click="learningClick(3)">
@@ -120,62 +90,34 @@
 				</view>
 				<view class="subtitle flex-between">
 					<view class="qk">
-						1次
+						{{datas.noSignonCount?datas.noSignonCount:0}}次
 					</view>
 					<image class="push-down-img" src="../../static/down-push-arrow.png" mode=""></image>
 				</view>
 			</view>
 			<view v-show="tab3">
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							<view class="qk-title">
-								道路危险货物运输管理
+				<template v-if="datas.list && datas.list.length > 0">
+					<view class="details-items" v-for="(item,index) in datas.list" :key='index'>
+						<view class="sigle-item flex-between">
+							<view class="head">
+								<view class="qk-title">
+									{{item.courseName}}
+								</view>
+								<view class="time-subtitle">
+									{{item.startTime}} <text class="hight-color">签出没有打卡</text>
+								</view>
 							</view>
-							<view class="time-subtitle">
-								2020-09-04(星期四)12:00 <text class="hight-color">签出没有打卡</text>
+							<view class="go-learning" @click="goLearning(item)">
+								去学习
 							</view>
-							 
-						</view>
-						<view class="go-learning">
-							去学习
-						</view>
-					</view>
-				</view>
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							<view class="qk-title">
-								道路危险货物运输管理
-							</view>
-							<view class="time-subtitle">
-								2020-09-04(星期四)12:00 <text class="hight-color">签出没有打卡</text>
-							</view>
-							 
-						</view>
-						<view class="go-learning">
-							去学习
 						</view>
 					</view>
-				</view>
-				<view class="details-items">
-					<view class="sigle-item flex-between">
-						<view class="head">
-							<view class="qk-title">
-								道路危险货物运输管理
-							</view>
-							<view class="time-subtitle">
-								2020-09-04(星期四)12:00 <text class="hight-color">签出没有打卡</text>
-							</view>
-							 
-						</view>
-						<view class="go-learning">
-							去学习
-						</view>
-					</view>
-				</view>
+				</template>
+				<template v-else>
+					<view class="no-data">暂无数据</view>
+				</template>
 			</view>
-			
+
 		</view>
 	</view>
 </template>
@@ -189,53 +131,76 @@
 	export default {
 		data() {
 			return {
-				dateString: '2020-10-10',
+				dateString: '',
 				tab1: false,
 				tab2: false,
-				tab3: false
+				tab3: false,
+				datas:{}
 			};
 		},
 		onShow() {
 
 		},
 		onLoad() {
-			this.initialData()
+			this.getCurrentDate()
 		},
 		components: {
 			userHeadImg,
 			userName
 		},
 		methods: {
-			// 获取数据
-			initialData(){
+			getCurrentDate() {
 				let date = new Date()
 				let initYear = date.getFullYear()
-				let initMonth = date.getMonth() +1
+				let initMonth = date.getMonth() + 1
 				let day = date.getDate()
-				let month = initYear+'-'+initMonth+'-'+day
-				console.log('month:',month)
-				getMonthSummaryData({month:month}).then(res=>{
-					console.log('月汇总数据',res)
-					if(res.data.code == 200){
-						
-					}else {
+				this.dateString = initYear + '-' + initMonth
+				this.initialData()
+			},
+			// 获取数据
+			initialData() {
+				uni.showLoading({
+					title: '查询中'
+				})
+				let _date = new Date(this.dateString)
+				let y = _date.getFullYear()
+				let m = _date.getMonth() + 1
+				let start =  y + '-' + m + '-' + '01'
+				let end = y + '-' + m + '-' + new Date(y, m, 0).getDate() < 10 ? '0' + new Date(y, m, 0).getDate() : new Date(y, m, 0).getDate()
+				getMonthSummaryData({
+					weekStart: start,
+					weekEnd: end
+				}).then(res => {
+					uni.hideLoading()
+					console.log('月汇总数据', res)
+					if (res.data.code == 200) {
+						this.datas = res.data.data
+					} else {
 						request_success(res)
 					}
 				})
 			},
-			
+
 			// 日期变换
 			dateChange(e) {
 				console.log('zxczxc', e.detail.value)
+				this.dateString = e.detail.value
+				this.initialData()
 			},
 			learningClick(num) {
-				if(num == 1){
+				if (num == 1) {
 					this.tab1 = !this.tab1
-				}else if(num == 2){
+				} else if (num == 2) {
 					this.tab2 = !this.tab2
-				}else {
+				} else {
 					this.tab3 = !this.tab3
 				}
+			},
+			goLearning(item){
+				let id = item.id
+				uni.navigateTo({
+					url:'../course/view/view?id='+id
+				})
 			}
 		}
 	}
@@ -265,8 +230,8 @@
 	}
 
 	.month {
-		border-top-right-radius: 10rpx;
-		border-bottom-right-radius: 10rpx;
+		// border-top-right-radius: 10rpx;
+		// border-bottom-right-radius: 10rpx;
 	}
 
 	.item-block {
@@ -321,23 +286,33 @@
 		padding: 24rpx 30rpx;
 		border-bottom: 2rpx solid #EAEAEA;
 	}
-	.time-subtitle{
+
+	.time-subtitle {
 		font-size: 24rpx;
 		color: #333333;
 	}
-	.hight-color{
+
+	.hight-color {
 		color: #3CA7FF;
 		margin-left: 10rpx;
 	}
-	.go-learning{
+
+	.go-learning {
 		color: #3CA7FF;
 		font-size: 30rpx;
 		padding: 10rpx 0 10rpx 40rpx;
 		border-left: 2rpx solid #999999;
 	}
-	.qk-title{
+
+	.qk-title {
 		margin-bottom: 16rpx;
 		color: #333333;
 		font-size: 32rpx;
+	}
+	.no-data{
+		text-align: center;
+		color: #000000;
+		font-size: 32rpx;
+		padding: 30rpx 0;
 	}
 </style>

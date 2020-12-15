@@ -184,7 +184,7 @@
 
 			iuywsertkfjg(img) {
 				let userno = getUserLoginInfo('userNo')
-				let comid = uni.getStorageSync('userBasicInfo').compId
+				let comid = uni.getStorageSync('userCompanyInfo').compId
 				console.log('9527')
 				let params = {
 					courseType: 3,

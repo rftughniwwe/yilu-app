@@ -16,7 +16,8 @@
 	} from '@/commons/ResponseTips.js'
 
 	import {
-		getUserBasicInfo
+		getUserBasicInfo,
+		getCompanyId
 	} from '@/commons/api/apis.js'
 
 	import website from "@/utils/website.js";
@@ -41,7 +42,7 @@
 			}
 			// #endif
 
-			
+			getCompanyId()
 
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {

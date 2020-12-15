@@ -5,6 +5,9 @@
 				<view v-for="(item,index) in options" :key="index" :class="[direction==='column'?'uni-steps__column-text':'uni-steps__row-text']">
 					<text :class="[direction==='column'?'uni-steps__column-title':'uni-steps__row-title']">{{item.title}}</text>
 					<text :class="[direction==='column'?'uni-steps__column-desc':'uni-steps__row-desc']">{{item.desc}}</text>
+					<view class="faceImg">
+						<image :src="item.headImg?item.headImg:'../../static/course.png'" mode=""></image>
+					</view>
 				</view>
 			</view>
 			
@@ -243,5 +246,16 @@
 		height: 14px;
 		line-height: 14px;
 		margin: 2px 0px;
+	}
+	.faceImg{
+		width: 200rpx;
+		height: 230rpx;
+		background-color: #F8F8F8;
+		margin-top: 20rpx;
+		
+		image{
+			width: 100%;
+			height: 100%;
+		}
 	}
 </style>
