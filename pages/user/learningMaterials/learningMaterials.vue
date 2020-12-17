@@ -2,7 +2,7 @@
 <template>
 	<view>
 
-	<!-- 	<view class="wrap-top-tab-bar">
+		<!-- 	<view class="wrap-top-tab-bar">
 			<uni-nav-bar leftIcon="arrowleft" @clickLeft="goBack" :style="{'paddingTop':isFullScreen?'64rpx':'30rpx'}">
 				<learnTopSlide slot='default' type='3' :tabArr='tabArr' @tabChange="tabSelected" />
 			</uni-nav-bar>
@@ -11,16 +11,36 @@
 		<!-- <view class="container" :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> -->
 		<view class="container">
 			<view v-show="num=='0'">
-				<template v-if="filesData.list && filesData.list.length >0">
+				<!-- <template v-if="filesData.list && filesData.list.length >0">
 					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index'>
 						<image class="pdf-docx-img" src="../../../static/files-DOCX.png" mode=""></image>
 						<view class="file-content text-overflow2">
 							<view class="title">
 								{{item.name}}
 							</view>
-							<!-- <view class="file-size">
-								999MB
-							</view> -->
+						</view>
+						<view class="action-content flex-between">
+							<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
+							<image class="download-img" src="../../../static/download.png" mode="" @click="downloadFile(item)"></image>
+						</view>
+					</view>
+				</template> -->
+				<template v-if="filesData && filesData.length >0">
+					<view class="item-block flex-row-start" v-for="(item,index) in filesData" :key='index'>
+						<view class="pdf-docx-img">
+							<image v-if="item.suffix == 'png' || item.suffix == 'jpg' || item.suffix == 'gif'" :src="item.savePath" mode="" class="sxdcfdiuh" ></image>
+							<image v-else-if="item.suffix == 'mp4' || item.suffix == 'flv' || item.suffix == 'm3u8'"  src="../../../static/film.svg" mode="" class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'doc' || item.suffix == 'docx'"  src="../../../static/files-DOCX.png" mode="" class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'pdf'"  src="../../../static/files-PDF.png" mode="" class="sxdcfdiuh"></image>
+							<image v-else class="sxdcfdiuh" src="../../../static/file.svg" mode=""></image>
+						</view>
+						<view class="file-content">
+							<view class="title">
+								{{item.name}}
+							</view>
+							<view class="file-size">
+								{{item.suffix}}
+							</view>
 						</view>
 						<view class="action-content flex-between">
 							<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
@@ -77,7 +97,7 @@
 				num: '0',
 				isFullScreen: false,
 				filesData: {},
-				videoSrc:''
+				videoSrc: ''
 			};
 		},
 		components: {
@@ -101,6 +121,7 @@
 		},
 		methods: {
 			// 获取现场培训学习资料
+			
 			getaccessoryList(id) {
 				// 选择的一级分类
 				// let categoryId1 = getLearningTypeInfo().categoryId1
@@ -109,21 +130,28 @@
 				// 所属公司ID
 				// let compId = getLearningTypeInfo().compId
 				uni.showLoading({
-					title:'加载中...'
+					title: '加载中...'
 				})
 				httpRequest({
 					url: '/user/pc/tb/train/learn/attach/list',
 					method: 'POST',
 					data: {
 						"trainId": id,
-						"pageSize":10,
-						"pageCurrent":1
+						"pageSize": 10,
+						"pageCurrent": 1
 					},
 					success: res => {
 						uni.hideLoading()
 						console.log('学习资料：', res)
 						if (res.data.code == 200) {
-							this.filesData = res.data.data
+							let list = res.data.data.list
+							list.forEach((item,index)=>{
+								let path = item.savePath
+								let splitLength = path.split('.').length
+								let suffix = path.split('.')[splitLength - 1]
+								list[index].suffix = suffix
+							})
+							this.filesData = list
 						} else {
 							request_success(res)
 						}
@@ -142,38 +170,39 @@
 					delta: 1
 				})
 			},
-			previewFile(item){
+			previewFile(item) {
 				let path = item.savePath
 				let splitLength = path.split('.').length
-				let suffix = path.split('.')[splitLength-1]
-				console.log('path:',path)
-				if(suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8'){
+				let suffix = path.split('.')[splitLength - 1]
+				console.log('path:', path)
+				if (suffix == 'mp4' || suffix == 'flv' || suffix == 'm3u8') {
 					uni.navigateTo({
-						url:'../../playVideo/playVideo?video='+this.path
+						url: '../../playVideo/playVideo?video=' + path
 					})
-				}else if(suffix == 'doc' || suffix == 'xls' || suffix == 'ppt' || suffix == 'pdf' || suffix == 'docx' || suffix == 'xlsx' || suffix == 'pptx'){
+				} else if (suffix == 'doc' || suffix == 'xls' || suffix == 'ppt' || suffix == 'pdf' || suffix == 'docx' || suffix ==
+					'xlsx' || suffix == 'pptx') {
 					uni.downloadFile({
-						url:path,
-						timeout:20000,
+						url: path,
+						timeout: 20000,
 						success: (res) => {
 							uni.hideLoading()
-							console.log('下载成功：',res)
-							if(res.statusCode === 200){
+							console.log('下载成功：', res)
+							if (res.statusCode === 200) {
 								uni.openDocument({
-									filePath:res.tempFilePath,
-									success:(x)=> {
+									filePath: res.tempFilePath,
+									success: (x) => {
 										console.log('打开文档成功')
 									},
-									fail:err=>{
-										console.log('打开失败？',err)
+									fail: err => {
+										console.log('打开失败？', err)
 									}
 								})
-							}else {
+							} else {
 								Toast({
-									title:'下载文件失败'
+									title: '下载文件失败'
 								})
 							}
-							
+
 							// uni.saveFile({
 							// 	tempFilePath:res
 							// })
@@ -181,43 +210,43 @@
 						fail: () => {
 							uni.hideLoading()
 							uni.showToast({
-								title:'下载失败',
-								icon:'none'
+								title: '下载失败',
+								icon: 'none'
 							})
 						}
 					})
-					
-				}else {
+
+				} else {
 					Toast({
-						title:'该文件暂不支持预览'
+						title: '该文件暂不支持预览'
 					})
 				}
-				
+
 			},
-			downloadFile(item){
+			downloadFile(item) {
 				let path = item.savePath
 				uni.showLoading({
-					title:'保存中...'
+					title: '保存中...'
 				})
 				uni.downloadFile({
-					url:path,
-					timeout:20000,
+					url: path,
+					timeout: 20000,
 					success: (res) => {
-						console.log('下载成功：',res)
+						console.log('下载成功：', res)
 						uni.saveFile({
-							tempFilePath:res.tempFilePath,
-							success:resp=>{
+							tempFilePath: res.tempFilePath,
+							success: resp => {
 								uni.hideLoading()
 								uni.showToast({
-									title:'保存成功:'+resp.savedFilePath,
-									icon:'none'
+									title: '保存成功:' + resp.savedFilePath,
+									icon: 'none'
 								})
 							},
-							fail:err=>{
+							fail: err => {
 								uni.hideLoading()
 								uni.showToast({
-									title:'保存失败',
-									icon:'none'
+									title: '保存失败',
+									icon: 'none'
 								})
 							}
 						})
@@ -225,8 +254,8 @@
 					fail: () => {
 						uni.hideLoading()
 						uni.showToast({
-							title:'保存失败',
-							icon:'none'
+							title: '保存失败',
+							icon: 'none'
 						})
 					}
 				})
@@ -257,11 +286,16 @@
 			height: 56rpx;
 		}
 	}
-
-	.title {
+	.file-content {
+		width: 65%;
+	}
+	.title{
 		color: #333333;
 		font-size: 30rpx;
-		margin-bottom: 6rpx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: left;
+		margin-bottom: 4rpx;
 	}
 
 	.file-size {
@@ -286,15 +320,14 @@
 		height: 308rpx;
 		background-size: 100% 100%;
 		background-color: #DFDFDF;
+
 		image {
 			width: 148rpx;
 			height: 148rpx;
 		}
 	}
 
-	.file-content {
-		width: 65%;
-	}
+	
 
 	.preview-img {
 		width: 38rpx;

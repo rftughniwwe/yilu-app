@@ -142,6 +142,9 @@
 			this.globalSize = uni.getStorageSync('globalFontSize')
 			this.headimg = uni.getStorageSync('userBasicInfo').headImgUrl
 		},
+		onUnload() {
+			console.log('页面卸载：：：：：；')
+		},
 		methods:{
 			// 关于我们
 			goAboutUs(){

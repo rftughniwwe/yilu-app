@@ -41,9 +41,7 @@
 				plus.navigator.closeSplashscreen()
 			}
 			// #endif
-
-			getCompanyId()
-
+			
 			// 获取token
 			getAcceessToken(BD_OCR_KEY, BD_OCR_SECRET).then((res) => {
 				uni.setStorageSync('ocr_token', res.data.data) 
@@ -78,6 +76,7 @@
 					console.log('用户基本信息获取：', res)
 					if (res.data.code == 200) {
 						uni.setStorageSync('userBasicInfo', res.data.data)
+						
 					} else {
 						request_success(res)
 					}
@@ -86,6 +85,7 @@
 			
 				})
 			}
+			
 		},
 		onShow: function() {
 			website.serviceInfo(result => {

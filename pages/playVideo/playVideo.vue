@@ -13,6 +13,7 @@
 			};
 		},
 		onLoad(options) {
+			console.log('path',options.video)
 			if(!options.video){
 				uni.showToast({
 					title:'播放错误',

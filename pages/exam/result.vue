@@ -18,6 +18,9 @@
 				<view class="examText">
 					本次试卷满分为{{ examData.totalScore }}分
 				</view>
+				<view class="examText">
+					及格分为{{ examData.paperUpscore }}分
+				</view>
 			</view>
 			<view class="examInfoText">
 				<view class="examText" v-for="(item, index) in examData.titleScoreList" :key="index">
@@ -66,7 +69,7 @@
 		},
 		onLoad(options) {
 			this.examData = uni.getStorageSync('userexam-result')
-			console.log('zxczxczxzxc',this.examData)
+			console.log('试卷结果：',this.examData)
 		},
 		onBackPress() {
 			setTimeout(()=>{

@@ -198,6 +198,8 @@
 			},
 			goLearning(item){
 				let id = item.id
+				console.log('月汇总进入：',item)
+				uni.setStorageSync('courseInfoData', item)
 				uni.navigateTo({
 					url:'../course/view/view?id='+id
 				})

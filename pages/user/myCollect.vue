@@ -191,9 +191,10 @@
 			},
 			// 跳转
 			routeJump(e) {
-				let obj = encodeURIComponent(JSON.stringify(e.item))
+				// let obj = encodeURIComponent(JSON.stringify(e.item))
+				uni.setStorageSync('speacalDetails',item)
 				uni.navigateTo({
-					url: '../specialTopic/specialTopicDetail?item=' + obj
+					url: '../specialTopic/specialTopicDetail'
 				})
 			},
 			// 返回 
@@ -214,6 +215,7 @@
 				if (this.showRemove) {
 					this.selectItem = num
 					this.selectItemData = this.articleCollect[num]
+					console.log('wuhu',this.articleCollect[num])
 					// this.selectedRemoveItem = num
 				}
 			},
@@ -225,7 +227,7 @@
 					data: {
 						opType: 1,
 						userNo: getUserLoginInfo('userNo'),
-						weblogId: this.selectItemData.blogId
+						weblogId: this.selectItemData.id
 					},
 					success: res => {
 						if (res.data.code == 200) {

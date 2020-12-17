@@ -431,6 +431,7 @@
 				if (!this.simpleJudge(num)) return
 
 				let address = uni.getStorageSync('userAddress')
+				console.log('params:::::',this.signDatas)
 				let params = {
 					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
 					"compId": uni.getStorageSync('userCompanyInfo').compId,
@@ -573,7 +574,7 @@
 					"refId": this.signDatas.courseId,
 					"coursePeriodId": this.signDatas.periodList ? this.signDatas.periodList[0].periodId : '',
 					"numEvent": this.signDatas.id,
-					"refName": this.signDatas.courseName,
+					// "refName": this.signDatas.courseName,
 					"signonApp": 0,
 					"statusId": 1,
 					"courseType": '4',

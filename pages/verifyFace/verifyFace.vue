@@ -68,20 +68,27 @@
 				faceSignType: '',
 				isFaceverify: false,
 				xiba: '',
-				lat:'',
-				longit:'',
-				signAddress:''
+				lat: '',
+				longit: '',
+				signAddress: ''
 			}
 		},
 		onBackPress() {
-			if (!this.isFaceverify) {
-				uni.showToast({
-					title: '请进行人脸验证',
-					icon: 'none',
-					duration: 1500
-				})
-				return true
-			}
+			// if (!this.isFaceverify) {
+			// 	uni.showModal({
+			// 		title: '提示',
+			// 		content: '还未完成验证，确认退出？',
+			// 		confirmText: '确定',
+			// 		success: res => {
+			// 			if (res.confirm) {
+			// 				return 1
+			// 			}else {
+			// 				return true
+			// 			}
+			// 		}
+			// 	})
+				
+			// }
 		},
 		onLoad: function(options) {
 			if (this.isMinappAudit) {
@@ -99,7 +106,7 @@
 			this.userInfo = uni.getStorageSync('userInfo')
 			this.periodNo = scene
 			this.courseId = options.courseId || ''
-			
+
 			let fn = () => {
 				var That = this;
 				uni.getLocation({
@@ -182,19 +189,20 @@
 				const userId = faceData.userNo;
 				const sign = 'NBO8YDWI0BMN81Q4SPD1YV7NM539FGG7';
 				const nonce = faceData.nonce;
-
+				let pppp = {
+					webankAppId: faceData.wbappid,
+					orderNo: orderNo,
+					name: this.idCardinfo.name,
+					idNo: this.idCardinfo.idcardNum,
+					userId: userId,
+					version: '1.0.0',
+					sign: nonce
+				}
+				console.log('人脸验证参数：', pppp)
 				uni.request({
 					method: 'POST',
 					url: 'https://idasc.webank.com/api/server/getfaceid', //仅为示例，并非真实接口地址。
-					data: {
-						webankAppId: faceData.wbappid,
-						orderNo: orderNo,
-						name: this.idCardinfo.name,
-						idNo: this.idCardinfo.idcardNum,
-						userId: userId,
-						version: '1.0.0',
-						sign: nonce
-					},
+					data: pppp,
 					success: (res) => {
 						console.log('应该是查询该身份的人脸信息', res)
 						if (res && res.data && res.data.result && !res.data.result.faceId) {
@@ -244,12 +252,12 @@
 									title: '提示',
 									showCancel: false,
 									content: '人脸验证失败！请重新验证或者验证身体证号和真实名字是否正确',
-									cancelText:'返回',
-									confirmText:'重试',
+									cancelText: '返回',
+									confirmText: '重试',
 									success: function(res) {
-										if(res.cancel){
+										if (res.cancel) {
 											uni.navigateBack({
-												delta:1
+												delta: 1
 											})
 										}
 									}
@@ -356,7 +364,7 @@
 					fail: (err) => {
 						console.log('aaaaaaa', res)
 						uni.navigateBack({
-							delta:1
+							delta: 1
 						})
 					}
 				})

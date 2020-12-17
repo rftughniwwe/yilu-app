@@ -266,8 +266,9 @@
 			// 搜索课程点击
 			itemClick(item){
 				let id = item.id;
-				uni.setStorageSync('courseInfoData',item)
+				uni.setStorageSync('courseInfoData', item)
 				if (item.courseCategory == '1') {
+					console.log('搜索进入：',item)
 					uni.navigateTo({
 						url: '/pages/course/view/view?id=' + id
 					});

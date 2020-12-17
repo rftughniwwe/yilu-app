@@ -73,13 +73,22 @@
 				<rich-text :nodes="courseInfo.introduce"></rich-text>
 			</view>
 			<view v-else-if="tab == 3" class="course_brief font25 b_fff pd20">
-				<template v-if="filesData.list && filesData.list.length >0">
-					<view class="item-block flex-row-start" v-for="(item,index) in filesData.list" :key='index'>
+				<template v-if="filesData && filesData.length >0">
+					<view class="item-block flex-row-start" v-for="(item,index) in filesData" :key='index'>
 						<view class="pdf-docx-img">
-							<image class="sxdcfdiuh" src="../../../static/files-DOCX.png" mode=""></image>
+							<image v-if="item.suffix == 'png' || item.suffix == 'jpg' || item.suffix == 'gif'" :src="item.savePath" mode="" class="sxdcfdiuh" ></image>
+							<image v-else-if="item.suffix == 'mp4' || item.suffix == 'flv' || item.suffix == 'm3u8'"  src="../../../static/film.svg" mode="" class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'doc' || item.suffix == 'docx'"  src="../../../static/files-DOCX.png" mode="" class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'pdf'"  src="../../../static/files-PDF.png" mode="" class="sxdcfdiuh"></image>
+							<image v-else class="sxdcfdiuh" src="../../../static/file.svg" mode=""></image>
 						</view>
 						<view class="file-content">
-							{{item.name}}
+							<view class="title">
+								{{item.name}}
+							</view>
+							<view class="file-size">
+								{{item.suffix}}
+							</view>
 						</view>
 						<view class="action-content flex-between">
 							<image class="preview-img" src="../../../static/preview-file.png" mode="" @click="previewFile(item)"></image>
@@ -88,11 +97,13 @@
 					</view>
 				</template>
 				<template v-else>
-					<EmptyData type='serach' />
+					<view class="no-data">
+						暂无学习资料
+					</view>
 				</template>
 			</view>
 		</view>
-		<view v-if="fromUser" class="goexam-btn" @click="goExamfromUser">
+		<view class="goexam-btn" @click="getuserCourseinfo">
 			去考试
 		</view>
 		<!-- <float-tab :shareImg="true" coursetype="1" @hidevideo="changeVideoBox" @hideewm="changeVideoBox"></float-tab> -->
@@ -202,27 +213,28 @@
 		 * 生命周期函数--监听页面加载
 		 */
 		onLoad: function(options) {
+			// 课程id
 			let courseId = '';
-			let coursedatas = {} 
-			courseId = options.id;
+			courseId = options.id || '';
 			if (!this.isMinappAudit) {
 				this.tab = 1;
 			}
-			if (coursedatas) {
-				this.userCourseDatas = coursedatas
-			}
-			if(options.coursedata){
-				coursedatas = JSON.parse(decodeURIComponent(options.coursedata))
-			}
+			
+			this.userCourseDatas = uni.getStorageSync('courseInfoData')
+			// if(options.coursedata){
+			// 	coursedatas = JSON.parse(decodeURIComponent(options.coursedata))
+			// }
 			this.signName = courseId + ':' + (new Date()).getTime();
 			this.fromUser = options.fromUser
-			this.courseId = courseId
+			this.courseId = courseId 
+			// 培训场次id
 			this.traningId = options.trainingId || ''
 			
 			this.getCourse(courseId);
 			this.getChapterList(1);
 			// 学习资料
 			this.getaccessoryList()
+			
 			let coursesss = uni.getStorageSync('courseInfoData')
 
 			uni.$on('asifhbwsrei', (res) => {
@@ -259,7 +271,7 @@
 		 * 生命周期函数--监听页面显示
 		 */
 		onShow: function() {
-			this.getuserCourseinfo()
+			
 			
 			uni.$on('zxczxczxczxczxc', (res) => {
 				if (res.zxczxc) {
@@ -297,6 +309,13 @@
 
 			// 获取课程详情
 			getCourse(id) {
+				if(!id){
+					uni.showToast({
+						title:'课程为空',
+						icon:'none'
+					})
+					return
+				}
 				uni.showLoading({
 					title: '加载中...'
 				});
@@ -304,10 +323,16 @@
 				apis.courseInfo({
 					courseId: id
 				}).then(res => {
-					console.log('????',res)
+					console.log('获取课程详情',res)
 					res.introduce = res.introduce.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
 					this.courseInfo = res
 					this.isFree = !!res.isFree
+				},err=>{
+					console.log('获取课程错误：',err)
+					uni.showToast({
+						title:err.msg,
+						icon:'none'
+					})
 				});
 			},
 
@@ -649,20 +674,30 @@
 			videoTimeUpdate: function(e) {
 				this.playInfo = e.detail
 			},
+			// 获取用户课程信息
 			getuserCourseinfo() {
-				if(!this.userCourseDatas.idcard || !this.userCourseDatas.id) return
-				let obj = this.userCourseDatas
+				let idcard = uni.getStorageSync('userCompanyInfo').idCard
+				let trainid = this.userCourseDatas.traningId
 				httpRequest({
 					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',
 					method: 'POST',
 					data: {
-						"idcard": obj.idcard,
-						"trainId": obj.id
+						"idcard": idcard,
+						"trainId": trainid
 					},
 					success:res=>{
 						console.log('查询状态：',res)
 						if(res.data.code == 200){
-							
+							if(res.data.data){
+								this.userCourseDatas.isPassExam = res.data.data.isPassExam
+								this.userCourseDatas.isSignon = res.data.data.isSignon
+								this.goExamfromUser()
+							}else {
+								uni.showToast({
+									title:'获取考试详情失败',
+									icon:'none'
+								})
+							}
 						}else {
 							request_success(res)
 						}
@@ -675,6 +710,7 @@
 			// 去考试
 			goExamfromUser() {
 				let obj = this.userCourseDatas
+				console.log('ooo',obj)
 				if (obj.isPassExam == 1) {
 					uni.showToast({
 						title: '你该场次考试已经通过',
@@ -688,14 +724,22 @@
 					})
 					return
 				}
-				let id = this.traningId
+				let id = obj.traningId
+				if(!id){
+					uni.showToast({
+						title:'该培训没有考试',
+						icon:'none'
+					})
+					return
+				}
 				uni.navigateTo({
 					url: '../../exam/examInfo?id=' + id
 				})
 			},
+			// 学习资料获取
 			getaccessoryList() {
-				console.log('zzz', this.traningId)
-				let id = this.traningId
+				let id = uni.getStorageSync('courseInfoData').trainId
+				console.log('iiddiiddid:',id)
 				if (!id) {
 					uni.showToast({
 						title: '获取学习资料失败',
@@ -718,7 +762,15 @@
 						uni.hideLoading()
 						console.log('学习资料：', res)
 						if (res.data.code == 200) {
-							this.filesData = res.data.data
+							
+							let list = res.data.data.list
+							list.forEach((item,index)=>{
+								let path = item.savePath
+								let splitLength = path.split('.').length
+								let suffix = path.split('.')[splitLength - 1]
+								list[index].suffix = suffix
+							})
+							this.filesData = list
 						} else {
 							request_success(res)
 						}
@@ -775,6 +827,15 @@
 						}
 					})
 
+				} else if(suffix == 'png' || suffix == 'jpg' || suffix == 'jpeg' || suffix == 'gif'){
+					uni.previewImage({
+						current:path,
+						urls:[path],
+						indicator:'default',
+						success: (res) => {
+							console.log('预览')
+						}
+					})
 				} else {
 					Toast({
 						title: '该文件暂不支持预览'
@@ -919,20 +980,25 @@
 	}
 
 	.file-content {
-		width: 75%;
+		width: 65%;
+	}
+	.title{
 		color: #333333;
 		font-size: 30rpx;
-		margin-bottom: 6rpx;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
 		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: left;
+		margin-bottom: 4rpx;
 	}
 
 	.preview-img {
 		width: 38rpx;
 		height: 40rpx;
 		margin-right: 40rpx;
+	}
+	.file-size {
+		color: #FFB415;
+		font-size: 24rpx;
 	}
 
 	.download-img {
@@ -955,6 +1021,11 @@
 		margin-right: 10rpx;
 		color: #5CB6FF;
 	}
-
+	.no-data{
+		text-align: center;
+		margin: 30rpx 0;
+		font-size: 32rpx;
+		color: #000000;
+	}
 	.action-content {}
 </style>

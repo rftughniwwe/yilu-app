@@ -101,7 +101,8 @@
 				constrastTimes: null, // 认证时间点
 				answerTimeText: '',
 				submitFlag: false,
-				faceVerifyCount: -1
+				faceVerifyCount: -1,
+				isMiddleFaceVerify:false
 			};
 		},
 		components: {
@@ -185,7 +186,7 @@
 			swiperChange(e) {
 				this.swiperIndex = e.detail.current + 1;
 				console.log('当前题目：', this.swiperIndex)
-				if (this.swiperIndex == this.faceVerifyCount) {
+				if ((this.swiperIndex == this.faceVerifyCount) && !this.isMiddleFaceVerify) {
 					this.faceVierhudghr(true)
 				}
 
@@ -203,6 +204,7 @@
 						if (resp.data.code == 200) {
 							// 识别成功
 							if(middleVerify){
+								this.isMiddleFaceVerify = true
 								this.middleVerifyFace(res)
 							}else{
 								this.aikujsfbhnsjdkef(res)
@@ -259,6 +261,7 @@
 					})
 				})
 			},
+			
 			middleVerifyFace(base64){
 				uni.showLoading({
 					title:'上传中...'
@@ -274,6 +277,7 @@
 					uni.hideLoading()
 				})
 			},
+			
 			aikujsfbhnsjdkef(base64,signOut){
 				uni.showLoading({
 					title:'上传中...'
@@ -398,7 +402,7 @@
 								}
 							} else {
 								uni.showToast({
-									title:res.data.msg,
+									title:resp.data.msg,
 									icon:'none',
 									duration:1500
 								})

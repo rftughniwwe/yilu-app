@@ -38,7 +38,7 @@
 				</view>
 				<view class="right-content">
 					<view class="head-img">
-						{{userinfomation.nickname=='0'?'女':'男'}}
+						{{userinfomation.sex=='1'?'男':'女'}}
 					</view>
 				</view>
 			</view>

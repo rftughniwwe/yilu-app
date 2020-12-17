@@ -77,10 +77,11 @@
 		},
 		methods: {
 			goDetails(item) {
-				console.log('选中：',item)
+				console.log('我的签到选中：',item)
 				if(item.faceSignonType == 0){
+					uni.setStorageSync('courseInfoData', item)
 					uni.navigateTo({
-						url:'../../course/view/view?id='+item.id
+						url:'../../course/view/view?id='+item.courseId+'&trainingId='+item.id
 					})
 					return
 				}

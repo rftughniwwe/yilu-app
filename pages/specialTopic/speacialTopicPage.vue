@@ -130,9 +130,11 @@
 				}, 3)
 			},
 			routeJump(e) {
-				let obj = encodeURIComponent(JSON.stringify(e.item))
+				
+				// let obj = encodeURIComponent(JSON.stringify(e.item))
+				uni.setStorageSync('speacalDetails',e.item)
 				uni.navigateTo({
-					url: './specialTopicDetail?item=' + obj
+					url: './specialTopicDetail'
 				})
 			}
 		}

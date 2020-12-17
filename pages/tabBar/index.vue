@@ -61,20 +61,9 @@
 					<template v-else>
 						<EmptyData type='serach' />
 					</template>
-					<!-- <view class="item-img">
-						<view class="title">
-							专2题专题2专题2专题2专题2专题2
-						</view>
-					</view> -->
 				</scroll-view>
-				<!-- <newCover position='text'></newCover>
-				<newCover position='right'></newCover> -->
 			</view>
 		</view>
-		<!-- <loadingData v-if="reachBtm"></loadingData> -->
-		<!-- <view class="refresh" @click="refreshHandle">
-			<image src="../../static/refresh.png" mode=""></image>
-		</view> -->
 	</view>
 </template>
 
@@ -97,7 +86,8 @@
 		getNotRealTime
 	} from '@/utils/util.js'
 	import {
-		getUserBasicInfo
+		getUserBasicInfo,
+		getCompanyId
 	} from '@/commons/api/apis.js'
 
 	export default {
@@ -120,6 +110,7 @@
 			this.getUserInfo()
 			this.getSwpierBanner()
 			this.getTopic()
+			getCompanyId()
 			// this.getLearningOptions()
 		},
 		onReachBottom() {
@@ -132,9 +123,10 @@
 		},
 		methods: {
 			topicClick(item){
-				let obj = encodeURIComponent(JSON.stringify(item))
+				// let obj = encodeURIComponent(JSON.stringify(item))
+				uni.setStorageSync('speacalDetails',item)
 				uni.navigateTo({
-					url:'../specialTopic/specialTopicDetail?item='+obj
+					url:'../specialTopic/specialTopicDetail'
 				})
 			},
 			// 上拉加载更多

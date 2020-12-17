@@ -127,10 +127,11 @@
 				this.getMyCourse()
 			},
 			goPreview(item) {
-				let d = encodeURIComponent(JSON.stringify(item))
+				// let d = encodeURIComponent(JSON.stringify(item))
+				// uni.setStorageSync('selectCourseItemData',item)
 				uni.setStorageSync('courseInfoData', item)
 				uni.navigateTo({
-					url: '/pages/course/view/view?id=' + item.courseId +'&fromUser=1&trainingId='+item.id+'&coursedata='+d
+					url: '/pages/course/view/view?id=' + item.courseId +'&fromUser=1&trainingId='+item.id
 				});
 				// uni.navigateTo({
 				// 	url: './coursePreview?item=' + d

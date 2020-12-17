@@ -402,6 +402,7 @@
 				uni.showLoading({
 					title: '获取课程中...'
 				})
+				console.log('sdujifhbsd',uni.getStorageSync('userCompanyInfo'))
 				httpRequest({
 					url: '/course/api/course/courselist',
 					method: 'POST',
@@ -551,12 +552,10 @@
 				let id = item.id;
 				uni.setStorageSync('courseInfoData', item)
 				if (item.courseCategory == '1') {
-					console.log('111111111')
 					uni.navigateTo({
 						url: '/pages/course/view/view?id=' + id
 					});
 				} else {
-					console.log('22222222')
 					uni.navigateTo({
 						url: '/pages/course/live/live?id=' + id
 					});

@@ -71,8 +71,7 @@
 			uniPopup
 		},
 		onLoad(options) {
-			console.log('zxczxc',options.item)
-			this.item = JSON.parse(decodeURIComponent(options.item)) || {}
+			this.item = uni.getStorageSync('speacalDetails') || {}
 			this.getArticle()
 		},
 		methods: {

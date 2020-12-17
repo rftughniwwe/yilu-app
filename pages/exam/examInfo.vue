@@ -5,7 +5,7 @@
 			<view class="examText">试卷科目： {{ examData.subjectName || '暂无' }}</view>
 			<view class="examText">试卷年份： {{ examData.yearName || '暂无' }}</view>
 			<view class="examText">试卷总分： {{ examData.totalScore?examData.totalScore:0 }} 分</view>
-			<view class="examText">及格分数： {{ examData.totalScore?parseInt(examData.totalScore * 0.6):0 }} 分 </view>
+			<view class="examText">及格分数： {{ examData.paperUpscore?examData.paperUpscore:0 }} 分 </view>
 			<view class="examText" v-if="!gradeExamId">答题时间： {{ examData.answerTime?examData.answerTime:0 }}分钟</view>
 			<div class="exam-center-data" v-else>
 				考试时间： {{ examData.beginTime?examData.beginTime + '-'+ examData.endTime:0 }}
@@ -62,6 +62,7 @@
 		onLoad(options) {
 			console.log('options:', options)
 			if (options.id) {
+				this.trainingid = options.id
 				this.getExamId(options.id)
 			} else {
 				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
@@ -73,9 +74,9 @@
 			// this.getData(options.id)
 		},
 		onShow() {
-			let i = uni.getStorageSync('TrainingId')
-			this.trainingid = i
-			this.getExamId(i)
+			// let i = uni.getStorageSync('TrainingId')
+			// this.trainingid = i
+			// this.getExamId(i)
 		},
 		comments: {
 			primaryBtn
@@ -219,6 +220,7 @@
 			getExamInfoData() {
 				let id = this.examData.id
 				getExamDetails(id).then(res => {
+					console.log('试卷详情',res)
 					if (res.data.code == 200) {
 						this.examData = res.data.data || {}
 					} else {

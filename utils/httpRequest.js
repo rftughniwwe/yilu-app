@@ -2,7 +2,7 @@ import {
 	getNetworkType,
 	isLogin,
 	getUserLoginInfo
-} from './util.js'
+} from './util.js' 
 
 // const BASE_URL = 'http://172.168.1.229'
 const BASE_URL = 'http://47.101.131.157:8880'

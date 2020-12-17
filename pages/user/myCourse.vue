@@ -190,7 +190,7 @@
 			goPreview(item) {
 				// let d = encodeURIComponent(JSON.stringify(item))
 				uni.setStorageSync('courseInfoData', item)
-				console.log('zzzzzzz', item)
+				console.log('我的课程', item)
 				if (item.courseCategory == 1) {
 					uni.navigateTo({
 						url: '/pages/course/view/view?trainingId=' + item.trainId + '&id=' + item.id
