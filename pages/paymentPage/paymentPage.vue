@@ -39,23 +39,6 @@
 			</view>
 		</view>
 		<view class="valid-period">
-			<!-- <view class="valid-time flex-between">
-				<view :class="num==1?'selected-item':'item-date'" @click="changeTime(1)">
-					一个月
-				</view>
-				<view :class="num==2?'selected-item':'item-date'" @click="changeTime(2)">
-					三个月
-				</view>
-				<view :class="num==3?'selected-item':'item-date'" @click="changeTime(3)">
-					半月
-				</view>
-				<view :class="num==4?'selected-item':'item-date'" @click="changeTime(4)">
-					一年
-				</view>
-			</view>
-			<view class="tips">
-				有效期至：<text class="hight-color">2020-04-22</text>
-			</view> -->
 		</view>
 		<view class="pay-money">
 			<view class="item flex-between">
@@ -87,7 +70,7 @@
 			支付方式
 		</view>
 		<view class="pay-mode">
-			<view class="item first-item flex-between" @click="changePayMode(1)">
+			<!-- <view class="item first-item flex-between" @click="changePayMode(1)">
 				<view class="zhifub flex-row-start">
 					<image src="../../static/zhifub-pay.png" mode=""></image>
 					<view>
@@ -95,19 +78,20 @@
 					</view>	
 				</view>
 				<image class="options-img" :src="payMode===1?'../../static/selected-img.png':'../../static/no-selected-img.png'" mode=""></image>
-			</view>
-			<view class="item flex-between"  @click="changePayMode(2)">
+			</view> -->
+			<view class="item flex-between" @click="changePayMode(2)">
 				<view class="wechat flex-row-start">
 					<image src="../../static/wechat-pay.png" mode=""></image>
 					<view>
 						￥210
-					</view>	
+					</view>
 				</view>
-				<image class="options-img" :src="payMode===1?'../../static/no-selected-img.png':'../../static/selected-img.png'" mode=""></image>
+				<image class="options-img" :src="payMode===1?'../../static/no-selected-img.png':'../../static/selected-img.png'"
+				 mode=""></image>
 			</view>
 		</view>
 		<view class="go-pay-btn">
-			<primaryBtn @callBackFun="goPay" text="去支付"/>
+			<primaryBtn @callBackFun="goPay" text="去支付" />
 		</view>
 	</view>
 </template>
@@ -117,36 +101,78 @@
 	export default {
 		data() {
 			return {
-				payMode:1
+				payMode: 1
 			};
 		},
-		components:{
+		components: {
 			primaryBtn
 		},
 		onLoad(options) {
 
 		},
 		methods: {
-			changePayMode(num){
+			changePayMode(num) {
 				this.payMode = num
 			},
 			caculationDate(num) {
 				let date = new Date()
 				let year = date.getFullYear()
-				let month = date.getMonth()+1
+				let month = date.getMonth() + 1
 				let day = date.getDate()
-				
-				
+
+
 			},
-			goPay(){
-				console.log("去支付")
+			goPay() {
+				if (this.payMode == 1) {
+					// 支付宝
+				} else if (this.payMode == 2) {
+					// 微信
+					console.log('wechat!!')
+					uni.getProvider({
+						service: 'payment',
+						success: res => {
+							console.log('获取服务商：', res)
+							this.payment(res.provider[0])
+						},
+						fail: err => {
+							console.log('获取服务商失败')
+							uni.showToast({
+								title:'获取服务商失败',
+								icon:'none'
+							})
+						}
+					})
+				}
+
+			},
+			payment(provider) {
+				let orderinfo_obj = {
+					'count': 100,
+					'name': '继续教育'
+				}
+				let orderinfo_str = '继续教育费用'
+				uni.requestPayment({
+					provider: provider,
+					orderInfo: this.payMode == 1 ? orderinfo_str : orderinfo_obj,
+					success:res=>{
+						console.log('支付调用')
+					},
+					fail:err=>{
+						console.log('支付调用失败',err)
+						uni.showToast({
+							title:'支付调用失败',
+							icon:'none'
+						})
+					}
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
-	.container,page {
+	.container,
+	page {
 		background-color: #F5F6F7;
 	}
 
@@ -160,12 +186,14 @@
 		border-top: 2rpx solid #EAEAEA;
 		border-bottom: 2rpx solid #EAEAEA;
 	}
-	.bottom-brd{
+
+	.bottom-brd {
 		border-bottom: 2rpx solid #EAEAEA;
 	}
+
 	.item {
 		padding: 20rpx 30rpx;
-		
+
 		.title {
 			color: #333333;
 			font-size: 38rpx;
@@ -179,78 +207,93 @@
 			letter-spacing: 4rpx;
 		}
 	}
-	.selected-item{
+
+	.selected-item {
 		color: #3CA7FF;
 		border: 2rpx solid #3CA7FF;
 		background-color: #FFFFFF;
 		border-radius: 12rpx;
 		padding: 12rpx 26rpx;
 	}
+
 	.item-date {
 		background-color: #EFEFEF;
 		border-radius: 12rpx;
 		color: #333333;
 		padding: 12rpx 26rpx;
 	}
+
 	.valid-period {
 		margin-bottom: 40rpx;
 	}
+
 	.tips {
 		text-align: center;
 		color: #999999;
 		font-size: 24rpx;
 		margin-top: 10rpx;
+
 		.hight-color {
 			color: #3CA7FF;
 		}
 	}
+
 	.pay-money {
 		background-color: #FFFFFF;
-		
+
 	}
-	.pay-mode-title{
+
+	.pay-mode-title {
 		background-color: #F5F6F7;
 		color: #333333;
 		font-size: 34rpx;
 		font-weight: bold;
 		margin: 40rpx 30rpx;
 	}
-	.pay-mode{
+
+	.pay-mode {
 		background-color: #FFFFFF;
 		padding: 14rpx 30rpx;
-		.item{
-			.options-img{
+
+		.item {
+			.options-img {
 				width: 46rpx;
 				height: 46rpx;
 			}
 		}
 	}
-	.zhifub{
-		image{
+
+	.zhifub {
+		image {
 			margin-right: 20rpx;
 			width: 46rpx;
 			height: 44rpx;
 		}
-		view{
+
+		view {
 			color: #333333;
 			font-size: 34rpx;
 		}
 	}
-	.wechat{
-		image{
+
+	.wechat {
+		image {
 			margin-right: 20rpx;
 			width: 44rpx;
 			height: 38rpx;
 		}
-		view{
+
+		view {
 			color: #333333;
 			font-size: 34rpx;
 		}
 	}
-	.first-item{
+
+	.first-item {
 		border-bottom: 2rpx solid #eaeaea;
 	}
-	.go-pay-btn{
-		margin:60rpx 50rpx 40rpx;
+
+	.go-pay-btn {
+		margin: 60rpx 50rpx 40rpx;
 	}
 </style>

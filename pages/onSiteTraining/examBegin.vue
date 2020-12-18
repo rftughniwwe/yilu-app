@@ -4,30 +4,30 @@
 		<view class="detail-content">
 			<view class="title-content">
 				<view class="topic header">
-					道路危险货物运输
+					{{examinfo.paperName?examinfo.paperName:'未知'}}
 				</view>
-				<view class="exam-subject flex-row-start">
+				<!-- <view class="exam-subject flex-row-start">
 					<image src="../../static/exam-subject.png" mode=""></image>
 					<view class="top-txt">
 						考试科目：安全作业
 					</view>
-				</view>
+				</view> -->
 				<view class="exam-count flex-row-start">
 					<image src="../../static/exam-count.png" mode=""></image>
 					<view class="top-txt">
-						试题数量：<text class="red-color">10</text>题
+						试题数量：<text class="red-color">{{examinfo.paperNum?examinfo.paperNum:'0'}}</text>题
 					</view>
 				</view>
 				<view class="exam-time flex-row-start">
 					<image src="../../static/exam-time.png" mode=""></image>
 					<view class="top-txt">
-						考试时间：<text class="red-color">10</text>分钟
+						考试时间：<text class="red-color">{{examinfo.times?examinfo.times:'0'}}</text>分钟
 					</view>
 				</view>
 				<view class="exam-fraction flex-row-start">
 					<image src="../../static/exam-fraction.png" mode=""></image>
 					<view class="top-txt">
-						合格标注：满分<text class="red-color">10</text>分，及格<text class="red-color">8</text>分
+						合格标注：满分<text class="red-color">{{examinfo.paperScore?examinfo.paperScore:'0'}}</text>分，及格<text class="red-color">{{examinfo.paperUpscore?examinfo.paperUpscore:'0'}}</text>分
 					</view>
 				</view>
 			</view>
@@ -38,7 +38,7 @@
 				</view>
 				<view class="jb">
 					<view class="intro-txt">
-						一、单选题(20题，四个选项，一个正确选项，选对得1.00分，错选0分)
+						一、单选题(20题，四个选项，一个正确选项，选对得1分，错选0分)
 					</view>
 					<view class="intro-txt">
 						二、多选题（10题，五个选项，至少有两个正确选项，全选对得2.00分，漏选选对部分选项每个0.5分，错选、多选、不选得0分)
@@ -83,17 +83,38 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
 	
 	export default {
 		data() {
 			return {
-
+				examinfo:{}
 			};
 		},
 		components: {
 			primaryBtn
 		},
+		onLoad() {
+			this.getExaminfo()
+		},
 		methods:{
+			getExaminfo(){
+				httpRequest({
+					url:'/exam/api/tbCourPaper/view',
+					method:'GET',
+					success:res=>{
+						console.log('获取试卷详情：',res)
+						if(res.data.code == 200){
+							this.examinfo = res.data.data
+						}
+					},
+					fail:err=>{
+						console.log('获取试卷失败',err)
+					}
+				},5)
+			},
 			goExam(){
 				
 				useFacePlugin({}).then(res=>{
@@ -162,6 +183,7 @@
 		color: #666;
 		font-size: 30rpx;
 		letter-spacing: 2rpx;
+		text-align: left;
 	}
 
 	.red-color {

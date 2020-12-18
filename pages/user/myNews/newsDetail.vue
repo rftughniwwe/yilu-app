@@ -16,64 +16,8 @@
 				<view class="news-content">
 					<rich-text :nodes="msgData.msgText"></rich-text>
 				</view>
-				<!-- <view class="look-more flex-between">
-					<view class="look-more-titile">
-						查看详情
-					</view>
-					<view class="right-arrow-img">
-						<image src="../../../static/right-arrow.png" mode=""></image>
-					</view>
-				</view> -->
 			</view>
 		</view>
-		<!-- <view class="items-block">
-			<view class="time">
-				10月30日 12：01
-			</view>
-			<view class="news-content-wrap">
-				<view class="news-title flex-row-start">
-					<image src="../../../static/pay-img.png" mode=""></image>
-					<view class="topic text-overflow2">
-						支付成功通知
-					</view>
-				</view>
-				<view class="news-content text-overflow2">
-					您好，您在19:30有一节安全教育课，请提前30分钟检查上课设备，并准时进入教室人脸识别打卡!
-				</view>
-				<view class="look-more flex-between">
-					<view class="look-more-titile">
-						查看详情
-					</view>
-					<view class="right-arrow-img">
-						<image src="../../../static/right-arrow.png" mode=""></image>
-					</view>
-				</view>
-			</view>
-		</view>
-		<view class="items-block">
-			<view class="time">
-				10月30日 12：01
-			</view>
-			<view class="news-content-wrap">
-				<view class="news-title flex-row-start">
-					<image src="../../../static/sign-in-img.png" mode=""></image>
-					<view class="topic text-overflow2">
-						签到打卡通知
-					</view>
-				</view>
-				<view class="news-content text-overflow2">
-					您好，您在19:30有一节安全教育课，请提前30分钟检查上课设备，并准时进入教室人脸识别打卡!
-				</view>
-				<view class="look-more flex-between">
-					<view class="look-more-titile">
-						查看详情
-					</view>
-					<view class="right-arrow-img">
-						<image src="../../../static/right-arrow.png" mode=""></image>
-					</view>
-				</view>
-			</view>
-		</view> -->
 	</view>
 </template>
 

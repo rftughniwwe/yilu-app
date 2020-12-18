@@ -202,7 +202,7 @@
 									title: '下载文件失败'
 								})
 							}
-
+			
 							// uni.saveFile({
 							// 	tempFilePath:res
 							// })
@@ -215,13 +215,22 @@
 							})
 						}
 					})
-
+			
+				} else if(suffix == 'png' || suffix == 'jpg' || suffix == 'jpeg' || suffix == 'gif'){
+					uni.previewImage({
+						current:path,
+						urls:[path],
+						indicator:'default',
+						success: (res) => {
+							console.log('预览')
+						}
+					})
 				} else {
 					Toast({
 						title: '该文件暂不支持预览'
 					})
 				}
-
+			
 			},
 			downloadFile(item) {
 				let path = item.savePath
@@ -338,5 +347,9 @@
 	.download-img {
 		width: 50rpx;
 		height: 50rpx;
+	}
+	.sxdcfdiuh {
+		width: 60rpx;
+		height: 73rpx;
 	}
 </style>

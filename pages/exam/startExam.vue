@@ -565,6 +565,7 @@
 					})
 
 				}
+				console.log('试卷详情：',res)
 				if (res && res.id) {
 					if (gradeExamId) { // 班级考试的
 						this.recordId = res.id

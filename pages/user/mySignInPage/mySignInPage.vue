@@ -78,7 +78,16 @@
 		methods: {
 			goDetails(item) {
 				console.log('我的签到选中：',item)
+				
+				// 未完成
 				if(item.faceSignonType == 0){
+					if(!item.courseId){
+						uni.showToast({
+							title:'该培训为线下培训，没有课程',
+							icon:'none'
+						})
+						return
+					}
 					uni.setStorageSync('courseInfoData', item)
 					uni.navigateTo({
 						url:'../../course/view/view?id='+item.courseId+'&trainingId='+item.id

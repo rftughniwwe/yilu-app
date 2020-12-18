@@ -123,7 +123,7 @@
 				</view>
 				<view v-show="selfLearnType === 2" class="tab-exercise flex-between">
 					<!-- 练习 -->
-					<view class="exercise">
+					<view class="exercise" @click="goAutoLearning">
 						<view class="topic">
 							练习题
 						</view>
@@ -517,36 +517,43 @@
 			},
 			joinNow(num) {
 				let that = this
-				if (num == 1) {
-					uni.navigateTo({
-						url: '../onSiteTraining/onSiteTraining'
+				let type = uni.getStorageSync('teachType')
+				if(type == 0){
+					// 安全教育
+					if (num == 1) {
+						uni.navigateTo({
+							url: '../onSiteTraining/onSiteTraining'
+						})
+					} else if (num == 2) {
+						uni.navigateTo({
+							url: '../user/myCourse'
+						})
+						// uni.navigateTo({
+						// 	url: '../course/list/list'
+						// })
+					}
+				}else if(type== 1){
+					// 继续教育
+					// 需判断是否付费
+					uni.showModal({
+						content: '您尚未购买课程，无法使用学习功能',
+						confirmText: '去购买',
+						confirmColor: '#3CA7FF',
+						success(res) {
+							if (res.confirm) {
+								// 跳转到支付页面 
+								uni.navigateTo({
+									url: '../paymentPage/paymentPage'
+								})
+							}
+					
+						},
+						fail() {
+					
+						}
 					})
-				} else if (num == 2) {
-					uni.navigateTo({
-						url: '../user/myCourse'
-					})
-					// uni.navigateTo({
-					// 	url: '../course/list/list'
-					// })
 				}
-				// 需判断是否付费
-				// uni.showModal({
-				// 	content: '您尚未购买课程，无法使用学习功能',
-				// 	confirmText: '去购买',
-				// 	confirmColor: '#3CA7FF',
-				// 	success(res) {
-				// 		if (res.confirm) {
-				// 			// 跳转到支付页面 
-				// 			uni.navigateTo({
-				// 				url: '../paymentPage/paymentPage'
-				// 			})
-				// 		}
-
-				// 	},
-				// 	fail() {
-
-				// 	}
-				// })
+				
 			},
 			goCourse(item) {
 				let id = item.id;
@@ -571,6 +578,11 @@
 			goLeaderBoard() {
 				uni.navigateTo({
 					url: '../leaderBoard/leaderBoard'
+				})
+			},
+			goAutoLearning(){
+				uni.navigateTo({
+					url:'../onSiteTraining/examBegin'
 				})
 			}
 		}

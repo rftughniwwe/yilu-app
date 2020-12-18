@@ -76,10 +76,13 @@
 				<template v-if="filesData && filesData.length >0">
 					<view class="item-block flex-row-start" v-for="(item,index) in filesData" :key='index'>
 						<view class="pdf-docx-img">
-							<image v-if="item.suffix == 'png' || item.suffix == 'jpg' || item.suffix == 'gif'" :src="item.savePath" mode="" class="sxdcfdiuh" ></image>
-							<image v-else-if="item.suffix == 'mp4' || item.suffix == 'flv' || item.suffix == 'm3u8'"  src="../../../static/film.svg" mode="" class="sxdcfdiuh"></image>
-							<image v-else-if="item.suffix == 'doc' || item.suffix == 'docx'"  src="../../../static/files-DOCX.png" mode="" class="sxdcfdiuh"></image>
-							<image v-else-if="item.suffix == 'pdf'"  src="../../../static/files-PDF.png" mode="" class="sxdcfdiuh"></image>
+							<image v-if="item.suffix == 'png' || item.suffix == 'jpg' || item.suffix == 'gif'" :src="item.savePath" mode=""
+							 class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'mp4' || item.suffix == 'flv' || item.suffix == 'm3u8'" src="../../../static/film.svg"
+							 mode="" class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'doc' || item.suffix == 'docx'" src="../../../static/files-DOCX.png" mode=""
+							 class="sxdcfdiuh"></image>
+							<image v-else-if="item.suffix == 'pdf'" src="../../../static/files-PDF.png" mode="" class="sxdcfdiuh"></image>
 							<image v-else class="sxdcfdiuh" src="../../../static/file.svg" mode=""></image>
 						</view>
 						<view class="file-content">
@@ -219,22 +222,22 @@
 			if (!this.isMinappAudit) {
 				this.tab = 1;
 			}
-			
+
 			this.userCourseDatas = uni.getStorageSync('courseInfoData')
 			// if(options.coursedata){
 			// 	coursedatas = JSON.parse(decodeURIComponent(options.coursedata))
 			// }
 			this.signName = courseId + ':' + (new Date()).getTime();
 			this.fromUser = options.fromUser
-			this.courseId = courseId 
+			this.courseId = courseId
 			// 培训场次id
 			this.traningId = options.trainingId || ''
-			
+
 			this.getCourse(courseId);
 			this.getChapterList(1);
 			// 学习资料
 			this.getaccessoryList()
-			
+
 			let coursesss = uni.getStorageSync('courseInfoData')
 
 			uni.$on('asifhbwsrei', (res) => {
@@ -271,8 +274,8 @@
 		 * 生命周期函数--监听页面显示
 		 */
 		onShow: function() {
-			
-			
+
+
 			uni.$on('zxczxczxczxczxc', (res) => {
 				if (res.zxczxc) {
 					this.isVerifyFace = true
@@ -309,31 +312,34 @@
 
 			// 获取课程详情
 			getCourse(id) {
-				if(!id){
+				if (id) {
+					uni.showLoading({
+						title: '加载中...'
+					});
+					console.log('course id', id)
+					apis.courseInfo({
+						courseId: id
+					}).then(res => {
+						console.log('获取课程详情', res)
+						res.introduce = res.introduce.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
+						this.courseInfo = res
+						this.isFree = !!res.isFree
+					}, err => {
+						console.log('获取课程错误：', err)
+						uni.showToast({
+							title: err.msg,
+							icon: 'none'
+						})
+					});
+				}else {
 					uni.showToast({
-						title:'课程为空',
+						title:'该培训为线下培训',
 						icon:'none'
 					})
-					return
+					uni.navigateBack({
+						delta:1
+					})
 				}
-				uni.showLoading({
-					title: '加载中...'
-				});
-				console.log('course id',id)
-				apis.courseInfo({
-					courseId: id
-				}).then(res => {
-					console.log('获取课程详情',res)
-					res.introduce = res.introduce.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;"');
-					this.courseInfo = res
-					this.isFree = !!res.isFree
-				},err=>{
-					console.log('获取课程错误：',err)
-					uni.showToast({
-						title:err.msg,
-						icon:'none'
-					})
-				});
 			},
 
 			// 登录后详情
@@ -685,32 +691,32 @@
 						"idcard": idcard,
 						"trainId": trainid
 					},
-					success:res=>{
-						console.log('查询状态：',res)
-						if(res.data.code == 200){
-							if(res.data.data){
+					success: res => {
+						console.log('查询状态：', res)
+						if (res.data.code == 200) {
+							if (res.data.data) {
 								this.userCourseDatas.isPassExam = res.data.data.isPassExam
 								this.userCourseDatas.isSignon = res.data.data.isSignon
 								this.goExamfromUser()
-							}else {
+							} else {
 								uni.showToast({
-									title:'获取考试详情失败',
-									icon:'none'
+									title: '获取考试详情失败',
+									icon: 'none'
 								})
 							}
-						}else {
+						} else {
 							request_success(res)
 						}
 					},
-					fail:err=>{
-						console.log('查询错误：',err)
+					fail: err => {
+						console.log('查询错误：', err)
 					}
-				},1)
+				}, 1)
 			},
 			// 去考试
 			goExamfromUser() {
 				let obj = this.userCourseDatas
-				console.log('ooo',obj)
+				console.log('ooo', obj)
 				if (obj.isPassExam == 1) {
 					uni.showToast({
 						title: '你该场次考试已经通过',
@@ -725,10 +731,10 @@
 					return
 				}
 				let id = obj.traningId
-				if(!id){
+				if (!id) {
 					uni.showToast({
-						title:'该培训没有考试',
-						icon:'none'
+						title: '该培训没有考试',
+						icon: 'none'
 					})
 					return
 				}
@@ -739,7 +745,7 @@
 			// 学习资料获取
 			getaccessoryList() {
 				let id = uni.getStorageSync('courseInfoData').trainId
-				console.log('iiddiiddid:',id)
+				console.log('iiddiiddid:', id)
 				if (!id) {
 					uni.showToast({
 						title: '获取学习资料失败',
@@ -762,9 +768,9 @@
 						uni.hideLoading()
 						console.log('学习资料：', res)
 						if (res.data.code == 200) {
-							
+
 							let list = res.data.data.list
-							list.forEach((item,index)=>{
+							list.forEach((item, index) => {
 								let path = item.savePath
 								let splitLength = path.split('.').length
 								let suffix = path.split('.')[splitLength - 1]
@@ -827,11 +833,11 @@
 						}
 					})
 
-				} else if(suffix == 'png' || suffix == 'jpg' || suffix == 'jpeg' || suffix == 'gif'){
+				} else if (suffix == 'png' || suffix == 'jpg' || suffix == 'jpeg' || suffix == 'gif') {
 					uni.previewImage({
-						current:path,
-						urls:[path],
-						indicator:'default',
+						current: path,
+						urls: [path],
+						indicator: 'default',
 						success: (res) => {
 							console.log('预览')
 						}
@@ -982,7 +988,8 @@
 	.file-content {
 		width: 65%;
 	}
-	.title{
+
+	.title {
 		color: #333333;
 		font-size: 30rpx;
 		overflow: hidden;
@@ -996,6 +1003,7 @@
 		height: 40rpx;
 		margin-right: 40rpx;
 	}
+
 	.file-size {
 		color: #FFB415;
 		font-size: 24rpx;
@@ -1021,11 +1029,13 @@
 		margin-right: 10rpx;
 		color: #5CB6FF;
 	}
-	.no-data{
+
+	.no-data {
 		text-align: center;
 		margin: 30rpx 0;
 		font-size: 32rpx;
 		color: #000000;
 	}
+
 	.action-content {}
 </style>

@@ -186,10 +186,10 @@
 			iuywsertkfjg(img) {
 				let userno = getUserLoginInfo('userNo')
 				let comid = uni.getStorageSync('userCompanyInfo').compId
-				console.log('9527')
+				let trainid = this.trainingid || uni.getStorageSync('TrainingId')
 				let params = {
 					courseType: 3,
-					numEvent: this.trainingid,
+					numEvent: trainid,
 					refName: '考试',
 					signonApp: 0,
 					statusId: 1,

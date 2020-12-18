@@ -34,6 +34,9 @@
 		myMessageList
 	} from '@/commons/api/user.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 	
 	export default {
 		data() {
@@ -60,16 +63,17 @@
 				})
 			},
 			getMsg() {
+				let userno = getUserLoginInfo('userNo')
 				uni.showLoading({
 					title: '加载中...'
 				});
 				myMessageList({
 					pageCurrent: this.pageCurrent,
-					pageSize: 10
+					pageSize: 1000
 				}).then(res => {
 					console.log(res);
 					uni.hideLoading()
-					console.log('我的消息：',res)
+					uni.setStorageSync(userno,res.list.length)
 					this.totalPage = res.totalPage
 					this.msgList = this.msgList.concat(res.list)
 					if (res.totalPage == res.pageCurrent) {

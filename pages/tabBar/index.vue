@@ -11,6 +11,9 @@
 			</view>
 			<view class="info flex-between" @click="gomyNews">
 				<image src="../../static/user-info.png" mode=""></image>
+				<view v-if="msgList > 0" class="news-bubble">
+					{{msgList>99?99:msgList}}
+				</view>
 			</view>
 		</view>
 		<view class="banner-content" :style="{'margin-top':isFullScreen?'194rpx':'142rpx'}">
@@ -89,14 +92,18 @@
 		getUserBasicInfo,
 		getCompanyId
 	} from '@/commons/api/apis.js'
-
+	import {
+		myMessageList
+	} from '@/commons/api/user.js'
+	
 	export default {
 		data() {
 			return {
 				isFullScreen: false,
 				newsArr: [],
 				bannerDatas:[],
-				topicdata:[]
+				topicdata:[],
+				msgList:0
 			};
 		},
 		components: {
@@ -105,11 +112,13 @@
 			EmptyData
 		},
 		onLoad() {
+			let useMsg = uni.getStorageSync('userMsg')
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.getIndexInfomation()
 			this.getUserInfo()
 			this.getSwpierBanner()
 			this.getTopic()
+			this.getMsg()
 			getCompanyId()
 			// this.getLearningOptions()
 		},
@@ -120,6 +129,10 @@
 			this.getIndexInfomation()
 			this.getTopic()
 			this.getSwpierBanner()
+			this.getMsg()
+		},
+		onShow() {
+			this.getMsg()
 		},
 		methods: {
 			topicClick(item){
@@ -352,7 +365,23 @@
 					}
 				})
 			},
-
+			getMsg() {
+				let userno = getUserLoginInfo('userNo')
+				let storage = uni.getStorageSync(userno)
+				myMessageList({
+					pageCurrent: this.pageCurrent,
+					pageSize: 1000
+				}).then(res => {
+					
+					if(storage){
+						this.msgList = res.list.length - storage
+					}else {
+						this.msgList = res.list.length
+						uni.setStorageSync(userno,res.list.length)
+					}
+					
+				});
+			}
 		}
 
 	}
@@ -401,9 +430,24 @@
 		}
 
 		.info {
+			position: relative;
 			image {
 				width: 44rpx;
 				height: 44rpx;
+			}
+			.news-bubble{
+				position: absolute;
+				right: -14rpx;
+				top: -10rpx;
+				width: 20rpx;
+				height: 20rpx;
+				font-size: 20rpx;
+				color: #FFFFFF;
+				background-color: red;
+				border-radius: 50%;
+				text-align: center;
+				padding: 8rpx;
+				line-height: 20rpx;
 			}
 		}
 	}
