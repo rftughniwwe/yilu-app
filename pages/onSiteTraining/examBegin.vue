@@ -116,27 +116,30 @@
 				},5)
 			},
 			goExam(){
-				
-				useFacePlugin({}).then(res=>{
-					// 人脸验证
-					uni.showLoading({
-						title: '验证中...'
-					})
-					faceVerification(res).then(res => {
-						console.log('考试前的人脸验证：', res)
-						uni.hideLoading()
-						if (res.data.code == 200) {
-							uni.navigateTo({
-								url:'/pages/examQuestion/examQuestion'
-							})
-						} else {
-							request_success(res)
-						}
-					}, err => {
-						uni.hideLoading()
-						request_err(err, '人脸验证失败，稍后重试')
-					})
+				uni.setStorageSync('userAutoQuestions',this.examinfo)
+				uni.navigateTo({
+					url:'/pages/examQuestion/examQuestion?id='+this.examinfo.id
 				})
+				// useFacePlugin({}).then(res=>{
+				// 	// 人脸验证
+				// 	uni.showLoading({
+				// 		title: '验证中...'
+				// 	})
+				// 	faceVerification(res).then(res => {
+				// 		console.log('考试前的人脸验证：', res)
+				// 		uni.hideLoading()
+				// 		if (res.data.code == 200) {
+				// 			uni.navigateTo({
+				// 				url:'/pages/examQuestion/examQuestion'
+				// 			})
+				// 		} else {
+				// 			request_success(res)
+				// 		}
+				// 	}, err => {
+				// 		uni.hideLoading()
+				// 		request_err(err, '人脸验证失败，稍后重试')
+				// 	})
+				// })
 				
 				
 			}

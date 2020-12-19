@@ -2,10 +2,10 @@
 <template>
 	<view class="container">
 		<view class="topic-content">
-			<examTopContent :datas='topDatas'/>
+			<examTopContent :datas='topDatas' :currentTab='currentQuestion' />
 		</view>
 		<view class="swiper-contnet">
-			<examSwpier :options='options'/>
+			<examSwpier :options='options' />
 		</view>
 		<view class="bottom-content">
 			<questionBottom @answerSheet='answerSheet' @complete='completeExam' />
@@ -14,7 +14,7 @@
 		<view v-show="answerShow" class="answer-sheet-modal" @touchmove.stop.prevent="moveStop" @click.stop.prevent="answerSheet">
 			<view class="answer" @click.stop.prevent="moveStop">
 				<view class="top-content flex-between">
-					<view class="left-content"  @click.stop.prevent="moveStop">
+					<view class="left-content" @click.stop.prevent="moveStop">
 						<view class="flex-row-start">
 							<view class="zz flex-between">
 								<view class="circle circle-right">
@@ -43,43 +43,32 @@
 						<image src="../../static/close-img.png" mode=""></image>
 					</view>
 				</view>
-				<view class="main-content" @click.stop.prevent="moveStop">
+				<view class="main-content">
 					<view class="serial-content">
 						<view class="title">
 							单选题
 						</view>
-						<view class="inline-block-item flex-row-start">
-							<view class="item empty-item">
-								1
+						<scroll-view class="scroll-contents" scroll-y="true">
+							<view class="inline-block-item flex-row-start">
+								<template v-if="options && options.length > 0">
+									<view v-for="(item,index) in options" :key='index'>
+										<view v-if="!item.userAnswer" class="item empty-item">
+											{{index+1}}
+										</view>
+										<view v-else-if="item.userAnswer !== item.problemAnswer" class="item error-item">
+											{{index+1}}
+										</view>
+										<view v-else-if="item.userAnswer === item.problemAnswer" class="item right-item">
+											{{index+1}}
+										</view>
+									</view>
+
+								</template>
+								<template v-else>
+									<view class="no_data">暂无题目</view>
+								</template>
 							</view>
-							<view class="item empty-item">
-								2
-							</view>
-							<view class="item empty-item">
-								3
-							</view>
-							<view class="item empty-item">
-								4
-							</view>
-							<view class="item empty-item">
-								5
-							</view>
-							<view class="item empty-item">
-								6
-							</view>
-							<view class="item empty-item">
-								7
-							</view>
-							<view class="item empty-item">
-								8
-							</view>
-							<view class="item empty-item">
-								9
-							</view>
-							<view class="item empty-item">
-								10
-							</view>
-						</view>
+						</scroll-view>
 					</view>
 				</view>
 				<view class="jiaojuan" @click.stop.prevent="moveStop">
@@ -104,12 +93,18 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+
 	export default {
 		data() {
 			return {
 				topDatas: {},
 				answerShow: false,
-				options: []
+				options: [],
+				examInfo: {},
+				currentQuestion: 1
 			};
 		},
 		components: {
@@ -121,39 +116,82 @@
 
 		},
 		onUnload() {
-			console.log('页面卸载')
+
 		},
-		onLoad() {
+		onLoad(options) {
 			uni.setNavigationBarTitle({
-				title: '练习题'
+				title: '在线考试'
 			})
+
+			this.examInfo = uni.getStorageSync('userAutoQuestions')
+			if (!this.examInfo) {
+				uni.showToast({
+					title: '获取题目失败',
+					icon: 'none',
+					duration: 1500
+				})
+			}
+			this.getQuestions()
 			this.setTopData()
 			
+			uni.$on('optionsChange',res=>{
+				this.options = uni.getStorageSync('autoExamQuestions')
+			})
 		},
 		methods: {
 			setTopData() {
+				let exam = this.examInfo
 				this.topDatas = {
-					mode: '单选题',
-					scope: '10',
-					time: '600',
-					total: '10',
-					current: '1'
+					time: exam.times,
+					total: exam.paperNum,
 				}
 
 			},
 			moveStop() {},
 			// 答题卡
 			answerSheet() {
+				this.options = uni.getStorageSync('autoExamQuestions')
 				this.answerShow = !this.answerShow
+			},
+			// 获取试题
+			getQuestions() {
+				uni.showLoading({
+					title: '获取试题中',
+				})
+				httpRequest({
+					url: '/exam/api/tbCourPaper/list',
+					method: 'POST',
+					success: res => {
+						// console.log('获取的试题', res)
+						uni.hideLoading()
+
+						if (res.data.code == 200) {
+							uni.setStorageSync('autoExamQuestions', res.data.data)
+							this.setExamdata(res.data.data)
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						console.log('获取试题失败', err)
+					}
+				})
+			},
+			setExamdata(data) {
+				// uni.showLoading({
+				// 	title:'加载试题中...'
+				// })
+				this.options = data
 			},
 			// 交卷
 			completeExam() {
 				uni.showModal({
-					title:'提交',
-					content:'确认交卷吗？',
-					success:res=>{
-						if(res.confirm){
-							useFacePlugin({}).then(res=>{
+					title: '提交',
+					content: '确认交卷吗？',
+					success: res => {
+						if (res.confirm) {
+							useFacePlugin({}).then(res => {
 								// 人脸验证
 								uni.showLoading({
 									title: '验证中...'
@@ -163,7 +201,7 @@
 									uni.hideLoading()
 									if (res.data.code == 200) {
 										uni.redirectTo({
-											url:'../onSiteTraining/examResult'
+											url: '../onSiteTraining/examResult'
 										})
 									} else {
 										request_success(res)
@@ -173,11 +211,11 @@
 									request_err(err, '人脸验证失败，稍后重试')
 								})
 							})
-							
+
 						}
 					}
 				})
-			
+
 			}
 		}
 	}
@@ -289,8 +327,7 @@
 		right: 0;
 		bottom: 0;
 		z-index: 10000;
-		margin: 30rpx 0;
-		padding: 0 80rpx;
+		padding: 30rpx 80rpx;
 		background-color: #FFFFFF;
 	}
 
@@ -306,7 +343,7 @@
 
 	.inline-block-item {
 		padding: 30rpx 0;
-		flex-wrap:wrap
+		flex-wrap: wrap
 	}
 
 	.item {
@@ -318,7 +355,7 @@
 		text-align: center;
 		white-space: nowrap;
 		text-overflow: hidden;
-		margin:0 20rpx 30rpx 20rpx;
+		margin: 0 20rpx 30rpx 20rpx;
 		line-height: 2.5;
 	}
 
@@ -337,5 +374,15 @@
 		background-color: rgba(220, 242, 253, 1);
 		color: #26A8FD;
 		border: 2rpx solid rgba(220, 242, 253, 1);
+	}
+
+	.no_data {
+		text-align: center;
+		margin: 30rpx auto;
+		font-size: 32rpx;
+		color: #000000;
+	}
+	.scroll-contents{
+		height: 900rpx;
 	}
 </style>

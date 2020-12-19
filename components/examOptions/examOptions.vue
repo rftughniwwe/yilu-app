@@ -1,20 +1,20 @@
 <!-- 题目选项 -->
 <template>
 	<view>
-		<view v-for="(option,index) in item" :class="['options-item','flex-row-start',singleItem == index?'selected':'']" @click="clickItem(index)">
+		<view v-for="(option,index) in item" :class="['options-item','flex-row-start',singleItem == index?'selected':'']" @click="clickItem(index,option)">
 			<view class="options-img">
-				<image v-if="option.serialNum == 'A'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsA-selected.png':'../../static/optionsA.png'"
+				<image v-if="index == '0'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsA-selected.png':'../../static/optionsA.png'"
 				 mode=""></image>
-				<image v-if="option.serialNum == 'B'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsB-selected.png':'../../static/optionsB.png'"
+				<image v-if="index == '1'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsB-selected.png':'../../static/optionsB.png'"
 				 mode=""></image>
-				<image v-if="option.serialNum == 'C'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsC-selected.png':'../../static/optionsC.png'"
+				<image v-if="index == '2'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsC-selected.png':'../../static/optionsC.png'"
 				 mode=""></image>
-				<image v-if="option.serialNum == 'D'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsD-selected.png':'../../static/optionsD.png'"
+				<image v-if="index == '3'" :class="singleItem == index?'selectedImg':''" :src="singleItem == index?'../../static/optionsD-selected.png':'../../static/optionsD.png'"
 				 mode=""></image>
 			
 			</view>
 			<view class="options-text">
-				{{option.options}}
+				{{option.optionContent?option.optionContent:'未知'}}
 			</view>
 		</view>
 		
@@ -25,13 +25,29 @@
 	export default {
 		data() {
 			return {
-				singleItem:-1
+				singleItem:-1,
+				current:0
 			};
 		},
-		props:['item'],
+		props:['item','index'],
+		created() {
+			
+		},
+		mounted() {
+			
+		},
+		updated() {
+			
+		},
 		methods: {
-			clickItem(index){
+			clickItem(index,item){
+				if(this.singleItem !== -1){
+					return
+				}
+				let examdatas = uni.getStorageSync('autoExamQuestions')
+				let answerId = item.answerId
 				this.singleItem = index
+				this.$emit('optionsClick',{option:index})
 			}
 		}
 	}

@@ -4,12 +4,12 @@ import {
 	getUserLoginInfo
 } from './util.js' 
 
-const BASE_URL = 'http://172.168.1.229'
-// const BASE_URL = 'http://47.101.131.157:8880'
+// const BASE_URL = 'http://172.168.1.229'
+const BASE_URL = 'http://47.101.131.157:8880'
 
 // 图片上传
-const BASE_URL2 = 'http://172.168.1.229:8730'
-// const BASE_URL2 = 'http://47.101.131.157:8880'
+// const BASE_URL2 = 'http://172.168.1.229:8730'
+const BASE_URL2 = 'http://47.101.131.157:8880'
 
 
 // 身份证OCR地址
@@ -34,19 +34,19 @@ function httpRequest(options, url_type, isToken) {
 
 	let base_url = BASE_URL
 
-	if (url_type == 1) {
-		base_url = BASE_URL + ':8720'
-	} else if (url_type == 2) {
-		base_url = BASE_URL + ':8730'
-	} else if (url_type == 3) {
-		base_url = BASE_URL + ':8740'
-	} else if (url_type == 4) {
-		base_url = BASE_URL + ':8700'
-	} else if (url_type == 5) {
-		base_url = BASE_URL + ':8760'
-	} else if (url_type == 6) {
-		base_url = BASE_URL + ':8710'
-	}
+	// if (url_type == 1) {
+	// 	base_url = BASE_URL + ':8720'
+	// } else if (url_type == 2) {
+	// 	base_url = BASE_URL + ':8730'
+	// } else if (url_type == 3) {
+	// 	base_url = BASE_URL + ':8740'
+	// } else if (url_type == 4) {
+	// 	base_url = BASE_URL + ':8700'
+	// } else if (url_type == 5) {
+	// 	base_url = BASE_URL + ':8760'
+	// } else if (url_type == 6) {
+	// 	base_url = BASE_URL + ':8710'
+	// }
 
 	let t = getUserLoginInfo('token')
 	let _header = isToken ? {} : {

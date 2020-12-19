@@ -134,7 +134,7 @@
 				p.backPics = a
 				console.log('ppp',p)
 				httpRequest({
-					url:'/user/pc/tb/feedback/save',
+					url:'/user/api/tb/feedback/save',
 					method:'POST',
 					data:p,
 					success:res=>{

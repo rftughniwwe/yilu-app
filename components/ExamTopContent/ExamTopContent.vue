@@ -3,14 +3,14 @@
 	<view class="main flex-between">
 		<view class="subject-mode">
 			<text class="subject-text">
-				{{datas.mode}}({{datas.scope}}分)
+				{{optionType}}({{perscore}}分)
 			</text>
 		</view>
 		<view class="timeout">
 			{{timecountdown?timecountdown:'00:00:00'}}
 		</view>
 		<view class="current-count">
-			<text class="currTxt">{{tab}}</text>/{{datas.total}}
+			<text class="currTxt">{{current}}</text>/{{datas.total}}
 		</view>
 	</view>
 </template>
@@ -25,15 +25,24 @@
 			return {
 				timer: null,
 				timecountdown: '',
-				tab: 1
+				current: 1,
+				optionType:'',
+				perscore:'',
+				mapping:['未知','单选题','多选题','判断题']
+				
 			};
 		},
 		props: ['datas'],
 		created() {
-			
-			this.countDown(this.datas.time)
+			let examdatas = uni.getStorageSync('autoExamQuestions')
+			let _proType = examdatas[0].problemType
+			this.optionType = this.mapping[_proType]
+			this.countDown(this.datas.time * 60)
 			uni.$on('swiperChange',(res)=>{
-				this.tab = res.current+1
+				let proType = examdatas[res.current].problemType
+				this.current = res.current+1
+				this.optionType = this.mapping[proType]
+				this.perscore = examdatas[res.current].perScore
 			})
 		},
 		updated() {
@@ -93,7 +102,7 @@
 			font-size: 28rpx;
 			color: #FFFFFF;
 			border-radius: 6rpx;
-			padding: 8rpx 6rpx;
+			padding: 8rpx;
 
 		}
 	}

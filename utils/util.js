@@ -228,6 +228,8 @@ function removeAppStorage(options) {
 	uni.removeStorageSync('userBasicInfo')
 	// 用户签出后的现场培训id
 	// uni.removeStorageSync('TrainingId')
+	// 用户自主学习试卷详情
+	uni.removeStorageSync('userAutoQuestions')
 }
 
 // 获取用户登录信息
