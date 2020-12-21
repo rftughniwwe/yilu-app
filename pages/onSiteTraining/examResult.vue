@@ -8,13 +8,13 @@
 		<view class="top-content flex-evenly">
 			<view class="score">
 				<view class="score-txt">
-					5分
+					{{examResult.score || '0'}}
 				</view>
 				<view class="subheading zzz">
 					得分
 				</view>
 				<view class="subheading">
-					试卷总分：10分
+					试卷总分：{{examResult.paperUpscore || '0'}}分
 				</view>
 			</view>
 
@@ -22,29 +22,29 @@
 		<view class="exam-info">
 			<view class="items">
 				<view class="head">
-					考生姓名：<text class="ttt">guochang</text>
+					考生姓名：<text class="ttt">{{nickname || '未知'}}</text>
 				</view>
 			</view>
-			<view class="items">
+			<!-- <view class="items">
 				<view class="head">
 					考试科目：<text class="ttt">道路危险货物运输</text>
 				</view>
-			</view>
+			</view> -->
 			<view class="items">
 				<view class="head">
-					考试用时：<text class="ttt">4分钟22秒</text>
+					考试用时：<text class="ttt">{{examtime || 0}}分</text>
 				</view>
 			</view>
 			<view class="items">
 				<view class="head">
-					考试成绩：<text class="ttt">5分</text>
+					考试成绩：<text class="ttt">{{examResult.score || '0'}}分</text>
 				</view>
 			</view>
-			<view class="items">
+			<!-- <view class="items">
 				<view class="head">
-					考试评分：<text class="unqualified">不合格</text>
+					考试评分：<text class="unqualified"></text>
 				</view>
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>
@@ -54,14 +54,20 @@
 	export default {
 		data() {
 			return {
-				isFullScreen: false
+				isFullScreen: false,
+				examResult:{},
+				examtime:'',
+				nickname:''
 			};
 		},
 		components: {
 			uniNavBar
 		},
-		onLoad() {
+		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
+			this.examResult = JSON.parse(decodeURIComponent(options.result))
+			this.examtime = Math.floor(this.examResult.totalTime - this.examResult.examtime)
+			this.nickname = uni.getStorageSync('userCompanyInfo').userName
 		},
 		onBackPress() {
 			uni.switchTab({
@@ -119,7 +125,7 @@
 	}
 
 	.head {
-		text-align: center;
+		text-align: left;
 		color: #333333;
 		font-size: 30rpx;
 	}
@@ -138,7 +144,7 @@
 
 	.exam-info {
 		padding: 80rpx 0 50rpx;
-		width: 70%;
+		width: 60%;
 		margin: 0 auto;
 	}
 

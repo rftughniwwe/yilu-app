@@ -35,14 +35,25 @@
 				longit: '',
 				lat: '',
 				place: '',
-				liveInfo:{}
+				liveInfo:{},
+				isNeedFaceVerify:true
 			};
 		},
 
 		components: {},
 		props: {},
 		onBackPress() {
-			this.getLiveStatus(this.courseId,true)
+			if(this.isNeedFaceVerify == true){
+			console.log('xixix',this.isNeedFaceVerify)
+				this.getLiveStatus(this.courseId,true)
+			}else {
+				console.log('xixix123123123',this.isNeedFaceVerify)
+				setTimeout(()=>{
+					uni.redirectTo({
+						url:'../course/live/live'
+					})
+				},200)
+			}
 			return true
 		},
 		onLoad: function(options) {
@@ -57,6 +68,7 @@
 				this.pagePath = data.liveUrl;
 			}
 			this.courseId = options.id
+			this.isNeedFaceVerify = options.needFace
 			this.getUserLocation()
 			this.getLiveStatus(options.id)
 			// let coursesss = uni.getStorageSync('courseInfoData')

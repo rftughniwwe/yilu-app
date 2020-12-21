@@ -2,13 +2,13 @@
 <template>
 	<view class="container">
 		<view class="topic-content">
-			<examTopContent :datas='topDatas' :currentTab='currentQuestion' />
+			<examTopContent :datas='topDatas' :currentTab='currentQuestion' :isFromError='isFromError' />
 		</view>
 		<view class="swiper-contnet">
-			<examSwpier :options='options' />
+			<examSwpier />
 		</view>
 		<view class="bottom-content">
-			<questionBottom @answerSheet='answerSheet' @complete='completeExam' />
+			<questionBottom @answerSheet='answerSheet' @complete='completeExam' :isFromError='isFromError' />
 		</view>
 
 		<view v-show="answerShow" class="answer-sheet-modal" @touchmove.stop.prevent="moveStop" @click.stop.prevent="answerSheet">
@@ -45,20 +45,20 @@
 				</view>
 				<view class="main-content">
 					<view class="serial-content">
-						<view class="title">
+						<!-- <view class="title">
 							单选题
-						</view>
+						</view> -->
 						<scroll-view class="scroll-contents" scroll-y="true">
 							<view class="inline-block-item flex-row-start">
 								<template v-if="options && options.length > 0">
 									<view v-for="(item,index) in options" :key='index'>
-										<view v-if="!item.userAnswer" class="item empty-item">
+										<view v-if="!item.userAnswer" class="item empty-item" @click="gogogo(index)">
 											{{index+1}}
 										</view>
-										<view v-else-if="item.userAnswer !== item.problemAnswer" class="item error-item">
+										<view v-else-if="item.userAnswer !== item.problemAnswer" class="item error-item" @click="gogogo(index)">
 											{{index+1}}
 										</view>
-										<view v-else-if="item.userAnswer === item.problemAnswer" class="item right-item">
+										<view v-else-if="item.userAnswer === item.problemAnswer" class="item right-item" @click="gogogo(index)">
 											{{index+1}}
 										</view>
 									</view>
@@ -71,7 +71,7 @@
 						</scroll-view>
 					</view>
 				</view>
-				<view class="jiaojuan" @click.stop.prevent="moveStop">
+				<view v-if="!isFromError" class="jiaojuan" @click.stop.prevent="moveStop">
 					<primaryBtn text='交卷并查看结果' @callBackFun='completeExam' />
 				</view>
 			</view>
@@ -96,6 +96,9 @@
 	import {
 		httpRequest
 	} from '@/utils/httpRequest.js'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 
 	export default {
 		data() {
@@ -104,7 +107,12 @@
 				answerShow: false,
 				options: [],
 				examInfo: {},
-				currentQuestion: 1
+				currentQuestion: 1,
+				zzzz: 0,
+				examId: '',
+				startExamTime: '',
+				isFromError: false,
+				examTime:''
 			};
 		},
 		components: {
@@ -119,24 +127,43 @@
 
 		},
 		onLoad(options) {
-			uni.setNavigationBarTitle({
-				title: '在线考试'
-			})
+			if (options.fromError) {
+				uni.setNavigationBarTitle({
+					title: '错题集'
+				})
+				let a = uni.getStorageSync('autoExamQuestions')
+				this.options  = a.length > 200 ? a.slice(0,200):a
+				this.topDatas = {
+					total: a.length
+				}
+				this.isFromError = true
+			} else {
+				uni.setNavigationBarTitle({
+					title: '在线考试'
+				})
+				this.examId = options.id
+				this.startExamTime = new Date()
+				this.examInfo = uni.getStorageSync('userAutoQuestions')
+				if (!this.examInfo) {
+					uni.showToast({
+						title: '获取题目失败',
+						icon: 'none',
+						duration: 1500
+					})
+				}
+				this.getQuestions()
+				this.setTopData()
 
-			this.examInfo = uni.getStorageSync('userAutoQuestions')
-			if (!this.examInfo) {
-				uni.showToast({
-					title: '获取题目失败',
-					icon: 'none',
-					duration: 1500
+				uni.$on('optionsChange', res => {
+					this.options = uni.getStorageSync('autoExamQuestions')
+				})
+				
+				uni.$on('timeChange',(res)=>{
+					this.examTime = res.time
 				})
 			}
-			this.getQuestions()
-			this.setTopData()
-			
-			uni.$on('optionsChange',res=>{
-				this.options = uni.getStorageSync('autoExamQuestions')
-			})
+
+
 		},
 		methods: {
 			setTopData() {
@@ -156,13 +183,12 @@
 			// 获取试题
 			getQuestions() {
 				uni.showLoading({
-					title: '获取试题中',
+					title: '出题中',
 				})
 				httpRequest({
 					url: '/exam/api/tbCourPaper/list',
 					method: 'POST',
 					success: res => {
-						// console.log('获取的试题', res)
 						uni.hideLoading()
 
 						if (res.data.code == 200) {
@@ -176,7 +202,7 @@
 						uni.hideLoading()
 						console.log('获取试题失败', err)
 					}
-				})
+				}, 5)
 			},
 			setExamdata(data) {
 				// uni.showLoading({
@@ -186,36 +212,106 @@
 			},
 			// 交卷
 			completeExam() {
+
+
+
+				let examdatas = uni.getStorageSync('autoExamQuestions')
+				let questionList = []
+				let userno = getUserLoginInfo('userNo')
+				let now_date = new Date()
+				examdatas.forEach((item, index) => {
+					questionList.push({
+						questionId: item.id,
+						perScore: item.perScore,
+						answerCode: item.userAnswer,
+						isTrue: item.userAnswer == item.problemAnswer ? 1 : 0,
+						createDate: now_date,
+						createUser: userno
+					})
+				})
+
+
 				uni.showModal({
 					title: '提交',
 					content: '确认交卷吗？',
 					success: res => {
 						if (res.confirm) {
-							useFacePlugin({}).then(res => {
-								// 人脸验证
-								uni.showLoading({
-									title: '验证中...'
-								})
-								faceVerification(res).then(res => {
-									console.log('考试前的人脸验证：', res)
-									uni.hideLoading()
-									if (res.data.code == 200) {
-										uni.redirectTo({
-											url: '../onSiteTraining/examResult'
-										})
-									} else {
-										request_success(res)
-									}
-								}, err => {
-									uni.hideLoading()
-									request_err(err, '人脸验证失败，稍后重试')
-								})
-							})
+							this.submitExam(questionList)
+							// useFacePlugin({}).then(res => {
+							// 	// 人脸验证
+							// 	uni.showLoading({
+							// 		title: '验证中...'
+							// 	})
+							// 	faceVerification(res).then(res => {
+							// 		console.log('考试前的人脸验证：', res)
+							// 		uni.hideLoading()
+							// 		if (res.data.code == 200) {
+							// 			uni.redirectTo({
+							// 				url: '../onSiteTraining/examResult'
+							// 			})
+							// 		} else {
+							// 			request_success(res)
+							// 		}
+							// 	}, err => {
+							// 		uni.hideLoading()
+							// 		request_err(err, '人脸验证失败，稍后重试')
+							// 	})
+							// })
 
 						}
 					}
 				})
 
+			},
+			submitExam(list) {
+				let userno = getUserLoginInfo('userNo')
+				let now_date = new Date()
+				let data = {
+					questionList: JSON.stringify(list),
+					tbMockTest: {
+						createUser: userno,
+						paperId: this.examId
+					}
+
+				};
+				console.log('交卷参数:', data)
+				uni.showLoading({
+					title:'交卷中...'
+				})
+				httpRequest({
+					url: '/exam/api/tbCourPaper/submitPaper',
+					method: 'POST',
+					data: data,
+					success: res => {
+						console.log('交卷：', res)
+						uni.hideLoading()
+						if (res.data) {
+							let a = res.data
+							a.examtime = this.examTime
+							a.totalTime = this.examInfo.times
+							let d = encodeURIComponent(JSON.stringify(res.data))
+							uni.navigateTo({
+								url: '../onSiteTraining/examResult?result=' + d
+							})
+						}else {
+							uni.showToast({
+								title:'交卷失败',
+								icon:'none'
+							})
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						console.log('交卷失败：', err)
+					}
+				}, 5)
+			},
+			// 答题卡跳转
+			gogogo(index) {
+				this.answerShow = !this.answerShow
+				uni.$emit('tabChange', {
+					index: index
+				})
 			}
 		}
 	}
@@ -382,7 +478,8 @@
 		font-size: 32rpx;
 		color: #000000;
 	}
-	.scroll-contents{
+
+	.scroll-contents {
 		height: 900rpx;
 	}
 </style>

@@ -123,7 +123,7 @@
 				</view>
 				<view v-show="selfLearnType === 2" class="tab-exercise flex-between">
 					<!-- 练习 -->
-					<view class="exercise" @click="goAutoLearning">
+					<view class="exercise" @click="goAutoLearning(0)">
 						<view class="topic">
 							练习题
 						</view>
@@ -131,7 +131,7 @@
 							掌握程度，当场知晓
 						</view>
 					</view>
-					<view class="error-title">
+					<view class="error-title" @click="goAutoLearning(1)">
 						<view class="topic">
 							错题回顾
 						</view>
@@ -265,7 +265,7 @@
 				isFullScreen: false,
 				courseDatas: [],
 				autoLearning: [],
-				autoLearningStati:{}
+				autoLearningStati: {}
 			};
 		},
 		components: {
@@ -316,11 +316,11 @@
 
 		},
 		onShow() {
-			
+
 		},
 		methods: {
 			getAutoLearningStati() {
-				console.log('dddate',this.date)
+				console.log('dddate', this.date)
 				let userNo = getUserLoginInfo('userNo')
 				let year = this.date.split('-')[0]
 				let month = this.date.split('-')[1]
@@ -328,8 +328,8 @@
 				let end = new Date(year, month, 0).getDate()
 				let s_time = this.date + '-' + start
 				let e_time = this.date + '-' + end
-				console.log('s',s_time)
-				console.log('e',e_time)
+				console.log('s', s_time)
+				console.log('e', e_time)
 				httpRequest({
 					url: '/exam/api/tbCourQuestionPerson/questionCount',
 					method: 'POST',
@@ -349,7 +349,7 @@
 					fail: err => {
 						console.log('获取自主学习统计数据失败：', err)
 					}
-				},5)
+				}, 5)
 			},
 			courseItemClick(e) {
 				let item = e.item
@@ -389,7 +389,7 @@
 				// 学习模块中选择的二级分类
 				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
 				let compId = uni.getStorageSync('userCompanyInfo').compId
-				
+
 				let params = {
 					courseCategory: 2,
 					liveStatus: 2,
@@ -402,7 +402,7 @@
 				uni.showLoading({
 					title: '获取课程中...'
 				})
-				console.log('sdujifhbsd',uni.getStorageSync('userCompanyInfo'))
+				console.log('sdujifhbsd', uni.getStorageSync('userCompanyInfo'))
 				httpRequest({
 					url: '/course/api/course/courselist',
 					method: 'POST',
@@ -518,7 +518,15 @@
 			joinNow(num) {
 				let that = this
 				let type = uni.getStorageSync('teachType')
-				if(type == 0){
+				let isSign = uni.getStorageSync('isSignSuccess')
+				if (isSign) {
+					uni.showToast({
+						title: '你正在参加现场培训，无需参加远程教育',
+						icon: 'none'
+					})
+					return
+				}
+				if (type == 0) {
 					// 安全教育
 					if (num == 1) {
 						uni.navigateTo({
@@ -532,7 +540,7 @@
 						// 	url: '../course/list/list'
 						// })
 					}
-				}else if(type== 1){
+				} else if (type == 1) {
 					// 继续教育
 					// 需判断是否付费
 					uni.showModal({
@@ -546,16 +554,24 @@
 									url: '../paymentPage/paymentPage'
 								})
 							}
-					
+
 						},
 						fail() {
-					
+
 						}
 					})
 				}
-				
+
 			},
 			goCourse(item) {
+				let isSign = uni.getStorageSync('isSignSuccess')
+				if (isSign) {
+					uni.showToast({
+						title: '你正在参加现场培训，无需参加远程教育',
+						icon: 'none'
+					})
+					return
+				}
 				let id = item.id;
 				uni.setStorageSync('courseInfoData', item)
 				if (item.courseCategory == '1') {
@@ -580,11 +596,44 @@
 					url: '../leaderBoard/leaderBoard'
 				})
 			},
-			goAutoLearning(){
-				uni.navigateTo({
-					url:'../onSiteTraining/examBegin'
-				})
-			}
+			goAutoLearning(index) {
+				if (index === 0) {
+					uni.navigateTo({
+						url: '../onSiteTraining/examBegin'
+					})
+				}else {
+					this.getErrorQuestion()
+					
+				}
+			},
+			getErrorQuestion(){
+				let userid = getUserLoginInfo('userNo')
+				httpRequest({
+					url:'/exam/api/tbCourQuestionPerson/errorlist?userId='+userid,
+					method:'GET',
+					success:res=>{
+						console.log('错题集zz：',res.data.data.length)
+						if(res.data.code == 200){
+							uni.setStorageSync('autoExamQuestions',res.data.data)
+							uni.navigateTo({           
+								url:'../examQuestion/examQuestion?fromError='+true
+							})
+						}else {
+							uni.showToast({
+								title:'暂无错题',
+								icon:'none'
+							})
+						}
+					},
+					fail:err=>{
+						console.log('获取错题集失败')
+						uni.showToast({
+							title:'获取错题集失败',
+							icon:'none'
+						})
+					}
+				},5)
+			},
 		}
 	}
 </script>

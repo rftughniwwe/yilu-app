@@ -112,10 +112,13 @@
 					<template v-if="filesData && filesData.length >0">
 						<view class="item-block flex-row-start" v-for="(item,index) in filesData" :key='index'>
 							<view class="pdf-docx-img">
-								<image v-if="item.suffix == 'png' || item.suffix == 'jpg' || item.suffix == 'gif'" :src="item.savePath" mode="" class="sxdcfdiuh" ></image>
-								<image v-else-if="item.suffix == 'mp4' || item.suffix == 'flv' || item.suffix == 'm3u8'"  src="../../../static/film.svg" mode="" class="sxdcfdiuh"></image>
-								<image v-else-if="item.suffix == 'doc' || item.suffix == 'docx'"  src="../../../static/files-DOCX.png" mode="" class="sxdcfdiuh"></image>
-								<image v-else-if="item.suffix == 'pdf'"  src="../../../static/files-PDF.png" mode="" class="sxdcfdiuh"></image>
+								<image v-if="item.suffix == 'png' || item.suffix == 'jpg' || item.suffix == 'gif'" :src="item.savePath" mode=""
+								 class="sxdcfdiuh"></image>
+								<image v-else-if="item.suffix == 'mp4' || item.suffix == 'flv' || item.suffix == 'm3u8'" src="../../../static/film.svg"
+								 mode="" class="sxdcfdiuh"></image>
+								<image v-else-if="item.suffix == 'doc' || item.suffix == 'docx'" src="../../../static/files-DOCX.png" mode=""
+								 class="sxdcfdiuh"></image>
+								<image v-else-if="item.suffix == 'pdf'" src="../../../static/files-PDF.png" mode="" class="sxdcfdiuh"></image>
 								<image v-else class="sxdcfdiuh" src="../../../static/file.svg" mode=""></image>
 							</view>
 							<view class="file-content">
@@ -138,7 +141,7 @@
 						</view>
 					</template>
 				</view>
-				
+
 			</view>
 			<view class="goexam-btn" @click="getuserCourseinfo">
 				去考试
@@ -221,7 +224,7 @@
 				longit: '',
 				place: '',
 				isFaceVerify: false,
-				userCourseDatas:{}
+				userCourseDatas: {}
 			};
 		},
 
@@ -270,7 +273,7 @@
 		 * 生命周期函数--监听页面显示
 		 */
 		onShow: function() {
-			
+
 		},
 
 		methods: {
@@ -347,18 +350,20 @@
 					videoInfo = e.currentTarget.dataset.vinfo
 				}
 				if (videoInfo.videoVid || videoInfo.videoLength) {
-					if (this.isFree || videoInfo.isFree) {
-						let vid = videoInfo.videoVid;
-						this.playVideo(videoInfo, vid);
-						uni.pageScrollTo({
-							scrollTop: 0
-						});
-					} else {
-						uni.showToast({
-							title: '该课程非免费开放,您没有观看权限',
-							icon: 'none'
-						});
-					}
+					// if (this.isFree || videoInfo.isFree) {
+					console.log('FUk1')
+					let vid = videoInfo.videoVid;
+					this.playVideo(videoInfo, vid);
+					uni.pageScrollTo({
+						scrollTop: 0
+					});
+					// } 
+					// else {
+					// 	uni.showToast({
+					// 		title: '该课程非免费开放,您没有观看权限',
+					// 		icon: 'none'
+					// 	});
+					// }
 				} else if (e.playback) {
 					// 欢拓直播间、回放
 					// liveState = (0: 直播 1: 回放)
@@ -381,8 +386,9 @@
 							periodId: e.id,
 
 						})
+						console.log('FUk')
 						uni.navigateTo({
-							url: "/pages/webview/webview?id=" + this.courseId
+							url: "/pages/webview/webview?id=" + this.courseId+'&needFace='+ false
 						})
 					});
 				} else {
@@ -517,8 +523,8 @@
 			getuserCourseinfo() {
 				let idcard = uni.getStorageSync('userCompanyInfo').idCard
 				let obj = this.userCourseDatas
-				console.log('trainid',obj.trainId)
-				console.log('idcard',idcard)
+				console.log('trainid', obj.trainId)
+				console.log('idcard', idcard)
 				httpRequest({
 					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',
 					method: 'POST',
@@ -526,27 +532,27 @@
 						"idcard": idcard,
 						"trainId": obj.trainId
 					},
-					success:res=>{
-						console.log('查询状态：',res)
-						if(res.data.code == 200){
-							if(res.data.data){
+					success: res => {
+						console.log('查询状态：', res)
+						if (res.data.code == 200) {
+							if (res.data.data) {
 								this.userCourseDatas.isPassExam = res.data.data.isPassExam
 								this.userCourseDatas.isSignon = res.data.data.isSignon
 								this.goExamfromUser()
-							}else {
+							} else {
 								uni.showToast({
-									title:'获取考试详情失败',
-									icon:'none'
+									title: '获取考试详情失败',
+									icon: 'none'
 								})
 							}
-						}else {
+						} else {
 							request_success(res)
 						}
 					},
-					fail:err=>{
-						console.log('查询错误：',err)
+					fail: err => {
+						console.log('查询错误：', err)
 					}
-				},1)
+				}, 1)
 			},
 			// 学习资料获取
 			getaccessoryList() {
@@ -567,9 +573,9 @@
 						uni.hideLoading()
 						console.log('学习资料：', res)
 						if (res.data.code == 200) {
-							
+
 							let list = res.data.data.list
-							list.forEach((item,index)=>{
+							list.forEach((item, index) => {
 								let path = item.savePath
 								let splitLength = path.split('.').length
 								let suffix = path.split('.')[splitLength - 1]
@@ -618,7 +624,7 @@
 									title: '下载文件失败'
 								})
 							}
-			
+
 							// uni.saveFile({
 							// 	tempFilePath:res
 							// })
@@ -631,12 +637,12 @@
 							})
 						}
 					})
-			
-				} else if(suffix == 'png' || suffix == 'jpg' || suffix == 'jpeg' || suffix == 'gif'){
+
+				} else if (suffix == 'png' || suffix == 'jpg' || suffix == 'jpeg' || suffix == 'gif') {
 					uni.previewImage({
-						current:path,
-						urls:[path],
-						indicator:'default',
+						current: path,
+						urls: [path],
+						indicator: 'default',
 						success: (res) => {
 							console.log('预览')
 						}
@@ -646,7 +652,7 @@
 						title: '该文件暂不支持预览'
 					})
 				}
-			
+
 			},
 			downloadFile(item) {
 				let path = item.savePath
@@ -688,7 +694,7 @@
 			// 去考试
 			goExamfromUser() {
 				let obj = this.userCourseDatas
-				console.log('去考试：',obj)
+				console.log('去考试：', obj)
 				if (obj && obj.isPassExam == 1) {
 					uni.showToast({
 						title: '你该场次考试已经通过',
@@ -778,9 +784,9 @@
 							this.isFaceVerify = true
 							console.log('人脸签入日志：', res)
 							uni.showToast({
-								title:'签到成功',
-								icon:'none',
-								duration:1500
+								title: '签到成功',
+								icon: 'none',
+								duration: 1500
 							})
 						}, err => {
 							uni.showToast({
@@ -842,10 +848,12 @@
 	.live_status {
 		top: 0;
 	}
+
 	.sxdcfdiuh {
 		width: 60rpx;
 		height: 73rpx;
 	}
+
 	.live_status .text {
 		color: red;
 		font-size: 24rpx;
@@ -909,10 +917,12 @@
 
 
 	}
+
 	.file-content {
 		width: 65%;
 	}
-	.title{
+
+	.title {
 		color: #333333;
 		font-size: 30rpx;
 		overflow: hidden;
@@ -920,6 +930,7 @@
 		text-align: left;
 		margin-bottom: 4rpx;
 	}
+
 	.pdf-docx-img {
 		margin-right: 20rpx;
 		width: 10%;
@@ -947,6 +958,7 @@
 		width: 50rpx;
 		height: 50rpx;
 	}
+
 	.goexam-btn {
 		width: 60%;
 		margin: 40rpx auto 20rpx;
@@ -957,12 +969,14 @@
 		padding: 20rpx 0;
 		font-size: 36rpx`;
 	}
-	.no-data{
+
+	.no-data {
 		text-align: center;
 		margin: 30rpx 0;
 		font-size: 32rpx;
 		color: #000000;
 	}
+
 	.file-size {
 		color: #FFB415;
 		font-size: 24rpx;

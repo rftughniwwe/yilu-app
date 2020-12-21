@@ -495,6 +495,7 @@
 												that.noSign1 = false
 												that.signInTime = getCurrentDate('onlyHours')
 												uni.setStorageSync('TrainingId', that.signDatas.id)
+												uni.setStorageSync('isSignSuccess', true)
 												Toast({
 													title: '签入成功',
 													icon: 'success'
@@ -503,6 +504,7 @@
 												that.noSign2 = false
 												that.signOutTime = getCurrentDate('onlyHours')
 												uni.setStorageSync('TrainingId', that.signDatas.id)
+												uni.setStorageSync('isSignSuccess', false)
 												uni.showModal({
 													title: '提示',
 													content: '签出成功，是否立即进行考试？',

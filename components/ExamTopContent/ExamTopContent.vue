@@ -2,11 +2,14 @@
 <template>
 	<view class="main flex-between">
 		<view class="subject-mode">
-			<text class="subject-text">
+			<text v-if="!isFromError" class="subject-text">
 				{{optionType}}({{perscore}}分)
 			</text>
+			<text v-else class="subject-text">
+				{{optionType}}
+			</text>
 		</view>
-		<view class="timeout">
+		<view class="timeout" v-if="!isFromError">
 			{{timecountdown?timecountdown:'00:00:00'}}
 		</view>
 		<view class="current-count">
@@ -32,12 +35,15 @@
 				
 			};
 		},
-		props: ['datas'],
+		props: ['datas','isFromError'],
 		created() {
 			let examdatas = uni.getStorageSync('autoExamQuestions')
 			let _proType = examdatas[0].problemType
 			this.optionType = this.mapping[_proType]
-			this.countDown(this.datas.time * 60)
+			if(!this.isFromError){
+				this.countDown(this.datas.time * 60)
+			}
+			
 			uni.$on('swiperChange',(res)=>{
 				let proType = examdatas[res.current].problemType
 				this.current = res.current+1
@@ -81,6 +87,7 @@
 					}
 					t--
 					this.timecountdown = getCountDown(t)
+					uni.$emit('timeChange',{time:this.timecountdown})
 				}, 1000)
 			}
 		}

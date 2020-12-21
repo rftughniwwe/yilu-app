@@ -230,6 +230,8 @@ function removeAppStorage(options) {
 	// uni.removeStorageSync('TrainingId')
 	// 用户自主学习试卷详情
 	uni.removeStorageSync('userAutoQuestions')
+	// 是否签入
+	uni.removeStorageSync('isSignSuccess')
 }
 
 // 获取用户登录信息

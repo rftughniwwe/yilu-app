@@ -1,13 +1,13 @@
 <!-- 题目底部组件 -->
 <template>
-	<view class="main flex-between">
+	<view class="main flex-evenly">
 		<view class="answer-sheet flex-evenly">
 			<image src="../../static/answer-sheet-img.png" mode=""></image>
 			<view class="txt" @click="answerSheet">
 				答题卡
 			</view>
 		</view>
-		<view class="submit-btn">
+		<view class="submit-btn" v-if="!isFromError">
 			<view class="txt" @click="complete">
 				交卷
 			</view>
@@ -22,6 +22,7 @@
 
 			};
 		},
+		props:['isFromError'],
 		methods:{
 			answerSheet(){
 				this.$emit('answerSheet')
@@ -44,6 +45,7 @@
 		border-radius: $uni-border-radius-half-circle;
 		padding: 18rpx 0;
 		width: 30%;
+		margin-right: 20rpx;
 		image {
 			width: 34rpx;
 			height: 34rpx;

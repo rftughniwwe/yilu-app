@@ -1,7 +1,7 @@
 <!-- 做题swpier -->
 <template>
 	<view class="main">
-		<swiper class='swiper' :indicator-dots='false' @change="itemChange">
+		<swiper class='swiper' :indicator-dots='false' @change="itemChange" :current='currentItem' :disable-programmatic-animation='true'>
 			<template v-for="(item,index) in datas">
 				<swiper-item>
 					<view class="topic">
@@ -28,7 +28,7 @@
 									正确答案：
 								</view>
 								<view class="option">
-									{{item.problemAnswer}}
+									{{optionsMapping[rightAnswerOption]}}
 								</view>
 							</view>
 							<view class="my-answer-content">
@@ -36,7 +36,7 @@
 									我的答案：
 								</view>
 								<view class="option">
-									{{item.userAnswer}}
+									{{optionsMapping[currentOption]}}
 								</view>
 							</view>
 						</view>
@@ -58,42 +58,84 @@
 
 <script>
 	import examOptions from '@/components/examOptions/examOptions.vue'
+	import {
+		httpRequest
+	} from '@/utils/httpRequest.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
 	export default {
 		data() {
 			return {
 				datas: [],
+				optionsMapping:['A','B','C','D','E','F'],
 				singleItem: -1,
-				currnet: 0
+				currnet: 0,
+				currentItem:0,
+				rightAnswerOption:0,
+				currentOption:0
 			};
 		},
 		components: {
 			examOptions
 		},
-		props: ['options'],
+		props: [],
 		created() {
-			let examdatas = uni.getStorageSync('autoExamQuestions')
-			this.datas = examdatas
-		},
-		updated() {
-
+			// let examdatas = uni.getStorageSync('autoExamQuestions')
+			
+			this.getQuestions()
+			uni.$on('tabChange',(res)=>{
+				this.currentItem = res.index
+			})
 		},
 		methods: {
 			clickItem(e, index) {
 				let examdatas = uni.getStorageSync('autoExamQuestions')
 				let selected = e.option
+				this.currentOption = selected
 				console.log('当前选项：', selected)
 				console.log('当前的item：', examdatas[index])
+				examdatas[index].children.forEach((i,index)=>{
+					if(i.isTrue){
+						this.rightAnswerOption = index
+					}
+				})
 				examdatas[index].userAnswer = examdatas[index].children[selected].optionContent
+				examdatas[index].questionId = examdatas[index].children[selected].answerId
 				this.datas = examdatas
 				uni.setStorageSync('autoExamQuestions', examdatas)
 				uni.$emit('optionsChange',{})
 			},
 			itemChange(e) {
-				console.log('eeee啊', e)
 				uni.$emit('swiperChange', {
 					current: e.target.current
 				})
-			}
+			},
+			// 获取试题
+			getQuestions() {
+				uni.showLoading({
+					title: '出题中',
+				})
+				httpRequest({
+					url: '/exam/api/tbCourPaper/list',
+					method: 'POST',
+					success: res => {
+						uni.hideLoading()
+			
+						if (res.data.code == 200) {
+							// uni.setStorageSync('autoExamQuestions', res.data.data)
+							this.datas = res.data.data
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						uni.hideLoading()
+						console.log('获取试题失败', err)
+					}
+				},5)
+			},
 		}
 	}
 </script>

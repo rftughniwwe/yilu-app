@@ -189,6 +189,14 @@
 			},
 			goPreview(item) {
 				// let d = encodeURIComponent(JSON.stringify(item))
+				let isSign = uni.getStorageSync('isSignSuccess')
+				if(isSign){
+					uni.showToast({
+						title:'你正在参加现场培训，无需参加远程教育',
+						icon:'none'
+					})
+					return
+				}
 				uni.setStorageSync('courseInfoData', item)
 				console.log('我的课程', item)
 				if (item.courseCategory == 1) {
