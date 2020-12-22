@@ -42,17 +42,18 @@
 
 		components: {},
 		props: {},
-		onBackPress() {
+		onBackPress(e) {
 			if(this.isNeedFaceVerify == true){
 			console.log('xixix',this.isNeedFaceVerify)
 				this.getLiveStatus(this.courseId,true)
 			}else {
 				console.log('xixix123123123',this.isNeedFaceVerify)
-				setTimeout(()=>{
-					uni.redirectTo({
-						url:'../course/live/live'
-					})
-				},200)
+				// setTimeout(()=>{
+				// 	uni.navigateBack({
+				// 		delta:1
+				// 	})
+				// },200)
+				return false
 			}
 			return true
 		},

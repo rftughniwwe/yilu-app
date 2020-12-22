@@ -374,7 +374,7 @@
 						categoryId1: id
 					},
 					success: res => {
-						console.log('自主学习课程：', res)
+						// console.log('自主学习课程：', res)
 						if (res.data.code == 200) {
 							this.autoLearning = res.data.data
 						}
@@ -519,13 +519,7 @@
 				let that = this
 				let type = uni.getStorageSync('teachType')
 				let isSign = uni.getStorageSync('isSignSuccess')
-				if (isSign) {
-					uni.showToast({
-						title: '你正在参加现场培训，无需参加远程教育',
-						icon: 'none'
-					})
-					return
-				}
+				
 				if (type == 0) {
 					// 安全教育
 					if (num == 1) {
@@ -533,6 +527,13 @@
 							url: '../onSiteTraining/onSiteTraining'
 						})
 					} else if (num == 2) {
+						if (isSign) {
+							uni.showToast({
+								title: '你正在参加现场培训，无需参加远程教育',
+								icon: 'none'
+							})
+							return
+						}
 						uni.navigateTo({
 							url: '../user/myCourse'
 						})
@@ -608,11 +609,16 @@
 			},
 			getErrorQuestion(){
 				let userid = getUserLoginInfo('userNo')
+				uni.showLoading({
+					title:'出题中',
+					mask:true
+				})
 				httpRequest({
 					url:'/exam/api/tbCourQuestionPerson/errorlist?userId='+userid,
 					method:'GET',
 					success:res=>{
 						console.log('错题集zz：',res.data.data.length)
+						uni.hideLoading()
 						if(res.data.code == 200){
 							uni.setStorageSync('autoExamQuestions',res.data.data)
 							uni.navigateTo({           
@@ -626,6 +632,7 @@
 						}
 					},
 					fail:err=>{
+						uni.hideLoading()
 						console.log('获取错题集失败')
 						uni.showToast({
 							title:'获取错题集失败',

@@ -47,7 +47,8 @@
 		base64ToPath
 	} from '../../js_sdk/gsq-image-tools/image-tools/index.js'
 	import {
-		uploadImage
+		uploadImage,
+		httpRequest
 	} from '@/utils/httpRequest.js'
 
 	export default {
@@ -70,7 +71,9 @@
 				xiba: '',
 				lat: '',
 				longit: '',
-				signAddress: ''
+				signAddress: '',
+				isMiddleFaceLog:false,
+				refId:''
 			}
 		},
 		onBackPress() {
@@ -106,7 +109,8 @@
 			this.userInfo = uni.getStorageSync('userInfo')
 			this.periodNo = scene
 			this.courseId = options.courseId || ''
-
+			this.isMiddleFaceLog = options.middleFace || false
+			console.log('middleeeee,',this.isMiddleFaceLog)
 			let fn = () => {
 				var That = this;
 				uni.getLocation({
@@ -141,8 +145,12 @@
 		methods: {
 			// 获取身份证信息
 			getIDCardInfo() {
+				uni.showLoading({
+					title:'加载中',
+					mask:true
+				})
 				getIdCardInfo().then(res => {
-
+					uni.hideLoading()
 					if (res.data.code == 200) {
 						console.log('获取身份证信息a a a ：', res)
 						this.idCardinfo = res.data.data
@@ -150,15 +158,13 @@
 						request_success(res)
 					}
 				}, err => {
+					uni.hideLoading()
 					request_err(err, '获取身份失败')
 				})
 			},
 			toError() {
 				this.isFaceverify = false
 				uni.$emit("verifyFaceErr:" + this.refId)
-				uni.$emit("asifhbwsrei", {
-					verify: false
-				})
 			},
 
 			async getData() {
@@ -304,7 +310,7 @@
 										faceContrasResult: 'Success',
 									}
 									if (this.type == 2) {
-										auth.faceSignLog(params).then(() => {
+										auth.faceSignLog(params).then((res) => {
 											if (this.faceSignType == 1) {
 												uni.$emit('asifhbwsrei', {
 													verify: true
@@ -322,7 +328,7 @@
 												icon: 'none'
 											})
 										});
-									} else {
+									} else if(this.type == 1){
 										auth.faceUserLog({
 											userNo: _userNo,
 											category: this.signType,
@@ -351,6 +357,10 @@
 											})
 										});
 									}
+									if(this.isMiddleFaceLog){
+										console.log('中间人脸识别')
+										this.xixixixix(face_img.data)
+									}
 								}, error => {
 									console.log('上传人脸图片失败：', error)
 								})
@@ -369,7 +379,39 @@
 					}
 				})
 			},
-
+			xixixixix(img){
+				let userno = getUserLoginInfo('userNo')
+				let comid = uni.getStorageSync('userCompanyInfo').compId
+				let courseInfo = uni.getStorageSync('courseInfoData')
+				let params = {
+					courseType: 1,
+					numEvent: courseInfo.trainId,
+					refName: courseInfo.courseName,
+					signonApp: 0,
+					statusId: 1,
+					compId: comid,
+					userNo: userno,
+					refId: this.refId,
+					longitude: this.longit,
+					latitude: this.lat,
+					place: this.signAddress,
+					userImage: img,
+					faceContrasResult: 'Success',
+				}
+				httpRequest({
+					url:'/course/api/middleFaceLog/save',
+					method:'POST',
+					data:params,
+					success:res=>{
+						if(res.data.code == 200){
+							console.log('保存成功')
+						}
+					},
+					fail:err=>{
+						console.log('保存失败')
+					}
+				},2)
+			},
 			handleReady() {
 				let num = this.num
 				if (num == 0) {

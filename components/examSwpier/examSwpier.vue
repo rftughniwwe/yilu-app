@@ -8,35 +8,56 @@
 						{{index+1}}.{{item.problemContent}}
 					</view>
 					<view class="options">
-						<examOptions :item='item.children' @optionsClick='clickItem($event,index)' />
+						<examOptions :item='item' @optionsClick='clickItem($event,index)' @optionsClickMutile='MutileOptionClick($event,index)'/>
 					</view>
 					<view v-if="item.userAnswer" class="answer-content">
-						<view v-if="item.userAnswer !== item.problemAnswer" class="error-answer-content flex-between" :style="{'backgroundColor': '#F75D42'}">
-							<image src="../../static/answer-error-img.png" mode=""></image>
-							<view class="text">
-								回答错误
+						<template v-if="(item.problemType == 1 || item.problemType == 3)">
+							<view v-if="item.userAnswer !== item.problemAnswer" class="error-answer-content flex-between" :style="{'backgroundColor': '#F75D42'}">
+								<image src="../../static/answer-error-img.png" mode=""></image>
+								<view class="text">
+									回答错误
+								</view>
 							</view>
-						</view>
-						<view v-else-if='item.userAnswer === item.problemAnswer' class="error-answer-content" :style="{'backgroundColor': '#3ED3AA'}">
-							<view class="text">
-								回答正确
+							<view v-else-if='item.userAnswer === item.problemAnswer' class="error-answer-content" :style="{'backgroundColor': '#3ED3AA'}">
+								<view class="text">
+									回答正确
+								</view>
 							</view>
-						</view>
+						</template>
+						<template v-else>
+							<view v-if="rightAnswerMutile !== currentOptionMutile" class="error-answer-content flex-between" :style="{'backgroundColor': '#F75D42'}">
+								<image src="../../static/answer-error-img.png" mode=""></image>
+								<view class="text">
+									回答错误
+								</view>
+							</view>
+							<view v-else-if='rightAnswerMutile === currentOptionMutile' class="error-answer-content" :style="{'backgroundColor': '#3ED3AA'}">
+								<view class="text">
+									回答正确
+								</view>
+							</view>
+						</template>
 						<view class="answer-contrast flex-evenly">
 							<view class="right-answer-content">
 								<view class="answer-txt">
 									正确答案：
 								</view>
-								<view class="option">
+								<view v-if='item.problemType == 1 || item.problemType == 3' class="option">
 									{{optionsMapping[rightAnswerOption]}}
+								</view>
+								<view v-else class="option">
+									{{rightAnswerMutile}}
 								</view>
 							</view>
 							<view class="my-answer-content">
 								<view class="answer-txt">
 									我的答案：
 								</view>
-								<view class="option">
+								<view v-if='item.problemType == 1 || item.problemType == 3' class="option">
 									{{optionsMapping[currentOption]}}
+								</view>
+								<view v-else class="option">
+									{{currentOptionMutile}}
 								</view>
 							</view>
 						</view>
@@ -74,7 +95,10 @@
 				currnet: 0,
 				currentItem:0,
 				rightAnswerOption:0,
-				currentOption:0
+				rightAnswerMutile:'',
+				currentOption:0,
+				currentOptionMutile:'',
+				isShowAnswer:false
 			};
 		},
 		components: {
@@ -136,6 +160,35 @@
 					}
 				},5)
 			},
+			MutileOptionClick(e,index){
+				let examdatas = uni.getStorageSync('autoExamQuestions')
+				let selected = e.option
+				
+				console.log('当前答案集：', selected)
+				console.log('当前的item：', examdatas[index])
+				let rightAnswer = ''
+				let myAnsers = ''
+				let submit_answer = ''
+				examdatas[index].children.forEach((_item,_index)=>{
+					console.log('itemssss',_item)
+					if(_item.isTrue == 1){
+						rightAnswer += this.optionsMapping[_index]
+					}
+				})
+				selected.forEach((item,inx)=>{
+					myAnsers += this.optionsMapping[item.index]
+					submit_answer += submit_answer.length==0?item.option.optionContent:'|'+item.option.optionContent
+				})
+				console.log('正确答案：',rightAnswer)
+				console.log('我的答案：',submit_answer)
+				this.rightAnswerMutile = rightAnswer
+				this.currentOptionMutile = myAnsers
+				examdatas[index].userAnswer = submit_answer
+				// examdatas[index].questionId = examdatas[index].children[selected].answerId
+				this.datas = examdatas
+				uni.setStorageSync('autoExamQuestions', examdatas)
+				uni.$emit('optionsChange',{})
+			}
 		}
 	}
 </script>

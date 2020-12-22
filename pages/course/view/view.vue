@@ -9,8 +9,8 @@
 		<!--  #endif -->
 
 		<video v-if="videoSrc" id="polyvVideo" class="img_box" :poster="courseInfo.courseImg" :src="videoSrc" @ended="nextVideo"
-		 @play="isPlay" @pause="pausevideo" @timeupdate="videoTimeUpdate" enable-danmu="true">
-			<cover-view class="beisu-box" v-if="playstatu">
+		 @play="isPlay" @pause="pausevideo" @timeupdate="videoTimeUpdate" enable-danmu="true" :enable-progress-gesture='false'>
+			<!-- <cover-view class="beisu-box" v-if="playstatu">
 				<cover-view class="clearfix">
 					<button class="beisu-btn" @tap="showbei">倍速{{bei == 1.0 ? "" : bei + "X"}}</button>
 				</cover-view>
@@ -20,7 +20,10 @@
 					<button :class="'btn ' + (bei == 1.25 ? 'on' : '')" @tap="jiasu" data-b="1.25">1.25X</button>
 					<button :class="'btn ' + (bei == 1.5 ? 'on' : '')" @tap="jiasu" data-b="1.5">1.5X</button>
 				</cover-view>
-			</cover-view>
+			</cover-view> -->
+			<!-- <cover-view class="fullscreen" @click="fullscreen">
+				全屏
+			</cover-view> -->
 		</video>
 		<view class="course_msg b_fff">
 			<view class="flex_row_between">
@@ -148,7 +151,7 @@
 			return {
 				faceContrast: 0, // 活体认证次数
 				isFaceContras: 0,
-				constrastTimes: null, // 认证时间点
+				// constrastTimes: null, // 认证时间点
 				videoPeriodId: '', // 正在播放课时ID
 				playstatu: false, // 开始播放
 				playInfo: {
@@ -190,6 +193,9 @@
 				userCourseDatas: {},
 				"isSignon": 0,
 				"isPassExam": 0,
+				destroyed: false,
+				setFullScreen: false,
+				videoCurrentTime:0
 			};
 		},
 
@@ -211,6 +217,9 @@
 			// return {
 			// 	path: url
 			// };
+		},
+		onUnload() {
+			this.destroyed = true
 		},
 		/**
 		 * 生命周期函数--监听页面加载
@@ -240,7 +249,7 @@
 
 			let coursesss = uni.getStorageSync('courseInfoData')
 
-			uni.$on('asifhbwsrei', (res) => {
+			uni.$once('asifhbwsrei', (res) => {
 				if (res.verify) {
 					uni.setStorageSync('TrainingId', coursesss.trainId)
 					// this.getaccessoryList()
@@ -282,7 +291,7 @@
 					uni.showToast({
 						title: "完成验证"
 					})
-					this.constrastTimes.splice(0, 1);
+					// this.constrastTimes.splice(0, 1);
 					// #ifdef MP-WEIXIN || APP-PLUS
 					this.videoContext.play()
 					// #endif
@@ -331,13 +340,13 @@
 							icon: 'none'
 						})
 					});
-				}else {
+				} else {
 					uni.showToast({
-						title:'该培训为线下培训',
-						icon:'none'
+						title: '该培训为线下培训',
+						icon: 'none'
 					})
 					uni.navigateBack({
-						delta:1
+						delta: 1
 					})
 				}
 			},
@@ -433,7 +442,15 @@
 					});
 				}
 			},
+			fullscreen() {
 
+				if (this.setFullScreen) {
+					this.videoContext.exitFullScreen()
+				} else {
+					this.videoContext.requestFullScreen()
+				}
+				this.setFullScreen = !this.setFullScreen
+			},
 			// 播放视频
 			playVideo(videoInfo, vid) {
 				const that = this;
@@ -459,7 +476,7 @@
 					videoVid: vid
 				}).then(res => {
 					if (videoInfo.isFaceContras == 1) {
-						this.constrastTimes = '';
+						// this.constrastTimes = '';
 						this.faceContrast = videoInfo.faceContrasCount;
 					}
 					this.isFaceContras = videoInfo.isFaceContras;
@@ -578,13 +595,15 @@
 				if (this.randomtimes > 30) return
 				let result = 0
 				let m = Math.floor(max) - 40
-				r()
 				let i = 0
+				r()
 
 				function r() {
 					result = Math.floor(Math.random() * m)
 					i++
-					if (i >= 20) {
+					console.log('simadongxi:', result)
+					if (i >= 10) {
+						result = 31
 						return
 					}
 					if (result <= 30) {
@@ -598,6 +617,9 @@
 
 			// 活体认证
 			checkContrast(playObj) {
+				if (this.destroyed) {
+					return
+				}
 				if (this.isFaceContras === 0) {
 					return;
 				}
@@ -632,16 +654,8 @@
 						this.videoContext.pause && this.videoContext.pause()
 						// #endif
 
-						// uni.showToast({
-						// 	title: '人脸识别'
-						// })
-
-						// setTimeout(()=> {
-						// 	this.signName && uni.setStorageSync(this.signName, true);
-						// 	uni.$emit("verifyFace:" + this.courseId)
-						// }, 2000)
 						uni.navigateTo({
-							url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1&xiba=1'
+							url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signType=1&xiba=1&middleFace='+true
 						})
 					}
 				}
@@ -662,7 +676,7 @@
 				this.playstatu = false
 				this.getPlayTime()
 				uni.navigateTo({
-					url: '../../verifyFace/verifyFace?refId=' + this.videoPeriodId + '&signType=1&faceSignType=1'
+					url: '../../verifyFace/verifyFace?refId=' + this.courseId + '&signType=1&faceSignType=1&type=2'
 				})
 
 			},
@@ -679,11 +693,21 @@
 			},
 			videoTimeUpdate: function(e) {
 				this.playInfo = e.detail
+
+				// let time = e.detail.currentTime;
+				// if ((time - this.videoCurrentTime).toFixed(3) > 2) {
+				// 	let nowtime = this.videoCurrentTime.toFixed(0);
+				// 	this.videoContext.seek(nowtime);
+				// } else {
+				// 	this.videoCurrentTime = time;
+				// }
 			},
 			// 获取用户课程信息
 			getuserCourseinfo() {
 				let idcard = uni.getStorageSync('userCompanyInfo').idCard
-				let trainid = this.userCourseDatas.traningId
+				let trainid = this.userCourseDatas.trainId
+				console.log('idcard:',idcard)
+				console.log('trainid:',trainid)
 				httpRequest({
 					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',
 					method: 'POST',
@@ -700,7 +724,7 @@
 								this.goExamfromUser()
 							} else {
 								uni.showToast({
-									title: '获取考试详情失败',
+									title: '你不是本培训的参与人员',
 									icon: 'none'
 								})
 							}
@@ -1038,4 +1062,15 @@
 	}
 
 	.action-content {}
+
+	.fullscreen {
+		background-color: #3CA7FF;
+		border-radius: 10rpx;
+		color: #FFFFFF;
+		padding: 10rpx 16rpx;
+		position: relative;
+		right: 30rpx;
+		bottom: 20rpx;
+		width: 120rpx;
+	}
 </style>

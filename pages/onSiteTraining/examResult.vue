@@ -32,7 +32,7 @@
 			</view> -->
 			<view class="items">
 				<view class="head">
-					考试用时：<text class="ttt">{{examtime || 0}}分</text>
+					考试用时：<text class="ttt">{{examtime || 0}}分钟</text>
 				</view>
 			</view>
 			<view class="items">
@@ -55,9 +55,9 @@
 		data() {
 			return {
 				isFullScreen: false,
-				examResult:{},
-				examtime:'',
-				nickname:''
+				examResult: {},
+				examtime: '',
+				nickname: ''
 			};
 		},
 		components: {
@@ -66,7 +66,9 @@
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.examResult = JSON.parse(decodeURIComponent(options.result))
-			this.examtime = Math.floor(this.examResult.totalTime - this.examResult.examtime)
+			let ys = this.examResult.examtime.split(':')[1]
+			this.examtime = Math.ceil(this.examResult.totalTime - ys) < 1 ? 1 : Math.ceil(this.examResult.totalTime -
+				ys)
 			this.nickname = uni.getStorageSync('userCompanyInfo').userName
 		},
 		onBackPress() {
@@ -144,7 +146,7 @@
 
 	.exam-info {
 		padding: 80rpx 0 50rpx;
-		width: 60%;
+		width: 50%;
 		margin: 0 auto;
 	}
 

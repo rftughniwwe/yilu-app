@@ -102,7 +102,10 @@
 				answerTimeText: '',
 				submitFlag: false,
 				faceVerifyCount: -1,
-				isMiddleFaceVerify:false
+				isMiddleFaceVerify:false,
+				longit:'',
+				lat:'',
+				signAddress:''
 			};
 		},
 		components: {
@@ -111,7 +114,29 @@
 		onLoad(options) {
 			this.examId = options.id;
 			this.getData(options.id, options.gradeExamId || '')
-
+			let fn = () => {
+				var That = this;
+				uni.getLocation({
+					type: 'wgs84',
+					geocode: true,
+					success: function(res) {
+						That.longit = res.longitude;
+						That.lat = res.latitude;
+						let place = ''
+						if (res.address) {
+							const a = res.address;
+							a.country && (place += a.country);
+							a.province && (place += a.province);
+							a.city && (place += a.city);
+							a.district && (place += a.district);
+							a.street && (place += a.street);
+							a.streetNum && (place += a.streetNum);
+						}
+						That.signAddress = place;
+					}
+				});
+			}
+			fn()
 			setInterval(() => {
 				this.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
 			}, 5000)
@@ -306,9 +331,9 @@
 					compId: comid,
 					userNo: userno,
 					refId: this.examId,
-					longitude: '',
-					latitude: '',
-					place: '',
+					longitude: this.longit,
+					latitude: this.lat,
+					place: this.signAddress,
 					userImage: img.data,
 					faceContrasResult: 'Success',
 				}
@@ -341,9 +366,9 @@
 					userNo: userno,
 					signonType: signOut?1:0,
 					refId: this.examId,
-					longitude: '',
-					latitude: '',
-					place: '',
+					longitude: this.longit,
+					latitude: this.lat,
+					place: this.signAddress,
 					userImage: img.data,
 					faceContrasResult: 'Success',
 				}

@@ -56,7 +56,10 @@
 			return {
 				examData: {},
 				gradeExamId: '',
-				trainingid: ''
+				trainingid: '',
+				longit:'',
+				lat:'',
+				signAddress:''
 			};
 		},
 		onLoad(options) {
@@ -67,6 +70,30 @@
 			} else {
 				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
 			}
+
+			let fn = () => {
+				var That = this;
+				uni.getLocation({
+					type: 'wgs84',
+					geocode: true,
+					success: function(res) {
+						That.longit = res.longitude;
+						That.lat = res.latitude;
+						let place = ''
+						if (res.address) {
+							const a = res.address;
+							a.country && (place += a.country);
+							a.province && (place += a.province);
+							a.city && (place += a.city);
+							a.district && (place += a.district);
+							a.street && (place += a.street);
+							a.streetNum && (place += a.streetNum);
+						}
+						That.signAddress = place;
+					}
+				});
+			}
+			fn()
 
 			// if(options.gradeExamId) {
 			// 	this.gradeExamId = options.gradeExamId
@@ -199,9 +226,9 @@
 					userNo: userno,
 					signonType: 0,
 					refId: this.examData.id,
-					longitude: '',
-					latitude: '',
-					place: '',
+					longitude: this.longit,
+					latitude: this.lat,
+					place: this.signAddress,
 					userImage: img.data,
 					faceContrasResult: 'Success',
 				}

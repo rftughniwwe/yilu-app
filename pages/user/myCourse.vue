@@ -66,7 +66,7 @@
 	export default {
 		data() {
 			return {
-				tabArr: ['课程直播', '课程回放'],
+				tabArr: ['课程直播', '课程录播'],
 				tab: 0,
 				num: 0,
 				courseData: [],
@@ -170,7 +170,6 @@
 					data: params,
 					success: (res) => {
 						uni.hideLoading()
-						console.log('课程数据:', res)
 						if (res.data.code == 200) {
 							this.courseData = res.data.data
 						} else {

@@ -133,8 +133,9 @@
 				})
 				let a = uni.getStorageSync('autoExamQuestions')
 				this.options  = a.length > 200 ? a.slice(0,200):a
+				uni.setStorageSync('autoExamQuestions',this.options)
 				this.topDatas = {
-					total: a.length
+					total: this.options.length
 				}
 				this.isFromError = true
 			} else {
@@ -144,6 +145,7 @@
 				this.examId = options.id
 				this.startExamTime = new Date()
 				this.examInfo = uni.getStorageSync('userAutoQuestions')
+				
 				if (!this.examInfo) {
 					uni.showToast({
 						title: '获取题目失败',

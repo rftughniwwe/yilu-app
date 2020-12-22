@@ -3,10 +3,10 @@
 	<view class="main flex-between">
 		<view class="subject-mode">
 			<text v-if="!isFromError" class="subject-text">
-				{{optionType}}({{perscore}}分)
+				{{optionType || '选择题'}}({{perscore}}分)
 			</text>
 			<text v-else class="subject-text">
-				{{optionType}}
+				{{optionType || '选择题'}}
 			</text>
 		</view>
 		<view class="timeout" v-if="!isFromError">
