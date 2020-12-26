@@ -727,8 +727,8 @@
 									icon: 'none'
 								})
 							}
-						} else {
 							request_success(res)
+						} else {
 						}
 					},
 					fail: err => {

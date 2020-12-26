@@ -36,17 +36,17 @@ function httpRequest(options, url_type, isToken) {
 	let base_url = BASE_URL
 
 	// if (url_type == 1) {
-	// 	base_url = BASE_URL + ':8720'
+	// 	base_url = BASE_URL + ':8720/'
 	// } else if (url_type == 2) {
-	// 	base_url = BASE_URL + ':8730'
+	// 	base_url = BASE_URL + ':8730/'
 	// } else if (url_type == 3) {
-	// 	base_url = BASE_URL + ':8740'
+	// 	base_url = BASE_URL + ':8740/'
 	// } else if (url_type == 4) {
-	// 	base_url = BASE_URL + ':8700'
+	// 	base_url = BASE_URL + ':8700/'
 	// } else if (url_type == 5) {
-	// 	base_url = BASE_URL + ':8760'
+	// 	base_url = BASE_URL + ':8760/'
 	// } else if (url_type == 6) {
-	// 	base_url = BASE_URL + ':8710'
+	// 	base_url = BASE_URL + ':8710/'
 	// }
 
 	let t = getUserLoginInfo('token')

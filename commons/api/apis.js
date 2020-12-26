@@ -178,18 +178,19 @@ export function getIdCardInfo(num) {
 
 // 签到根据时间选择获取统计数据
 export function getSignOnDateTime(date) {
-
-
+	let  cId = getLearningTypeInfo().compId
+	let usernum = getUserLoginInfo('userNo')
+	console.log('cId',cId)
+	console.log('usernum',usernum)
+	console.log('date',date)
 	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: 'user/api/tbCourVideoStudyHistory/signonDateTime',
 			method: 'POST',
 			data: {
-				"categoryId1": categoryId1,
-				"categoryId2": categoryId2,
-				"compId": compId,
+				"compId": cId,
 				"dateTime": date,
-				"userId": userNum,
+				"userId": usernum,
 			},
 			success: res => {
 				resolve(res)

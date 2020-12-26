@@ -491,7 +491,7 @@
 						liveUrl: liveUrl,
 						periodId: this.courseInfo.periodId,
 					})
-					console.log('nimade:', this.courseId)
+					console.log('nimade:', liveUrl)
 					uni.navigateTo({
 						url: "/pages/webview/webview?id=" + this.courseId
 					})

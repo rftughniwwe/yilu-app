@@ -302,7 +302,7 @@
 			// 自主学习中的tab变化
 			uni.$on('selfChange', (data) => {
 				this.selfLearnType = data.tab
-				if(data.tab == 3){
+				if (data.tab == 3) {
 					this.getAutoLearningStati()
 				}
 			})
@@ -360,14 +360,14 @@
 				uni.setStorageSync('courseInfoData', item)
 				console.log('自主学习点击：', item)
 				uni.navigateTo({
-					url:'../course/view/autoView?id=' + item.id
+					url: '../course/view/autoView?id=' + item.id
 				})
 			},
 			getAutoLearning() {
 				let id = getLearningTypeInfo().categoryId1
-				console.log('id',id)
+				console.log('id', id)
 				uni.showLoading({
-					title:'获取中...'
+					title: '获取中...'
 				})
 				httpRequest({
 					url: 'course/api/course/independentlist',
@@ -376,7 +376,7 @@
 						categoryId1: id
 					},
 					success: res => {
-						// console.log('自主学习课程：', res)
+						console.log('自主学习课程：', res)
 						uni.hideLoading()
 						if (res.data.code == 200) {
 							this.autoLearning = res.data.data
@@ -498,7 +498,7 @@
 			// },
 			// 左上角选择学习模块
 			bindPickerChange(e) {
-				console.log('eeeeeeeeeeeeee',e)
+				console.log('eeeeeeeeeeeeee', e)
 				this.type = e.target.value
 				let item = this.typeArr[e.target.value]
 				uni.setStorageSync('teachType', this.type)
@@ -513,10 +513,13 @@
 					// uni.setStorageSync('LearningSubType', item.listSub)
 					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
 				}
-				if(e.target.value == 2){
+				// if(e.target.value == 2){
+				// 	this.getAutoLearning()
+				// }
+				// 1自主学习
+				if(e.target.value == 1){
 					this.getAutoLearning()
 				}
-
 				// app.globalData.LearningSubType = item.listSub
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
@@ -526,7 +529,7 @@
 				let that = this
 				let type = uni.getStorageSync('teachType')
 				let isSign = uni.getStorageSync('isSignSuccess')
-				
+
 				if (type == 0) {
 					// 安全教育
 					if (num == 1) {
@@ -609,44 +612,44 @@
 					uni.navigateTo({
 						url: '../onSiteTraining/examBegin'
 					})
-				}else {
+				} else {
 					this.getErrorQuestion()
-					
+
 				}
 			},
-			getErrorQuestion(){
+			getErrorQuestion() {
 				let userid = getUserLoginInfo('userNo')
 				uni.showLoading({
-					title:'出题中',
-					mask:true
+					title: '出题中',
+					mask: true
 				})
 				httpRequest({
-					url:'exam/api/tbCourQuestionPerson/errorlist?userId='+userid,
-					method:'GET',
-					success:res=>{
-						console.log('错题集zz：',res.data.data.length)
+					url: 'exam/api/tbCourQuestionPerson/errorlist?userId=' + userid,
+					method: 'GET',
+					success: res => {
+						console.log('错题集zz：', res.data.data.length)
 						uni.hideLoading()
-						if(res.data.code == 200){
-							uni.setStorageSync('autoExamQuestions',res.data.data)
-							uni.navigateTo({           
-								url:'../examQuestion/examQuestion?fromError='+true
+						if (res.data.code == 200) {
+							uni.setStorageSync('autoExamQuestions', res.data.data)
+							uni.navigateTo({
+								url: '../examQuestion/examQuestion?fromError=' + true
 							})
-						}else {
+						} else {
 							uni.showToast({
-								title:'暂无错题',
-								icon:'none'
+								title: '暂无错题',
+								icon: 'none'
 							})
 						}
 					},
-					fail:err=>{
+					fail: err => {
 						uni.hideLoading()
 						console.log('获取错题集失败')
 						uni.showToast({
-							title:'获取错题集失败',
-							icon:'none'
+							title: '获取错题集失败',
+							icon: 'none'
 						})
 					}
-				},5)
+				}, 5)
 			},
 		}
 	}
