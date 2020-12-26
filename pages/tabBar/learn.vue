@@ -3,7 +3,7 @@
 	<view class="mainzz">
 		<chooseLearningType v-if='!chooseTypePager' />
 		<view v-else class="learning-content">
-			<view :class="type === 2?'no-padding':'learn-top-bar'">
+			<view :class="type === 1?'no-padding':'learn-top-bar'">
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
 					<view class="left-select">
 						<picker class="flex-between" :range="typeArrStr" :value="type" @change="bindPickerChange">
@@ -13,17 +13,17 @@
 							<image src="../../static/down-push-arrow.png" mode=""></image>
 						</picker>
 					</view>
-					<view v-show="type !== 2" class="right-scannin-code" @click="scanCode">
+					<view v-show="type !== 1" class="right-scannin-code" @click="scanCode">
 						<image src="../../static/camera-code.png" mode=""></image>
 					</view>
-					<view v-show="type === 2" class="right-leader-board" @click="goLeaderBoard">
+					<view v-show="type === 1" class="right-leader-board" @click="goLeaderBoard">
 						<image src="../../static/leader-board.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 
 			<!-- 继续教育和安全教育 -->
-			<view v-show="type !== 2" class="learning-teach">
+			<view v-show="type == 0" class="learning-teach">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide :type='type' :AnquanType="AnquanType" />
 				</view>
@@ -105,7 +105,7 @@
 			</view>
 
 			<!-- 自主学习 -->
-			<view v-show="type === 2" class="self-learning">
+			<view v-show="type === 1" class="self-learning">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide type='2' :selfLearnType='selfLearnType' />
 				</view>
@@ -302,6 +302,9 @@
 			// 自主学习中的tab变化
 			uni.$on('selfChange', (data) => {
 				this.selfLearnType = data.tab
+				if(data.tab == 3){
+					this.getAutoLearningStati()
+				}
 			})
 
 			// 安全教育中第一次选择subtitle变化
@@ -330,12 +333,13 @@
 				let e_time = this.date + '-' + end
 				console.log('s', s_time)
 				console.log('e', e_time)
+				console.log('userno', userNo)
 				httpRequest({
-					url: '/exam/api/tbCourQuestionPerson/questionCount',
+					url: 'exam/api/tbCourQuestionPerson/questionCount',
 					method: 'POST',
 					data: {
-						"endTime": s_time,
-						"startTime": e_time,
+						"endTime": e_time,
+						"startTime": s_time,
 						"updateUser": userNo
 					},
 					success: res => {
@@ -355,31 +359,31 @@
 				let item = e.item
 				uni.setStorageSync('courseInfoData', item)
 				console.log('自主学习点击：', item)
-				if (item.courseCategory == 1) {
-					uni.navigateTo({
-						url: '/pages/course/view/view?id=' + item.id
-					});
-				} else {
-					uni.navigateTo({
-						url: '/pages/course/live/live?id=' + item.id
-					})
-				}
+				uni.navigateTo({
+					url:'../course/view/autoView?id=' + item.id
+				})
 			},
 			getAutoLearning() {
 				let id = getLearningTypeInfo().categoryId1
+				console.log('id',id)
+				uni.showLoading({
+					title:'获取中...'
+				})
 				httpRequest({
-					url: '/course/api/course/independentlist',
+					url: 'course/api/course/independentlist',
 					method: 'POST',
 					data: {
 						categoryId1: id
 					},
 					success: res => {
 						// console.log('自主学习课程：', res)
+						uni.hideLoading()
 						if (res.data.code == 200) {
 							this.autoLearning = res.data.data
 						}
 					},
 					fail: err => {
+						uni.hideLoading()
 						console.log('获取自主学习课程失败：', err)
 					}
 				}, 2)
@@ -404,7 +408,7 @@
 				})
 				console.log('sdujifhbsd', uni.getStorageSync('userCompanyInfo'))
 				httpRequest({
-					url: '/course/api/course/courselist',
+					url: 'course/api/course/courselist',
 					method: 'POST',
 					data: params,
 					success: (res) => {
@@ -494,6 +498,7 @@
 			// },
 			// 左上角选择学习模块
 			bindPickerChange(e) {
+				console.log('eeeeeeeeeeeeee',e)
 				this.type = e.target.value
 				let item = this.typeArr[e.target.value]
 				uni.setStorageSync('teachType', this.type)
@@ -508,7 +513,9 @@
 					// uni.setStorageSync('LearningSubType', item.listSub)
 					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
 				}
-
+				if(e.target.value == 2){
+					this.getAutoLearning()
+				}
 
 				// app.globalData.LearningSubType = item.listSub
 				if (this.type === 0) {
@@ -614,7 +621,7 @@
 					mask:true
 				})
 				httpRequest({
-					url:'/exam/api/tbCourQuestionPerson/errorlist?userId='+userid,
+					url:'exam/api/tbCourQuestionPerson/errorlist?userId='+userid,
 					method:'GET',
 					success:res=>{
 						console.log('错题集zz：',res.data.data.length)

@@ -10,7 +10,7 @@ export default function sendSMSCode(num){
 	}
 	return new Promise((resolve,reject)=>{
 		httpRequest({
-			url:'/user/api/user/send/code',
+			url:'user/api/user/send/code',
 			method:'POST',
 			data:{
 				mobile:num

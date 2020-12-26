@@ -241,7 +241,6 @@
 			this.courseId = courseId
 			// 培训场次id
 			this.traningId = options.trainingId || ''
-
 			this.getCourse(courseId);
 			this.getChapterList(1);
 			// 学习资料
@@ -709,7 +708,7 @@
 				console.log('idcard:',idcard)
 				console.log('trainid:',trainid)
 				httpRequest({
-					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',
+					url: 'user/api/tbTrainingPerson/selectTbTrainingPerson',
 					method: 'POST',
 					data: {
 						"idcard": idcard,
@@ -768,8 +767,8 @@
 			},
 			// 学习资料获取
 			getaccessoryList() {
-				let id = uni.getStorageSync('courseInfoData').trainId
-				console.log('iiddiiddid:', id)
+				let id = uni.getStorageSync('courseInfoData').trainId || this.traningId
+				console.log('iiddiiddid:', uni.getStorageSync('courseInfoData'))
 				if (!id) {
 					uni.showToast({
 						title: '获取学习资料失败',
@@ -781,7 +780,7 @@
 					title: '加载中...'
 				})
 				httpRequest({
-					url: '/user/pc/tb/train/learn/attach/list',
+					url: 'user/pc/tb/train/learn/attach/list',
 					method: 'POST',
 					data: {
 						"trainId": id,

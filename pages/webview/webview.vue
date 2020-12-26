@@ -30,13 +30,15 @@
 	export default {
 		data() {
 			return {
+				faveVerifyTime:0,
 				pagePath: '',
 				courseId: '',
 				longit: '',
 				lat: '',
 				place: '',
 				liveInfo:{},
-				isNeedFaceVerify:true
+				liveStatus:0,
+				timerId:null
 			};
 		},
 
@@ -58,7 +60,6 @@
 			return true
 		},
 		onLoad: function(options) {
-			console.log('1111111111111111111111')
 			if (options.url) {
 				this.setData({
 					pagePath: options.url
@@ -72,6 +73,7 @@
 			this.isNeedFaceVerify = options.needFace
 			this.getUserLocation()
 			this.getLiveStatus(options.id)
+			this.getRandomTimeVerifyFace()
 			// let coursesss = uni.getStorageSync('courseInfoData')
 
 			// uni.$on('asifhbwsrei', (res) => {
@@ -94,7 +96,15 @@
 			// })
 
 		},
+		
 		methods: {
+			getRandomTimeVerifyFace(){
+				let livestatus = this.liveStatus
+				// 不是直播不用人脸检测
+				if(livestatus != 2) return
+				let random = Math.floor(Math.random() * ((200 - 30) + 1) + min)
+				console.log('random time;',random)
+			},
 			fn(data) {
 				console.log('fffffffffffffffffff', data)
 				// uni.navigateTo({
@@ -108,6 +118,7 @@
 					courseId: _id
 				}).then(res => {
 					this.liveInfo = res
+					this.liveStatus = res.liveStatus
 					if(isBack){
 						if(res.liveStatus != 2){
 							this.faceVerify()
@@ -149,7 +160,8 @@
 				useFacePlugin({}).then(res => {
 					// 人脸验证
 					uni.showLoading({
-						title: '验证中...'
+						title: '验证中...',
+						mask:true
 					})
 					faceVerification(res).then(_res => {
 						console.log('看直播时的人脸验证：', _res)
@@ -175,7 +187,7 @@
 			faceSign(base64) {
 				let obj = uni.getStorageSync('courseInfoData')
 				base64ToPath(base64).then((path) => {
-					uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
+					uploadImage('course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
 						let face_img = JSON.parse(_resp.data)
 						let comid = uni.getStorageSync('userCompanyInfo').compId
 						let _userNo = getUserLoginInfo('userNo')

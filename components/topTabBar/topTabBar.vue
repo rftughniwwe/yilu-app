@@ -78,7 +78,7 @@
 			},
 			isCollection(id) {
 				httpRequest({
-					url: '/community/auth/blog/user/record/collection/list',
+					url: 'community/auth/blog/user/record/collection/list',
 					method: 'POST',
 					data: {
 						articleType: 2,
@@ -104,7 +104,7 @@
 			},
 			getCollectTopic(id) {
 				httpRequest({
-					url: '/community/api/labelUserRecord/selectUserRecord',
+					url: 'community/api/labelUserRecord/selectUserRecord',
 					method: 'POST',
 					data: {
 						"labelId": id,

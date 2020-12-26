@@ -69,7 +69,7 @@
 					}
 					console.log('paramas',obj)
 					httpRequest({
-						url:'/user/api/baiduFaceAip/auth/addface',
+						url:'user/api/baiduFaceAip/auth/addface',
 						method:'POST',
 						data:obj,
 						success:response=>{

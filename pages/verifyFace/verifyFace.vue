@@ -100,7 +100,7 @@
 				});
 			}
 			let scene = options.scene ? decodeURIComponent(options.scene) : 'Y38500'
-			this.type = options.type || 1
+			this.type = options.type || -1
 			this.refId = options.refId || 1
 			this.signType = options.signType || '';
 			this.signName = options.signName || '';
@@ -289,7 +289,7 @@
 								title: '处理中...'
 							})
 							base64ToPath(result.res.userImageString).then((path) => {
-								uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
+								uploadImage('course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
 									let face_img = JSON.parse(_resp.data)
 									let params = {
 										courseType: this.signType,
@@ -383,6 +383,7 @@
 				let userno = getUserLoginInfo('userNo')
 				let comid = uni.getStorageSync('userCompanyInfo').compId
 				let courseInfo = uni.getStorageSync('courseInfoData')
+				console.log('中途人脸识别参数imgimgimg：',img)
 				let params = {
 					courseType: 1,
 					numEvent: courseInfo.trainId,
@@ -398,13 +399,23 @@
 					userImage: img,
 					faceContrasResult: 'Success',
 				}
+				console.log('中途人脸识别参数：',params)
 				httpRequest({
-					url:'/course/api/middleFaceLog/save',
+					url:'course/api/middleFaceLog/save',
 					method:'POST',
 					data:params,
 					success:res=>{
+						console.log('中途人脸识别保存成功：',res)
 						if(res.data.code == 200){
 							console.log('保存成功')
+							uni.navigateBack({
+								delta:1
+							})
+						}else {
+							uni.showToast({
+								title:'保存人脸信息失败',
+								icon:'none'
+							})
 						}
 					},
 					fail:err=>{

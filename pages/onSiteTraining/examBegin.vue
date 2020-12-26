@@ -102,7 +102,7 @@
 		methods:{
 			getExaminfo(){
 				httpRequest({
-					url:'/exam/api/tbCourPaper/view',
+					url:'exam/api/tbCourPaper/view',
 					method:'GET',
 					success:res=>{
 						console.log('获取试卷详情：',res)

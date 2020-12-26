@@ -9,6 +9,8 @@ import {
 } from './util.js'
 const createHttp = {
 	post: (url, params) => {
+		console.log('baseurl:',config.baseUrl)
+		console.log('url:',url)
 		const token = uni.getStorageSync('userToken') || '';
 		let t = getUserLoginInfo('token')
 		const baseUrl = config.baseUrl

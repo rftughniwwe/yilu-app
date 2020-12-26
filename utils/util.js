@@ -45,31 +45,31 @@ const LEARNING_MODE_DATA = [{
 			}
 		]
 	},
-	{
-		"id": "1263818106115375105",
-		"categoryName": "继续教育",
-		"floor": 1,
-		"remark": null,
-		"listSub": [{
-				"id": "1263818166278471681",
-				"categoryName": "驾驶员",
-				"floor": 2,
-				"remark": null
-			},
-			{
-				"id": "1263818224717709313",
-				"categoryName": "押运员",
-				"floor": 2,
-				"remark": null
-			},
-			{
-				"id": "1263818285547700225",
-				"categoryName": "装卸管理员",
-				"floor": 2,
-				"remark": null
-			}
-		]
-	},
+	// {
+	// 	"id": "1263818106115375105",
+	// 	"categoryName": "继续教育",
+	// 	"floor": 1,
+	// 	"remark": null,
+	// 	"listSub": [{
+	// 			"id": "1263818166278471681",
+	// 			"categoryName": "驾驶员",
+	// 			"floor": 2,
+	// 			"remark": null
+	// 		},
+	// 		{
+	// 			"id": "1263818224717709313",
+	// 			"categoryName": "押运员",
+	// 			"floor": 2,
+	// 			"remark": null
+	// 		},
+	// 		{
+	// 			"id": "1263818285547700225",
+	// 			"categoryName": "装卸管理员",
+	// 			"floor": 2,
+	// 			"remark": null
+	// 		}
+	// 	]
+	// },
 	{
 		"id": "1320662675097346049",
 		"categoryName": "自主学习",

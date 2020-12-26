@@ -83,7 +83,7 @@
 					title:'上传图片中...',
 					mask:true
 				})
-				uploadImage('/course/api/upload/pic', 'picFile', path, {}).then(res=>{
+				uploadImage('course/api/upload/pic', 'picFile', path, {}).then(res=>{
 					uni.hideLoading()
 					uni.showToast({
 						title:'上传成功',
@@ -134,7 +134,7 @@
 				p.backPics = a
 				console.log('ppp',p)
 				httpRequest({
-					url:'/user/api/tb/feedback/save',
+					url:'user/api/tbFeedback/uploadFeedBack',
 					method:'POST',
 					data:p,
 					success:res=>{

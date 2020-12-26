@@ -130,7 +130,7 @@
 					success(tempFilePaths) {
 						that.tempPath = tempFilePaths.tempFilePaths[0]
 						
-						uploadImage('/course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
+						uploadImage('course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
 							let img_data = JSON.parse(respones.data)
 							console.log('上传图片成功：', img_data)
 							if (img_data.code == 200) {
@@ -167,7 +167,7 @@
 						title:'保存中...'
 					})
 					httpRequest({
-						url:'/user/api/tbSysQualification/save',
+						url:'user/api/tbSysQualification/save',
 						method:'POST',
 						data:data,
 						success:(res)=>{

@@ -26,7 +26,7 @@ export function queryUnitName(name) {
 
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/tbSysServiceUnit/selectByUnitName',
+			url: 'user/api/tbSysServiceUnit/selectByUnitName',
 			method: 'POST',
 			data: {
 				unitName: name
@@ -45,7 +45,7 @@ export function queryUnitName(name) {
 export function getHotSearchData() {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: "/course/api/tbHotSearch/selectlist",
+			url: "course/api/tbHotSearch/selectlist",
 			method: "POST",
 			success: res => {
 				resolve(res)
@@ -81,7 +81,7 @@ export function getHistorySearchData(num) {
 export function clearHistorySearch(num) {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: "/course/api/tbHistorySearch/delete",
+			url: "course/api/tbHistorySearch/delete",
 			method: "POST",
 			data: {
 				userNo: num
@@ -100,7 +100,7 @@ export function clearHistorySearch(num) {
 export function faceLogin(res) {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/baiduFaceAip/auth/facelogin',
+			url: 'user/api/baiduFaceAip/auth/facelogin',
 			method: 'POST',
 			data: {
 				base64: res,
@@ -130,7 +130,7 @@ export function faceVerification(face) {
 	}
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/baiduFaceAip/auth/faceVeryfy',
+			url: 'user/api/baiduFaceAip/auth/faceVeryfy',
 			method: 'POST',
 			data: datas,
 			success: res => {
@@ -147,7 +147,7 @@ export function faceVerification(face) {
 export function getUserBasicInfo(num) {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/user/perfect/getBasicInfo?userNo=' + num,
+			url: 'user/api/user/perfect/getBasicInfo?userNo=' + num,
 			method: 'POST',
 			success: res => {
 				resolve(res)
@@ -164,7 +164,7 @@ export function getIdCardInfo(num) {
 	let usernum = num || getUserLoginInfo('userNo')
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/tbSysIdCard/view?userid=' + usernum,
+			url: 'user/api/tbSysIdCard/view?userid=' + usernum,
 			method: 'GET',
 			success: res => {
 				resolve(res)
@@ -182,7 +182,7 @@ export function getSignOnDateTime(date) {
 
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/tbCourVideoStudyHistory/signonDateTime',
+			url: 'user/api/tbCourVideoStudyHistory/signonDateTime',
 			method: 'POST',
 			data: {
 				"categoryId1": categoryId1,
@@ -222,7 +222,7 @@ export function getMonthSummaryData(options) {
 	console.log('月汇总params:', params)
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/tbCourVideoStudyHistory/monthCount',
+			url: 'user/api/tbCourVideoStudyHistory/monthCount',
 			method: 'POST',
 			data: params,
 			success: res => {
@@ -240,7 +240,7 @@ export function getMonthSummaryData(options) {
 export function subscribeCourse(options) {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/user/msg/save',
+			url: 'user/api/user/msg/save',
 			data: options,
 			method: 'POST',
 			success: res => {
@@ -282,7 +282,7 @@ export function signInOut(params) {
 	console.log('token:::', t)
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/course/auth/face/sign/log/signSave',
+			url: 'course/auth/face/sign/log/signSave',
 			method: 'post',
 			data: params,
 			success: res => {
@@ -300,7 +300,7 @@ export function signInOut(params) {
 export function setUserInfomation(obj) {
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/user/perfect/basicInfo',
+			url: 'user/api/user/perfect/basicInfo',
 			method: 'POST',
 			data: obj,
 			success: (res) => {
@@ -317,7 +317,7 @@ export function setUserInfomation(obj) {
 export function getOldSignData(datas) {
 	return new Promise((resolve) => {
 		httpRequest({
-			url: '/course/auth/face/sign/log/signlist',
+			url: 'course/auth/face/sign/log/signlist',
 			method: 'POST',
 			data: datas,
 			success: res => {
@@ -335,7 +335,7 @@ export function getExamIdByTraingId(id) {
 
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/exam/auth/exam/selectExamIdByTrainingId',
+			url: 'exam/auth/exam/selectExamIdByTrainingId',
 			method: 'POST',
 			data: {
 				"trainingid": id
@@ -356,7 +356,7 @@ export function getExamDetails(examId) {
 	let userno = getUserLoginInfo('userNo')
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/exam/auth/exam/info',
+			url: 'exam/auth/exam/info',
 			method: 'POST',
 			data: {
 				"examId": examId,
@@ -377,7 +377,7 @@ export function getCompanyId() {
 	getIdCardInfo().then(res => {
 		let idCardNum = res.data.data.idcardNum
 		httpRequest({
-			url: '/user/api/compUser/selectCompByIdCard',
+			url: 'user/api/compUser/selectCompByIdCard',
 			data: {
 				idCard: idCardNum
 			},

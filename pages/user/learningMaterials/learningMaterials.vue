@@ -133,7 +133,7 @@
 					title: '加载中...'
 				})
 				httpRequest({
-					url: '/user/pc/tb/train/learn/attach/list',
+					url: 'user/pc/tb/train/learn/attach/list',
 					method: 'POST',
 					data: {
 						"trainId": id,

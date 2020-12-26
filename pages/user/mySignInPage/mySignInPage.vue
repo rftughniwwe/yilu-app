@@ -122,7 +122,7 @@
 				})
 				console.log('zxczxc',params)
 				httpRequest({
-					url: '/user/api/tbTraining/myMonthCount',
+					url: 'user/api/tbTraining/myMonthCount',
 					method: 'POST',
 					data: params,
 					success:res=>{

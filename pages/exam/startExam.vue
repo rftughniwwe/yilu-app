@@ -292,7 +292,7 @@
 					title:'上传中...'
 				})
 				base64ToPath(base64).then(_rep=>{
-					uploadImage('/course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
+					uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
 						let face_img = JSON.parse(_resp.data)
 						this.xixixixix(face_img)
 					},err=>{
@@ -308,7 +308,7 @@
 					title:'上传中...'
 				})
 				base64ToPath(base64).then(_rep=>{
-					uploadImage('/course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
+					uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
 						let face_img = JSON.parse(_resp.data)
 						this.iuywsertkfjg(face_img,signOut)
 					},err=>{
@@ -338,7 +338,7 @@
 					faceContrasResult: 'Success',
 				}
 				httpRequest({
-					url:'/course/api/middleFaceLog/save',
+					url:'course/api/middleFaceLog/save',
 					method:'POST',
 					data:params,
 					success:res=>{

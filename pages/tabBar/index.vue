@@ -179,7 +179,7 @@
 					mask: true
 				})
 				httpRequest({
-					url: '/community/api/blog/list',
+					url: 'community/api/blog/list',
 					method: 'POST',
 					data: {
 						articleType: '2',
@@ -214,7 +214,7 @@
 					title:'加载专题中...'
 				})
 				httpRequest({
-					url:'/community/pc/label/list',
+					url:'community/pc/label/list',
 					method:'POST',
 					data:{
 						labelType:3,
@@ -265,7 +265,7 @@
 
 			getSwpierBanner(){
 				httpRequest({
-					url:'/system/pc/adv/list',
+					url:'system/pc/adv/list',
 					method:'POST',
 					data:{
 						advLocation:1,

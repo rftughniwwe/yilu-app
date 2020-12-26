@@ -64,10 +64,16 @@
 		},
 		onLoad(options) {
 			console.log('options:', options)
-			if (options.id) {
-				this.trainingid = options.id
-				this.getExamId(options.id)
-			} else {
+			let id = options.id || uni.getStorageSync('TrainingId')
+			if (id) {
+				this.trainingid = id
+				this.getExamId(id)
+			} else if(!id){
+				uni.showToast({
+					title:'没有配置考试',
+					icon:'none'
+				})
+			}else {
 				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
 			}
 
@@ -152,7 +158,7 @@
 				})
 				let userno = getUserLoginInfo('userNo')
 				httpRequest({
-					url: '/exam/auth/user/exam/record/examCount',
+					url: 'exam/auth/user/exam/record/examCount',
 					method: 'POST',
 					data: {
 						examId: this.examData.id,
@@ -188,7 +194,7 @@
 							})
 							base64ToPath(base64).then(_rep => {
 								console.log('toPath', _rep)
-								uploadImage('/course/api/upload/pic', 'picFile', _rep, {}).then(_resp => {
+								uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp => {
 									console.log("upload img", _resp)
 									let face_img = JSON.parse(_resp.data)
 									this.iuywsertkfjg(face_img)

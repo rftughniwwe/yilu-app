@@ -526,7 +526,7 @@
 				console.log('trainid', obj.trainId)
 				console.log('idcard', idcard)
 				httpRequest({
-					url: '/user/api/tbTrainingPerson/selectTbTrainingPerson',
+					url: 'user/api/tbTrainingPerson/selectTbTrainingPerson',
 					method: 'POST',
 					data: {
 						"idcard": idcard,
@@ -562,7 +562,7 @@
 					title: '加载中...'
 				})
 				httpRequest({
-					url: '/user/pc/tb/train/learn/attach/list',
+					url: 'user/pc/tb/train/learn/attach/list',
 					method: 'POST',
 					data: {
 						"trainId": id,
@@ -753,7 +753,7 @@
 				// })
 				// return
 				base64ToPath(base64).then((path) => {
-					uploadImage('/course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
+					uploadImage('course/api/upload/pic', 'picFile', path, {}).then((_resp) => {
 						let face_img = JSON.parse(_resp.data)
 						let comid = uni.getStorageSync('userCompanyInfo').compId
 						let _userNo = getUserLoginInfo('userNo')

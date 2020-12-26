@@ -141,7 +141,7 @@
 					title:'加载中...'
 				})
 				httpRequest({
-					url: '/data/api/courseStatUser/userCourseRankinglist',
+					url: 'data/api/courseStatUser/userCourseRankinglist',
 					method: "POST",
 					data: d,
 					success: res => {

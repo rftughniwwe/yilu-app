@@ -188,7 +188,7 @@
 					title: '出题中',
 				})
 				httpRequest({
-					url: '/exam/api/tbCourPaper/list',
+					url: 'exam/api/tbCourPaper/list',
 					method: 'POST',
 					success: res => {
 						uni.hideLoading()
@@ -281,7 +281,7 @@
 					title:'交卷中...'
 				})
 				httpRequest({
-					url: '/exam/api/tbCourPaper/submitPaper',
+					url: 'exam/api/tbCourPaper/submitPaper',
 					method: 'POST',
 					data: data,
 					success: res => {

@@ -165,7 +165,7 @@
 				// }
 				console.log('params：', params)
 				httpRequest({
-					url: '/course/api/course/courselist',
+					url: 'course/api/course/courselist',
 					method: 'POST',
 					data: params,
 					success: (res) => {

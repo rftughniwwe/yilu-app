@@ -88,7 +88,7 @@
 					title: "加载中..."
 				})
 				httpRequest({
-					url: '/community/api/blog/view',
+					url: 'community/api/blog/view',
 					method: 'POST',
 					data: {
 						id: id
@@ -115,7 +115,7 @@
 				let c = e.collect
 				if (c) {
 					httpRequest({
-						url: '/community/auth/blog/user/record/save',
+						url: 'community/auth/blog/user/record/save',
 						method: 'POST',
 						data: {
 							userIp: '127.0.0.1',
@@ -141,7 +141,7 @@
 					}, 3)
 				} else {
 					httpRequest({
-						url: '/community/auth/blog/user/record/delete',
+						url: 'community/auth/blog/user/record/delete',
 						method: 'POST',
 						data: {
 							opType: 1,

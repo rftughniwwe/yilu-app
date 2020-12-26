@@ -104,7 +104,7 @@
 				}
 				console.log('params：', params)
 				httpRequest({
-					url: '/user/api/tbTraining/myCourseType',
+					url: 'user/api/tbTraining/myCourseType',
 					method: 'POST',
 					data: params,
 					success: (res) => {
@@ -130,6 +130,14 @@
 				// let d = encodeURIComponent(JSON.stringify(item))
 				// uni.setStorageSync('selectCourseItemData',item)
 				uni.setStorageSync('courseInfoData', item)
+				console.log('zzz',item)
+				if(!item.courseId){
+					uni.showToast({
+						title:'课程不存在',
+						icon:'none'
+					})
+					return
+				}
 				uni.navigateTo({
 					url: '/pages/course/view/view?id=' + item.courseId +'&fromUser=1&trainingId='+item.id
 				});

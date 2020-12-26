@@ -104,7 +104,7 @@
 					title: '加载中'
 				})
 				httpRequest({
-					url: '/community/api/labelUserRecord/selectLabellist',
+					url: 'community/api/labelUserRecord/selectLabellist',
 					method: 'POST',
 					data: {
 						"opType": 1,
@@ -131,7 +131,7 @@
 			},
 			getAllCollectionArticle() {
 				httpRequest({
-					url: '/community/api/blog/userRecordlist',
+					url: 'community/api/blog/userRecordlist',
 					method: 'POST',
 					data: {
 						articleType: 2,
@@ -162,7 +162,7 @@
 				let item = e.item
 				if (item.collectType == 1) {
 					httpRequest({
-						url: '/community/api/labelUserRecord/deleteLabelRecord',
+						url: 'community/api/labelUserRecord/deleteLabelRecord',
 						method: 'DELETE',
 						data: {
 							labelId: item.id,
@@ -192,6 +192,7 @@
 			// 跳转
 			routeJump(e) {
 				// let obj = encodeURIComponent(JSON.stringify(e.item))
+				let item = e.item
 				uni.setStorageSync('speacalDetails',item)
 				uni.navigateTo({
 					url: '../specialTopic/specialTopicDetail'
@@ -222,7 +223,7 @@
 			removeSingle() {
 				if (this.selectItem == -1) return
 				httpRequest({
-					url: '/community/auth/blog/user/record/delete',
+					url: 'community/auth/blog/user/record/delete',
 					method: 'POST',
 					data: {
 						opType: 1,
@@ -253,7 +254,7 @@
 					success: res => {
 						if (res.confirm) {
 							httpRequest({
-								url: '/community/api/blog/user/record/deleteList',
+								url: 'community/api/blog/user/record/deleteList',
 								method: 'DELETE',
 								data: {
 									"articleType": 2,

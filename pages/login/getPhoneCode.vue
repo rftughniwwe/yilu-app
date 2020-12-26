@@ -73,7 +73,7 @@
 						title:'处理中...'
 					})
 					httpRequest({
-						url: '/user/api/user/registerApp',
+						url: 'user/api/user/registerApp',
 						method: 'POST',
 						data: {
 							code: e,

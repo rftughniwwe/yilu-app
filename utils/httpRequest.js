@@ -5,12 +5,13 @@ import {
 } from './util.js' 
 
 // const BASE_URL = 'http://172.168.1.229'
-const BASE_URL = 'http://47.101.131.157:8880'
+// const BASE_URL = 'http://47.101.131.157:8880'
+const BASE_URL = 'https://www.ylonlinedu.com/gateway'
 
 // 图片上传
 // const BASE_URL2 = 'http://172.168.1.229:8730'
-const BASE_URL2 = 'http://47.101.131.157:8880'
-
+// const BASE_URL2 = 'http://47.101.131.157:8880'
+const BASE_URL2 = 'https://www.ylonlinedu.com/gateway'
 
 // 身份证OCR地址
 const ID_CARD_OCR = 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard'
@@ -78,7 +79,7 @@ function getAcceessToken(key, secret) {
 	return new Promise((resolve, reject) => {
 
 		httpRequest({
-			url: '/user/pc/api/user/getToken',
+			url: 'user/pc/api/user/getToken',
 			success: (res) => {
 				resolve(res)
 			},
@@ -129,7 +130,7 @@ function getQualification(options) {
 
 	return new Promise((resolve, reject) => {
 		httpRequest({
-			url: '/user/api/tbSysQualification/view',
+			url: 'user/api/tbSysQualification/view',
 			method: 'GET',
 			data: options,
 			success: (res) => {

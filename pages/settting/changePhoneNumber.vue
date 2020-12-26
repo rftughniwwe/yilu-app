@@ -89,7 +89,7 @@
 					title: '修改中...'
 				})
 				httpRequest({
-					url: '/user/auth/user/ext/update',
+					url: 'user/auth/user/ext/update',
 					method: 'post',
 					data: {
 						code: code,

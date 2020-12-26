@@ -135,7 +135,7 @@
 				tab1: false,
 				tab2: false,
 				tab3: false,
-				datas:{}
+				datas: {}
 			};
 		},
 		onShow() {
@@ -165,8 +165,9 @@
 				let _date = new Date(this.dateString)
 				let y = _date.getFullYear()
 				let m = _date.getMonth() + 1
-				let start =  y + '-' + m + '-' + '01'
-				let end = y + '-' + m + '-' + new Date(y, m, 0).getDate() < 10 ? '0' + new Date(y, m, 0).getDate() : new Date(y, m, 0).getDate()
+				let start = y + '-' + m + '-' + '01'
+				let lastday = new Date(y, m, 0).getDate() < 10 ? '0' + new Date(y, m, 0).getDate() : new Date(y, m, 0).getDate()
+				let end = y + '-' + m + '-' + lastday
 				getMonthSummaryData({
 					weekStart: start,
 					weekEnd: end
@@ -196,12 +197,12 @@
 					this.tab3 = !this.tab3
 				}
 			},
-			goLearning(item){
+			goLearning(item) {
 				let id = item.id
-				console.log('月汇总进入：',item)
+				console.log('月汇总进入：', item)
 				uni.setStorageSync('courseInfoData', item)
 				uni.navigateTo({
-					url:'../course/view/view?id='+id
+					url: '../course/view/view?id=' + id + '&trainingId=' + item.trainId
 				})
 			}
 		}
@@ -311,7 +312,8 @@
 		color: #333333;
 		font-size: 32rpx;
 	}
-	.no-data{
+
+	.no-data {
 		text-align: center;
 		color: #000000;
 		font-size: 32rpx;

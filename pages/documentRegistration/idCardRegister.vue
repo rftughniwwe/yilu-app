@@ -162,7 +162,7 @@
 		methods: {
 			setIdCardInfo(){
 				httpRequest({
-					url: '/user/auth/user/ext/update',
+					url: 'user/auth/user/ext/update',
 					method: 'post',
 					data: {
 						userNo: getUserLoginInfo('userNo'),
@@ -201,7 +201,7 @@
 			queryIdCardInfo() {
 				let userno = getUserLoginInfo('userNo');
 				httpRequest({
-					url: '/user/api/tbSysIdCard/view?userid=' + userno,
+					url: 'user/api/tbSysIdCard/view?userid=' + userno,
 					success: resp => {
 						console.log('resp:', resp)
 						if (resp.data.code == 200) {
@@ -254,7 +254,7 @@
 					mask:true
 				})
 				httpRequest({
-					url: '/user/api/tbSysIdCard/save',
+					url: 'user/api/tbSysIdCard/save',
 					method: 'POST',
 					data: datas,
 					success: (res) => {
@@ -280,7 +280,7 @@
 			// 根据身份证号获取服务单位
 			getCompanyById(id) {
 				httpRequest({
-					url: '/user/api/compUser/selectCompByIdCard',
+					url: 'user/api/compUser/selectCompByIdCard',
 					data: {
 						idCard: id
 					},
@@ -394,7 +394,7 @@
 									})
 								}
 
-								uploadImage('/course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
+								uploadImage('course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
 									let img_data = JSON.parse(respones.data)
 									console.log('上传图片成功：', img_data)
 									if (img_data.code == 200) {

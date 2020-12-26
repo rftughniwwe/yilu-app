@@ -45,7 +45,7 @@
 				let item = e.item
 				if (item.collectType == 0) {
 					httpRequest({
-						url: '/community/api/labelUserRecord/save',
+						url: 'community/api/labelUserRecord/save',
 						method: 'POST',
 						data: {
 							labelId: item.id,
@@ -74,7 +74,7 @@
 					}, 3)
 				} else {
 					httpRequest({
-						url: '/community/api/labelUserRecord/deleteLabelRecord',
+						url: 'community/api/labelUserRecord/deleteLabelRecord',
 						method: 'DELETE',
 						data: {
 							labelId: item.id,
@@ -106,7 +106,7 @@
 					title: '加载中...'
 				})
 				httpRequest({
-					url: '/community/pc/label/list',
+					url: 'community/pc/label/list',
 					method: 'POST',
 					data: {
 						labelType: 3,

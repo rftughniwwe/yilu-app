@@ -84,7 +84,7 @@
 						title: '登录中...'
 					})
 					httpRequest({
-						url: '/user/api/user/login/password',
+						url: 'user/api/user/login/password',
 						method: 'POST',
 						data: {
 							clientType: platform,

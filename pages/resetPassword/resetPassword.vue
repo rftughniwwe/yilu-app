@@ -121,7 +121,7 @@
 				})
 				// 正式请求
 				httpRequest({
-					url:'/user/api/user/update/password',
+					url:'user/api/user/update/password',
 					method:'POST',
 					data:{
 						code:this.vrcode,

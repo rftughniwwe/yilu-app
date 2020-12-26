@@ -409,6 +409,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/course/view/autoView",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "自主学习",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#999999",

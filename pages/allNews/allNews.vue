@@ -62,7 +62,7 @@
 					mask: true
 				})
 				httpRequest({
-					url: '/community/api/blog/list',
+					url: 'community/api/blog/list',
 					method: 'POST',
 					data: {
 						articleType: '2',

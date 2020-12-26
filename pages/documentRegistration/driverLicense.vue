@@ -136,7 +136,7 @@
 		onLoad(options) {
 			this.idCardInfo = options.idCard
 			this.idCardNum = options.idCardNum
-			this.text = `请上传${ options.name || '本人'}的身份证正反面照片`
+			this.text = `请上传${ options.name || '本人'}的驾驶证正反面图片`
 			this.queryInfo()
 		},
 		methods: {
@@ -184,7 +184,7 @@
 								}
 								
 								console.log('驾驶证识别成功：',data.words_result)
-								uploadImage('/course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
+								uploadImage('course/api/upload/pic', 'picFile', tempFilePaths.tempFilePaths[0], {}).then((respones) => {
 									let img_data = JSON.parse(respones.data)
 									console.log('上传图片成功：', img_data)
 									if (img_data.code == 200) {
@@ -268,7 +268,7 @@
 				})
 				console.log('ddddd',data)
 				httpRequest({
-					url:'/user/api/tbSysDrivingLicense/save',
+					url:'user/api/tbSysDrivingLicense/save',
 					method:'POST',
 					data:data,
 					success:(res)=>{
@@ -305,7 +305,7 @@
 			queryInfo(){
 				let userno = getUserLoginInfo('userNo');
 				httpRequest({
-					url:'/user/api/tbSysDrivingLicense/view?userid='+userno,
+					url:'user/api/tbSysDrivingLicense/view?userid='+userno,
 					success:resp=>{
 						console.log('驾驶证信息:',resp)
 						if(resp.data.code == 200){

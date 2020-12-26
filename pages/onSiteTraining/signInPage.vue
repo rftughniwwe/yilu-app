@@ -111,7 +111,7 @@
 		<view v-show="tab==2" class="statis-wrap">
 			<view class='martop' :style="{'marginTop':isFullScreen?'150rpx':'120rpx'}"> </view>
 			<view class="">
-				<picker mode="date" :value="todayweek.date" @change="dateChange">
+				<picker mode="date" :value="todayweek.date" fields="day" @change="dateChange">
 					<view class="date-topic flex-row-start">
 						<view class="header">
 							{{todayweek.date}}
@@ -463,7 +463,7 @@
 					base64ToPath(res).then(path => {
 
 						// 图片上传到阿里云
-						uploadImage('/course/api/upload/pic', 'picFile', path, {}).then(response => {
+						uploadImage('course/api/upload/pic', 'picFile', path, {}).then(response => {
 							let img_data = JSON.parse(response.data)
 							if (img_data.code == 200) {
 								params.userImage = img_data.data
@@ -513,8 +513,11 @@
 													confirmColor: '#38A6FD',
 													success: res => {
 														if (res.confirm) {
-															uni.reLaunch({
-																url: '/pages/exam/examInfo?id=' + that.signDatas.id
+															// uni.reLaunch({
+															// 	url: '/pages/exam/examInfo?id=' + that.signDatas.id
+															// })
+															uni.navigateTo({
+																url:'/pages/exam/examInfo?id=' + that.signDatas.id
 															})
 														}
 														// else if(res.cancel){

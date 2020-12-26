@@ -48,7 +48,7 @@
 				})
 				console.log('zz',this.name)
 				httpRequest({
-					url: '/user/auth/user/ext/update',
+					url: 'user/auth/user/ext/update',
 					method: 'post',
 					data: {
 						nickname: this.name,

@@ -96,7 +96,7 @@
 					title: '加载中...'
 				})
 				httpRequest({
-					url: '/user/auth/user/ext/view',
+					url: 'user/auth/user/ext/view',
 					method: 'POST',
 					data: {
 						userNo: getUserLoginInfo('userNo')
@@ -126,7 +126,7 @@
 						uni.showLoading({
 							title: '上传中...'
 						})
-						uploadImage('/course/api/upload/pic', 'picFile', temp_img, {}).then((respones) => {
+						uploadImage('course/api/upload/pic', 'picFile', temp_img, {}).then((respones) => {
 							uni.hideLoading()
 							let img_data = JSON.parse(respones.data)
 							console.log('上传图片：', img_data)
@@ -156,7 +156,7 @@
 					title: '修改中...'
 				})
 				httpRequest({
-					url: '/user/auth/user/ext/update',
+					url: 'user/auth/user/ext/update',
 					method: 'post',
 					data: {
 						headImgUrl: img,

@@ -169,7 +169,7 @@
 			queryInfo(){
 				let userno = getUserLoginInfo('userNo')
 				httpRequest({
-					url:'/user/api/user/perfect/getBasicInfo?userNo='+userno,
+					url:'user/api/user/perfect/getBasicInfo?userNo='+userno,
 					method:'POST',
 					success:resp=>{
 						console.log('resp:',resp)

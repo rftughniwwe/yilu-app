@@ -96,7 +96,7 @@
 					title:'加载中'
 				})
 				httpRequest({
-					url:'/community/api/blog/list',
+					url:'community/api/blog/list',
 					method:'POST',
 					data:{
 						tagsName:this.item.labelName,
@@ -121,7 +121,7 @@
 				let c = e.collect
 				if(c){
 					httpRequest({
-						url: '/community/api/labelUserRecord/save',
+						url: 'community/api/labelUserRecord/save',
 						method: 'POST',
 						data: {
 							labelId:this.item.id,
@@ -147,7 +147,7 @@
 					},3)
 				}else {
 					httpRequest({
-						url: '/community/api/labelUserRecord/deleteLabelRecord',
+						url: 'community/api/labelUserRecord/deleteLabelRecord',
 						method: 'DELETE',
 						data: {
 							labelId:this.item.id,

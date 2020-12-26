@@ -212,7 +212,7 @@
 					title: '搜索中...'
 				})
 				httpRequest({
-					url: '/community/api/blog/searchListByTitle',
+					url: 'community/api/blog/searchListByTitle',
 					method: 'POST',
 					data: {
 						"articleType": 2,
@@ -243,7 +243,7 @@
 				let id = getLearningTypeInfo().categoryId1 || LEARNING_MODE_DATA[2].id
 				let val = this.serachVal
 				httpRequest({
-					url: '/course/api/course/searchCourseList',
+					url: 'course/api/course/searchCourseList',
 					method: 'POST',
 					data: {
 						"category_id1": id,
@@ -264,27 +264,12 @@
 				}, 2)
 			},
 			// 搜索课程点击
-			itemClick(item){
-				let isSign = uni.getStorageSync('isSignSuccess')
-				if(isSign){
-					uni.showToast({
-						title:'你正在参加现场培训，无需参加远程教育',
-						icon:'none'
-					})
-					return
-				}
-				let id = item.id;
-				uni.setStorageSync('courseInfoData', item)
-				if (item.courseCategory == '1') {
-					console.log('搜索进入：',item)
-					uni.navigateTo({
-						url: '/pages/course/view/view?id=' + id
-					});
-				} else {
-					uni.navigateTo({
-						url: '/pages/course/live/live?id=' + id
-					});
-				}
+			itemClick(e){
+				let z = e.item;
+				uni.setStorageSync('courseInfoData', z)
+				uni.navigateTo({
+					url:'../course/view/autoView?id=' + z.id
+				})
 			},
 			// 热门搜索点击
 			hotSerachContent(item) {
