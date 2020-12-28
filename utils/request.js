@@ -9,8 +9,6 @@ import {
 } from './util.js'
 const createHttp = {
 	post: (url, params) => {
-		console.log('baseurl:',config.baseUrl)
-		console.log('url:',url)
 		const token = uni.getStorageSync('userToken') || '';
 		let t = getUserLoginInfo('token')
 		const baseUrl = config.baseUrl
@@ -55,7 +53,7 @@ const request = (params, cb) => {
 				title: '加载中'
 			});
 		}
-		console.log('参数：',params)
+		console.log('DATA:',params)
 		uni.request({
 			...params,
 			success: res => {

@@ -755,6 +755,7 @@
 					res.titleList = arr;
 					this.total = total
 					this.examData = res;
+					console.log('res:',res)
 					this.getRandomFaceVerify()
 				}
 			}

@@ -17,7 +17,7 @@
 
 	import {
 		getUserBasicInfo,
-		getCompanyId
+		getCompanyId	
 	} from '@/commons/api/apis.js'
 
 	import website from "@/utils/website.js";

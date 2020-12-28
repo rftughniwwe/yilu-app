@@ -16,7 +16,7 @@
 			<view class="examTipTitle">考试须知：</view>
 			<view class="examTip red" v-if="!gradeExamId">1.考试时间为{{ examData.answerTime?examData.answerTime:0 }}分钟</view>
 			<view class="examTip red">2.本考试为闭卷考试，请不要随意切换考试界面</view>
-			<view class="examTip red">3.交卷后， 可查看答卷和解析</view>
+			<view class="examTip red">3.交卷后，可查看答卷和解析</view>
 		</view>
 		<view class="footer">
 			<primaryBtn @callBackFun='startExam' text='开始考试' />
