@@ -103,7 +103,7 @@
 				if (this.examData.titleList && this.examData.titleList.forEach) {
 					this.examData.titleList.forEach((t) => {
 						let userScore = 0;
-						t.problemList.forEach(e => {
+						t.problemList && t.problemList.forEach(e => {
 							if (e.childrenList && e.childrenList.length) {
 								e.childrenList.forEach((c, cIndex) => {
 									userScore += (+c.userScore) || 0
@@ -265,11 +265,10 @@
 				function initHtml(s) {
 					return s.replace(/\<img/gi, '<img style="max-width:100%;height:auto" ');
 				}
-				
 				let problemIndex = 0;
 				// 设置图片width 100%
 				data.titleList.forEach((t) => {
-					t.problemList.forEach((p) => {
+					t.problemList && t.problemList.forEach((p) => {
 						if (p.problemContent) {
 							p.problemContent = initHtml(p.problemContent);
 						}
@@ -301,7 +300,7 @@
 				})
 				var total = 0;
 				data.titleList.forEach((e) => {
-					e.problemList.forEach(e => {
+					e.problemList && e.problemList.forEach(e => {
 						if (e.childrenList && e.childrenList.length) {
 							total += e.childrenList.length
 						} else {
