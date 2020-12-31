@@ -32,7 +32,7 @@
 		<view class="h5px"></view>
 		<view class="teacher_box b_fff c_999 font25">
 			<text>讲师：</text>
-			<text class="c_333">{{courseInfo.lecturer.lecturerName}}</text>
+			<text class="c_333">{{courseInfo.lecturer?courseInfo.lecturer.lecturerName : '未知'}}</text>
 		</view>
 
 		<view class="h5px"></view>
@@ -192,6 +192,7 @@
 		},
 		onUnload() {
 			this.destroyed = true
+			this.pausevideo()
 		},
 		/**
 		 * 生命周期函数--监听页面加载
@@ -476,16 +477,18 @@
 				// #endif
 				// this.playInfo.currentTime
 
-				if (this.faceContrast) { // 校验认证信息
-					this.checkContrast(playInfo)
-				}
+				// if (this.faceContrast) { 
+				// 	this.checkContrast(playInfo)
+				// }
 
 				auth.saveCourseLog({
 					noLoading: true,
 					periodId: this.videoPeriodId,
 					watchLength: playInfo.currentTime,
 					duration: playInfo.duration
-				}).then(res => {})
+				}).then(res => {
+					console.log('保存课程信息',res)
+				})
 				if (this.playstatu) {
 					setTimeout(() => {
 						this.getPlayTime()
