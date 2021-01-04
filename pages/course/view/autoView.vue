@@ -120,6 +120,9 @@
 	} from '@/utils/httpRequest.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import Toast from '@/commons/showToast.js'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 
 	export default {
 		data() {
@@ -166,8 +169,8 @@
 				"isPassExam": 0,
 				destroyed: false,
 				setFullScreen: false,
-				videoCurrentTime:0,
-				isFromAutoLeraning:false
+				videoCurrentTime: 0,
+				isFromAutoLeraning: false
 			};
 		},
 
@@ -193,6 +196,7 @@
 		onUnload() {
 			this.destroyed = true
 			this.pausevideo()
+			this.saveUserWatchInfo()
 		},
 		/**
 		 * 生命周期函数--监听页面加载
@@ -217,7 +221,7 @@
 			this.isFromAutoLeraning = options.isFromAutoLeraning || false
 			this.getCourse(courseId);
 			this.getChapterList(1);
-			
+
 			// 学习资料
 			this.getaccessoryList()
 
@@ -487,13 +491,44 @@
 					watchLength: playInfo.currentTime,
 					duration: playInfo.duration
 				}).then(res => {
-					console.log('保存课程信息',res)
+					console.log('保存课程信息', res)
 				})
 				if (this.playstatu) {
 					setTimeout(() => {
 						this.getPlayTime()
 					}, 3000)
 				}
+			},
+
+			saveUserWatchInfo() {
+				const playInfo = this.playInfo
+				let min = Math.floor((playInfo.currentTime) / 60) < 1 ? 1 : Math.floor((playInfo.currentTime) / 60)
+				let userno = getUserLoginInfo('userNo')
+				let comid = uni.getStorageSync('userCompanyInfo').compId
+				let params = {
+					compId:comid,
+					type: 2,
+					userId: userno,
+					videoId: this.videoPeriodId,
+					watchTime: min
+				}
+				console.log('保存观看信息参数', params)
+				httpRequest({
+					url: '/user/api/tbCourVideoStudyHistory/save',
+					method: 'POST',
+					data: params,
+					success: res => {
+						console.log('保存信息：', res)
+						if (res.data.code == 200) {
+
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						request_err(err, '保存信息失败')
+					}
+				}, 1)
 			},
 
 
@@ -505,12 +540,13 @@
 			// 暂停播放
 			pausevideo: function() {
 				this.playstatu = false
-				this.getPlayTime()
+				// this.getPlayTime()
 			},
 			// 暂停播放
 			nextVideo: function() {
 				this.playstatu = false
 				this.getPlayTime()
+				this.saveUserWatchInfo()
 			},
 			// 显示加速列表
 			showbei: function() {
@@ -530,8 +566,6 @@
 			getuserCourseinfo() {
 				let idcard = uni.getStorageSync('userCompanyInfo').idCard
 				let trainid = this.userCourseDatas.trainId
-				console.log('idcard:',idcard)
-				console.log('trainid:',trainid)
 				httpRequest({
 					url: 'user/api/tbTrainingPerson/selectTbTrainingPerson',
 					method: 'POST',

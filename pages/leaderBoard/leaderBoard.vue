@@ -14,46 +14,46 @@
 				<view class="top-two">
 					<view class="circle-img">
 						<image class="top-two-img" src="../../static/number-two.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' :url="'default'"/>
+						<userHeadImg width='112rpx' height='112rpx' :url="threeRanking[1]&& threeRanking.length >= 1?threeRanking[1].headImgUrl:'default'" />
 					</view>
 					<view class="name">
-						{{datas && datas.length > 0?datas[1].name:'暂无人选'}}
+						{{threeRanking[1] && threeRanking.length >= 1?threeRanking[1].nickName:'暂无人选'}}
 					</view>
 					<view class="totla-time">
-						0
+						{{threeRanking[1] && threeRanking[1].watchLength?threeRanking[1].watchLength:0}}
 					</view>
 				</view>
 				<view class="top-one">
 					<view class="circle-img">
 						<image class="top-one-img" src="../../static/number-one.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' :url="'default'"/>
+						<userHeadImg width='112rpx' height='112rpx' :url="threeRanking[0]&& threeRanking.length > 0?threeRanking[0].headImgUrl:'default'" />
 					</view>
 					<view class="name">
-						{{datas && datas.length > 0?datas[0].name:'暂无人选'}}
+						{{threeRanking && threeRanking.length > 0?threeRanking[0].nickName:'暂无人选'}}
 					</view>
 					<view class="totla-time">
-						0
+						{{threeRanking[0] && threeRanking[0].watchLength?threeRanking[0].watchLength:0}}
 					</view>
 				</view>
 				<view class="top-three">
 					<view class="circle-img">
 						<image class="top-three-img" src="../../static/number-three.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' :url="'default'"/>
+						<userHeadImg width='112rpx' height='112rpx' :url="threeRanking[2]&& threeRanking.length >= 2?threeRanking[2].headImgUrl:'default'" />
 					</view>
 					<view class="name">
-						{{datas && datas.length > 0?datas[2].name:'暂无人选'}}
+						{{threeRanking && threeRanking.length >= 2?threeRanking[2].nickName:'暂无人选'}}
 					</view>
 					<view class="totla-time">
-						0
+						{{threeRanking[2] && threeRanking[2].watchLength?threeRanking[2].watchLength:0}}
 					</view>
 				</view>
 			</view>
 			<view class="current-top-content flex-evenly">
 				<view class="current-top-img">
-					<userHeadImg width='52rpx' height='52rpx' :url='datas.nickName'/>
+					<userHeadImg width='52rpx' height='52rpx' :url='datas.headImgUrl' />
 				</view>
 				<view class="current-top-text">
-					当前排名第{{datas.ranking}}名
+					当前排名第{{datas.ranking?datas.ranking:'99+'}}名
 				</view>
 			</view>
 		</view>
@@ -72,15 +72,15 @@
 					学习总时长
 				</view>
 			</view>
-			<template v-if="datas && datas.length > 0">
-				<view v-for="(item,index) in datas" :key='item' class="table flex-between">
+			<template v-if="datas && datas.list">
+				<view v-for="(item,index) in datas.list" :key='item' class="table flex-between">
 					<view class="no">
 						{{item.ranking}}
 					</view>
 					<view class="t-name flex-evenly">
-						<view class="t-circle-img">
+						<!-- <view class="t-circle-img">
 							<userHeadImg width='70rpx' height='70rpx' :url='item.headImgUrl'/>
-						</view>
+						</view> -->
 						<view class="real-name">
 							{{item.nickName}}
 						</view>
@@ -96,8 +96,8 @@
 			<view v-else class="no-data">
 				暂无数据
 			</view>
-			
-			
+
+
 		</view>
 	</view>
 </template>
@@ -121,7 +121,8 @@
 		data() {
 			return {
 				tabNum: 0,
-				datas:[]
+				datas: [],
+				threeRanking: []
 			};
 		},
 		onLoad() {
@@ -132,23 +133,37 @@
 			userName
 		},
 		methods: {
-			getData() {
-				let d = {
-					"compId": this.tabNum == 0 ? getLearningTypeInfo().compId : null,
-					"userNo": getUserLoginInfo('userNo')
+			getData(num) {
+				let n = num || this.tabNum
+				let d = {}
+				if(n === 0){
+					d = {
+						"compId": this.tabNum == 0 ? uni.getStorageSync('userCompanyInfo').compId : null,
+						"userNo": getUserLoginInfo('userNo')
+					}
+				}else {
+					d = {
+						"userNo": getUserLoginInfo('userNo')
+					}
 				}
 				uni.showLoading({
-					title:'加载中...'
+					title: '加载中...'
 				})
 				httpRequest({
-					url: 'data/api/courseStatUser/userCourseRankinglist',
+					url: 'user/api/tbCourseRanking/userCourseRankinglist',
 					method: "POST",
 					data: d,
 					success: res => {
 						uni.hideLoading()
-						console.log('zxczxczxc', res)
 						if (res.data.code == 200) {
-							this.datas = res.data.data
+							let x = res.data.data
+							this.datas = x
+
+							for (let i = 0; i < 3; i++) {
+								if (x.list[i]) {
+									this.threeRanking.push(x.list[i])
+								}
+							}
 						} else {
 							request_success(res)
 						}
@@ -157,11 +172,12 @@
 						uni.hideLoading()
 						request_err(err, '获取数据失败')
 					}
-				}, 4)
+				}, 1)
+				console.log('排行榜数据', this.datas.list)
 			},
 			changeTab(num) {
 				this.tabNum = num
-				this.getData()
+				this.getData(num)
 			}
 		}
 	}

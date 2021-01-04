@@ -72,7 +72,7 @@
 			bottom: 0;
 			border-top-left-radius: 20rpx;
 			border-top-right-radius: 20rpx;
-			height: 500rpx;
+			height: 650rpx;
 			background-color: #FFFFFF;
 		}
 	}

@@ -418,6 +418,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/courseListPage/courseListPage",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "课程列表",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"tabBar": {
 		"color": "#999999",

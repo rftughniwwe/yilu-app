@@ -86,10 +86,11 @@
 			<view class="map-contentzz">
 				<view class="top-tips flex-row-start">
 					<template v-if="!isOldData">
-						<image v-show="isInRange" src="../../static/success.png" mode=""></image>
-						<image v-show='!isInRange' src="../../static/signin.png" mode=""></image>
+						<!-- <image v-show="isInRange" src="../../static/success.png" mode=""></image>
+						<image v-show='!isInRange' src="../../static/signin.png" mode=""></image> -->
 						<view class="txt">
-							{{isInRange?'已进入签到范围：':'当前位置未进入签到范围'}}
+							<!-- {{isInRange?'已进入签到范围：':'当前位置未进入签到范围'}} -->
+							签到地点
 						</view>
 					</template>
 					<template v-else>
@@ -426,6 +427,8 @@
 
 			// 签入签出
 			sign(num) {
+				
+				return
 				let that = this
 
 				if (!this.simpleJudge(num)) return
@@ -748,7 +751,7 @@
 
 	.mapz {
 		width: 690rpx;
-		height: 350rpx;
+		height: 300rpx;
 	}
 
 	.tab-bar {

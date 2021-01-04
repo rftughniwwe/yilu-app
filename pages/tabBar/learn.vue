@@ -3,7 +3,7 @@
 	<view class="mainzz">
 		<chooseLearningType v-if='!chooseTypePager' />
 		<view v-else class="learning-content">
-			<view :class="type === 1?'no-padding':'learn-top-bar'">
+			<view :class="type === 2?'no-padding':'learn-top-bar'">
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
 					<view class="left-select">
 						<picker class="flex-between" :range="typeArrStr" :value="type" @change="bindPickerChange">
@@ -13,17 +13,17 @@
 							<image src="../../static/down-push-arrow.png" mode=""></image>
 						</picker>
 					</view>
-					<view v-show="type !== 1" class="right-scannin-code" @click="scanCode">
+					<view v-show="type !== 2" class="right-scannin-code" @click="scanCode">
 						<image src="../../static/camera-code.png" mode=""></image>
 					</view>
-					<view v-show="type === 1" class="right-leader-board" @click="goLeaderBoard">
+					<view v-show="type === 2" class="right-leader-board" @click="goLeaderBoard">
 						<image src="../../static/leader-board.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 
 			<!-- 继续教育和安全教育 -->
-			<view v-show="type == 0" class="learning-teach">
+			<view v-show="type !== 2" class="learning-teach">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide :type='type' :AnquanType="AnquanType" />
 				</view>
@@ -44,7 +44,7 @@
 					<!-- <image src="../../static/anquan-top-img.png" mode=""></image> -->
 				</view>
 
-				<view class="online-notice" v-if="courseDatas && courseDatas.length > 0">
+				<!-- <view class="online-notice" v-if="courseDatas && courseDatas.length > 0">
 					<view class="top-tips flex-row-start">
 						<image src="../../static/shuxian.png" mode=""></image>
 						直播中
@@ -63,7 +63,6 @@
 							<view class="notive-teacher-join flex-between">
 								<view class="teacher">
 									<view class="xxx">老师：{{courseDatas[0].lecturerName}}</view>
-									<!-- <view class="xxx">9999人参与</view> -->
 								</view>
 								<view class="join-room" @click="goCourse(courseDatas[0])">
 									进入直播间
@@ -71,7 +70,7 @@
 							</view>
 						</view>
 					</view>
-				</view>
+				</view> -->
 
 
 				<view class="learning-center">
@@ -92,10 +91,10 @@
 					</view>
 					<view class="distance-education">
 						<view class="top-text">
-							远程教育
+							在线考试
 						</view>
 						<view class="bottom-text">
-							直播录播课程随你来学
+							新进在职人员线上考核
 						</view>
 						<view class="join-btn" @click="joinNow(2)">
 							<image src="../../static/join-now2.png" mode=""></image>
@@ -105,7 +104,7 @@
 			</view>
 
 			<!-- 自主学习 -->
-			<view v-show="type === 1" class="self-learning">
+			<view v-show="type === 2" class="self-learning">
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide type='2' :selfLearnType='selfLearnType' />
 				</view>
@@ -243,10 +242,13 @@
 		httpRequest,
 		requestQrCodeUrl
 	} from '@/utils/httpRequest.js'
+	import {
+		getExamIdByTraingId
+	} from '@/commons/api/apis.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import userName from '@/components/userName/userName.vue'
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
-
+	import Toast from '@/commons/showToast.js'
 	const app = getApp()
 
 
@@ -265,7 +267,8 @@
 				isFullScreen: false,
 				courseDatas: [],
 				autoLearning: [],
-				autoLearningStati: {}
+				autoLearningStati: {},
+				examData:{}
 			};
 		},
 		components: {
@@ -283,11 +286,13 @@
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.type = uni.getStorageSync('teachType')
 			this.date = getCurrentDate('month')
-			this.typeArr = LEARNING_MODE_DATA
-			this.setOptions(LEARNING_MODE_DATA)
+			this.typeArr = uni.getStorageSync('learningtypemode')
+			this.setOptions(this.typeArr)
+			
 			this.getMyCoursedata()
 			this.getAutoLearning()
 			this.getAutoLearningStati()
+			this.getExamId()
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
 
@@ -376,7 +381,6 @@
 						categoryId1: id
 					},
 					success: res => {
-						console.log('自主学习课程：', res)
 						uni.hideLoading()
 						if (res.data.code == 200) {
 							this.autoLearning = res.data.data
@@ -437,23 +441,7 @@
 			scanCode() {
 				let sT = getNotRealTime('start')
 				let eT = getNotRealTime('end')
-				console.log('st', sT)
-				console.log('et', eT)
 				// 插件扫码
-				let obj = {
-					"teacher": '王老师',
-					"name": "ceshi",
-					"limit": 500,
-					"lon": "121.506292",
-					"startTime": sT,
-					"trainIntro": "<p>测试介绍</p>",
-					"id": 11,
-					"endTime": eT,
-					"addr": "浦江科技广场21号楼5",
-					"type": 1,
-					"lat": "31.0991625",
-					"teacherIntro": "<p>介绍</p>"
-				}
 
 				uni.scanCode({
 					scanType: ['qrCode'],
@@ -467,23 +455,23 @@
 						// })
 
 						console.log('扫描结果：', resp.result)
-						uni.showLoading({
-							title: '解析中...'
-						})
+						// uni.showLoading({
+						// 	title: '解析中...'
+						// })
 
-						requestQrCodeUrl(resp.result).then((res) => {
-							scanCodeReturn(res)
-							if (res.data.code == 200) {
-								uni.navigateTo({
-									url: '../onSiteTraining/courseDetails'
-								})
-							} else {
-								request_success(res)
-							}
-						}, (err) => {
-							uni.hideLoading()
-							request_err(err, '解析二维码失败')
-						})
+						// requestQrCodeUrl(resp.result).then((res) => {
+						// 	scanCodeReturn(res)
+						// 	if (res.data.code == 200) {
+						// 		uni.navigateTo({
+						// 			url: '../onSiteTraining/courseDetails'
+						// 		})
+						// 	} else {
+						// 		request_success(res)
+						// 	}
+						// }, (err) => {
+						// 	uni.hideLoading()
+						// 	request_err(err, '解析二维码失败')
+						// })
 
 					},
 					fail: err => {
@@ -525,31 +513,61 @@
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
 				}
 			},
+			// 根据培训场次获取试卷ID
+			getExamId() {
+				let trainingid = uni.getStorageSync('TrainingId')
+				console.log('培训场次id', trainingid)
+				if(!trainingid) return
+				getExamIdByTraingId(trainingid).then(res => {
+					console.log('根据培训场次获取试卷:', res)
+					if (res.data.code == 200) {
+						this.examData = res.data.data || {}
+					} else {
+						request_success(res)
+					}
+				})
+			},
+			// 前往在线考试
+			goOnlineExam() {
+				if (!this.examData || !this.examData.id) {
+					Toast({
+						title: '你没有在线考试'
+					})
+					return
+				}
+				let d = encodeURIComponent(JSON.stringify(this.examData))
+				uni.navigateTo({
+					url: '/pages/exam/examInfo?examdatas=' + d
+				});
+			},
 			joinNow(num) {
 				let that = this
 				let type = uni.getStorageSync('teachType')
-				let isSign = uni.getStorageSync('isSignSuccess')
-
+				// let isSign = uni.getStorageSync('isSignSuccess')
 				if (type == 0) {
 					// 安全教育
 					if (num == 1) {
+						// uni.navigateTo({
+						// 	url: '../onSiteTraining/onSiteTraining'
+						// })
 						uni.navigateTo({
-							url: '../onSiteTraining/onSiteTraining'
+							url:'../courseListPage/courseListPage'
 						})
 					} else if (num == 2) {
-						if (isSign) {
-							uni.showToast({
-								title: '你正在参加现场培训，无需参加远程教育',
-								icon: 'none'
-							})
-							return
-						}
-						uni.navigateTo({
-							url: '../user/myCourse'
-						})
+						// if (isSign) {
+						// 	uni.showToast({
+						// 		title: '你正在参加现场培训，无需参加远程教育',
+						// 		icon: 'none'
+						// 	})
+						// 	return
+						// }
+						// uni.navigateTo({
+						// 	url: '../user/myCourse'
+						// })
 						// uni.navigateTo({
 						// 	url: '../course/list/list'
 						// })
+						this.goOnlineExam()
 					}
 				} else if (type == 1) {
 					// 继续教育

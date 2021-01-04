@@ -46,54 +46,15 @@
 				AnquanNum: 0,
 				JixuNum: 0,
 				otherTab: 0,
-				datas: [{
-						"id": "1080387575940304898",
-						"categoryName": "从业人员技能培训",
-						"floor": 2,
-						"remark": ""
-					},
-					{
-						"id": "1080748559775240194",
-						"categoryName": "安全领导小组学习",
-						"floor": 2,
-						"remark": ""
-					},
-					{
-						"id": "1080752583811469314",
-						"categoryName": "从业人员安全学习",
-						"floor": 2,
-						"remark": ""
-					},
-					{
-						"id": "1232501813918695426",
-						"categoryName": "应急演练",
-						"floor": 2,
-						"remark": ""
-					}
-				],
-				datas2: [{
-						"id": "1263818166278471681",
-						"categoryName": "驾驶员",
-						"floor": 2,
-						"remark": null
-					},
-					{
-						"id": "1263818224717709313",
-						"categoryName": "押运员",
-						"floor": 2,
-						"remark": null
-					},
-					{
-						"id": "1263818285547700225",
-						"categoryName": "装卸管理员",
-						"floor": 2,
-						"remark": null
-					}
-				]
+				datas: [],
+				datas2: []
 			};
 		},
 		props: ['type', 'AnquanType', 'selfLearnType', 'tabArr'],
 		created() {
+			let storage = uni.getStorageSync('learningtypemode')
+			this.datas = storage[0].listSub
+			this.datas2 = storage[1].listSub
 			this.AnquanNum = this.AnquanType > 0 ? this.AnquanType : uni.getStorageSync('anquanTab')
 			this.JixuNum = uni.getStorageSync('jixuTab') ? uni.getStorageSync('jixuTab') : 0
 			uni.$on('closeModalMask', (data) => {

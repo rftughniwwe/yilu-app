@@ -8,19 +8,19 @@
 			<view class="item" @click="goLearningMaterials">
 				<image src="../../static/learningzl.png" mode=""></image>
 			</view>
-			<view class="item" @click="goOnlineExam">
+		<!-- 	<view class="item" @click="goOnlineExam">
 				<image src="../../static/online-exam.png" mode=""></image>
-			</view>
+			</view> -->
 		</view>
 		<view class="sign-in-tips">
 			<view class="topic">
 				【现场签到步骤】
 			</view>
 			<view class="content">
-				1，点击现场签到,扫描企业二维码进入相关课程页。
+				1，使用打卡机进行人脸识别签入，课程结束后也需要进行人脸识别签出，为了保障您的学习时长统计，请不要忘记签到，签出。
 			</view>
 			<view class="content">
-				2，手机进行人脸识别签到，课程结束后也需要进行人脸识别签出，为了保障您的学习时长统计，请不要忘记签到，签出。
+				2，点击现场签到,可以查看您的签入、签出记录
 			</view>
 		</view>
 	</view>
@@ -63,61 +63,39 @@
 		},
 		methods: {
 			signinNow() {
-				let sT = getNotRealTime('start')
-				let eT = getNotRealTime('end')
-				console.log('st',sT)
-				console.log('et',eT)
-				// 插件扫码
-				let obj = {
-					"teacher": '王老师',
-					"name": "驾驶员资格证",
-					"limit": 500,
-					"lon": "121.506292",
-					"startTime": sT,
-					"trainIntro": "<p>测试介绍</p>",
-					"id": 11,
-					"endTime": eT,
-					"addr": "浦江科技广场21号楼5",
-					"type": 1,
-					"lat": "31.0991625",
-					"teacherIntro": "<p>介绍</p>"
-				}
-
-				// 系统扫码
-				uni.scanCode({
-					scanType: ['qrCode'],
-					onlyFromCamera: true,
-					success: resp => {
-						uni.showLoading({
-							title: '解析中...'
-						})
-						
-						// 测试用数据
-						// uni.hideLoading()
-						// uni.setStorageSync('scanData', obj)
-						// uni.navigateTo({
-						// 	url: '../onSiteTraining/courseDetails'
-						// })
-						
-						// 实际数据
-						requestQrCodeUrl(resp.result).then((res) => {
-							scanCodeReturn(res)
-							if (res.data.code == 200) {
-								uni.navigateTo({
-									url: '../onSiteTraining/courseDetails'
-								})
-							} else {
-								request_success(res)
-							}
-						}, (err) => {
-							uni.hideLoading()
-							request_err(err, '解析二维码失败')
-						})
-					},
-					fail: err => {
-						console.log('扫描失败', err)
-					}
+				uni.navigateTo({
+					url: './signInPage'
 				})
+				// let sT = getNotRealTime('start')
+				// let eT = getNotRealTime('end')
+				// 系统扫码
+				// uni.scanCode({
+				// 	scanType: ['qrCode'],
+				// 	onlyFromCamera: true,
+				// 	success: resp => {
+				// 		uni.showLoading({
+				// 			title: '解析中...'
+				// 		})
+						
+				// 		实际数据
+				// 		requestQrCodeUrl(resp.result).then((res) => {
+				// 			scanCodeReturn(res)
+				// 			if (res.data.code == 200) {
+				// 				uni.navigateTo({
+				// 					url: '../onSiteTraining/courseDetails'
+				// 				})
+				// 			} else {
+				// 				request_success(res)
+				// 			}
+				// 		}, (err) => {
+				// 			uni.hideLoading()
+				// 			request_err(err, '解析二维码失败')
+				// 		})
+				// 	},
+				// 	fail: err => {
+				// 		console.log('扫描失败', err)
+				// 	}
+				// })
 			},
 			// 前往学习资料
 			goLearningMaterials() {
@@ -161,9 +139,6 @@
 				uni.navigateTo({
 					url: '/pages/exam/examInfo?examdatas=' + d
 				});
-				// uni.navigateTo({
-				// 	url:'/pages/onSiteTraining/examBegin'
-				// })
 			}
 		}
 	}
@@ -178,7 +153,7 @@
 		margin: 30rpx 0 40rpx;
 
 		image {
-			width: 234rpx;
+			width: 334rpx;
 			height: 234rpx;
 		}
 	}

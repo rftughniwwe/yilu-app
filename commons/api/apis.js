@@ -12,14 +12,6 @@ import {
 	request_success
 } from '@/commons/ResponseTips.js'
 
-// 选择的一级分类
-const categoryId1 = getLearningTypeInfo().categoryId1
-// 选择的二级分类
-const categoryId2 = getLearningTypeInfo().categoryId2
-// 所属公司ID
-const compId = getLearningTypeInfo().compId
-// 用户ID
-const userNum = getUserLoginInfo('userNo')
 
 // 模糊查询公司
 export function queryUnitName(name) {
@@ -386,9 +378,6 @@ export function getCompanyId() {
 			success: resp => {
 				console.log('查询服务单位：', resp)
 				if (resp.data.code == 200) {
-					// let info = uni.getStorageSync('userBasicInfo')
-					// info.compId = resp.data.data.compId
-					// uni.setStorageSync('userBasicInfo', info)
 					uni.setStorageSync('userCompanyInfo',resp.data.data)
 				} else {
 					request_success(resp)
@@ -400,4 +389,33 @@ export function getCompanyId() {
 		}, 1)
 	})
 
+}
+
+//获取学习分类
+export function getLearningMode(){
+	
+	return new Promise((resolve,reject)=>{
+		httpRequest({
+			url:'course/api/course/category/categorylist',
+			method:'GET',
+			success:res=>{
+				console.log('获取分类：',res)
+				if(res.data.code == 200){
+					uni.setStorageSync('learningtypemode',res.data.data)
+				}else {
+					uni.showToast({
+						title:'获取学习分类失败',
+						icon:'none'
+					})
+				}
+				resolve(res)
+			},
+			fail:err=>{
+				console.log('获取分类失败：',err)
+				reject(err)
+			}
+		},2)
+	})
+	
+	
 }

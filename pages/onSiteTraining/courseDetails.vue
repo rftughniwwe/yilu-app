@@ -1,12 +1,12 @@
 <!-- 课程详情 -->
 <template>
 	<view>
-		<view class="begin-time flex-row-start">
+		<!-- <view class="begin-time flex-row-start">
 			<image src="../../static/timeout.png" mode=""></image>
 			<view class="text">
 				距离课程开始时间: {{countdownStr?countdownStr:'00:00:00'}}
 			</view>
-		</view>
+		</view> -->
 		<view class="topic">
 			<view class="title">
 				{{courseInfo.name}}
@@ -62,7 +62,7 @@
 			return {
 				courseInfo: {},
 				timer: null,
-				countdownStr: '',
+				// countdownStr: '',
 				count: 0
 			};
 		},
@@ -98,7 +98,7 @@
 					
 				// }
 				uni.navigateTo({
-					url: './signInPage'
+					url:'./onSiteTraining'
 				})
 				// 人脸采集
 				// useFacePlugin({
@@ -163,17 +163,18 @@
 						}
 						time--
 						this.count = time
-						this.countdownStr = getCountDown(time)
+						// this.countdownStr = getCountDown(time)
 					}, 1000)
-				} else {
-					let end = new Date(this.courseInfo.endTime).getTime()
-					let now = new Date().getTime()
-					if (now > end) {
-						this.countdownStr = '培训已经结束'
-					} else {
-						this.countdownStr = '培训已开始'
-					}
-				}
+				} 
+				// else {
+				// 	let end = new Date(this.courseInfo.endTime).getTime()
+				// 	let now = new Date().getTime()
+				// 	if (now > end) {
+				// 		this.countdownStr = '培训已经结束'
+				// 	} else {
+				// 		this.countdownStr = '培训已开始'
+				// 	}
+				// }
 
 			}
 		}

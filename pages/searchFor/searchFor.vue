@@ -240,7 +240,8 @@
 			},
 			// 搜索课程
 			serachCourse() {
-				let id = getLearningTypeInfo().categoryId1 || LEARNING_MODE_DATA[2].id
+				let storage = uni.getStorageSync('learningtypemode')
+				let id = getLearningTypeInfo().categoryId1 || storage[2].id
 				let val = this.serachVal
 				httpRequest({
 					url: 'course/api/course/searchCourseList',

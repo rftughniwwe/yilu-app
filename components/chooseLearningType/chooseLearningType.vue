@@ -54,7 +54,7 @@
 			// 	})
 			// }
 			// console.log('data:', data)
-			this.dataArr = LEARNING_MODE_DATA
+			this.dataArr = uni.getStorageSync('learningtypemode')
 		},
 		methods: {
 			confirm() {

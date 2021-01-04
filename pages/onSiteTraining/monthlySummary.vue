@@ -107,9 +107,9 @@
 									{{item.startTime}} <text class="hight-color">签出没有打卡</text>
 								</view>
 							</view>
-							<view class="go-learning" @click="goLearning(item)">
+						<!-- 	<view class="go-learning" @click="goLearning(item)">
 								去学习
-							</view>
+							</view> -->
 						</view>
 					</view>
 				</template>

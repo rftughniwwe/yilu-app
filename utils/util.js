@@ -232,6 +232,8 @@ function removeAppStorage(options) {
 	uni.removeStorageSync('userAutoQuestions')
 	// 是否签入
 	uni.removeStorageSync('isSignSuccess')
+	//分类信息
+	uni.removeStorageSync('learningtypemode')
 }
 
 // 获取用户登录信息
@@ -310,10 +312,8 @@ function dateWeek(time) {
 }
 
 // 扫码通用
-function scanCodeReturn(resp) {
-	uni.hideLoading()
-	console.log('解析结果', resp)
-	uni.setStorageSync('scanData', resp.data.data)
+function scanCodeReturn(data) {
+	uni.setStorageSync('scanData', data)
 }
 // 获取随机题目
 function getRandomQuestions(count) {
