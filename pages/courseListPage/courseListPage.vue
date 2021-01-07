@@ -2,7 +2,7 @@
 	<view class="main">
 		<template v-if="autoLearning && autoLearning.length > 0">
 			<view v-for="(item,index) in autoLearning" :key='index'>
-				<course :data='item' @courseClick='courseItemClick' />
+				<course :data='item' @courseClick='courseItemClick' author='主持人'/>
 			</view>
 		</template>
 		<template v-else>

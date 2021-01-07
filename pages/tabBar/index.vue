@@ -2,9 +2,9 @@
 <template>
 	<view class="main">
 		<view class="top-content flex-evenly" :style="{'padding': isFullScreen?'100rpx 0 30rpx':'50rpx 0 30rpx'}">
-			<view class="camera-qr-code flex-between" @click="scanCode">
+			<!-- <view class="camera-qr-code flex-between" @click="scanCode">
 				<image src="../../static/camera-code.png" mode=""></image>
-			</view>
+			</view> -->
 			<view class="serach-content flex-row-start" @click="goToSerach">
 				<image src="../../static/serach-img.png" mode=""></image>
 				<text>搜索</text>
@@ -21,6 +21,8 @@
 				<swiper-item v-for="(item,index) in bannerDatas" :key='index'>
 					<view class="swiper-item">
 						<image :src="item.advImg" mode=""></image>
+						<!-- <easy-loadimage mode="widthFix" :scroll-top="0" :src="item.advImg">
+						</easy-loadimage> -->
 					</view>
 				</swiper-item>
 			</swiper>
@@ -96,6 +98,7 @@
 	import {
 		myMessageList
 	} from '@/commons/api/user.js'
+	import easyLoadimage from '@/components/easy-loadimage/easy-loadimage.vue'
 	
 	export default {
 		data() {
@@ -104,13 +107,18 @@
 				newsArr: [],
 				bannerDatas:[],
 				topicdata:[],
-				msgList:0
+				msgList:0,
+				scrollTop:0
+
 			};
 		},
 		components: {
 			newCover,
 			loadingData,
 			EmptyData
+		},
+		onPageScroll({scrollTop}) {
+			this.scrollTop = scrollTop
 		},
 		onLoad() {
 			let useMsg = uni.getStorageSync('userMsg')
@@ -391,7 +399,7 @@
 		}
 
 		.serach-content {
-			width: 65%;
+			width: 75%;
 			border-radius: $uni-border-radius-base;
 			background: #F5F5F5;
 			padding: 10rpx 20rpx;
@@ -410,6 +418,7 @@
 
 		.info {
 			position: relative;
+			
 			image {
 				width: 44rpx;
 				height: 44rpx;

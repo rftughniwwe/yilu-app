@@ -271,13 +271,13 @@
 		},
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
-			this.signDatas = uni.getStorageSync('scanData')
+			this.signDatas = uni.getStorageSync('scanData') || {}
 			this.todayweek = dateWeek()
 			this.getSignInData()
 			// 每十秒获取一次位置信息
-			this.timer = setInterval(() => {
-				this.getLocationFun()
-			}, 10000)
+			// this.timer = setInterval(() => {
+			// 	this.getLocationFun()
+			// }, 10000)
 		},
 		onShow() {
 			this.getLocationFun()

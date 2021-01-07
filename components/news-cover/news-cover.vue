@@ -7,6 +7,8 @@
 			</view>
 			<view class="right">
 				<image :src="datas.blogImg" mode=""></image>
+				<!-- <easy-loadimage mode="widthFix" :scroll-top="0" :src="datas.blogImg">
+				</easy-loadimage> -->
 			</view>
 			<view class="form-time flex-between">
 				<!-- <image v-if="datas.isTop" class="top-img" src="../../static/top.png" mode=""></image> -->
@@ -18,6 +20,7 @@
 </template>
 
 <script>
+	import easyLoadimage from '@/components/easy-loadimage/easy-loadimage.vue'
 	export default {
 		data() {
 			return {

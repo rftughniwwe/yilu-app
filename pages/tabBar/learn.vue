@@ -13,9 +13,9 @@
 							<image src="../../static/down-push-arrow.png" mode=""></image>
 						</picker>
 					</view>
-					<view v-show="type !== 2" class="right-scannin-code" @click="scanCode">
+					<!-- <view v-show="type !== 2" class="right-scannin-code" @click="scanCode">
 						<image src="../../static/camera-code.png" mode=""></image>
-					</view>
+					</view> -->
 					<view v-show="type === 2" class="right-leader-board" @click="goLeaderBoard">
 						<image src="../../static/leader-board.png" mode=""></image>
 					</view>

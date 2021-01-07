@@ -14,7 +14,7 @@
 						{{datas.startTime || '未知'}}
 					</view>
 					<view class="from">
-						老师：{{datas.lecturerName || '未知'}}
+						{{author}}：{{datas.lecturerName || '未知'}}
 					</view>
 				</view>
 			</view>
@@ -26,12 +26,14 @@
 	export default {
 		data() {
 			return {
-				datas:{}
+				datas:{},
+				author:''
 			};
 		},
-		props:['data'],
+		props:['data','authorzz'],
 		created() {
-			this.datas = this.data?this.data:{}
+			this.datas = this.data?this.data:{},
+			this.author = this.authorzz?this.authorzz:'主持人'
 		},
 		methods:{
 			itemClick(item){

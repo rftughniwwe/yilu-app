@@ -1,14 +1,23 @@
 <!-- 课程详情 -->
 <template>
 	<view>
-		<!-- <view class="begin-time flex-row-start">
+		<view class="begin-time flex-row-start">
 			<image src="../../static/timeout.png" mode=""></image>
 			<view class="text">
 				距离课程开始时间: {{countdownStr?countdownStr:'00:00:00'}}
 			</view>
-		</view> -->
-		<view class="topic">
-			<view class="title">
+		</view>
+		<view class="topic flex-between">
+			<view class="left-img">
+				<image src="../../static/banner2.png" mode=""></image>
+			</view>
+			<view class="right-content">
+				<view class="text-overflow2 titles">道路危险货物运输管理安全教育</view>
+				<view class="lecturer">
+					{{courseInfoIntroduce.lecturer}}:王带锤
+				</view>
+			</view>
+			<!-- <view class="title">
 				{{courseInfo.name}}
 			</view>
 			<view class="subtitle middle">
@@ -16,22 +25,28 @@
 			</view>
 			<view class="subtitle">
 				开课地点：{{courseInfo.addr?courseInfo.addr:'未知'}}
-			</view>
+			</view> -->
 		</view>
 		<view class="container-content">
 			<view class="header title">
-				培训介绍
+				{{courseInfoIntroduce.introduce}}
 			</view>
 			<view class="subtitle text-overflow5">
 				<rich-text :nodes="courseInfo.trainIntro"></rich-text>
 				<!-- {{courseInfo.trainIntro?courseInfo.trainIntro:'未知'}} -->
 			</view>
 			<view class="header title">
-				讲师介绍
+				{{courseInfoIntroduce.time}}
 			</view>
 			<view class="subtitle text-overflow5">
 				<rich-text :nodes="courseInfo.teacherIntro"></rich-text>
 				<!-- {{courseInfo.teacherIntro?courseInfo.teacherIntro:'未知'}} -->
+			</view>
+			<view class="header title">
+				{{courseInfoIntroduce.address}}
+			</view>
+			<view class="subtitle text-overflow5">
+				上海市浦东新区松林路357号-1楼 
 			</view>
 		</view>
 		<view class="next-step">
@@ -56,14 +71,21 @@
 		getUserLoginInfo,
 		getCountDown
 	} from '@/utils/util.js'
+	
 
 	export default {
 		data() {
 			return {
 				courseInfo: {},
 				timer: null,
-				// countdownStr: '',
-				count: 0
+				countdownStr: '',
+				count: 0,
+				courseInfoIntroduce:{
+					lecturer:'主持人',
+					introduce:'宣教及培训介绍',
+					time:'培训时间',
+					address:'培训地点'
+				}
 			};
 		},
 		components: {
@@ -163,7 +185,7 @@
 						}
 						time--
 						this.count = time
-						// this.countdownStr = getCountDown(time)
+						this.countdownStr = getCountDown(time)
 					}, 1000)
 				} 
 				// else {
@@ -233,5 +255,26 @@
 
 	.next-step {
 		padding: 30rpx;
+	}
+	.left-img{
+		width: 256rpx;
+		height: 168rpx;
+		margin-right: 20rpx;
+		background-color: #D1D1D1;
+		image{
+			width: 100%;
+			height: 100%;
+			border-radius: 12rpx;
+		}
+	}
+	.titles{
+		font-size: 32rpx;
+		font-weight: bold;
+		color: #333333;
+	}
+	.lecturer{
+		font-size: 28rpx;
+		color: #333333;
+		margin-top: 20rpx;
 	}
 </style>
