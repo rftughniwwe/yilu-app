@@ -268,7 +268,7 @@
 				courseDatas: [],
 				autoLearning: [],
 				autoLearningStati: {},
-				examData:{}
+				examData: {}
 			};
 		},
 		components: {
@@ -288,7 +288,7 @@
 			this.date = getCurrentDate('month')
 			this.typeArr = uni.getStorageSync('learningtypemode')
 			this.setOptions(this.typeArr)
-			
+
 			this.getMyCoursedata()
 			this.getAutoLearning()
 			this.getAutoLearningStati()
@@ -505,7 +505,7 @@
 				// 	this.getAutoLearning()
 				// }
 				// 1自主学习
-				if(e.target.value == 1){
+				if (e.target.value == 1) {
 					this.getAutoLearning()
 				}
 				// app.globalData.LearningSubType = item.listSub
@@ -513,19 +513,47 @@
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
 				}
 			},
-			// 根据培训场次获取试卷ID
+			// 根据所属公司和用户number获取试卷ID
 			getExamId() {
-				let trainingid = uni.getStorageSync('TrainingId')
-				console.log('培训场次id', trainingid)
-				if(!trainingid) return
-				getExamIdByTraingId(trainingid).then(res => {
-					console.log('根据培训场次获取试卷:', res)
-					if (res.data.code == 200) {
-						this.examData = res.data.data || {}
-					} else {
-						request_success(res)
+				// let trainingid = uni.getStorageSync('TrainingId')
+				// console.log('培训场次id', trainingid)
+				// if(!trainingid) return
+				// getExamIdByTraingId(trainingid).then(res => {
+				// 	console.log('根据培训场次获取试卷:', res)
+				// 	if (res.data.code == 200) {
+				// 		this.examData = res.data.data || {}
+				// 	} else {
+				// 		request_success(res)
+				// 	}
+				// })
+				let item = uni.getStorageSync('LearningSubTypeSubItem')
+				let mode = uni.getStorageSync('learningtypemode')
+				let type = item.id == mode[0].listSub[0].id ? 2 : 1
+				let compId = uni.getStorageSync('userCompanyInfo').compId
+				let userid = getUserLoginInfo('userNo')
+				let params = {
+					"compId": compId,
+					"isPassExam": 0,
+					"type": type,
+					"userNo": userid
+				}
+				httpRequest({
+					url:'/user/api/tbExamPerson/examList',
+					method:'POST',
+					data:params,
+					success:res=>{
+						console.log('获取试卷：',res)
+						if(res.data.code == 200){
+							
+						}else {
+							request_success(res)
+						}
+					},
+					fail:err=>{
+						console.log('获取试卷失败：',err)
 					}
-				})
+				},1)
+				
 			},
 			// 前往在线考试
 			goOnlineExam() {
@@ -551,7 +579,7 @@
 						// 	url: '../onSiteTraining/onSiteTraining'
 						// })
 						uni.navigateTo({
-							url:'../courseListPage/courseListPage'
+							url: '../courseListPage/courseListPage'
 						})
 					} else if (num == 2) {
 						// if (isSign) {

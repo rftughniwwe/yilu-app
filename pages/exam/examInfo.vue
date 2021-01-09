@@ -57,9 +57,9 @@
 				examData: {},
 				gradeExamId: '',
 				trainingid: '',
-				longit:'',
-				lat:'',
-				signAddress:''
+				longit: '',
+				lat: '',
+				signAddress: ''
 			};
 		},
 		onLoad(options) {
@@ -68,12 +68,12 @@
 			if (id) {
 				this.trainingid = id
 				this.getExamId(id)
-			} else if(!id){
+			} else if (!id) {
 				uni.showToast({
-					title:'没有配置考试',
-					icon:'none'
+					title: '没有配置考试',
+					icon: 'none'
 				})
-			}else {
+			} else {
 				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
 			}
 
@@ -164,7 +164,7 @@
 						examId: this.examData.id,
 						userNo: userno
 					},
-					success: res => { 
+					success: res => {
 						uni.hideLoading()
 						console.log('00000', res)
 						if (res.data.code == 200) {
@@ -219,41 +219,65 @@
 			iuywsertkfjg(img) {
 				let userno = getUserLoginInfo('userNo')
 				let comid = uni.getStorageSync('userCompanyInfo').compId
+				let mode = uni.getStorageSync('learningtypemode')
 				let trainid = this.trainingid || uni.getStorageSync('TrainingId')
+				let etype = item.id == mode[0].listSub[0].id ? 2 : 1
+				// let params = {
+				// 	courseType: 3,
+				// 	numEvent: trainid,
+				// 	refName: '考试',
+				// 	signonApp: 0,
+				// 	statusId: 1,
+				// 	compId: comid,
+				// 	startTime: this.examData.beginTime,
+				// 	endTime: this.examData.endTime,
+				// 	userNo: userno,
+				// 	signonType: 0,
+				// 	refId: this.examData.id,
+				// 	longitude: this.longit,
+				// 	latitude: this.lat,
+				// 	place: this.signAddress,
+				// 	userImage: img.data,
+				// 	faceContrasResult: 'Success',
+				// }
 				let params = {
-					courseType: 3,
-					numEvent: trainid,
-					refName: '考试',
-					signonApp: 0,
-					statusId: 1,
-					compId: comid,
-					startTime: this.examData.beginTime,
-					endTime: this.examData.endTime,
-					userNo: userno,
-					signonType: 0,
-					refId: this.examData.id,
-					longitude: this.longit,
-					latitude: this.lat,
-					place: this.signAddress,
-					userImage: img.data,
-					faceContrasResult: 'Success',
+					"compId": comid,
+					"examId": '试卷id',
+					"examType": etype,
+					"faceContrasResult": "Success",
+					"latitude": this.lat,
+					"longitude": this.longit,
+					"place": this.signAddress,
+					"signonType": 0,
+					"userImage":  img.data,
+					"userNo": userno
 				}
 				console.log('pppp', params)
-				auth.faceSignLog(params).then(() => {
-					let url = '/pages/exam/startExam?id=' + this.examData.id;
-					// if (this.gradeExamId) {
-					// 	url += '&gradeExamId=' + this.gradeExamId
-					// }
-					uni.navigateTo({
-						url: url
-					});
-				});
+				httpRequest({
+					url:'exam/api/examFaceSignLog/save',
+					method:"POST",
+					data:params,
+					success:res=>{
+						console.log('上传考试记录：',res)
+					},
+					fail:err=>{
+						console.log('上传考试记录失败：',err)
+					}
+				},5)
+				
+				
+				// auth.faceSignLog(params).then(() => {
+				// 	let url = '/pages/exam/startExam?id=' + this.examData.id;
+				// 	uni.navigateTo({
+				// 		url: url
+				// 	});
+				// });
 			},
 
 			getExamInfoData() {
 				let id = this.examData.id
 				getExamDetails(id).then(res => {
-					console.log('试卷详情',res)
+					console.log('试卷详情', res)
 					if (res.data.code == 200) {
 						this.examData = res.data.data || {}
 					} else {
