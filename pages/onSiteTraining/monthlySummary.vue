@@ -57,11 +57,11 @@
 
 			<view class="item flex-between" @click="learningClick(2)">
 				<view class="head">
-					学习总时长
+					学习次数
 				</view>
 				<view class="subtitle flex-between">
 					<view class="txt">
-						{{datas.countStudyTime?datas.countStudyTime:0}}小时
+						{{datas.countStudyTime?datas.countStudyTime:0}}次
 					</view>
 					<image class="push-down-img" src="../../static/down-push-arrow.png" mode=""></image>
 				</view>
@@ -74,7 +74,7 @@
 								{{item.dat}}
 							</view>
 							<view class="txt">
-								{{item.sum?item.sum:0}}分钟
+								1次
 							</view>
 						</view>
 					</view>

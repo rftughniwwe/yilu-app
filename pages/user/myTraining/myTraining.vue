@@ -12,8 +12,9 @@
 		<view class="course-contnt">
 			<template v-if="courseData && courseData.length > 0">
 
-				<view class="course-item" v-for="(item,index) in courseData" :key='index' @click="goPreview(item)">
-					<view class="title text-overflow-ellipsis">
+				<view class="course-item" v-for="(item,index) in courseData" :key='index'>
+					<course :data='item' @courseClick='courseItemClick' author='主持人' :isTag='true'/>
+					<!-- <view class="title text-overflow-ellipsis">
 						{{item.name?item.name:'未知'}}
 					</view>
 					<view class="subtitle">
@@ -24,7 +25,7 @@
 						<view class="tags">
 							{{'回放'}}
 						</view>
-					</view>
+					</view> -->
 				</view>
 			</template>
 			<template v-else>
@@ -76,6 +77,14 @@
 			uni.hideLoading()
 		},
 		methods: {
+			courseItemClick(e) {
+				let item = e.item
+				console.log('点击：', item)
+				scanCodeReturn(item)
+				uni.navigateTo({
+					url: '../onSiteTraining/courseDetails'
+				})
+			},
 			goBack() {
 				uni.navigateBack({
 					delta: 1

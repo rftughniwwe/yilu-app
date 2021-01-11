@@ -95,6 +95,7 @@
 							uni.hideLoading()
 							console.log('密码登录成功：', res)
 							if (res.data.code == 200) {
+								uni.setStorageSync('userCompleteInfo', 1)
 								setAppStorage({
 									userNo: res.data.data.userNo,
 									userToken: res.data.data.token
@@ -108,6 +109,9 @@
 										// })
 									}
 								});
+								uni.reLaunch({
+									url: '../tabBar/index'
+								})
 								// let userInfoComplete = uni.getStorageSync('userCompleteInfo');
 
 								// if(userInfoComplete == 1){
@@ -119,33 +123,31 @@
 								// 		url:`./faceLogin?userPhone=${that.phone}`
 								// 	})
 								// }else {
-								getIdCardInfo(res.data.data.userNo).then(respones => {
-									if (respones.data.code == 200) {
-										let _data = respones.data.data
-										if (_data && _data.name && _data.idcardNum) {
-											// 1：已经完善了身份信息，跳主页
-											uni.setStorageSync('userCompleteInfo', 1)
-											uni.reLaunch({
-												url: '../tabBar/index'
-											})
-										} else {
-											// 2：未完善，需要完善，直接跳人脸注册页面
-											uni.setStorageSync('userCompleteInfo', 2)
-											uni.reLaunch({
-												url: `./faceLogin?userPhone=${that.phoneNum}`
-											})
-										}
+								// getIdCardInfo(res.data.data.userNo).then(respones => {
+								// 	if (respones.data.code == 200) {
+								// 		let _data = respones.data.data
+								// 		if (_data && _data.name && _data.idcardNum) {
+								// 			uni.setStorageSync('userCompleteInfo', 1)
+								// 			uni.reLaunch({
+								// 				url: '../tabBar/index'
+								// 			})
+								// 		} else {
+								// 			uni.setStorageSync('userCompleteInfo', 2)
+								// 			uni.reLaunch({
+								// 				url: `./faceLogin?userPhone=${that.phoneNum}`
+								// 			})
+								// 		}
 
-									} else {
-										console.log('查询信息是否完善失败：', respones)
-										uni.showToast({
-											title: '查询信息是否完善失败',
-											icon: 'none'
-										})
-									}
-								}, err => {
-									console.log('查询信息是否完善失败：', err)
-								})
+								// 	} else {
+								// 		console.log('查询信息是否完善失败：', respones)
+								// 		uni.showToast({
+								// 			title: '查询信息是否完善失败',
+								// 			icon: 'none'
+								// 		})
+								// 	}
+								// }, err => {
+								// 	console.log('查询信息是否完善失败：', err)
+								// })
 								// }
 							} else {
 								console.log('登录错误：', res)

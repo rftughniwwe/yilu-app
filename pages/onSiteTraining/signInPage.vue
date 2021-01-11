@@ -104,8 +104,8 @@
 				<view class="address">
 					{{signDatas.addr?signDatas.addr:oldSignData[0].place}}
 				</view>
-				<map :latitude="signDatas.lat?signDatas.lat:oldSignData[0].latitude" :longitude="signDatas.lon?signDatas.lon:oldSignData[0].longitude"
-				 class="mapz"></map>
+				<!-- <map :latitude="signDatas.lat?signDatas.lat:oldSignData[0].latitude" :longitude="signDatas.lon?signDatas.lon:oldSignData[0].longitude"
+				 class="mapz"></map> -->
 			</view>
 		</view>
 
@@ -141,7 +141,7 @@
 						你真是太棒了，今日一共学习了{{tongJiSign.count}}次!
 					</view>
 				</view>
-				<view class="learning-data">
+				<!-- <view class="learning-data">
 					<view class="subheading">
 						学习数据
 					</view>
@@ -163,7 +163,7 @@
 							</view>
 						</view>
 					</view>
-				</view>
+				</view> -->
 				<view class="recording">
 					<view class="subheading">
 						签到记录

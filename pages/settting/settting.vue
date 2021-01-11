@@ -14,7 +14,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="item flex-between" @click="fillInfomation">
+			<!-- <view class="item flex-between" @click="fillInfomation">
 				<view class="head">
 					完善信息
 				</view>
@@ -23,7 +23,7 @@
 						<image src="../../static/right-arrow.png" mode=""></image>
 					</view>
 				</view>
-			</view>
+			</view> -->
 			<view class="item flex-between" @click="goEditPassword">
 				<view class="head">
 					修改密码
@@ -123,7 +123,7 @@
 			logout(){
 				removeAppStorage()
 				uni.reLaunch({
-					url:'../login/normalLogin'
+					url:'../login/codeLogin'
 				})
 			},
 			// 完善信息

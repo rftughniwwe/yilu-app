@@ -39,22 +39,31 @@
 						我的培训
 					</view>
 				</view>
-				<view class="my-sign-in" @click="goMySign">
-					<image src="../../static/user-my-signin.png" mode=""></image>
+				<view class="my-sign-in" @click="goMyExamPage">
+					<image src="../../static/user-my-exam-img.png" mode=""></image>
 					<view class="" :style="{'fontSize':globalSize+'rpx'}">
-
-						我的签到
+						我的考试
 					</view>
 				</view>
 				<view class="my-order" @click="goMyOrder">
 					<image src="../../static/user-my-order.png" mode=""></image>
 					<view class="" :style="{'fontSize':globalSize+'rpx'}">
-
 						我的订单
 					</view>
 				</view>
 			</view>
 			<view class="items-content">
+				<view class="item flex-between" @click="fillInfomation">
+					<view class="item-icon flex-row-start">
+						<image src="../../static/user-fill-infomation.png" mode=""></image>
+						<view class="title" :style="{'fontSize':globalSize+'rpx'}">
+							证件上传
+						</view>
+					</view>
+					<view class="right-arrow-img">
+						<image src="../../static/right-arrow.png" mode=""></image>
+					</view>
+				</view>
 				<view class="item flex-between" @click="goMyNews">
 					<view class="item-icon flex-row-start">
 						<image src="../../static/user-my-news.png" mode=""></image>
@@ -209,6 +218,17 @@
 			goMySign(){
 				uni.navigateTo({
 					url:'../user/mySignInPage/mySignInPage'
+				})
+			},
+			// 完善信息
+			fillInfomation(){
+				uni.navigateTo({
+					url:'../fillInfomation/fillInfomation'
+				})
+			},
+			goMyExamPage(){
+				uni.navigateTo({
+					url:'../myExamListPage/myExamListPage'
 				})
 			}
 		}

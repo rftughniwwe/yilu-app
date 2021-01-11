@@ -128,6 +128,34 @@
 			// 跳转页面
 			routePage(num) {
 				let that = this
+				httpRequest({
+					url: 'user/api/user/perfect/getBasicInfo?userNo=' + num,
+					method: 'POST',
+					success: resp => {
+						console.log('查询服务单位判断是否是第一次注册进入:', resp)
+						if (resp.data.code == 200) {
+							let d = resp.data.data
+							if(d){
+								if(d.compId){
+									uni.setStorageSync('userCompleteInfo', 1)
+									uni.reLaunch({
+										url:'../tabBar/index'
+									})
+								}else {
+									uni.navigateTo({
+										url:'../confirmCompany/confirmCompany'
+									})
+								}
+							}
+						}
+					},
+					fail: err => {
+						console.log('请求失败', err)
+						Toast({
+							title: '请求失败'
+						})
+					}
+				}, 1)
 				// let userInfoComplete = uni.getStorageSync('userCompleteInfo');
 				// console.log('userinfo', userInfoComplete)
 				// if(userInfoComplete == 1){
@@ -142,35 +170,32 @@
 				// 	})
 				// }else {
 				// 查不到缓存就请求
-				getIdCardInfo(num).then(respones => {
-					console.log('查询完善信息：', respones)
-					if (respones.data.code == 200) {
-						let _data = respones.data.data
-						if (_data && _data.name && _data.idcardNum) {
-							// 1：已经完善，跳主页
-							// 设置缓存，下次进来就不用请求了
-							uni.setStorageSync('userCompleteInfo', 1)
-							uni.reLaunch({
-								url: '../tabBar/index'
-							})
-						} else {
-							// 2：未完善，需要完善，直接跳信息完善页面
-							uni.setStorageSync('userCompleteInfo', 2)
-							uni.navigateTo({
-								url: '../../pages/fillInfomation/fillInfomation'
-							})
-						}
+				// getIdCardInfo(num).then(respones => {
+				// 	console.log('查询完善信息：', respones)
+				// 	if (respones.data.code == 200) {
+				// 		let _data = respones.data.data
+				// 		if (_data && _data.name && _data.idcardNum) {
+				// 			uni.setStorageSync('userCompleteInfo', 1)
+				// 			uni.reLaunch({
+				// 				url: '../tabBar/index'
+				// 			})
+				// 		} else {
+				// 			uni.setStorageSync('userCompleteInfo', 2)
+				// 			uni.navigateTo({
+				// 				url: '../../pages/fillInfomation/fillInfomation'
+				// 			})
+				// 		}
 
-					} else {
-						console.log('查询信息是否完善失败：', respones)
-						uni.showToast({
-							title: '查询信息是否完善失败',
-							icon: 'none'
-						})
-					}
-				}, err => {
-					console.log('查询信息是否完善失败：', err)
-				})
+				// 	} else {
+				// 		console.log('查询信息是否完善失败：', respones)
+				// 		uni.showToast({
+				// 			title: '查询信息是否完善失败',
+				// 			icon: 'none'
+				// 		})
+				// 	}
+				// }, err => {
+				// 	console.log('查询信息是否完善失败：', err)
+				// })
 				// }
 			},
 

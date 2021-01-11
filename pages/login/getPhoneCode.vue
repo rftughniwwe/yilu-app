@@ -33,7 +33,8 @@
 		setAppStorage
 	} from '../../utils/util.js'
 	import {
-		getIdCardInfo
+		getIdCardInfo,
+		getCompanyId
 	} from '@/commons/api/apis.js'
 	import auth from "@/utils/auth";
 
@@ -66,11 +67,11 @@
 			inputVal(e) {
 
 				if (e.length === 6) {
-					
+
 					let initialPwd = getRandomDigits(6)
-					console.log('initialPwd:',initialPwd)
+					console.log('initialPwd:', initialPwd)
 					uni.showLoading({
-						title:'处理中...'
+						title: '处理中...'
 					})
 					httpRequest({
 						url: 'user/api/user/registerApp',
@@ -80,15 +81,16 @@
 							mobile: this.phoneNum,
 							password: initialPwd,
 							repassword: initialPwd,
-							clientType:2
+							clientType: 2
 						},
 						success: (res) => {
 							uni.hideLoading()
 							console.log("注册/登录回调:", res)
 							if (res.data.code == 200) {
+								uni.setStorageSync('userloginphonenumber', this.phoneNum)
 								setAppStorage({
-									userNo:res.data.data.userNo,
-									userToken:res.data.data.token
+									userNo: res.data.data.userNo,
+									userToken: res.data.data.token
 								})
 								uni.setStorage({
 									'key': 'userToken',
@@ -100,11 +102,11 @@
 									}
 								});
 								this.codeLogin(res.data.data.userNo)
-							}else {
-								console.log('注册错误：',res)
+							} else {
+								console.log('注册错误：', res)
 								Toast({
-									title:res.data.msg,
-									duration:2000
+									title: res.data.msg,
+									duration: 2000
 								})
 							}
 						},
@@ -115,10 +117,10 @@
 								title: '注册登录失败'
 							})
 						}
-					},1,true)
+					}, 1, true)
 				}
 			},
-			
+
 			// 验证码登录
 			codeLogin(num) {
 				let that = this
@@ -132,34 +134,61 @@
 				// 		url:`./faceLogin?userPhone=${that.phoneNum}`
 				// 	})
 				// }else {
-					getIdCardInfo(num).then(respones => {
-						console.log('查询信息：', respones)
-						if (respones.data.code == 200) {
-							let _data = respones.data.data
-							if(_data && _data.name && _data.idcardNum){
-								// 1：已经完善了身份信息，跳主页
-								uni.setStorageSync('userCompleteInfo', 1)
-								uni.reLaunch({
-									url: '../tabBar/index'
-								})
-							}else {
-								// 2：未完善，需要完善，直接跳人脸注册页面
-								uni.setStorageSync('userCompleteInfo', 2)
-								uni.reLaunch({
-									url:`./faceLogin?userPhone=${that.phoneNum}`
-								})
+				// 查询
+				httpRequest({
+					url: 'user/api/user/perfect/getBasicInfo?userNo=' + num,
+ 					method: 'POST',
+					success: resp => {
+						console.log('查询服务单位判断是否是第一次注册进入:', resp)
+						if (resp.data.code == 200) {
+							let d = resp.data.data
+							if(d){
+								if(d.compId){
+									uni.setStorageSync('userCompleteInfo', 1)
+									uni.reLaunch({
+										url:'../tabBar/index'
+									})
+								}else {
+									uni.navigateTo({
+										url:'../confirmCompany/confirmCompany'
+									})
+								}
 							}
-							
-						} else {
-							console.log('查询信息是否完善失败：', respones)
-							uni.showToast({
-								title: '查询信息是否完善失败',
-								icon: 'none'
-							})
 						}
-					}, err => {
-						console.log('查询信息是否完善失败：', err)
-					})
+					},
+					fail: err => {
+						console.log('请求失败', err)
+						Toast({
+							title: '请求失败'
+						})
+					}
+				}, 1)
+				// getIdCardInfo(num).then(respones => {
+				// 	console.log('查询信息：', respones)
+				// 	if (respones.data.code == 200) {
+				// 		let _data = respones.data.data
+				// 		if (_data && _data.name && _data.idcardNum) {
+				// 			uni.setStorageSync('userCompleteInfo', 1)
+				// 			uni.reLaunch({
+				// 				url: '../tabBar/index'
+				// 			})
+				// 		} else {
+				// 			uni.setStorageSync('userCompleteInfo', 2)
+				// 			uni.reLaunch({
+				// 				url: `./faceLogin?userPhone=${that.phoneNum}`
+				// 			})
+				// 		}
+
+				// 	} else {
+				// 		console.log('查询信息是否完善失败：', respones)
+				// 		uni.showToast({
+				// 			title: '查询信息是否完善失败',
+				// 			icon: 'none'
+				// 		})
+				// 	}
+				// }, err => {
+				// 	console.log('查询信息是否完善失败：', err)
+				// })
 				// }
 			},
 
@@ -175,7 +204,7 @@
 					title: '发送中...'
 				})
 				sendSMSCode(phone).then((res) => {
-					
+
 					uni.hideLoading()
 					if (res.data.code == 200) {
 						Toast({
@@ -193,7 +222,7 @@
 							}
 						}, 1000)
 					} else {
-						console.log('发送错误',res)
+						console.log('发送错误', res)
 						Toast({
 							title: '发送错误'
 						})

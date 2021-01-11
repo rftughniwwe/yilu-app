@@ -17,17 +17,23 @@
 					{{courseInfoIntroduce.lecturer}}:王带锤
 				</view>
 			</view>
-			<!-- <view class="title">
-				{{courseInfo.name}}
-			</view>
-			<view class="subtitle middle">
-				开课时间：{{courseInfo.startTime?courseInfo.startTime:'未知'}} · 名师：{{courseInfo.teacher?courseInfo.teacher:'未知'}}
-			</view>
-			<view class="subtitle">
-				开课地点：{{courseInfo.addr?courseInfo.addr:'未知'}}
-			</view> -->
 		</view>
 		<view class="container-content">
+			<view class="top-tab-content flex-around">
+				<view class="sign-record flex-evenly" @click="signinNow">
+					<image class="iiimg" src="../../static/course-info-sign-img.png" mode=""></image>
+					<view class="ttttttttttttext">
+						签到记录
+					</view>
+				</view>
+				<view class="line"></view>
+				<view class="learning-material flex-evenly" @click="goLearningMaterials">
+					<image class="iiimg" src="../../static/course-info-leraning-material.png" mode=""></image>
+					<view class="ttttttttttttext">
+						学习资料
+					</view>
+				</view>
+			</view>
 			<view class="header title">
 				{{courseInfoIntroduce.introduce}}
 			</view>
@@ -49,9 +55,9 @@
 				上海市浦东新区松林路357号-1楼 
 			</view>
 		</view>
-		<view class="next-step">
+		<!-- <view class="next-step">
 			<nextPageBtn @goNextPage='nextStep' />
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -108,17 +114,6 @@
 		methods: {
 			// 下一步
 			nextStep() {
-				// if (this.count > 600) {
-				// 	Toast({
-				// 		title: '还没有到签入时间!'
-				// 	})
-				// } else if (this.count <= 0) {
-				// 	Toast({
-				// 		title: '签入时间已过！不能签入'
-				// 	})
-				// } else {
-					
-				// }
 				uni.navigateTo({
 					url:'./onSiteTraining'
 				})
@@ -160,7 +155,25 @@
 				// 	request_err(err, '人脸采集失败。')
 				// })
 			},
-
+			signinNow() {
+				uni.navigateTo({
+					url: './signInPage'
+				})
+			},
+			// 前往学习资料
+			goLearningMaterials() {
+				let trainingid = uni.getStorageSync('TrainingId')
+				console.log('培训场次id', trainingid)
+				if (!trainingid) {
+					Toast({
+						title: '你没有学习资料'
+					})
+					return
+				}
+				uni.navigateTo({
+					url: '../user/learningMaterials/learningMaterials?trainid='+trainingid
+				})
+			},
 			// 倒计时
 			countDown() {
 				let start = new Date(this.courseInfo.startTime).getTime()
@@ -276,5 +289,27 @@
 		font-size: 28rpx;
 		color: #333333;
 		margin-top: 20rpx;
+	}
+	.top-tab-content{
+		padding: 40rpx 30rpx;
+		background-color: #FFFFFF;
+		border-radius: 20rpx;
+		box-shadow: 0 0 10rpx #e8e8e8;
+		margin: 0 0 30rpx;
+	}
+	.iiimg{
+		width: 44rpx;
+		height: 44rpx;
+	}
+	.ttttttttttttext{
+		margin-left: 20rpx;
+		font-size: 32rpx;
+		color: #333333;
+		letter-spacing: 2rpx;
+	}
+	.line{
+		height: 46rpx;
+		width: 2rpx;
+		background-color: #eaeaea;
 	}
 </style>

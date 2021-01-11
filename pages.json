@@ -1,11 +1,21 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		
 		{
 			// 默认进入的页面
 			"path": "pages/login/codeLogin",
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+		    "path" : "pages/confirmCompany/confirmCompany",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": " ",
+		        "enablePullDownRefresh": false
+		    }
+		    
 		},
 		{
 			
@@ -423,6 +433,25 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "课程列表",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        
+        ,{
+            "path" : "pages/myExamListPage/myExamListPage",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的试卷",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/myExamDetail/myExamDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "试卷详情",
                 "enablePullDownRefresh": false
             }
             

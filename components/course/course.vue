@@ -3,6 +3,9 @@
 	<view class="main" @click="itemClick(datas)">
 		<view class="item-content flex-between">
 			<view class="img-content">
+				<view v-if="isShowTag" class="tag-content">
+					未开始
+				</view>
 				<image :src="datas.courseLogo || ''" mode=""></image>
 			</view>
 			<view class="right-content flex-column-between">
@@ -27,13 +30,15 @@
 		data() {
 			return {
 				datas:{},
-				author:''
+				author:'',
+				isShowTag:false
 			};
 		},
-		props:['data','authorzz'],
+		props:['data','authorzz','isTag'],
 		created() {
 			this.datas = this.data?this.data:{},
 			this.author = this.authorzz?this.authorzz:'主持人'
+			this.isShowTag = this.isTag?true:false
 		},
 		methods:{
 			itemClick(item){
@@ -63,9 +68,22 @@
 		width:40%;
 		height: 170rpx;
 		background-color: #999999;
+		position: relative;
 		image{
 			width: 100%;
 			height: 100%;
+		}
+		.tag-content{
+			position: absolute;
+			top: 20rpx;
+			left: 0;
+			padding: 6rpx 12rpx;
+			color: #FFFFFF;
+			font-size: 22rpx;
+			background-color: rgba(0,0,0,.5);
+			z-index: 998;
+			border-top-right-radius: 8rpx;
+			border-bottom-right-radius: 8rpx;
 		}
 	}
 	.right-content{
