@@ -53,7 +53,6 @@
 			};
 		},
 		onLoad(options) {
-			console.log('传手机号：',options)
 		},
 		methods: {
 			goNextPager() {
@@ -85,6 +84,7 @@
 						console.log('查询服务单位：', res)
 						if (res.data.code == 200) {
 							this.setCompany(res.data.data)
+							this.idCardSave()
 							this.company = res.data.data.compName
 						} else {
 							request_success(res)
@@ -92,6 +92,36 @@
 					},
 					fail: err => {
 						request_err(err, '查询服务单位失败')
+					}
+				}, 1)
+			},
+			// 设置身份证信息
+			idCardSave() {
+			
+				let datas = {
+					"idcardNum": this.inputIdcard,
+					"userId": getUserLoginInfo('userNo')
+				}
+				console.log('保存信息参数:', datas)
+				httpRequest({
+					url: 'user/api/tbSysIdCard/save',
+					method: 'POST',
+					data: datas,
+					success: (res) => {
+						console.log('保存信息成功：', res)
+						if (res.data.code == 200) {
+							
+						} else {
+							Toast({
+								title: res.data.msg
+							})
+						}
+					},
+					fail: (err) => {
+						console.log('保存信息失败', err)
+						Toast({
+							title: "保存信息失败"
+						})
 					}
 				}, 1)
 			},
@@ -105,11 +135,6 @@
 						showCancel:false,
 						confirmText:'我知道了',
 						success:res=>{
-							// if(res.cancel){
-							// 	// #ifdef APP-PLUS
-							// 		plus.runtime.quit()
-							// 	// #endif
-							// }
 						}
 					})
 					return

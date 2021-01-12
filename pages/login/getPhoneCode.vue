@@ -137,21 +137,28 @@
 				// 查询
 				httpRequest({
 					url: 'user/api/user/perfect/getBasicInfo?userNo=' + num,
- 					method: 'POST',
+					method: 'POST',
 					success: resp => {
 						console.log('查询服务单位判断是否是第一次注册进入:', resp)
 						if (resp.data.code == 200) {
 							let d = resp.data.data
-							if(d){
-								if(d.compId){
+							if (d) {
+								if (d.compId) {
 									uni.setStorageSync('userCompleteInfo', 1)
 									uni.reLaunch({
-										url:'../tabBar/index'
+										url: '../tabBar/index'
 									})
-								}else {
+									// uni.navigateTo({
+									// 	url:'../confirmCompany/confirmCompany'
+									// })
+								} else {
+									uni.setStorageSync('userCompleteInfo', 2)
 									uni.navigateTo({
-										url:'../confirmCompany/confirmCompany'
+										url: `./faceLogin?userPhone=${this.phoneNum}`
 									})
+									// uni.navigateTo({
+									// 	url: '../confirmCompany/confirmCompany'
+									// })
 								}
 							}
 						}

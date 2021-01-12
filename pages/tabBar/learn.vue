@@ -82,9 +82,9 @@
 						<view class="top-text">
 							现场培训
 						</view>
-						<view class="bottom-text">
+						<!-- <view class="bottom-text">
 							签到打卡学习
-						</view>
+						</view> -->
 						<view class="join-btn" @click="joinNow(1)">
 							<image src="../../static/join-now1.png" mode=""></image>
 						</view>
@@ -93,9 +93,9 @@
 						<view class="top-text">
 							在线考试
 						</view>
-						<view class="bottom-text">
+						<!-- <view class="bottom-text">
 							新进在职人员线上考核
-						</view>
+						</view> -->
 						<view class="join-btn" @click="joinNow(2)">
 							<image src="../../static/join-now2.png" mode=""></image>
 						</view>
@@ -557,15 +557,15 @@
 			},
 			// 前往在线考试
 			goOnlineExam() {
-				if (!this.examData || !this.examData.id) {
-					Toast({
-						title: '你没有在线考试'
-					})
-					return
-				}
-				let d = encodeURIComponent(JSON.stringify(this.examData))
+				// if (!this.examData || !this.examData.id) {
+				// 	Toast({
+				// 		title: '你没有在线考试'
+				// 	})
+				// 	return
+				// }
+				// let d = encodeURIComponent(JSON.stringify(this.examData))
 				uni.navigateTo({
-					url: '/pages/exam/examInfo?examdatas=' + d
+					url: '/pages/exam/examInfo'
 				});
 			},
 			joinNow(num) {
@@ -801,8 +801,8 @@
 
 		.top-text {
 			color: #1984E2;
-			font-size: 38rpx;
-			margin: 20rpx 0;
+			font-size: 42rpx;
+			margin: 20rpx 0 40rpx;
 		}
 
 		.bottom-text {
@@ -818,8 +818,8 @@
 
 		.top-text {
 			color: #EF8C2B;
-			font-size: 38rpx;
-			margin-bottom: 20rpx;
+			font-size: 42rpx;
+			margin: 20rpx 0 40rpx;
 		}
 
 		.bottom-text {

@@ -38,7 +38,8 @@
 	import {
 		faceVerification,
 		getExamDetails,
-		getExamIdByTraingId
+		getExamIdByTraingId,
+		getExamLists
 	} from '@/commons/api/apis.js'
 	import {
 		getUserLoginInfo
@@ -59,23 +60,24 @@
 				trainingid: '',
 				longit: '',
 				lat: '',
-				signAddress: ''
+				signAddress: '',
+				examPersonType:1
 			};
 		},
 		onLoad(options) {
-			console.log('options:', options)
-			let id = options.id || uni.getStorageSync('TrainingId')
-			if (id) {
-				this.trainingid = id
-				this.getExamId(id)
-			} else if (!id) {
-				uni.showToast({
-					title: '没有配置考试',
-					icon: 'none'
-				})
-			} else {
-				this.examData = JSON.parse(decodeURIComponent(options.examdatas))
-			}
+			// let id = options.id || uni.getStorageSync('TrainingId')
+			// if (id) {
+			// 	this.trainingid = id
+			// 	this.getExamId(id)
+			// } else if (!id) {
+			// 	uni.showToast({
+			// 		title: '没有配置考试',
+			// 		icon: 'none'
+			// 	})
+			// } else {
+			// 	this.examData = JSON.parse(decodeURIComponent(options.examdatas))
+			// }
+			this.getExamInfoData()
 
 			let fn = () => {
 				var That = this;
@@ -116,14 +118,13 @@
 		},
 		methods: {
 			// 根据培训场次获取试卷ID
-			getExamId(id) {
-				console.log('培训场次id', id)
+			getExamId() {
 				uni.showLoading({
 					title: '加载中...'
 				})
-				getExamIdByTraingId(id).then(res => {
+				getExamIdByTraingId().then(res => {
 					uni.hideLoading()
-					console.log('resssss', res)
+					console.log('考试详情列表', res)
 					if (res.data.code == 200) {
 						this.examData = res.data.data
 						this.getExamInfoData()
@@ -147,7 +148,7 @@
 				}
 				if (!this.examData) {
 					uni.showToast({
-						title: '你没有考试',
+						title: '获取题目失败',
 						icon: 'none',
 						duration: 1500
 					});
@@ -158,7 +159,7 @@
 				})
 				let userno = getUserLoginInfo('userNo')
 				httpRequest({
-					url: 'exam/auth/user/exam/record/examCount',
+					url: 'user/api/tbExamPerson/examCount',
 					method: 'POST',
 					data: {
 						examId: this.examData.id,
@@ -178,7 +179,7 @@
 						uni.hideLoading()
 						request_err(err, '查询考试失败')
 					}
-				}, 5)
+				}, 1)
 			},
 			siaudghfs() {
 				useFacePlugin({}).then(base64 => {
@@ -220,8 +221,8 @@
 				let userno = getUserLoginInfo('userNo')
 				let comid = uni.getStorageSync('userCompanyInfo').compId
 				let mode = uni.getStorageSync('learningtypemode')
-				let trainid = this.trainingid || uni.getStorageSync('TrainingId')
-				let etype = item.id == mode[0].listSub[0].id ? 2 : 1
+				// let trainid = this.trainingid || uni.getStorageSync('TrainingId')
+				let etype = this.examPersonType
 				// let params = {
 				// 	courseType: 3,
 				// 	numEvent: trainid,
@@ -242,30 +243,34 @@
 				// }
 				let params = {
 					"compId": comid,
-					"examId": '试卷id',
+					"examId": this.examData.id,
 					"examType": etype,
 					"faceContrasResult": "Success",
 					"latitude": this.lat,
 					"longitude": this.longit,
 					"place": this.signAddress,
 					"signonType": 0,
-					"userImage":  img.data,
+					"userImage": img.data,
 					"userNo": userno
 				}
 				console.log('pppp', params)
 				httpRequest({
-					url:'exam/api/examFaceSignLog/save',
-					method:"POST",
-					data:params,
-					success:res=>{
-						console.log('上传考试记录：',res)
+					url: 'exam/api/examFaceSignLog/save',
+					method: "POST",
+					data: params,
+					success: res => {
+						console.log('上传考试记录：', res)
+						let url = '/pages/exam/startExam?id=' + this.examData.id;
+						uni.navigateTo({
+							url: url
+						});
 					},
-					fail:err=>{
-						console.log('上传考试记录失败：',err)
+					fail: err => {
+						console.log('上传考试记录失败：', err)
 					}
-				},5)
-				
-				
+				}, 5)
+
+
 				// auth.faceSignLog(params).then(() => {
 				// 	let url = '/pages/exam/startExam?id=' + this.examData.id;
 				// 	uni.navigateTo({
@@ -275,18 +280,44 @@
 			},
 
 			getExamInfoData() {
-				let id = this.examData.id
-				getExamDetails(id).then(res => {
-					console.log('试卷详情', res)
-					if (res.data.code == 200) {
-						this.examData = res.data.data || {}
-					} else {
-						request_success(res)
-					}
+				uni.showLoading({
+					title: '加载中...'
+				})
+				getExamLists().then(res => {
+					console.log('试卷列表', res)
+					uni.hideLoading()
+					// if (res.data.code == 200) {
+					let d = res.data[0]
+					this.examPersonType = d.type
+					uni.setStorageSync('userexamtype',d.type)
+					uni.setStorageSync('userexamsid',d.examId)
+					this.getExaminfomation(d)
+					// } else {
+					// 	request_success(res)
+					// }
+				}, err => {
+					uni.hideLoading()
+					request_err(err, '获取失败')
 				})
 
 			},
-
+			getExaminfomation(data) {
+				if (!data || !data.examId) {
+					return
+				}
+				let id = data.examId
+				getExamDetails(id).then(res => {
+					console.log('试卷详情', res)
+					if (res.data.code == 200) {
+						this.examData = res.data.data
+					} else {
+						request_success(res)
+					}
+				}, err => {
+					uni.hideLoading()
+					request_err(err, '获取失败')
+				})
+			},
 
 			async getData(id) {
 				let fn = "getExamViewInfo"

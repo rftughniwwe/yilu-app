@@ -53,7 +53,7 @@ const request = (params, cb) => {
 				title: '加载中'
 			});
 		}
-		console.log('DATA:',params)
+		console.log('url:',params.url)
 		uni.request({
 			...params,
 			success: res => {

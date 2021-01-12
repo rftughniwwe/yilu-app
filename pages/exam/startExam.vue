@@ -85,7 +85,7 @@
 		uploadImage
 	} from '@/utils/httpRequest.js'
 	import * as auth from '@/commons/api/user.js'
-	
+
 	export default {
 		data() {
 			return {
@@ -102,18 +102,18 @@
 				answerTimeText: '',
 				submitFlag: false,
 				faceVerifyCount: -1,
-				isMiddleFaceVerify:false,
-				longit:'',
-				lat:'',
-				signAddress:''
+				isMiddleFaceVerify: false,
+				longit: '',
+				lat: '',
+				signAddress: ''
 			};
 		},
 		components: {
 			problemItem
 		},
 		onLoad(options) {
-			this.examId = options.id;
-			this.getData(options.id, options.gradeExamId || '')
+			this.examId = uni.getStorageSync('userexamsid')
+			this.getData(this.examId, options.gradeExamId || '')
 			let fn = () => {
 				var That = this;
 				uni.getLocation({
@@ -139,6 +139,7 @@
 			fn()
 			setInterval(() => {
 				this.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+				fn()
 			}, 5000)
 		},
 		filters: {
@@ -155,7 +156,7 @@
 			clearInterval(this.time)
 			// clearTimeout(this.timer)
 			uni.hideLoading()
-			if (this.submitFlag) {
+			if (!this.submitFlag) {
 				this.submit(true)
 			}
 
@@ -210,28 +211,27 @@
 			},
 			swiperChange(e) {
 				this.swiperIndex = e.detail.current + 1;
-				console.log('当前题目：', this.swiperIndex)
 				if ((this.swiperIndex == this.faceVerifyCount) && !this.isMiddleFaceVerify) {
 					this.faceVierhudghr(true)
 				}
 
 			},
-			
-			faceVierhudghr(middleVerify){
+
+			faceVierhudghr(middleVerify) {
 				useFacePlugin({}).then((res) => {
 					uni.showLoading({
 						title: '验证中...',
 						mask: true
 					})
-				
+
 					faceVerification(res).then(resp => {
 						uni.hideLoading()
 						if (resp.data.code == 200) {
 							// 识别成功
-							if(middleVerify){
+							if (middleVerify) {
 								this.isMiddleFaceVerify = true
 								this.middleVerifyFace(res)
-							}else{
+							} else {
 								this.aikujsfbhnsjdkef(res)
 							}
 						} else {
@@ -239,15 +239,15 @@
 							uni.showToast({
 								title: resp.data.msg,
 								duration: 1500,
-								icon:'none'
+								icon: 'none'
 							})
 							uni.showModal({
-								title:'提示',
-								content:'认证失败，请重试？',
-								confirmText:'重试',
-								showCancel:false,
-								success:res=>{
-									if(res.confirm){
+								title: '提示',
+								content: '认证失败，请重试',
+								confirmText: '重试',
+								showCancel: false,
+								success: res => {
+									if (res.confirm) {
 										this.faceVierhudghr()
 									}
 								}
@@ -260,7 +260,7 @@
 							// 		e.examId = this.examId;
 							// 		e.recordId = this.recordId;
 							// 		uni.setStorageSync('userexam-result', e);
-				
+
 							// 		uni.redirectTo({
 							// 			url: '/pages/exam/gradeResult'
 							// 		})
@@ -273,7 +273,7 @@
 							// 		e.examId = this.examId;
 							// 		e.recordId = this.recordId;
 							// 		uni.setStorageSync('userexam-result', e);
-				
+
 							// 		uni.redirectTo({
 							// 			url: '/pages/exam/result'
 							// 		})
@@ -286,106 +286,161 @@
 					})
 				})
 			},
-			
-			middleVerifyFace(base64){
+
+			middleVerifyFace(base64) {
 				uni.showLoading({
-					title:'上传中...'
+					title: '上传中...'
 				})
-				base64ToPath(base64).then(_rep=>{
-					uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
+				base64ToPath(base64).then(_rep => {
+					uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp => {
 						let face_img = JSON.parse(_resp.data)
 						this.xixixixix(face_img)
-					},err=>{
+					}, err => {
 						uni.hideLoading()
 					})
-				},err=>{
+				}, err => {
 					uni.hideLoading()
 				})
 			},
-			
-			aikujsfbhnsjdkef(base64,signOut){
+
+			aikujsfbhnsjdkef(base64, signOut) {
 				uni.showLoading({
-					title:'上传中...'
+					title: '上传中...'
 				})
-				base64ToPath(base64).then(_rep=>{
-					uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp=>{
+				base64ToPath(base64).then(_rep => {
+					uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp => {
 						let face_img = JSON.parse(_resp.data)
-						this.iuywsertkfjg(face_img,signOut)
-					},err=>{
+						this.iuywsertkfjg(face_img, signOut)
+					}, err => {
 						uni.hideLoading()
 					})
-				},err=>{
+				}, err => {
 					uni.hideLoading()
 				})
 			},
-			xixixixix(img){
+			xixixixix(img) {
+				// let userno = getUserLoginInfo('userNo')
+				// let comid = uni.getStorageSync('userCompanyInfo').compId
+				// let i = uni.getStorageSync('TrainingId')
+				// let params = {
+				// 	courseType: 3,
+				// 	numEvent: i,
+				// 	refName: '考试',
+				// 	signonApp: 0,
+				// 	statusId: 1,
+				// 	compId: comid,
+				// 	userNo: userno,
+				// 	refId: this.examId,
+				// 	longitude: this.longit,
+				// 	latitude: this.lat,
+				// 	place: this.signAddress,
+				// 	userImage: img.data,
+				// 	faceContrasResult: 'Success',
+				// }
+				// httpRequest({
+				// 	url:'course/api/middleFaceLog/save',
+				// 	method:'POST',
+				// 	data:params,
+				// 	success:res=>{
+				// 		console.log('nnn',res)
+				// 		if(res.data.code == 200){
+				// 			console.log('保存成功')
+				// 		}
+				// 	},
+				// 	fail:err=>{
+				// 		console.log('保存失败')
+				// 	}
+				// },2)
+				let etype = uni.getStorageSync('userexamtype')
 				let userno = getUserLoginInfo('userNo')
 				let comid = uni.getStorageSync('userCompanyInfo').compId
-				let i = uni.getStorageSync('TrainingId')
+				let examid = uni.getStorageSync('userexamsid')
 				let params = {
-					courseType: 3,
-					numEvent: i,
-					refName: '考试',
-					signonApp: 0,
-					statusId: 1,
-					compId: comid,
-					userNo: userno,
-					refId: this.examId,
-					longitude: this.longit,
-					latitude: this.lat,
-					place: this.signAddress,
-					userImage: img.data,
-					faceContrasResult: 'Success',
+					"compId": comid,
+					"examId": examid,
+					"examType": etype,
+					"faceContrasResult": "Success",
+					"latitude": this.lat,
+					"longitude": this.longit,
+					"place": this.signAddress,
+					"signonType": 2,
+					"userImage": img.data,
+					"userNo": userno
 				}
+				console.log('中途人脸验证参数：', params)
 				httpRequest({
-					url:'course/api/middleFaceLog/save',
-					method:'POST',
-					data:params,
-					success:res=>{
-						console.log('nnn',res)
-						if(res.data.code == 200){
-							console.log('保存成功')
-						}
+					url: 'exam/api/examFaceSignLog/save',
+					method: "POST",
+					data: params,
+					success: res => {
+						console.log('上传考试记录：', res)
 					},
-					fail:err=>{
-						console.log('保存失败')
+					fail: err => {
+						console.log('上传考试记录失败：', err)
 					}
-				},2)
+				}, 5)
 			},
-			iuywsertkfjg(img,signOut) {
+
+			iuywsertkfjg(img, signOut) {
+				// let i = uni.getStorageSync('TrainingId')
+				// let params = {
+				// 	courseType: 3,
+				// 	numEvent: i,
+				// 	refName: '考试',
+				// 	signonApp: 0,
+				// 	statusId: 1,
+				// 	compId: comid,
+				// 	userNo: userno,
+				// 	signonType: signOut?1:0,
+				// 	refId: this.examId,
+				// 	longitude: this.longit,
+				// 	latitude: this.lat,
+				// 	place: this.signAddress,
+				// 	userImage: img.data,
+				// 	faceContrasResult: 'Success',
+				// }
+				// auth.faceSignLog(params).then(() => {
+				// let url = '/pages/exam/startExam?id=' + this.examData.id;
+				// if (this.gradeExamId) {
+				// 	url += '&gradeExamId=' + this.gradeExamId
+				// }
+				// uni.navigateTo({
+				// 	url: url
+				// });
+				// });
+				let etype = uni.getStorageSync('userexamtype')
 				let userno = getUserLoginInfo('userNo')
 				let comid = uni.getStorageSync('userCompanyInfo').compId
-				let i = uni.getStorageSync('TrainingId')
+				let examid = uni.getStorageSync('userexamsid')
 				let params = {
-					courseType: 3,
-					numEvent: i,
-					refName: '考试',
-					signonApp: 0,
-					statusId: 1,
-					compId: comid,
-					userNo: userno,
-					signonType: signOut?1:0,
-					refId: this.examId,
-					longitude: this.longit,
-					latitude: this.lat,
-					place: this.signAddress,
-					userImage: img.data,
-					faceContrasResult: 'Success',
+					"compId": comid,
+					"examId": examid,
+					"examType": etype,
+					"faceContrasResult": "Success",
+					"latitude": this.lat,
+					"longitude": this.longit,
+					"place": this.signAddress,
+					"signonType": 1,
+					"userImage": img.data,
+					"userNo": userno
 				}
-				auth.faceSignLog(params).then(() => {
-					// let url = '/pages/exam/startExam?id=' + this.examData.id;
-					// if (this.gradeExamId) {
-					// 	url += '&gradeExamId=' + this.gradeExamId
-					// }
-					// uni.navigateTo({
-					// 	url: url
-					// });
-				});
+				console.log('交卷参数：', params)
+				httpRequest({
+					url: 'exam/api/examFaceSignLog/save',
+					method: "POST",
+					data: params,
+					success: res => {
+						console.log('上传考试记录：', res)
+					},
+					fail: err => {
+						console.log('上传考试记录失败：', err)
+					}
+				}, 5)
 			},
-			
+
 			submit(flag) {
 				clearInterval(this.time)
-
+				console.log('flagflagflagflag:', flag)
 				if (!flag) {
 					useFacePlugin({}).then((res) => {
 						uni.showLoading({
@@ -396,40 +451,24 @@
 							uni.hideLoading()
 							if (resp.data.code == 200) {
 								this.submitFlag = true
-								this.aikujsfbhnsjdkef(res,true)
-								if (this.isGradeExam) {
-									const d = {
-										id: this.recordId
-									}
-									gradeApis.submitExam(d).then((e) => {
-										e.examId = this.examId;
-										e.recordId = this.recordId;
-										console.log('交卷：',e)
-										uni.setStorageSync('userexam-result', e);
-										uni.redirectTo({
-											url: '/pages/exam/gradeResult'
-										})
-									})
-								} else {
-									const d = {
-										recordId: this.recordId
-									}
-									examApis.examFinish(d).then((e) => {
-										e.examId = this.examId;
-										e.recordId = this.recordId;
-										console.log('交卷2：',e)
-										uni.setStorageSync('userexam-result', e);
-
-										uni.redirectTo({
-											url: '/pages/exam/result'
-										})
-									})
+								this.aikujsfbhnsjdkef(res, true)
+								const d = {
+									recordId: this.recordId
 								}
+								console.log('交卷2222：', d)
+								examApis.examFinish(d).then((e) => {
+									e.examId = this.examId;
+									e.recordId = this.recordId;
+									uni.setStorageSync('userexam-result', e);
+									uni.redirectTo({
+										url: '/pages/exam/result'
+									})
+								})
 							} else {
 								uni.showToast({
-									title:resp.data.msg,
-									icon:'none',
-									duration:1500
+									title: resp.data.msg,
+									icon: 'none',
+									duration: 1500
 								})
 							}
 						}, err => {
@@ -439,35 +478,36 @@
 					})
 				} else {
 					this.submitFlag = true
-					if (this.isGradeExam) {
-						const d = {
-							id: this.recordId
-						}
-						gradeApis.submitExam(d).then((e) => {
-							e.examId = this.examId;
-							e.recordId = this.recordId;
-							console.log('交卷3：',e)
-							uni.setStorageSync('userexam-result', e);
+					// if (this.isGradeExam) {
+					// 	const d = {
+					// 		id: this.recordId
+					// 	}
+					// 	gradeApis.submitExam(d).then((e) => {
+					// 		e.examId = this.examId;
+					// 		e.recordId = this.recordId;
+					// 		console.log('交卷3：',e)
+					// 		uni.setStorageSync('userexam-result', e);
 
-							uni.redirectTo({
-								url: '/pages/exam/gradeResult'
-							})
-						})
-					} else {
-						const d = {
-							recordId: this.recordId
-						}
-						examApis.examFinish(d).then((e) => {
-							e.examId = this.examId;
-							e.recordId = this.recordId;
-							console.log('交卷4：',e)
-							uni.setStorageSync('userexam-result', e);
-
-							uni.redirectTo({
-								url: '/pages/exam/result'
-							})
-						})
+					// 		uni.redirectTo({
+					// 			url: '/pages/exam/gradeResult'
+					// 		})
+					// 	})
+					// } else {
+					const d = {
+						recordId: this.recordId
 					}
+					console.log('交卷4：', d)
+					examApis.examFinish(d).then((e) => {
+						e.examId = this.examId;
+						e.recordId = this.recordId;
+						
+						uni.setStorageSync('userexam-result', e);
+
+						uni.redirectTo({
+							url: '/pages/exam/result'
+						})
+					})
+					// }
 				}
 
 
@@ -537,16 +577,16 @@
 				// 需要活体认证''
 				// if (playObj.currentTime > currentContrastTime && !this.isVerifyFace) { 
 				// 	this.isVerifyFace = true;
-					// uni.$emit("verifyFace:" + this.recordId);
-					// uni.showToast({
-					// 	title: '人工识别'
-					// })
-					// return;
-					// clearInterval(this.time);
-					// this.time = ''
-					// uni.navigateTo({
-					// 	url: '/pages/verifyFace/verifyFace?refId=' + this.recordId + '&signType=3'
-					// })
+				// uni.$emit("verifyFace:" + this.recordId);
+				// uni.showToast({
+				// 	title: '人工识别'
+				// })
+				// return;
+				// clearInterval(this.time);
+				// this.time = ''
+				// uni.navigateTo({
+				// 	url: '/pages/verifyFace/verifyFace?refId=' + this.recordId + '&signType=3'
+				// })
 				// }
 			},
 
@@ -573,58 +613,45 @@
 				}
 				let record = {};
 				let res = {};
-				if (gradeExamId) { // 班级考试
-					this.isGradeExam = true;
-					res = await gradeApis.examRelationView({
-						id: gradeExamId
-					})
-					const dateToTime = (n = '') => {
-						return parseInt((new Date(n).getTime() / 1000));
-					}
-					this.answerTime = parseInt(dateToTime(res.endTime) - dateToTime(res.beginTime))
-					this.totalTime = this.answerTime
-					this.initTime();
-				} else {
-					res = await examApis.getAuthExamViewInfo({
-						examId: id || ''
-					})
+				res = await examApis.getAuthExamViewInfo({
+					examId: id || ''
+				})
 
-				}
-				console.log('试卷详情：',res)
+				console.log('试卷详情：', res)
 				if (res && res.id) {
-					if (gradeExamId) { // 班级考试的
-						this.recordId = res.id
-						// if (res.examStatus === 2) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
-						// 	record = await gradeApis.continueExam({
-						// 		id: res.id
-						// 	})
-						if (record.code === 200) {
-							record = record;
-							res.titleList = record.titleList
-						} else{
-							record = await gradeApis.beginExam({
-								id: res.id
-							})
-							if (record && record.titleList && record.titleList.length) {
-								record = record;
-								res.titleList = record.titleList
-							}
-						}
-					} else {
-						this.recordId = res.recordId
-						// if (res.recordId) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
-						// 	record = await examApis.recordExam({
-						// 		recordId: res.recordId
-						// 	})
-						// } else {
-						record = await examApis.examexamOnline({
-							examId: id
-						})
-						if (record && record.recordId) {
-							this.recordId = record.recordId;
-						}
-						// }
+					// if (gradeExamId) { 
+					// this.recordId = res.id
+					// if (res.examStatus === 2) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
+					// 	record = await gradeApis.continueExam({
+					// 		id: res.id
+					// 	})
+					// if (record.code === 200) {
+					// 	record = record;
+					// 	res.titleList = record.titleList
+					// } else{
+					// 	record = await gradeApis.beginExam({
+					// 		id: res.id
+					// 	})
+					// 	if (record && record.titleList && record.titleList.length) {
+					// 		record = record;
+					// 		res.titleList = record.titleList
+					// 	}
+					// }
+					// } else {
+					this.recordId = res.recordId
+					// if (res.recordId) { // 如果用户有考试记录 就直接继续考试 没有就开始一个新的考试记录
+					// 	record = await examApis.recordExam({
+					// 		recordId: res.recordId
+					// 	})
+					// } else {
+					record = await examApis.examexamOnline({
+						examId: id
+					})
+					if (record && record.recordId) {
+						this.recordId = record.recordId;
 					}
+					// }
+					// }
 
 					this.answerTime = record.answerTime;
 					this.totalTime = this.answerTime
@@ -755,7 +782,6 @@
 					res.titleList = arr;
 					this.total = total
 					this.examData = res;
-					console.log('res:',res)
 					this.getRandomFaceVerify()
 				}
 			}

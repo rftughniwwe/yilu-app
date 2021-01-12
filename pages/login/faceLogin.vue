@@ -77,8 +77,11 @@
 							console.log('上传人脸成功：',response)
 							
 							if(response.data.code == 200){
+								// uni.navigateTo({
+								// 	url:'../fillInfomation/fillInfomation'
+								// })
 								uni.navigateTo({
-									url:'../fillInfomation/fillInfomation'
+									url: '../confirmCompany/confirmCompany'
 								})
 							}else {
 								uni.showToast({

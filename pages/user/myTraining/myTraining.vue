@@ -11,21 +11,8 @@
 		</view>
 		<view class="course-contnt">
 			<template v-if="courseData && courseData.length > 0">
-
-				<view class="course-item" v-for="(item,index) in courseData" :key='index'>
-					<course :data='item' @courseClick='courseItemClick' author='主持人' :isTag='true'/>
-					<!-- <view class="title text-overflow-ellipsis">
-						{{item.name?item.name:'未知'}}
-					</view>
-					<view class="subtitle">
-						{{item.trainStart?item.trainStart:'未知'}}
-					</view>
-					<view class="img-content">
-						<image :src="item.headurl" mode=""></image>
-						<view class="tags">
-							{{'回放'}}
-						</view>
-					</view> -->
+				<view v-for="(item,index) in courseData" :key='index'>
+					<course :data='item' @courseClick='courseItemClick' :isTag='true' />
 				</view>
 			</template>
 			<template v-else>
@@ -47,9 +34,10 @@
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import {
 		getLearningTypeInfo,
+		scanCodeReturn,
 		getUserLoginInfo
 	} from '@/utils/util.js'
-
+	
 	export default {
 		data() {
 			return {
@@ -82,7 +70,7 @@
 				console.log('点击：', item)
 				scanCodeReturn(item)
 				uni.navigateTo({
-					url: '../onSiteTraining/courseDetails'
+					url: '../../onSiteTraining/courseDetails'
 				})
 			},
 			goBack() {
@@ -92,28 +80,20 @@
 			},
 			// 获取我的课程
 			getMyCourse() {
-				let categoryId1 = uni.getStorageSync('selectedLearningType').id
-				// 学习模块中选择的二级分类
-				let categoryId2 = uni.getStorageSync('LearningSubTypeSubItem').id
 				let compId = uni.getStorageSync('userCompanyInfo').compId
 				let tab = this.tab
 				let userid = getUserLoginInfo('userNo')
-				if (!categoryId1 || !categoryId2 || !compId) {
-					Toast({
-						title: '获取数据失败'
-					})
-					return
-				}
 				uni.showLoading({
 					title: '加载中...'
 				})
 				let params = {
-					"completeType": tab,
+					"compId": compId,
+					"isSignon": tab,
 					"userNo": userid
 				}
 				console.log('params：', params)
 				httpRequest({
-					url: 'user/api/tbTraining/myCourseType',
+					url: 'user/api/tbTrainingPerson/myTbTrainingPersonList',
 					method: 'POST',
 					data: params,
 					success: (res) => {
@@ -139,16 +119,16 @@
 				// let d = encodeURIComponent(JSON.stringify(item))
 				// uni.setStorageSync('selectCourseItemData',item)
 				uni.setStorageSync('courseInfoData', item)
-				console.log('zzz',item)
-				if(!item.courseId){
+				console.log('zzz', item)
+				if (!item.courseId) {
 					uni.showToast({
-						title:'课程不存在',
-						icon:'none'
+						title: '课程不存在',
+						icon: 'none'
 					})
 					return
 				}
 				uni.navigateTo({
-					url: '/pages/course/view/view?id=' + item.courseId +'&fromUser=1&trainingId='+item.id
+					url: '/pages/course/view/view?id=' + item.courseId + '&fromUser=1&trainingId=' + item.id
 				});
 				// uni.navigateTo({
 				// 	url: './coursePreview?item=' + d
@@ -161,7 +141,7 @@
 <style lang="scss">
 	.tab-content {
 		background-color: #EBEFF2;
-		padding: 30rpx;
+		padding: 20rpx 30rpx;
 		position: fixed;
 		left: 0;
 		right: 0;

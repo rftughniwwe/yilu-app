@@ -3,10 +3,10 @@
 		<view :class="[direction==='column'?'uni-steps__column':'uni-steps__row']">
 			<view :class="[direction==='column'?'uni-steps__column-text-container':'uni-steps__row-text-container']">
 				<view v-for="(item,index) in options" :key="index" :class="[direction==='column'?'uni-steps__column-text':'uni-steps__row-text']">
-					<text :class="[direction==='column'?'uni-steps__column-title':'uni-steps__row-title']">{{item.title}}</text>
-					<text :class="[direction==='column'?'uni-steps__column-desc':'uni-steps__row-desc']">{{item.desc}}</text>
+					<text :class="[direction==='column'?'uni-steps__column-title':'uni-steps__row-title']">{{item.title?item.title:'未知'}}</text>
+					<text :class="[direction==='column'?'uni-steps__column-desc':'uni-steps__row-desc']">{{item.desc?item.desc:'未知'}}</text>
 					<view class="faceImg">
-						<image :src="item.headImg?item.headImg:'../../static/course.png'" mode=""></image>
+						<image :src="item.headImg?item.headImg:'../../static/leaderborder-bg.png'" mode=""></image>
 					</view>
 				</view>
 			</view>

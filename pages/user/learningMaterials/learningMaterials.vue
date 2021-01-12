@@ -105,12 +105,12 @@
 			uniNavBar
 		},
 		onLoad(options) {
-			let id = options.trainid ? options.trainid : uni.getStorageSync('TrainingId')
+			let id = options.trainid
 			if (id) {
 				this.getaccessoryList(id)
 			} else {
 				Toast({
-					title: '你没有学习资料'
+					title: '获取学习资料失败'
 				})
 			}
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
@@ -121,14 +121,7 @@
 		},
 		methods: {
 			// 获取现场培训学习资料
-			
 			getaccessoryList(id) {
-				// 选择的一级分类
-				// let categoryId1 = getLearningTypeInfo().categoryId1
-				// 选择的二级分类
-				// let categoryId2 = getLearningTypeInfo().categoryId2
-				// 所属公司ID
-				// let compId = getLearningTypeInfo().compId
 				uni.showLoading({
 					title: '加载中...'
 				})
@@ -137,7 +130,7 @@
 					method: 'POST',
 					data: {
 						"trainId": id,
-						"pageSize": 10,
+						"pageSize": 100,
 						"pageCurrent": 1
 					},
 					success: res => {

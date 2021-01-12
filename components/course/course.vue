@@ -4,20 +4,30 @@
 		<view class="item-content flex-between">
 			<view class="img-content">
 				<view v-if="isShowTag" class="tag-content">
-					未开始
+					{{datas.trainFlag == 1?'已结束':'未开始'}}
 				</view>
-				<image :src="datas.courseLogo || ''" mode=""></image>
+				<image v-if="!isShowTag" :src="datas.courseLogo || ''" mode=""></image>
+				<image v-if="isShowTag" :src="datas.headurl || ''" mode=""></image>
 			</view>
 			<view class="right-content flex-column-between">
-				<view class="title text-overflow2">
+				<view v-if="!isShowTag" class="title text-overflow2">
 					{{datas.courseName || '未知'}}
 				</view>
+				<view v-if="isShowTag" class="title text-overflow2">
+					{{datas.name || '未知'}}
+				</view>
 				<view class="time-from">
-					<view class="time">
+					<view v-if="!isShowTag" class="time">
 						{{datas.startTime || '未知'}}
 					</view>
-					<view class="from">
-						{{author}}：{{datas.lecturerName || '未知'}}
+					<view v-if="isShowTag" class="time">
+						{{datas.trainStart || '未知'}}
+					</view>
+					<view v-if="!isShowTag"  class="from">
+						讲师：{{datas.lecturerName || '未知'}}
+					</view>
+					<view v-if="isShowTag"  class="from">
+						{{datas.type==4?'总指挥':'主持人'}}：{{datas.teacher || '未知'}}
 					</view>
 				</view>
 			</view>
@@ -30,21 +40,20 @@
 		data() {
 			return {
 				datas:{},
-				author:'',
-				isShowTag:false
+				isShowTag:false,
+				tttttttxt:''
 			};
 		},
-		props:['data','authorzz','isTag'],
+		props:['data','isTag'],
 		created() {
 			this.datas = this.data?this.data:{},
-			this.author = this.authorzz?this.authorzz:'主持人'
 			this.isShowTag = this.isTag?true:false
 		},
 		methods:{
 			itemClick(item){
 				this.$emit('courseClick',{item:item})
 			}
-		}
+		},
 	}
 </script>
 

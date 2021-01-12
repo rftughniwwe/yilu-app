@@ -365,6 +365,29 @@ export function getExamDetails(examId) {
 	})
 }
 
+export function getExamLists() {
+	let userno = getUserLoginInfo('userNo')
+	let compid = uni.getStorageSync('userCompanyInfo').compId
+	return new Promise((resolve, reject) => {
+		httpRequest({
+			url: 'user/pc/tb/exam/person/examList',
+			method: 'POST',
+			data: {
+				"compId": compid,
+				"userNo": userno,
+				"isPassExam":0
+			},
+			success: res => {
+				resolve(res)
+			},
+			fail: err => {
+				request_err(err, '获取试卷失败')
+			}
+		},1)
+	})
+}
+
+
 // 服务单位信息
 export function getCompanyId() {
 	getIdCardInfo().then(res => {
@@ -401,7 +424,9 @@ export function getLearningMode(){
 			success:res=>{
 				console.log('获取分类：',res)
 				if(res.data.code == 200){
+					uni.setStorageSync('sdrhdrfthftghftyjh',res.data.data)
 					uni.setStorageSync('learningtypemode',res.data.data)
+					uni.getStorageSync('learningtypemode')
 				}else {
 					uni.showToast({
 						title:'获取学习分类失败',
