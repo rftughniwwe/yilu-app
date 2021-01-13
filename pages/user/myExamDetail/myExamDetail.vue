@@ -2,14 +2,14 @@
 	<view class="main">
 		<view class="top-content">
 			<view class="topic text-overflow2">
-				2020年运输危险品_危化品运输中常见的危险品 新进员工考核
+				{{data.examName || '未知'}}
 			</view>
 		</view>
 		<view class="main-content">
 			<view class="top-card-content flex-around">
 				<view class="top-left">
 					<view class="title">
-						15
+						{{data.answerTime || 0}}
 					</view>
 					<view class="subtitle">
 						分钟
@@ -20,7 +20,7 @@
 				</view>
 				<view class="top-right">
 					<view class="title">
-						2
+						{{data.count || 0}}
 					</view>
 					<view class="subtitle">
 						次
@@ -33,7 +33,7 @@
 			<view class="btm-card-content flex-around">
 				<view class="btm-left">
 					<view class="title">
-						60
+						{{data.score || 0}}
 					</view>
 					<view class="subtitle">
 						分
@@ -44,8 +44,8 @@
 				</view>
 				<view class="btm-right">
 					<view class="flex-around">
-						<view :class="isJige?'jige':'bujige'">
-							{{isJige?'及格':'不及格'}}
+						<view :class="data.isPassExam==1?'jige':'bujige'">
+							{{data.isPassExam==1?'及格':'不及格'}}
 						</view>
 					</view>
 					<view class="soldfikhgj desc">
@@ -71,7 +71,7 @@
 					<uni-steps :options="xibai" direction="column"></uni-steps>
 				</view>
 			</view>
-			<view v-if="!isJige" class="goexam-btn">
+			<view v-if="data.isPassExam == 0" class="goexam-btn">
 				<primary-btn text='去考试' @callBackFun='goExamxiba' radius='16rpx'></primary-btn>
 			</view>
 		</view>
@@ -86,30 +86,44 @@
 		data() {
 			return {
 				showLog: false,
-				isJige:false,
-				xibai: [
-					{
-						title: '2020-11-11 09:11',
-						desc: '上海市浦东新区松林路357号-1楼',
-						headImg: ''
-					},
-					{
-						title: '2020-11-11 09:11',
-						desc: '上海市浦东新区松林路357号-1楼',
-						headImg: ''
-					}
-				]
+				xibai: [],
+				data:{}
 			};
 		},
 		components: {
 			primaryBtn
 		},
 		onLoad() {
-
+			this.data = uni.getStorageSync('userselectedexamitem')
+			this.setFacelogList(this.data.list)
 		},
 		methods: {
+			setFacelogList(list){
+				let res = []
+				if(list.length >= 3){
+					for(let i=0;i<3;i++){
+						res.push({
+							title: list[i].createTime,
+							desc: list[i].place,
+							headImg: list[i].userImage
+						})
+					}
+				}else {
+					list.forEach((item,index)=>{
+						res.push({
+							title: item.createTime,
+							desc: item.place,
+							headImg: item.userImage
+						})
+					})
+				}
+				
+				this.xibai = res
+			},
 			goExamxiba() {
-
+				uni.navigateTo({
+					url:'../../exam/examInfo?examId='+this.data.examId
+				})
 			},
 			checklogface() {
 				this.showLog = !this.showLog

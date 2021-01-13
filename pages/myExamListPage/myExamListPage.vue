@@ -6,7 +6,7 @@
 		</view>
 		<view class="exam-list-content">
 			<template v-if="examList && examList.length > 0">
-				<view v-for="(item,index) in examList" :key='index' class="exam-item" @click="goDetail">
+				<view v-for="(item,index) in examList" :key='index' class="exam-item" @click="goDetail(item)">
 					<view class="title text-overflow2">
 						{{item.examName?item.examName:'未知'}}
 					</view>
@@ -63,7 +63,8 @@
 			this.getExamList()
 		},
 		methods: {
-			goDetail() {
+			goDetail(item) {
+				uni.setStorageSync('userselectedexamitem',item)
 				uni.navigateTo({
 					url: '../user/myExamDetail/myExamDetail'
 				})
@@ -168,5 +169,10 @@
 
 	.input-content {
 		width: 80%;
+	}
+	.title{
+		color: #333333;
+		font-size: 30rpx;
+		font-weight: bold;
 	}
 </style>

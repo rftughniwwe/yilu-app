@@ -78,25 +78,25 @@
 						<image src="../../static/shuxian.png" mode=""></image>
 						学习中心
 					</view>
-					<view class="signin">
+					<view class="signin" @click="joinNow(1)">
 						<view class="top-text">
 							现场培训
 						</view>
 						<!-- <view class="bottom-text">
 							签到打卡学习
 						</view> -->
-						<view class="join-btn" @click="joinNow(1)">
+						<view class="join-btn" >
 							<image src="../../static/join-now1.png" mode=""></image>
 						</view>
 					</view>
-					<view class="distance-education">
+					<view class="distance-education" @click="joinNow(2)">
 						<view class="top-text">
 							在线考试
 						</view>
 						<!-- <view class="bottom-text">
 							新进在职人员线上考核
 						</view> -->
-						<view class="join-btn" @click="joinNow(2)">
+						<view class="join-btn">
 							<image src="../../static/join-now2.png" mode=""></image>
 						</view>
 					</view>

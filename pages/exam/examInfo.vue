@@ -77,7 +77,12 @@
 			// } else {
 			// 	this.examData = JSON.parse(decodeURIComponent(options.examdatas))
 			// }
-			this.getExamInfoData()
+			if(options.examId){
+				this.getExaminfomation(options.examId)
+			}else {
+				this.getExamInfoData()
+			}
+			
 
 			let fn = () => {
 				var That = this;
@@ -291,7 +296,7 @@
 					this.examPersonType = d.type
 					uni.setStorageSync('userexamtype',d.type)
 					uni.setStorageSync('userexamsid',d.examId)
-					this.getExaminfomation(d)
+					this.getExaminfomation(d.examId)
 					// } else {
 					// 	request_success(res)
 					// }
@@ -301,11 +306,10 @@
 				})
 
 			},
-			getExaminfomation(data) {
-				if (!data || !data.examId) {
+			getExaminfomation(id) {
+				if (!id) {
 					return
 				}
-				let id = data.examId
 				getExamDetails(id).then(res => {
 					console.log('试卷详情', res)
 					if (res.data.code == 200) {

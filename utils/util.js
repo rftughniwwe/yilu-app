@@ -234,6 +234,8 @@ function removeAppStorage(options) {
 	uni.removeStorageSync('isSignSuccess')
 	//分类信息
 	uni.removeStorageSync('learningtypemode')
+	
+	uni.removeStorageSync('userselectedexamitem')
 }
 
 // 获取用户登录信息
