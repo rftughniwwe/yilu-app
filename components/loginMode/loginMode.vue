@@ -128,34 +128,38 @@
 			// 跳转页面
 			routePage(num) {
 				let that = this
-				httpRequest({
-					url: 'user/api/user/perfect/getBasicInfo?userNo=' + num,
-					method: 'POST',
-					success: resp => {
-						console.log('查询服务单位判断是否是第一次注册进入:', resp)
-						if (resp.data.code == 200) {
-							let d = resp.data.data
-							if(d){
-								if(d.compId){
-									uni.setStorageSync('userCompleteInfo', 1)
-									uni.reLaunch({
-										url:'../tabBar/index'
-									})
-								}else {
-									uni.navigateTo({
-										url:'../confirmCompany/confirmCompany'
-									})
-								}
-							}
-						}
-					},
-					fail: err => {
-						console.log('请求失败', err)
-						Toast({
-							title: '请求失败'
-						})
-					}
-				}, 1)
+				uni.setStorageSync('userCompleteInfo', 1)
+				uni.reLaunch({
+					url:'../tabBar/index'
+				})
+				// httpRequest({
+				// 	url: 'user/api/user/perfect/getBasicInfo?userNo=' + num,
+				// 	method: 'POST',
+				// 	success: resp => {
+				// 		console.log('查询服务单位判断是否是第一次注册进入:', resp)
+				// 		if (resp.data.code == 200) {
+				// 			let d = resp.data.data
+				// 			if(d){
+				// 				if(d.compId){
+				// 					uni.setStorageSync('userCompleteInfo', 1)
+				// 					uni.reLaunch({
+				// 						url:'../tabBar/index'
+				// 					})
+				// 				}else {
+				// 					uni.navigateTo({
+				// 						url:'../confirmCompany/confirmCompany'
+				// 					})
+				// 				}
+				// 			}
+				// 		}
+				// 	},
+				// 	fail: err => {
+				// 		console.log('请求失败', err)
+				// 		Toast({
+				// 			title: '请求失败'
+				// 		})
+				// 	}
+				// }, 1)
 				// let userInfoComplete = uni.getStorageSync('userCompleteInfo');
 				// console.log('userinfo', userInfoComplete)
 				// if(userInfoComplete == 1){

@@ -600,6 +600,11 @@
 				} else if (type == 1) {
 					// 继续教育
 					// 需判断是否付费
+					uni.showToast({
+						title:'暂未开放',
+						icon:'none'
+					})
+					return
 					uni.showModal({
 						content: '您尚未购买课程，无法使用学习功能',
 						confirmText: '去购买',

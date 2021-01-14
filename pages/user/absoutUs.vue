@@ -9,7 +9,7 @@
 				版本号
 			</view>
 			<view class="subtitle">
-				1.0.0
+				1.1.0
 			</view>
 		</view>
 		<view class="item flex-between">

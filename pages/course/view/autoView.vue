@@ -73,7 +73,7 @@
 						</view>
 						<view class="file-content">
 							<view class="title">
-								{{item.name}}
+								{{item.acName}}
 							</view>
 							<view class="file-size">
 								{{item.suffix}}
@@ -222,8 +222,7 @@
 			this.getCourse(courseId);
 			this.getChapterList(1);
 
-			// 学习资料
-			this.getaccessoryList()
+		
 
 			let coursesss = uni.getStorageSync('courseInfoData')
 		},
@@ -340,6 +339,7 @@
 				// 		url:'../../login3/login'
 				// 	})
 				// }
+				console.log('ccccc',e)
 				this.isFaceContras = e.isFaceContras;
 				let videoInfo = e;
 				if (videoInfo.videoVid && videoInfo.videoLength) {
@@ -443,7 +443,10 @@
 					pageCurrent: page
 				}).then(res => {
 					console.log('列表。。。。。', res)
+					console.log('?????ZXczxczxc',res.list[0].periodList[0].id)
 					this.chapterList = this.chapterList.concat(res.list)
+					// 学习资料
+					this.getaccessoryList(res.list[0].periodList[0].id)
 					if (res.pageCurrent === res.totalPage) {
 						this.loaddingEnd = false
 					} else {
@@ -596,26 +599,25 @@
 				}, 1)
 			},
 			// 学习资料获取
-			getaccessoryList() {
-				let id = uni.getStorageSync('courseInfoData').trainId || this.traningId
-				console.log('iiddiiddid:', uni.getStorageSync('courseInfoData'))
-				if (!id) {
-					uni.showToast({
-						title: '获取学习资料失败',
-						icon: 'none'
-					})
-					return
-				}
+			getaccessoryList(id) {
+				// let id = uni.getStorageSync('courseInfoData').trainId || this.traningId
+				// console.log('iiddiiddid:', uni.getStorageSync('courseInfoData'))
+				// if (!id) {
+				// 	uni.showToast({
+				// 		title: '获取学习资料失败',
+				// 		icon: 'none'
+				// 	})
+				// 	return
+				// }
+				
 				uni.showLoading({
 					title: '加载中...'
 				})
 				httpRequest({
-					url: 'user/pc/tb/train/learn/attach/list',
+					url: 'course/api/courseAccessory/accessoryList',
 					method: 'POST',
 					data: {
-						"trainId": id,
-						"pageSize": 10,
-						"pageCurrent": 1
+						"refId": id
 					},
 					success: res => {
 						uni.hideLoading()
@@ -624,7 +626,7 @@
 
 							let list = res.data.data.list
 							list.forEach((item, index) => {
-								let path = item.savePath
+								let path = item.acUrl
 								let splitLength = path.split('.').length
 								let suffix = path.split('.')[splitLength - 1]
 								list[index].suffix = suffix
@@ -638,10 +640,10 @@
 						uni.hideLoading()
 						request_err(err, '获取学习资料失败')
 					}
-				}, 1)
+				}, 2)
 			},
 			previewFile(item) {
-				let path = item.savePath
+				let path = item.acUrl
 				let splitLength = path.split('.').length
 				let suffix = path.split('.')[splitLength - 1]
 				console.log('path:', path)
@@ -703,7 +705,7 @@
 
 			},
 			downloadFile(item) {
-				let path = item.savePath
+				let path = item.acUrl
 				uni.showLoading({
 					title: '保存中...'
 				})
@@ -856,16 +858,17 @@
 		height: 40rpx;
 		margin-right: 40rpx;
 	}
-
+	
+	.download-img {
+		width: 38rpx;
+		height: 40rpx;
+	}
 	.file-size {
 		color: #FFB415;
 		font-size: 24rpx;
 	}
 
-	.download-img {
-		width: 50rpx;
-		height: 50rpx;
-	}
+	
 
 	.goexam-btn {
 		width: 60%;

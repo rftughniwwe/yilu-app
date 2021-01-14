@@ -336,8 +336,8 @@
 			},
 			// 数据校验
 			judgeData() {
-
-				if (!this.flag1 || !this.flag2) {
+				console.log('flag1:',this.flag1)
+				if (!this.flag1) {
 					Toast({
 						title: '请拍摄或上传图片'
 					})
