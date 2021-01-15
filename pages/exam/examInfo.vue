@@ -310,6 +310,8 @@
 				if (!id) {
 					return
 				}
+				console.log('试卷id：',id)
+				uni.setStorageSync('userexamsid',id)
 				getExamDetails(id).then(res => {
 					console.log('试卷详情', res)
 					if (res.data.code == 200) {

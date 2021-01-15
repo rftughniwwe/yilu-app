@@ -103,6 +103,7 @@
 				uni.showLoading({
 					title: '加载中'
 				})
+				console.log('收藏：：：：：：：：：：：：：：：')
 				httpRequest({
 					url: 'community/api/labelUserRecord/selectLabellist',
 					method: 'POST',
@@ -112,8 +113,8 @@
 						"userNo": getUserLoginInfo('userNo')
 					},
 					success: res => {
-						uni.hideLoading()
 						console.log('zz', res)
+						uni.hideLoading()
 						if (res.data.code == 200) {
 							let list = res.data.data
 							list.forEach((i, index) => {
@@ -125,9 +126,10 @@
 						}
 					},
 					fail: err => {
+						console.log('获取收藏专题失败：',err)
 						uni.hideLoading()
 					}
-				})
+				},3)
 			},
 			getAllCollectionArticle() {
 				httpRequest({

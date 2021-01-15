@@ -86,6 +86,9 @@
 		request_err,
 		request_success
 	} from '@/commons/ResponseTips.js'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
 	export default {
 		data() {
 			return {
@@ -115,6 +118,10 @@
 		},
 		methods: {
 			clickItem(e, index) {
+				uni.showLoading({
+					title:'判断中',
+					mask:true
+				})
 				let examdatas = uni.getStorageSync('autoExamQuestions')
 				let selected = e.option
 				this.currentOption = selected
@@ -122,7 +129,9 @@
 				console.log('当前的item：', examdatas[index])
 				examdatas[index].children.forEach((i,index)=>{
 					if(i.isTrue){
+						console.log('答对了：')
 						this.rightAnswerOption = index
+						this.removeThisItem(examdatas[index].id,examdatas,index)
 					}
 				})
 				examdatas[index].userAnswer = examdatas[index].children[selected].optionContent
@@ -130,6 +139,24 @@
 				this.datas = examdatas
 				uni.setStorageSync('autoExamQuestions', examdatas)
 				uni.$emit('optionsChange',{})
+				uni.hideLoading()
+			},
+			removeThisItem(id,data,index){
+				let userNo = getUserLoginInfo('userNo')
+				httpRequest({
+					url:'exam/api/tbCourQuestionPerson/errordelete',
+					method:'DELETE',
+					data:{
+						questionId:id,
+						updateUser:userNo
+					},
+					success:res=>{
+						console.log('移除题目',res)
+					},
+					fail:err=>{
+						console.log('移除题目失败：',err)
+					}
+				},5)
 			},
 			itemChange(e) {
 				uni.$emit('swiperChange', {
@@ -139,7 +166,7 @@
 			// 获取试题
 			getQuestions() {
 				uni.showLoading({
-					title: '出题中',
+					title: '获取中',
 				})
 				httpRequest({
 					url: 'exam/api/tbCourPaper/list',

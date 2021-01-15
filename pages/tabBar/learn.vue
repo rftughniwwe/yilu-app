@@ -371,6 +371,8 @@
 			getAutoLearning() {
 				let id = getLearningTypeInfo().categoryId1
 				console.log('id', id)
+				// 1320662675097346049
+				// 1263818106115375105
 				uni.showLoading({
 					title: '获取中...'
 				})
@@ -382,6 +384,7 @@
 					},
 					success: res => {
 						uni.hideLoading()
+						console.log('自主学习课程列表',res)
 						if (res.data.code == 200) {
 							this.autoLearning = res.data.data
 						}
@@ -505,7 +508,7 @@
 				// 	this.getAutoLearning()
 				// }
 				// 1自主学习
-				if (e.target.value == 1) {
+				if (e.target.value == 2) {
 					this.getAutoLearning()
 				}
 				// app.globalData.LearningSubType = item.listSub

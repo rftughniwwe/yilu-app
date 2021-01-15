@@ -7,7 +7,6 @@
 					<view class="btm-img">
 						<view>
 							<image class="frist-img" src="../../static/guide-img1-1.png" mode=""></image>
-
 						</view>
 						<image class="last-img" src="../../static/guide-img1-2.png" mode=""></image>
 					</view>
@@ -52,8 +51,9 @@
 	export default {
 		data() {
 			return {
-
 			};
+		},
+		onLoad() {
 		},
 		methods: {
 			jumpOver() {
@@ -61,7 +61,7 @@
 				uni.setStorageSync('userAgreementModal', true)
 				// 需判断是否登录过，然后跳过首页或者登录页
 				uni.reLaunch({
-					url: '../login/normalLogin'
+					url: '../../pages/login/codeLogin'
 				})
 			}
 		}
@@ -72,7 +72,6 @@
 	.mainx {
 		width: 100vw;
 		height: 100vh;
-
 		.swiper-content {
 			width: 100%;
 			height: 100%;
@@ -81,7 +80,6 @@
 		.item-one {
 			background-image: url(../../static/guide-img1.png);
 			background-size: 100% 100%;
-
 			.frist-img {
 				width: 308rpx;
 				height: 58rpx;

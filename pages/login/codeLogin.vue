@@ -1,8 +1,8 @@
 <!-- 验证码登录 -->
 <template>
-	<view class="main">
+	<view>
 		<firstJoinPage v-if='!isFirst' />
-		<view v-else>
+		<view v-else class="main">
 			<view class="login-title">
 				欢迎登录宜陆
 			</view>

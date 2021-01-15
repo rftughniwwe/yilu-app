@@ -228,6 +228,7 @@
 						uni.hideLoading()
 						if (resp.data.code == 200) {
 							// 识别成功
+							console.log('识别结果：',res)
 							if (middleVerify) {
 								this.isMiddleFaceVerify = true
 								this.middleVerifyFace(res)
@@ -240,17 +241,6 @@
 								title: resp.data.msg,
 								duration: 1500,
 								icon: 'none'
-							})
-							uni.showModal({
-								title: '提示',
-								content: '认证失败，请重试',
-								confirmText: '重试',
-								showCancel: false,
-								success: res => {
-									if (res.confirm) {
-										this.faceVierhudghr()
-									}
-								}
 							})
 							// if (this.isGradeExam) {
 							// 	const d = {
@@ -286,7 +276,21 @@
 					})
 				})
 			},
-
+			
+			tryAgain(){
+				uni.showModal({
+					title: '提示',
+					content: '认证失败，请重试',
+					confirmText: '重试',
+					showCancel: false,
+					success: res => {
+						if (res.confirm) {
+							this.faceVierhudghr()
+						}
+					}
+				})
+			},
+			
 			middleVerifyFace(base64) {
 				uni.showLoading({
 					title: '上传中...'
@@ -297,9 +301,11 @@
 						this.xixixixix(face_img)
 					}, err => {
 						uni.hideLoading()
+						this.tryAgain()
 					})
 				}, err => {
 					uni.hideLoading()
+					this.tryAgain()
 				})
 			},
 
@@ -313,9 +319,11 @@
 						this.iuywsertkfjg(face_img, signOut)
 					}, err => {
 						uni.hideLoading()
+						this.tryAgain()
 					})
 				}, err => {
 					uni.hideLoading()
+					this.tryAgain()
 				})
 			},
 			xixixixix(img) {
@@ -374,8 +382,13 @@
 					data: params,
 					success: res => {
 						console.log('上传考试记录：', res)
+						uni.showToast({
+							title:'上传成功',
+							icon:'none'
+						})
 					},
 					fail: err => {
+						this.tryAgain()
 						console.log('上传考试记录失败：', err)
 					}
 				}, 5)
@@ -434,6 +447,7 @@
 					},
 					fail: err => {
 						console.log('上传考试记录失败：', err)
+						this.tryAgain()
 					}
 				}, 5)
 			},

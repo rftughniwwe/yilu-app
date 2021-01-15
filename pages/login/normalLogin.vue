@@ -1,8 +1,8 @@
 <!-- 密码登录 -->
 <template>
 	<view>
-		<firstJoinPage v-if='!isFirst' />
-		<view v-else class="main">
+		<!-- <firstJoinPage v-if='!isFirst' /> -->
+		<view class="main">
 			<userAgreementModal @IArgee="userArgee" v-if='userArgeeModal' />
 			<view class="login-title">
 				欢迎登录宜陆
