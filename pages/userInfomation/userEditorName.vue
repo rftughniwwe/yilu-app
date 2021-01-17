@@ -47,6 +47,7 @@
 					title: '修改中...'
 				})
 				console.log('zz',this.name)
+				console.log('sss',getUserLoginInfo('userNo'))
 				httpRequest({
 					url: 'user/auth/user/ext/update',
 					method: 'post',

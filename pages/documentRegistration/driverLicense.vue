@@ -176,7 +176,7 @@
 								uni.hideLoading()
 								let data = res.data
 								
-								if (!data.words_result) {
+								if (num == 1 && !data.words_result) {
 									Toast({
 										title: '识别失败，请重试。'
 									})
@@ -188,16 +188,14 @@
 									let img_data = JSON.parse(respones.data)
 									console.log('上传图片成功：', img_data)
 									if (img_data.code == 200) {
-										if (num === 1) {
+										if (num == 1) {
 											that.flag1 = true
 											that.tempPathFront_upload = img_data.data
-										} else {
+										} else if(num == 2){
+											console.log('???Zxczxczxc')
 											that.flag2 = true
 											that.tempPathBack_upload = img_data.data
-											return
 										}
-										// num === 1 ? 
-										//  that.tempPathFront = img_data.data: that.tempPathBack = img_data.data
 										
 										that.cardName = res.data.words_result.姓名 ? res.data.words_result.姓名.words : '';
 										that.cardAllowCarType = res.data.words_result.准驾车型 ? res.data.words_result.准驾车型.words : '';
@@ -313,10 +311,10 @@
 							if(resp.data.data){
 								let _data = resp.data.data
 								this.flag1 = _data.drivingFront?true:false
-								this.tempPathFront_upload = _data.drivingBack;
-								this.tempPathBack_upload = _data.drivingFront;
-								this.tempPathBack = _data.drivingBack,
-								this.tempPathFront = _data.drivingFront,
+								this.tempPathFront_upload = _data.drivingFront;
+								this.tempPathBack_upload = _data.drivingBack;
+								this.tempPathBack = _data.drivingBack?_data.drivingBack:this.tempPathBack,
+								this.tempPathFront = _data.drivingFront?_data.drivingFront:this.tempPathFront,
 								this.cardId = _data.drivingId;
 								this.cardAllowCarType = _data.drivingSubjecton;
 								this.cardEndDate = _data.indateEnd;
@@ -334,6 +332,7 @@
 					}
 				},1)
 			},
+			
 			// 数据校验
 			judgeData() {
 				console.log('flag1:',this.flag1)

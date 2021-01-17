@@ -16,7 +16,7 @@
 				<view class="sheetList">
 					<view class="sheetItem" v-for="(item, index) in examData.titleList" :key="index">
 						<view class="sheetItemTitle">{{ (index+ 1) | ChineseToNumber }}、{{ item.titleName }}{{ item.problemList.length }}
-							{{ item.problemList.length }}
+							<!-- {{ item.problemList.length }} -->
 						</view>
 						<view class="sheetItemProblem">
 							<template v-for="(problem, tindex) in item.problemList">

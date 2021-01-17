@@ -9,7 +9,7 @@
 		</view> -->
 		<view class="topic">
 			<view class="left-img">
-				<image src="../../static/banner2.png" mode=""></image>
+				<image :src="courseInfo.headurl" mode=""></image>
 			</view>
 			<view class="right-content">
 				<view class="text-overflow2 titles text-left">{{courseInfo.name || '未知'}}</view>

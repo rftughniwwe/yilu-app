@@ -32,7 +32,7 @@
 		<view class="h5px"></view>
 		<view class="teacher_box b_fff c_999 font25">
 			<text>讲师：</text>
-			<text class="c_333">{{courseInfo.lecturer?courseInfo.lecturer.lecturerName : '未知'}}</text>
+			<text class="c_333">宜陆科技</text>
 		</view>
 
 		<view class="h5px"></view>
@@ -40,7 +40,7 @@
 			<view class="tabs font33 c_333">
 				<view v-if="isMinappAudit " :class="tab == 2 ? 'tab active' : 'tab'" @tap="changeTab" data-int="2">课程大纲</view>
 				<view :class="tab == 1 ? 'tab active' : 'tab'" @tap="changeTab" data-int="1">课程介绍</view>
-				<view :class="tab == 3 ? 'tab active' : 'tab'" @tap="changeTab" data-int="3">学习资料</view>
+				<!-- <view :class="tab == 3 ? 'tab active' : 'tab'" @tap="changeTab" data-int="3">学习资料</view> -->
 			</view>
 			<view v-if="tab == 2 && isMinappAudit " class="course_brief font25 b_fff mgt30 pdb30">
 				<view v-for="(item, index) in chapterList" :key="index" class="c_333">
@@ -58,7 +58,7 @@
 			<view v-else-if="tab == 1" class="course_brief font25 b_fff learningMat">
 				<rich-text :nodes="courseInfo.introduce"></rich-text>
 			</view>
-			<view v-else-if="tab == 3" class="course_brief font25 b_fff pd20">
+			<!-- <view v-else-if="tab == 3" class="course_brief font25 b_fff pd20">
 				<template v-if="filesData && filesData.length >0">
 					<view class="item-block flex-row-start" v-for="(item,index) in filesData" :key='index'>
 						<view class="pdf-docx-img">
@@ -90,7 +90,7 @@
 						暂无学习资料
 					</view>
 				</template>
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>
@@ -221,9 +221,6 @@
 			this.isFromAutoLeraning = options.isFromAutoLeraning || false
 			this.getCourse(courseId);
 			this.getChapterList(1);
-
-		
-
 			let coursesss = uni.getStorageSync('courseInfoData')
 		},
 
@@ -442,11 +439,9 @@
 					courseId: this.courseId,
 					pageCurrent: page
 				}).then(res => {
-					console.log('列表。。。。。', res)
-					console.log('?????ZXczxczxc',res.list[0].periodList[0].id)
 					this.chapterList = this.chapterList.concat(res.list)
 					// 学习资料
-					this.getaccessoryList(res.list[0].periodList[0].id)
+					// this.getaccessoryList(res.list[0].periodList[0].id)
 					if (res.pageCurrent === res.totalPage) {
 						this.loaddingEnd = false
 					} else {

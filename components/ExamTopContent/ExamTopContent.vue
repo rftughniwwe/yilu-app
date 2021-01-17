@@ -29,30 +29,30 @@
 				timer: null,
 				timecountdown: '',
 				current: 1,
-				optionType:'',
-				perscore:'',
-				mapping:['未知','单选题','多选题','判断题']
-				
+				optionType: '',
+				perscore: '',
+				mapping: ['未知', '单选题', '多选题', '判断题']
+
 			};
 		},
-		props: ['datas','isFromError'],
+		props: ['datas', 'isFromError'],
 		created() {
 			let examdatas = uni.getStorageSync('autoExamQuestions')
+			console.log('ibelive',examdatas)
 			let _proType = examdatas[0].problemType
 			this.optionType = this.mapping[_proType]
-			if(!this.isFromError){
-				this.countDown(this.datas.time * 60)
+			if (!this.isFromError) {
+				this.countDown(this.datas.time? this.datas.time * 60:3600)
 			}
-			
-			uni.$on('swiperChange',(res)=>{
+
+			uni.$on('swiperChange', (res) => {
 				let proType = examdatas[res.current].problemType
-				this.current = res.current+1
+				this.current = res.current + 1
 				this.optionType = this.mapping[proType]
 				this.perscore = examdatas[res.current].perScore
 			})
 		},
-		updated() {
-		},
+		updated() {},
 		beforeDestroy() {
 			clearInterval(this.timer)
 			this.timer = null
@@ -87,7 +87,9 @@
 					}
 					t--
 					this.timecountdown = getCountDown(t)
-					uni.$emit('timeChange',{time:this.timecountdown})
+					uni.$emit('timeChange', {
+						time: this.timecountdown
+					})
 				}, 1000)
 			}
 		}

@@ -166,6 +166,7 @@
 					uni.showLoading({
 						title:'保存中...'
 					})
+					console.log('zxczxc',data)
 					httpRequest({
 						url:'user/api/tbSysQualification/save',
 						method:'POST',

@@ -24,10 +24,20 @@
 						{{datas.trainStart || '未知'}}
 					</view>
 					<view v-if="!isShowTag"  class="from">
-						讲师：{{datas.lecturerName || '未知'}}
+						<template v-if="!isShowlecturer">
+							讲师：{{datas.lecturerName || '未知'}}
+						</template>
+						<template v-else>
+							讲师：宜陆科技
+						</template>
 					</view>
 					<view v-if="isShowTag"  class="from">
-						{{datas.type==4?'总指挥':'主持人'}}：{{datas.teacher || '未知'}}
+						<template v-if="!isShowlecturer">
+							{{datas.type==4?'总指挥':'主持人'}}：{{datas.teacher || '未知'}}
+						</template>
+						<template v-else>
+							讲师：宜陆科技
+						</template>
 					</view>
 				</view>
 			</view>
@@ -41,13 +51,15 @@
 			return {
 				datas:{},
 				isShowTag:false,
-				tttttttxt:''
+				tttttttxt:'',
+				isShowlecturer:false
 			};
 		},
-		props:['data','isTag'],
+		props:['data','isTag','nolecturer'],
 		created() {
 			this.datas = this.data?this.data:{},
 			this.isShowTag = this.isTag?true:false
+			this.isShowlecturer = this.nolecturer?true:false
 		},
 		methods:{
 			itemClick(item){

@@ -98,25 +98,50 @@
 		},
 		onLoad() {
 			this.getExaminfo()
+			this.getQuestions()
 		},
 		methods:{
+			// 获取试题
+			getQuestions() {
+				httpRequest({
+					url: 'exam/api/tbCourPaper/list',
+					method: 'POST',
+					success: res => {
+						if (res.data.code == 200) {
+							uni.setStorageSync('autoExamQuestions', res.data.data)
+						} else {
+							request_success(res)
+						}
+					},
+					fail: err => {
+						console.log('获取试题失败', err)
+					}
+				}, 5)
+			},
 			getExaminfo(){
+				uni.showLoading({
+					title:'加载中',
+					mask:true
+				})
 				httpRequest({
 					url:'exam/api/tbCourPaper/view',
 					method:'GET',
 					success:res=>{
 						console.log('获取试卷详情：',res)
+						uni.hideLoading()
 						if(res.data.code == 200){
 							this.examinfo = res.data.data
+							uni.setStorageSync('userAutoQuestions',res.data.data)
 						}
 					},
 					fail:err=>{
+						uni.hideLoading()
 						console.log('获取试卷失败',err)
 					}
 				},5)
 			},
 			goExam(){
-				uni.setStorageSync('userAutoQuestions',this.examinfo)
+				
 				uni.navigateTo({
 					url:'/pages/examQuestion/examQuestion?id='+this.examinfo.id
 				})

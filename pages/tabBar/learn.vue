@@ -113,7 +113,7 @@
 					<!-- 课程 -->
 					<template v-if="autoLearning && autoLearning.length > 0">
 						<view v-for="(item,index) in autoLearning" :key='index'>
-							<course :data='item' @courseClick='courseItemClick' />
+							<course :data='item' @courseClick='courseItemClick' :nolecturer='true'/>
 						</view>
 					</template>
 					<template v-else>
@@ -192,7 +192,7 @@
 								学习天数
 							</view>
 							<view class="tail">
-								{{autoLearningStati.dateCount?autoLearningStati.dateCount:0}}
+								{{autoLearningStati.dateCount?autoLearningStati.dateCount:0}}天
 							</view>
 
 						</view>
@@ -201,7 +201,7 @@
 								学习总时长
 							</view>
 							<view class="tail">
-								{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}
+								{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}小时
 							</view>
 						</view>
 						<view class="items flex-between">
@@ -209,7 +209,7 @@
 								答题数量
 							</view>
 							<view class="tail">
-								{{autoLearningStati.questionCount?autoLearningStati.questionCount:0}}
+								{{autoLearningStati.questionCount?autoLearningStati.questionCount:0}}题
 							</view>
 						</view>
 					</view>
@@ -243,12 +243,16 @@
 		requestQrCodeUrl
 	} from '@/utils/httpRequest.js'
 	import {
-		getExamIdByTraingId
+		getExamIdByTraingId,
+		getExamDetails,
+		getExamLists
 	} from '@/commons/api/apis.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import userName from '@/components/userName/userName.vue'
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
 	import Toast from '@/commons/showToast.js'
+	
+	
 	const app = getApp()
 
 
@@ -292,13 +296,16 @@
 			this.getMyCoursedata()
 			this.getAutoLearning()
 			this.getAutoLearningStati()
-			this.getExamId()
+			
 			// 第一次进入学习模块时的事件监听
 			uni.$once('chooesedTypezz', (data) => {
 
 				if (data.num !== -1) {
 					if (data.num === 0) {
 						this.isHideSafetyModal = false
+					}
+					if(data.num == 2){
+						this.getAutoLearning()
 					}
 					this.type = data.num ? data.num : 0
 					this.chooseTypePager = true
@@ -350,7 +357,9 @@
 					success: res => {
 						console.log('自主学习统计数据：', res)
 						if (res.data.code == 200) {
-							this.autoLearningStati = res.data.data
+							let d =  res.data.data
+							d.watchSum = d.watchSum.toFixed(2)
+							this.autoLearningStati = d
 						} else {
 							console.log('获取自主学习统计数据失败：', res)
 						}
@@ -529,35 +538,74 @@
 				// 		request_success(res)
 				// 	}
 				// })
-				let item = uni.getStorageSync('LearningSubTypeSubItem')
-				let mode = uni.getStorageSync('learningtypemode')
-				let type = item.id == mode[0].listSub[0].id ? 2 : 1
-				let compId = uni.getStorageSync('userCompanyInfo').compId
-				let userid = getUserLoginInfo('userNo')
-				let params = {
-					"compId": compId,
-					"isPassExam": 0,
-					"type": type,
-					"userNo": userid
-				}
-				httpRequest({
-					url:'/user/api/tbExamPerson/examList',
-					method:'POST',
-					data:params,
-					success:res=>{
-						console.log('获取试卷：',res)
-						if(res.data.code == 200){
+				// let item = uni.getStorageSync('LearningSubTypeSubItem')
+				// let mode = uni.getStorageSync('learningtypemode')
+				// let type = item.id == mode[0].listSub[0].id ? 2 : 1
+				// let compId = uni.getStorageSync('userCompanyInfo').compId
+				// let userid = getUserLoginInfo('userNo')
+				// let params = {
+				// 	"compId": compId,
+				// 	"isPassExam": 0,
+				// 	"type": type,
+				// 	"userNo": userid
+				// }
+				// httpRequest({
+				// 	url:'user/api/tbExamPerson/examList',
+				// 	method:'POST',
+				// 	data:params,
+				// 	success:res=>{
+				// 		console.log('获取试卷：',res)
+				// 		if(res.data.code == 200){
 							
-						}else {
-							request_success(res)
-						}
-					},
-					fail:err=>{
-						console.log('获取试卷失败：',err)
-					}
-				},1)
+				// 		}else {
+				// 			request_success(res)
+				// 		}
+				// 	},
+				// 	fail:err=>{
+				// 		console.log('获取试卷失败：',err)
+				// 	}
+				// },1)
+				uni.showLoading({
+					title:'查询中'
+				})
+				getExamLists().then(res => {
+					console.log('试卷列表', res)
+					// if (res.data.code == 200) {
+					let d = res.data[0]
+					this.getExaminfomation(d.examId)
+					// } else {
+					// 	request_success(res)
+					// }
+				}, err => {
+					uni.hideLoading()
+					request_err(err, '获取失败')
+				})
 				
 			},
+			getExaminfomation(id) {
+				if (!id) {
+					uni.showToast({
+						title:'暂无考试，请联系管理员开始考试',
+						icon:'none'
+					})
+					uni.hideLoading()
+					return
+				}
+				console.log('试卷id：',id)
+				uni.setStorageSync('userexamsid',id)
+				getExamDetails(id).then(res => {
+					uni.hideLoading()
+					if (res.data.code == 200) {
+						this.goOnlineExam()
+					} else {
+						request_success(res)
+					}
+				}, err => {
+					uni.hideLoading()
+					request_err(err, '获取失败')
+				})
+			},
+			
 			// 前往在线考试
 			goOnlineExam() {
 				// if (!this.examData || !this.examData.id) {
@@ -598,7 +646,8 @@
 						// uni.navigateTo({
 						// 	url: '../course/list/list'
 						// })
-						this.goOnlineExam()
+						this.getExamId()
+						
 					}
 				} else if (type == 1) {
 					// 继续教育
@@ -668,7 +717,6 @@
 					})
 				} else {
 					this.getErrorQuestion()
-
 				}
 			},
 			getErrorQuestion() {

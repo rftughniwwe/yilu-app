@@ -102,7 +102,7 @@
 
 				</view>
 				<view class="address">
-					{{signDatas.addr?signDatas.addr:oldSignData[0].place}}
+					{{signDatas.addr}}
 				</view>
 				<!-- <map :latitude="signDatas.lat?signDatas.lat:oldSignData[0].latitude" :longitude="signDatas.lon?signDatas.lon:oldSignData[0].longitude"
 				 class="mapz"></map> -->
@@ -138,7 +138,7 @@
 						今日学习次数
 					</view>
 					<view class="subtitle-s">
-						你真是太棒了，今日一共学习了{{tongJiSign.count}}次!
+						你真是太棒了，今日一共学习了{{tongJiSign.count || 0}}次!
 					</view>
 				</view>
 				<!-- <view class="learning-data">
@@ -273,16 +273,17 @@
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.signDatas = uni.getStorageSync('scanData') || {}
 			this.todayweek = dateWeek()
-			this.getSignInData()
+			this.getOldSignDatas()
+			// this.getSignInData()
 			// 每十秒获取一次位置信息
 			// this.timer = setInterval(() => {
 			// 	this.getLocationFun()
 			// }, 10000)
 		},
 		onShow() {
-			this.getLocationFun()
+			// this.getLocationFun()
 			// 回显签到数据
-			this.getOldSignDatas()
+			
 		},
 		onPullDownRefresh() {
 			this.getLocationFun()
@@ -352,7 +353,6 @@
 			// 获取签到数据
 			getSignInData() {
 				let date = this.todayweek.date
-				console.log('date',date)
 				getSignOnDateTime(date).then(res => {
 					console.log('获取签到统计数据：', res)
 					if (res.data.code == 200) {
@@ -576,17 +576,11 @@
 			// 获取回显数据
 			getOldSignDatas() {
 				this.oldSignData = []
+				let iddata = uni.getStorageSync('userCompanyInfo')
 				let params = {
-					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
-					"compId": uni.getStorageSync('userCompanyInfo').compId,
-					"refId": this.signDatas.courseId,
-					"coursePeriodId": this.signDatas.periodList ? this.signDatas.periodList[0].periodId : '',
 					"numEvent": this.signDatas.id,
-					// "refName": this.signDatas.courseName,
-					"signonApp": 0,
-					"statusId": 1,
-					"courseType": '4',
-					"userNo": getUserLoginInfo('userNo')
+					"courseType": '1',
+					"idcard":iddata.idCard
 				}
 				uni.stopPullDownRefresh()
 				console.log('获取回显数据参数:', params)

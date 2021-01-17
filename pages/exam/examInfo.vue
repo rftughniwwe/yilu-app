@@ -65,18 +65,6 @@
 			};
 		},
 		onLoad(options) {
-			// let id = options.id || uni.getStorageSync('TrainingId')
-			// if (id) {
-			// 	this.trainingid = id
-			// 	this.getExamId(id)
-			// } else if (!id) {
-			// 	uni.showToast({
-			// 		title: '没有配置考试',
-			// 		icon: 'none'
-			// 	})
-			// } else {
-			// 	this.examData = JSON.parse(decodeURIComponent(options.examdatas))
-			// }
 			if(options.examId){
 				this.getExaminfomation(options.examId)
 			}else {

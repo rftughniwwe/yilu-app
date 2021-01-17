@@ -103,7 +103,6 @@
 				uni.showLoading({
 					title: '加载中'
 				})
-				console.log('收藏：：：：：：：：：：：：：：：')
 				httpRequest({
 					url: 'community/api/labelUserRecord/selectLabellist',
 					method: 'POST',
@@ -113,11 +112,13 @@
 						"userNo": getUserLoginInfo('userNo')
 					},
 					success: res => {
-						console.log('zz', res)
 						uni.hideLoading()
 						if (res.data.code == 200) {
 							let list = res.data.data
 							list.forEach((i, index) => {
+								let arr = i.gmtCreate.split('.')
+								let arr2 = arr[0].split('T')
+								list[index].gmtCreate = arr2[0] + ' ' + arr2[1]
 								list[index].collectType = 1
 							})
 							this.topicCollect = list

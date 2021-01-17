@@ -2,7 +2,7 @@
 <template>
 	<view class="container">
 		<view class="topic-content">
-			<examTopContent :datas='topDatas' :currentTab='currentQuestion' :isFromError='isFromError' />
+			<examTopContent :datas='topDatas' :currentTab='currentQuestion' :isFromError='isFromError'/>
 		</view>
 		<view class="swiper-contnet">
 			<examSwpier />
@@ -169,12 +169,11 @@
 		},
 		methods: {
 			setTopData() {
-				let exam = this.examInfo
+				let exam = uni.getStorageSync('userAutoQuestions')
 				this.topDatas = {
 					time: exam.times,
 					total: exam.paperNum,
 				}
-
 			},
 			moveStop() {},
 			// 答题卡
@@ -182,6 +181,7 @@
 				this.options = uni.getStorageSync('autoExamQuestions')
 				this.answerShow = !this.answerShow
 			},
+			
 			// 获取试题
 			getQuestions() {
 				uni.showLoading({
@@ -207,16 +207,10 @@
 				}, 5)
 			},
 			setExamdata(data) {
-				// uni.showLoading({
-				// 	title:'加载试题中...'
-				// })
 				this.options = data
 			},
 			// 交卷
 			completeExam() {
-
-
-
 				let examdatas = uni.getStorageSync('autoExamQuestions')
 				let questionList = []
 				let userno = getUserLoginInfo('userNo')
