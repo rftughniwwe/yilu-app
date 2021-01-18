@@ -54,7 +54,7 @@
 				</view>
 				<view class="info-item flex-between">
 					<view class="header">
-						证件编号
+						档案编号
 					</view>
 					<view class="input-content">
 						<input type="text" maxlength="40" v-model="cardId" value="" placeholder="请填写证件编号" />
@@ -85,8 +85,8 @@
 		</view>
 
 		<view class="next">
-			<nextPageBtn @goNextPage='goNextPager' :isSolid='true'></nextPageBtn>
-			<nextPageBtn @goNextPage='directNextPage' text='跳过'></nextPageBtn>
+			<nextPageBtn @goNextPage='goNextPager' :isSolid='true' text='完成'></nextPageBtn>
+			<!-- <nextPageBtn @goNextPage='directNextPage' text='跳过'></nextPageBtn> -->
 		</view>
 	</view>
 </template>
@@ -125,7 +125,8 @@
 				cardEndDate: '',
 				carTypeData: ['a1', 'a2', 'a1和a2'],
 				idCardInfo: {},
-				idCardNum:''
+				idCardNum:'',
+				idcardnumber:''
 			};
 		},
 		components: {
@@ -156,9 +157,6 @@
 						})
 						num === 1 ? that.tempPathFront = tempFilePaths.tempFilePaths[0] : that.tempPathBack = tempFilePaths.tempFilePaths[
 							0]
-
-						
-
 						toBase64(tempFilePaths.tempFilePaths[0], (r) => {
 							let original = r
 							let result = original.split(',')[1]
@@ -191,16 +189,15 @@
 										if (num == 1) {
 											that.flag1 = true
 											that.tempPathFront_upload = img_data.data
+											that.idcardnumber = res.data.words_result.证号 || ''
 										} else if(num == 2){
-											console.log('???Zxczxczxc')
 											that.flag2 = true
 											that.tempPathBack_upload = img_data.data
+											that.cardId = res.data.words_result.证号 ? res.data.words_result.证号.words : ''	;
 										}
-										
 										that.cardName = res.data.words_result.姓名 ? res.data.words_result.姓名.words : '';
 										that.cardAllowCarType = res.data.words_result.准驾车型 ? res.data.words_result.准驾车型.words : '';
 										that.cardFirstAllow = res.data.words_result.初次领证日期 ? dateFormat(res.data.words_result.初次领证日期.words, '-','-') : '';
-										that.cardId = res.data.words_result.证号 ? res.data.words_result.证号.words : ''	;
 										that.cardBeginDate = res.data.words_result.有效期限 ? dateFormat(res.data.words_result.有效期限.words, '-', '-') : '';
 										that.cardEndDate = res.data.words_result.至 ? res.data.words_result.至.words === '长期' ? '长期' : dateFormat(res.data.words_result.至.words, '-', '-') : '';
 										
@@ -251,7 +248,10 @@
 						content: '确认信息无误并提交？',
 						success:res=>{
 							if (res.confirm) {
-								this.confirmSubmit(data)
+								// this.confirmSubmit(data)
+								uni.switchTab({
+									url:'../tabBar/user'
+								})
 							}
 						}
 					})
@@ -342,6 +342,13 @@
 					})
 					return
 				}
+				let realidcard =  uni.getStorageSync('userCompanyInfo').idCard
+				if(this.idcardnumber != realidcard){
+					Toast({
+						title: '请上传本人的驾驶证图片'
+					})
+					return
+				}
 				if (!this.cardName) {
 					Toast({
 						title: '请填写姓名'
@@ -359,7 +366,7 @@
 					return
 				} else if (!this.cardId) {
 					Toast({
-						title: '请填写证件号'
+						title: '请填写档案编号'
 					})
 					return
 				} else if (!this.cardBeginDate) {
@@ -390,7 +397,7 @@
 					indateStart:this.cardBeginDate,
 					name:this.cardName,
 					cardFirstAllow:this.cardFirstAllow,
-					idcard:this.idCardNum
+					idcard: realidcard
 				}
 			},
 			// 准驾车型改变事件

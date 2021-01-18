@@ -22,14 +22,14 @@
 				<view class="head">
 					用户名
 				</view>
-				<view class="right-content flex-between" @click="goEditName">
+				<view class="right-content flex-between">
 					<view class="head-img user-name">
 						<!-- <userName :name='userinfomation.nickname'/> -->
-						{{userinfomation.nickname}}
+						{{name}}
 					</view>
-					<view class="right-arrow-img">
+					<!-- <view class="right-arrow-img">
 						<image src="../../static/right-arrow.png" mode=""></image>
-					</view>
+					</view> -->
 				</view>
 			</view>
 			<view class="item flex-between">
@@ -38,7 +38,7 @@
 				</view>
 				<view class="right-content">
 					<view class="head-img">
-						{{userinfomation.sex=='1'?'男':'女'}}
+						{{gender}}
 					</view>
 				</view>
 			</view>
@@ -75,9 +75,9 @@
 		data() {
 			return {
 				headImg: '',
-				genderArr: ['男', '女'],
-				gender: 0,
-				userinfomation: {}
+				gender: '男',
+				userinfomation: {},
+				name:''
 			};
 		},
 		components: {
@@ -85,6 +85,7 @@
 			userName
 		},
 		onLoad() {
+			this.name =  uni.getStorageSync('userCompanyInfo').userName
 			this.getInfo()
 		},
 		onShow() {
@@ -106,7 +107,10 @@
 						console.log('xb', res)
 						if (res.data.code == 200) {
 							uni.setStorageSync('userBasicInfo', res.data.data)
-							this.userinfomation = res.data.data
+							let d = res.data.data
+							this.userinfomation = d
+							let idcard = d.idCardNo.split('')
+							this.gender = idcard[16]%2==0?'女':'男'
 						}
 					},
 					fail: err => {
@@ -151,6 +155,7 @@
 					}
 				})
 			},
+		
 			editHeadImg(img) {
 				uni.showLoading({
 					title: '修改中...'

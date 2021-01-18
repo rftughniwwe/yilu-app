@@ -73,7 +73,7 @@
 				</view>
 			</view>
 			<template v-if="datas && datas.list">
-				<view v-for="(item,index) in datas.list" :key='item' class="table flex-between">
+				<view v-for="(item,index) in datas.list" :key='index' class="table flex-between">
 					<view class="no">
 						{{item.ranking}}
 					</view>
@@ -173,7 +173,6 @@
 						request_err(err, '获取数据失败')
 					}
 				}, 1)
-				console.log('排行榜数据', this.datas.list)
 			},
 			changeTab(num) {
 				this.tabNum = num

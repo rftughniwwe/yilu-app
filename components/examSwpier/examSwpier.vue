@@ -225,7 +225,7 @@
 		background-color: #F3F7F6;
 		padding: 40rpx 30rpx;
 		color: #333333;
-		font-size: 32rpx;
+		font-size: 36rpx;
 	}
 
 	.swiper {

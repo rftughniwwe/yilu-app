@@ -144,27 +144,28 @@
 					<view class="overview-content">
 						<view class="overview">
 							<view class="learning-time">
-								<text class="big-text">学习总时长：{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}</text>小时
+								<text class="big-text">自主学习总时长：{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}</text>小时
 							</view>
-							<view class="flex-between">
+							<view class="flex-around">
 								<view class="total-answer">
 									<view class="top">
 										<text class="big-text">{{autoLearningStati.questionCount?autoLearningStati.questionCount:0}}</text>道
 									</view>
 									累计答题
 								</view>
-								<view class="correct-rate middle-correct">
+								<view class="line"></view>
+								<view class="correct-rate">
 									<view class="top">
 										<text class="big-text">{{autoLearningStati.accuracy?autoLearningStati.accuracy:0}}</text>
 									</view>
 									正确率
 								</view>
-								<view class="total-date">
+								<!-- <view class="total-date">
 									<view class="top">
 										<text class="big-text">{{autoLearningStati.dateCount?autoLearningStati.dateCount:0}}</text>
 									</view>
 									累计天数
-								</view>
+								</view> -->
 							</view>
 						</view>
 					</view>
@@ -187,7 +188,7 @@
 								<userName />
 							</view>
 						</view>
-						<view class="items flex-between">
+						<!-- <view class="items flex-between">
 							<view class="header">
 								学习天数
 							</view>
@@ -195,10 +196,10 @@
 								{{autoLearningStati.dateCount?autoLearningStati.dateCount:0}}天
 							</view>
 
-						</view>
+						</view> -->
 						<view class="items flex-between">
 							<view class="header">
-								学习总时长
+								自主学习总时长
 							</view>
 							<view class="tail">
 								{{autoLearningStati.watchSum?autoLearningStati.watchSum:0}}小时
@@ -991,10 +992,6 @@
 		width: 30%;
 	}
 
-	.middle-correct {
-		border-right: 2rpx solid #FFFFFF;
-		border-left: 2rpx solid #FFFFFF;
-	}
 
 	.select-date-month {
 		padding: 20rpx 30rpx;
@@ -1107,5 +1104,10 @@
 		image {
 			border-radius: 20rpx;
 		}
+	}
+	.line{
+		height: 60rpx;
+		width: 2rpx;
+		background-color: #FFFFFF;
 	}
 </style>

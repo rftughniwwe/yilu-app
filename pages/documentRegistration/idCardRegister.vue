@@ -219,8 +219,8 @@
 								this.cardUseday = _data.indate;
 								this.tempPathFront_upload = _data.idcardFront;
 								this.tempPathBack_upload = _data.idcardBack;
-								this.tempPathBack = _data.idcardBack;
-								this.tempPathFront = _data.idcardFront;
+								this.tempPathBack = _data.idcardBack || '../../static/id-card-back.png';
+								this.tempPathFront = _data.idcardFront || '../../static/id-card-front.png';
 							}
 						}
 					},
@@ -262,7 +262,17 @@
 						console.log('保存成功：', res)
 						if (res.data.code == 200) {
 							this.setIdCardInfo()
-							this.getCompanyById(data.cardId)
+							Toast({
+								title: '保存成功',
+								icon: 'success',
+								mask: true
+							})
+							setTimeout(() => {
+								uni.navigateTo({
+									url: `./driverLicense`
+								})
+							}, 1500)
+							// this.getCompanyById(data.cardId)
 						} else {
 							Toast({
 								title: res.data.msg
@@ -289,6 +299,7 @@
 						console.log('查询成功zz：', res)
 						if (res.data.code == 200) {
 							this.setCompany(res.data.data)
+							
 						} else {
 							request_success(res)
 						}
@@ -320,21 +331,11 @@
 				let infoStorage = uni.getStorageSync('loginUserBasicInfo')
 				let info = infoStorage
 				info.compId = parseInt(data.compId)
-				console.log('zzzzzzzz',info)
 				setUserInfomation(info).then(res => {
 					console.log('xiba',res)
 					if (res.data.code == 200) {
 
-						Toast({
-							title: '保存成功',
-							icon: 'success',
-							mask: true
-						})
-						setTimeout(() => {
-							uni.navigateTo({
-								url: `./driverLicense?idCardNum=`+data.cardId
-							})
-						}, 1500)
+						
 					} else {
 						request_success(res)
 					}
@@ -465,7 +466,13 @@
 					})
 					return
 				}
-
+				let realidcard =  uni.getStorageSync('userCompanyInfo').idCard
+				if(this.cardId != realidcard){
+					Toast({
+						title: '请填写本人的身份证信息'
+					})
+					return
+				}
 				if (!this.cardName) {
 					Toast({
 						title: '请填写姓名'

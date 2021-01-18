@@ -13,16 +13,11 @@
 		},
 		props:['color','name'],
 		created() {
-			let userinfo = uni.getStorageSync('userBasicInfo')
-			this.nicknamez = userinfo.nickname
-			console.log('userinfo',userinfo)
-			if(this.name){
-				this.nicknamez = this.name
-			}
-		},
-		updated(){
-			let userinfo = uni.getStorageSync('userBasicInfo')
-			this.user = userinfo
+			let userinfo = uni.getStorageSync('userCompanyInfo')
+			this.nicknamez = userinfo.userName
+			// if(this.name){
+			// 	this.nicknamez = this.name
+			// }
 		}
 	}
 </script>

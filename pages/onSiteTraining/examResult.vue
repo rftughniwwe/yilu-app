@@ -129,12 +129,12 @@
 	.head {
 		text-align: left;
 		color: #333333;
-		font-size: 30rpx;
+		font-size: 36rpx;
 	}
 
 	.ttt {
 		color: #666;
-		font-size: 30rpx;
+		font-size: 34rpx;
 		margin-left: 26rpx;
 	}
 

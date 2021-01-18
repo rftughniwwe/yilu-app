@@ -145,7 +145,7 @@
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.mobile = uni.getStorageSync('userBasicInfo').mobile
 			this.headimg = uni.getStorageSync('userBasicInfo').headImgUrl
-			this.username = uni.getStorageSync('userBasicInfo').nickname
+			this.username =  uni.getStorageSync('userCompanyInfo').userName
 		},
 		onShow() {
 			this.globalSize = uni.getStorageSync('globalFontSize')

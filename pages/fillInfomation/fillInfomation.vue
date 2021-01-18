@@ -7,7 +7,8 @@
 					姓名
 				</view>
 				<view class="input-content">
-					<input type="text" maxlength="10" v-model="name" placeholder="请填写" />
+					<!-- <input type="text" maxlength="10" v-model="name" placeholder="请填写" /> -->
+					{{name}}
 				</view>
 			</view>
 			<view class="info-item flex-between">
@@ -15,14 +16,15 @@
 					性别
 				</view>
 				<view class="input-content">
-					<radio-group name="gender" @change="genderChange">
+					{{gender}}
+					<!-- <radio-group name="gender" @change="genderChange">
 						<label class="first-label">
 							<radio :value="1" :checked="gender==1"/><text>男</text>
 						</label>
 						<label>
 							<radio :value="2" :checked="gender==2"/><text>女</text>
 						</label>
-					</radio-group>
+					</radio-group> -->
 				</view>
 			</view>
 			<view class="info-item flex-between">
@@ -30,7 +32,8 @@
 					手机号
 				</view>
 				<view class="input-content">
-					<input type="number" maxlength="11" v-model="phoneNum" placeholder="请填写" />
+					<!-- <input type="number" maxlength="11" v-model="phoneNum" placeholder="请填写" /> -->
+					{{phoneNum}}
 				</view>
 			</view>
 			<!-- <view class="info-item flex-between">
@@ -75,7 +78,7 @@
 		data() {
 			return {
 				name: '',
-				gender: '1',
+				gender: '男',
 				phoneNum: '',
 				company: '',
 				companyArr: [],
@@ -86,56 +89,62 @@
 			nextPageBtn
 		},
 		onLoad() {
+			let data = uni.getStorageSync('userCompanyInfo')
+			this.name = data.userName
+			this.gender = data.idCard.split('')[16]%2==0?'女':'男'
 			this.queryInfo()
 		},
 		methods: {
 			// 添加或修改个人基本信息
 			goNextPager() {
-				let obj = {
-					mobile: this.phoneNum,
-					nickname: this.name,
-					sex: this.gender,
-					userNo: getUserLoginInfo('userNo'),
-					userType:1,
-					compId:0
-				}
+				uni.navigateTo({
+					url: '../documentRegistration/idCardRegister'
+				})
+				// let obj = {
+				// 	mobile: this.phoneNum,
+				// 	nickname: this.name,
+				// 	sex: this.gender,
+				// 	userNo: getUserLoginInfo('userNo'),
+				// 	userType:1,
+				// 	compId:0
+				// }
 
-				if (!this.name) {
-					uni.showToast({
-						title: '姓名不能为空',
-						icon: 'none'
-					})
-					return
-				}
-				if (!REG_PHONE.test(this.phoneNum)) {
-					uni.showToast({
-						title: "手机号格式不正确",
-						icon: "none"
-					})
-					return
-				}
-				uni.showLoading({
-					title: '处理中...'
-				})
+				// if (!this.name) {
+				// 	uni.showToast({
+				// 		title: '姓名不能为空',
+				// 		icon: 'none'
+				// 	})
+				// 	return
+				// }
+				// if (!REG_PHONE.test(this.phoneNum)) {
+				// 	uni.showToast({
+				// 		title: "手机号格式不正确",
+				// 		icon: "none"
+				// 	})
+				// 	return
+				// }
+				// uni.showLoading({
+				// 	title: '处理中...'
+				// })
 				
-				setUserInfomation(obj).then(res=>{
-					uni.hideLoading()
-					if (res.data.code == 200) {
-						console.log('基本信息修改成功：', res)
-						uni.setStorageSync('loginUserBasicInfo',obj)
-						uni.navigateTo({
-							url: '../documentRegistration/idCardRegister'
-						})
-					} else {
-						console.log('添加错误', res)
-						Toast({
-							title: res.data.msg
-						})
-					}
-				},err=>{
-					uni.hideLoading()
-					console.log('请求失败：', err)
-				})
+				// setUserInfomation(obj).then(res=>{
+				// 	uni.hideLoading()
+				// 	if (res.data.code == 200) {
+				// 		console.log('基本信息修改成功：', res)
+				// 		uni.setStorageSync('loginUserBasicInfo',obj)
+				// 		uni.navigateTo({
+				// 			url: '../documentRegistration/idCardRegister'
+				// 		})
+				// 	} else {
+				// 		console.log('添加错误', res)
+				// 		Toast({
+				// 			title: res.data.msg
+				// 		})
+				// 	}
+				// },err=>{
+				// 	uni.hideLoading()
+				// 	console.log('请求失败：', err)
+				// })
 				// httpRequest({
 				// 	url: '/user/api/user/perfect/basicInfo',
 				// 	method: 'POST',
@@ -178,8 +187,8 @@
 								let _data = resp.data.data
 								// this.compId = _data.compId
 								this.phoneNum = _data.mobile
-								this.name = _data.nickname
-								this.gender = _data.sex
+								// this.name = _data.nickname
+								// this.gender = _data.sex
 							}
 						}
 					},
