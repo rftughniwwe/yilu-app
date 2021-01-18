@@ -49,10 +49,12 @@
 				inputIdcard:'',
 				company:'',
 				phoneNum:'',
+				userfaceimg:''
 				
 			};
 		},
 		onLoad(options) {
+			this.userfaceimg = options.userimg
 		},
 		methods: {
 			goNextPager() {
@@ -142,12 +144,14 @@
 				// let infoStorage = uni.getStorageSync('loginUserBasicInfo')
 				// let info = infoStorage
 				let p = uni.getStorageSync('userloginphonenumber')
-				console.log('p',p)
+				
 				let params = {
 					mobile: p,
 					userNo: getUserLoginInfo('userNo'),
-					compId: data.compId
+					compId: data.compId,
+					headImgUrl:this.userfaceimg
 				}
+				console.log('p',params)
 				setUserInfomation(params).then(res => {
 					console.log('oaisdfhnksjd',res)
 					if (res.data.code == 200) {

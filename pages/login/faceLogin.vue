@@ -28,12 +28,18 @@
 <script>
 	import useFacePlugin from '../../commons/faceplugin.js'
 	import {
-		httpRequest
+		httpRequest,
+		uploadImage
 	} from '../../utils/httpRequest.js'
 	import {
 		getUserLoginInfo,
 		getSystemInfo
 	} from '../../utils/util.js'
+	import {
+		base64ToPath
+	} from '../../js_sdk/gsq-image-tools/image-tools/index.js'
+
+
 	export default {
 		data() {
 			return {
@@ -42,68 +48,98 @@
 		},
 		onLoad(options) {
 			this.userPhone = options.userPhone
-			console.log('options',options)
+			console.log('options', options)
 		},
 		methods: {
 			//注册人脸 开始识别
 			beginFace() {
-				
+
 				let that = this
 				useFacePlugin({
 					count: 1,
 					random: true
-				}).then((res) => {
-
+				}).then((base64img) => {
 					uni.showLoading({
-						title:'上传中...',
-						mask:true
+						title: '上传中...',
+						mask: true
 					})
-					let userNo = getUserLoginInfo('userNo')
-					let platform = getSystemInfo().platform
-					
-					let obj = {
-						"base64":res,
-						"clientType":platform =='android'?2:3,
-						"mobile":that.userPhone,
-						"userNo":userNo
-					}
-					console.log('paramas',obj)
-					httpRequest({
-						url:'user/api/baiduFaceAip/auth/addface',
-						method:'POST',
-						data:obj,
-						success:response=>{
+					// 上传注册人脸
+					base64ToPath(base64img).then(_rep => {
+						uploadImage('course/api/upload/pic', 'picFile', _rep, {}).then(_resp => {
+							let face_img = JSON.parse(_resp.data)
+							this.setFace(face_img, base64img)
+						}, err => {
 							uni.hideLoading()
-							console.log('上传人脸成功：',response)
-							
-							if(response.data.code == 200){
-								// uni.navigateTo({
-								// 	url:'../fillInfomation/fillInfomation'
-								// })
-								uni.navigateTo({
-									url: '../confirmCompany/confirmCompany'
-								})
-							}else {
-								uni.showToast({
-									title:response.data.msg,
-									icon:'none'
-								})
-							}
-						},
-						fail:err=>{
-							console.log('上传人脸失败',err)
-							uni.hideLoading()
-							uni.showToast({
-								title:"上传人脸失败",
-								icon:'none'
-							})
-						}
-					},1)
+						})
+					}, err => {
+						uni.hideLoading()
+					})
 
-					
+
+
+
 				}, (err) => {
 					console.error('识别失败', err)
 				})
+			},
+			setFace(img, base64img) {
+				
+				let userNo = getUserLoginInfo('userNo')
+				let that = this
+				let platform = getSystemInfo().platform
+				let obj = {
+					"base64": base64img,
+					"clientType": platform == 'android' ? 2 : 3,
+					"mobile": that.userPhone,
+					"userNo": userNo
+					// "headImgUrl":img.data
+				}
+				httpRequest({
+					url: 'user/api/baiduFaceAip/auth/addface',
+					method: 'POST',
+					data: obj,
+					success: response => {
+						uni.hideLoading()
+						console.log('上传人脸',response)
+						if (response.data.code == 200) {
+							// uni.navigateTo({
+							// 	url:'../fillInfomation/fillInfomation'
+							// })
+							let params = {
+								"headImgUrl": img.data,
+								"userNo": userNo
+							}
+							console.log('人脸照上传参数：',params)
+							httpRequest({
+								url: 'user/api/tbFaceToken/updateFace',
+								method: 'POST',
+								data: params,
+								success: res => {
+									console.log('上传人脸照', res)
+								},
+								fail: err => {
+									console.log('上传人脸照失败', err)
+								}
+							}, 1)
+							uni.navigateTo({
+								url: '../confirmCompany/confirmCompany?userimg=' + img.data
+							})
+						} else {
+							uni.showToast({
+								title: response.data.msg,
+								icon: 'none'
+							})
+						}
+					},
+					fail: err => {
+						console.log('上传人脸失败', err)
+						uni.hideLoading()
+						uni.showToast({
+							title: "上传人脸失败",
+							icon: 'none'
+						})
+					}
+				}, 1)
 			}
 		}
 	}

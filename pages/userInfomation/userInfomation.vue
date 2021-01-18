@@ -86,6 +86,7 @@
 		},
 		onLoad() {
 			this.name =  uni.getStorageSync('userCompanyInfo').userName
+			this.gender = uni.getStorageSync('userCompanyInfo').idCard.split('')[16]%2==0?'女':'男'
 			this.getInfo()
 		},
 		onShow() {

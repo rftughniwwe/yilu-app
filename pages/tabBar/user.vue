@@ -127,6 +127,18 @@
 <script>
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
 	import userName from '@/components/userName/userName.vue'
+	import {
+		getUserBasicInfo
+	} from '@/commons/api/apis.js'
+	import {
+		request_err,
+		request_success
+	} from '@/commons/ResponseTips.js'
+	import {
+		getUserLoginInfo
+	} from '@/utils/util.js'
+	
+	
 	export default {
 		data() {
 			return {
@@ -150,11 +162,30 @@
 		onShow() {
 			this.globalSize = uni.getStorageSync('globalFontSize')
 			this.headimg = uni.getStorageSync('userBasicInfo').headImgUrl
+			this.getUserInfo()
 		},
 		onUnload() {
 			console.log('页面卸载：：：：：；')
 		},
 		methods:{
+			// 获取用户信息
+			getUserInfo() {
+				let userBasicInfo = uni.getStorageSync('userBasicInfo')
+				if (userBasicInfo.compId) {
+					return
+				}
+				let userNo = getUserLoginInfo('userNo')
+				getUserBasicInfo(userNo).then(res => {
+					console.log('用户基本信息', res)
+					if (res.data.code == 200) {
+						uni.setStorageSync('userBasicInfo', res.data.data)
+					} else {
+						request_success(res)
+					}
+				}, err => {
+					console.log('获取用户基本信息失败')
+				})
+			},
 			// 关于我们
 			goAboutUs(){
 				uni.navigateTo({

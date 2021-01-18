@@ -247,12 +247,12 @@
 		getExamIdByTraingId,
 		getExamDetails,
 		getExamLists
+		
 	} from '@/commons/api/apis.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import userName from '@/components/userName/userName.vue'
 	import userHeadImg from '@/components/userHeadImg/userHeadImg.vue'
 	import Toast from '@/commons/showToast.js'
-	
 	
 	const app = getApp()
 
@@ -332,9 +332,10 @@
 
 		},
 		onShow() {
-
+			this.getUserInfo()
 		},
 		methods: {
+			
 			getAutoLearningStati() {
 				console.log('dddate', this.date)
 				let userNo = getUserLoginInfo('userNo')
