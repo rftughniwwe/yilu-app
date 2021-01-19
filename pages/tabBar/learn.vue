@@ -113,7 +113,7 @@
 					<!-- 课程 -->
 					<template v-if="autoLearning && autoLearning.length > 0">
 						<view v-for="(item,index) in autoLearning" :key='index'>
-							<course :data='item' @courseClick='courseItemClick' :nolecturer='true'/>
+							<course :data='item' @courseClick='courseItemClick' :nolecturer='true' isFromAuto='true'/>
 						</view>
 					</template>
 					<template v-else>
@@ -246,8 +246,8 @@
 	import {
 		getExamIdByTraingId,
 		getExamDetails,
-		getExamLists
-		
+		getExamLists,
+		getUserBasicInfo
 	} from '@/commons/api/apis.js'
 	import EmptyData from '@/components/EmptyData/EmptyData.vue'
 	import userName from '@/components/userName/userName.vue'
@@ -335,7 +335,25 @@
 			this.getUserInfo()
 		},
 		methods: {
+			// 获取用户信息
+			getUserInfo() {
+				let userBasicInfo = uni.getStorageSync('userBasicInfo')
+				if (userBasicInfo.compId) {
+					return
+				}
+				let userNo = getUserLoginInfo('userNo')
+				getUserBasicInfo(userNo).then(res => {
 			
+					console.log('用户基本信息', res)
+					if (res.data.code == 200) {
+						uni.setStorageSync('userBasicInfo', res.data.data)
+					} else {
+						request_success(res)
+					}
+				}, err => {
+					console.log('获取用户基本信息失败')
+				})
+			},
 			getAutoLearningStati() {
 				console.log('dddate', this.date)
 				let userNo = getUserLoginInfo('userNo')

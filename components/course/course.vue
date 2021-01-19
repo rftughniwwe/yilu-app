@@ -1,7 +1,7 @@
 <!-- 课程item -->
 <template>
 	<view class="main" @click="itemClick(datas)">
-		<view class="item-content flex-between">
+		<view class="item-content flexzzxczxc">
 			<view class="img-content">
 				<view v-if="isShowTag" class="tag-content">
 					{{datas.trainFlag == 1?'已结束':'未开始'}}
@@ -9,20 +9,34 @@
 				<image v-if="!isShowTag" :src="datas.courseLogo || ''" mode=""></image>
 				<image v-if="isShowTag" :src="datas.headurl || ''" mode=""></image>
 			</view>
-			<view class="right-content flex-column-between">
+			<view class="right-content">
 				<view v-if="!isShowTag" class="title text-overflow2">
 					{{datas.courseName || '未知'}}
 				</view>
 				<view v-if="isShowTag" class="title text-overflow2">
 					{{datas.name || '未知'}}
 				</view>
-				<view class="time-from">
+				
+				<view class="time-from" :style="isFromAutoz?'margin-top: 54rpx;':''">
 					<view v-if="!isShowTag" class="time">
-						{{datas.startTime || '未知'}}
+						<template v-if="!isFromAutoz">
+							<view class="">
+								开始时间：{{datas.startTime || '未知'}}
+							</view> 
+							<view class="">
+								结束时间：{{datas.endTime || '未知'}}
+							</view> 
+						</template>
 					</view>
 					<view v-if="isShowTag" class="time">
-						{{datas.trainStart || '未知'}}
+						<view class="">
+							开始时间：{{datas.trainStart || '未知'}}
+						</view>
+						<view class="">
+							结束时间：{{datas.trainEnd || '未知'}}
+						</view>
 					</view>
+					
 					<view v-if="!isShowTag"  class="from">
 						<template v-if="!isShowlecturer">
 							讲师：{{datas.lecturerName || '未知'}}
@@ -52,14 +66,16 @@
 				datas:{},
 				isShowTag:false,
 				tttttttxt:'',
-				isShowlecturer:false
+				isShowlecturer:false,
+				isFromAutoz:false
 			};
 		},
-		props:['data','isTag','nolecturer'],
+		props:['data','isTag','nolecturer','isFromAuto'],
 		created() {
 			this.datas = this.data?this.data:{},
 			this.isShowTag = this.isTag?true:false
 			this.isShowlecturer = this.nolecturer?true:false
+			this.isFromAutoz = this.isFromAuto?true:false
 		},
 		methods:{
 			itemClick(item){
@@ -110,5 +126,10 @@
 	.right-content{
 		width: 55%;
 		margin: 0 20rpx;
+	}
+	.flexzzxczxc{
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
 	}
 </style>

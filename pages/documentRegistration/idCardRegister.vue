@@ -138,6 +138,7 @@
 				tempPathBack_upload: '',
 				tempPathFront_upload: '',
 				cardName: '',
+				cardName2: '',
 				cardGender: '',
 				cardNation: '',
 				cardBirthday: '',
@@ -211,6 +212,7 @@
 								this.flag1 = _data.idcardFront ? true : false
 								this.flag2 = _data.idcardBack ? true : false
 								this.cardName = _data.name;
+								this.cardName2 = _data.name;
 								this.cardGender = _data.sex==1?'男':'女';
 								this.cardNation = _data.nation;
 								this.cardBirthday = _data.dateBirth;
@@ -402,6 +404,7 @@
 
 										if (num === 1) {
 											that.cardName = data.words_result.姓名 ? data.words_result.姓名.words : ''
+											that.cardName2 = data.words_result.姓名 ? data.words_result.姓名.words : ''
 											that.cardGender = data.words_result.性别 ? data.words_result.性别.words : ''
 											that.cardNation = data.words_result.民族 ? data.words_result.民族.words : ''
 											that.cardBirthday = data.words_result.出生 ? dateFormat(data.words_result.出生.words, '-', '-') : ''
@@ -467,7 +470,7 @@
 					return
 				}
 				let realidcard =  uni.getStorageSync('userCompanyInfo').idCard
-				if(this.cardId != realidcard){
+				if(this.cardId != realidcard || this.cardName != this.cardName2){
 					Toast({
 						title: '请填写本人的身份证信息'
 					})

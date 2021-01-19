@@ -49,8 +49,8 @@
 				inputIdcard:'',
 				company:'',
 				phoneNum:'',
-				userfaceimg:''
-				
+				userfaceimg:'',
+				username:''
 			};
 		},
 		onLoad(options) {
@@ -88,6 +88,7 @@
 							this.setCompany(res.data.data)
 							this.idCardSave()
 							this.company = res.data.data.compName
+							this.username = res.data.data.userName
 						} else {
 							request_success(res)
 						}
@@ -149,7 +150,8 @@
 					mobile: p,
 					userNo: getUserLoginInfo('userNo'),
 					compId: data.compId,
-					headImgUrl:this.userfaceimg
+					headImgUrl:this.userfaceimg,
+					nickName:this.username
 				}
 				console.log('p',params)
 				setUserInfomation(params).then(res => {

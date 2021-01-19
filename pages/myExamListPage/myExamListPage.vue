@@ -21,7 +21,7 @@
 							<image class="start" src="../../static/start.png" mode=""></image>
 							<image class="start" src="../../static/start.png" mode=""></image> -->
 							<view class="tttxt">
-								考试时间：{{item.examTime?item.examTime:'未知'}}
+								考试时间：{{item.createTime?item.createTime:'未知'}}
 							</view>
 						</view>
 						<view class="middle tttxt">

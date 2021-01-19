@@ -47,7 +47,12 @@
 			</view>
 			<view class="subtitle text-overflow5">
 				<!-- <rich-text :nodes="courseInfo.teacherIntro"></rich-text> -->
-				{{courseInfo.trainStart}}
+				<view class="">
+					开始时间：{{courseInfo.trainStart}}
+				</view>
+				<view class="">
+					结束时间：{{courseInfo.trainEnd}}
+				</view>
 				<!-- {{courseInfo.teacherIntro?courseInfo.teacherIntro:'未知'}} -->
 			</view>
 			

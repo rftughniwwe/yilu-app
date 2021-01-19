@@ -1,5 +1,5 @@
 <template>
-	<view class="login-protocol">登录/注册代表同意<text class="high-color" @click="userAgreement">《用户协议》、《隐私政策》</text></view>
+	<view class="login-protocol">登录/注册代表同意<text class="high-color"><text @click="userAgreement(1)">《用户协议》</text>、<text @click="userAgreement(2)">《隐私政策》</text></text></view>
 </template>
 
 <script>
@@ -10,9 +10,9 @@
 			};
 		},
 		methods: {
-			userAgreement() {
+			userAgreement(type) {
 				uni.navigateTo({
-					url: '../userAgreement/userAgreement'
+					url: '../userAgreement/userAgreement?type='+type
 				})
 			},
 		}

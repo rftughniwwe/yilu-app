@@ -57,7 +57,7 @@
 						档案编号
 					</view>
 					<view class="input-content">
-						<input type="text" maxlength="40" v-model="cardId" value="" placeholder="请填写证件编号" />
+						<input type="text" maxlength="40" v-model="cardId" value="" placeholder="请填写档案编号" />
 					</view>
 				</view>
 				<view class="info-item flex-between">
@@ -86,7 +86,7 @@
 
 		<view class="next">
 			<nextPageBtn @goNextPage='goNextPager' :isSolid='true' text='完成'></nextPageBtn>
-			<!-- <nextPageBtn @goNextPage='directNextPage' text='跳过'></nextPageBtn> -->
+			<nextPageBtn @goNextPage='directNextPage' text='跳过'></nextPageBtn>
 		</view>
 	</view>
 </template>
@@ -294,8 +294,8 @@
 			},
 			
 			directNextPage(){
-				uni.navigateTo({
-					url: './jobLicense'
+				uni.switchTab({
+					url:'../tabBar/user'
 				})
 			},
 			

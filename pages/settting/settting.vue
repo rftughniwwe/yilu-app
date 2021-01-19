@@ -69,9 +69,9 @@
 		</view>
 		<view class="logout-content">
 			<primaryBtn text='退出登录' @callBackFun='logout'/>
-			<view class="serverAgreement" @click="goUserAgreement">
-				<text class="first-txt">服务协议</text>
-				<text>隐私政策</text>
+			<view class="serverAgreement" >
+				<text class="first-txt" @click="goUserAgreement(1)">服务协议</text>
+				<text @click="goUserAgreement(2)">隐私政策</text>
 			</view>
 		</view>
 	</view>
@@ -102,9 +102,9 @@
 				})
 			},
 			// 前往用户协议
-			goUserAgreement(){
+			goUserAgreement(type){
 				uni.navigateTo({
-					url:'../userAgreement/userAgreement'
+					url:'../userAgreement/userAgreement?type='+type
 				})
 			},
 			// 前往修改手机号

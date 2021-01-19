@@ -125,17 +125,18 @@
 				let examdatas = uni.getStorageSync('autoExamQuestions')
 				let selected = e.option
 				this.currentOption = selected
-				console.log('当前选项：', selected)
-				console.log('当前的item：', examdatas[index])
-				examdatas[index].children.forEach((i,index)=>{
-					if(i.isTrue){
-						console.log('答对了：')
-						this.rightAnswerOption = index
-						this.removeThisItem(examdatas[index].id,examdatas,index)
+				let myAnswer = examdatas[index].children[selected].optionContent
+				let answerid = examdatas[index].children[selected].answerId
+				examdatas[index].children.forEach((i,iii)=>{
+					if(i.isTrue == 1){
+						if(answerid == i.answerId){
+							this.rightAnswerOption = iii
+							this.removeThisItem(examdatas[index].id,examdatas,iii)
+						}
 					}
 				})
-				examdatas[index].userAnswer = examdatas[index].children[selected].optionContent
-				examdatas[index].questionId = examdatas[index].children[selected].answerId
+				examdatas[index].userAnswer = myAnswer
+				examdatas[index].questionId = answerid
 				this.datas = examdatas
 				uni.setStorageSync('autoExamQuestions', examdatas)
 				uni.$emit('optionsChange',{})
@@ -143,6 +144,7 @@
 			},
 			removeThisItem(id,data,index){
 				let userNo = getUserLoginInfo('userNo')
+				console.log('id',id)
 				httpRequest({
 					url:'exam/api/tbCourQuestionPerson/errordelete',
 					method:'DELETE',

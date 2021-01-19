@@ -170,20 +170,19 @@ export function getIdCardInfo(num) {
 
 // 签到根据时间选择获取统计数据
 export function getSignOnDateTime(date) {
-	let  cId = getLearningTypeInfo().compId
+	let cId = getLearningTypeInfo().compId
 	let usernum = getUserLoginInfo('userNo')
-	console.log('cId',cId)
-	console.log('usernum',usernum)
-	console.log('date',date)
+	let params = {
+		"compId": cId,
+		"dateTime": date,
+		"userId": usernum,
+	}
+	console.log('vvvv', params)
 	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: 'user/api/tbCourVideoStudyHistory/signonDateTime',
 			method: 'POST',
-			data: {
-				"compId": cId,
-				"dateTime": date,
-				"userId": usernum,
-			},
+			data: params,
 			success: res => {
 				resolve(res)
 			},
@@ -209,7 +208,7 @@ export function getMonthSummaryData(options) {
 		"categoryId2": categoryId2,
 		"compId": compId,
 		"weekStart": options.weekStart,
-		"weekEnd":options.weekEnd,
+		"weekEnd": options.weekEnd,
 		"userId": userNum,
 	}
 	console.log('月汇总params:', params)
@@ -375,7 +374,7 @@ export function getExamLists() {
 			data: {
 				"compId": compid,
 				"userNo": userno,
-				"isPassExam":0
+				"isPassExam": 0
 			},
 			success: res => {
 				resolve(res)
@@ -383,7 +382,7 @@ export function getExamLists() {
 			fail: err => {
 				request_err(err, '获取试卷失败')
 			}
-		},1)
+		}, 1)
 	})
 }
 
@@ -401,7 +400,7 @@ export function getCompanyId() {
 			success: resp => {
 				console.log('查询服务单位：', resp)
 				if (resp.data.code == 200) {
-					uni.setStorageSync('userCompanyInfo',resp.data.data)
+					uni.setStorageSync('userCompanyInfo', resp.data.data)
 				} else {
 					request_success(resp)
 				}
@@ -415,32 +414,32 @@ export function getCompanyId() {
 }
 
 //获取学习分类
-export function getLearningMode(){
-	
-	return new Promise((resolve,reject)=>{
+export function getLearningMode() {
+
+	return new Promise((resolve, reject) => {
 		httpRequest({
-			url:'course/api/course/category/categorylist',
-			method:'GET',
-			success:res=>{
-				console.log('获取分类：',res)
-				if(res.data.code == 200){
-					uni.setStorageSync('sdrhdrfthftghftyjh',res.data.data)
-					uni.setStorageSync('learningtypemode',res.data.data)
+			url: 'course/api/course/category/categorylist',
+			method: 'GET',
+			success: res => {
+				console.log('获取分类：', res)
+				if (res.data.code == 200) {
+					uni.setStorageSync('sdrhdrfthftghftyjh', res.data.data)
+					uni.setStorageSync('learningtypemode', res.data.data)
 					uni.getStorageSync('learningtypemode')
-				}else {
+				} else {
 					uni.showToast({
-						title:'获取学习分类失败',
-						icon:'none'
+						title: '获取学习分类失败',
+						icon: 'none'
 					})
 				}
 				resolve(res)
 			},
-			fail:err=>{
-				console.log('获取分类失败：',err)
+			fail: err => {
+				console.log('获取分类失败：', err)
 				reject(err)
 			}
-		},2)
+		}, 2)
 	})
-	
-	
+
+
 }

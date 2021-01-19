@@ -73,14 +73,15 @@
 		},
 		onBackPress() {
 			uni.switchTab({
-				url: '../tabBar/index'
+				url: '../tabBar/learn'
 			})
+			return true
 		},
 		methods: {
 			// 返回
 			navigate() {
 				uni.switchTab({
-					url: '../tabBar/index'
+					url: '../tabBar/learn'
 				})
 			},
 			// 分享

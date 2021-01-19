@@ -294,7 +294,7 @@ function getCountDown(time) {
 function dateWeek(time) {
 	let date = time ? new Date(time) : new Date()
 	let year = date.getFullYear()
-	let mon = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) < 10 : date.getMonth() + 1
+	let mon = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
 	let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
 	let mapping = {
 		'0': '日',

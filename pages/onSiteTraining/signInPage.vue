@@ -272,9 +272,10 @@
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.signDatas = uni.getStorageSync('scanData') || {}
+			console.log('zxczxczxc',this.signDatas)
 			this.todayweek = dateWeek()
 			this.getOldSignDatas()
-			// this.getSignInData()
+			this.getSignInData()
 			// 每十秒获取一次位置信息
 			// this.timer = setInterval(() => {
 			// 	this.getLocationFun()

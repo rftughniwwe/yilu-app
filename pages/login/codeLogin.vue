@@ -3,6 +3,7 @@
 	<view>
 		<firstJoinPage v-if='!isFirst' />
 		<view v-else class="main">
+			<userAgreementModal @IArgee="userArgee" v-if='userArgeeModal' />
 			<view class="login-title">
 				欢迎登录宜陆
 			</view>
@@ -27,20 +28,24 @@
 		REG_PHONE
 	} from '../../utils/util.js'
 	import firstJoinPage from '@/components/firstJoinPage/firstJoinPage.vue'
+	import userAgreementModal from '@/components/userAgreementModal/userAgreementModal.vue'
 
 	export default {
 		data() {
 			return {
 				phone: '',
 				isFirst: null,
+				userArgeeModal:null
 			};
 		},
 		components: {
 			loginMode,
-			userAgreement
+			userAgreement,
+			userAgreementModal
 		},
 		onLoad() {
 			this.isFirst = uni.getStorageSync('firstIn')
+			this.userArgeeModal = uni.getStorageSync('userAgreementModal')
 		},
 		onUnload() {
 			this.phone = ''
@@ -62,8 +67,10 @@
 			},
 
 			clearPhone() {
-
 				this.phone = ''
+			},
+			userArgee() {
+				this.userArgeeModal = false
 			}
 		}
 	}

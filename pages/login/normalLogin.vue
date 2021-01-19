@@ -30,7 +30,6 @@
 	import loginMode from '@/components/loginMode/loginMode.vue'
 	import userAgreement from '@/components/userAgreement/userAgreement.vue'
 	import firstJoinPage from '@/components/firstJoinPage/firstJoinPage.vue'
-	import userAgreementModal from '@/components/userAgreementModal/userAgreementModal.vue'
 	import {
 		REG_PHONE,
 		setAppStorage
@@ -57,7 +56,6 @@
 		components: {
 			loginMode,
 			userAgreement,
-			userAgreementModal,
 			firstJoinPage
 		},
 		onLoad() {
