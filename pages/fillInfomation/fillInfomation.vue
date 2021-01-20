@@ -36,6 +36,18 @@
 					{{phoneNum}}
 				</view>
 			</view>
+			<view class="info-item flex-between">
+				<view class="header">
+					准驾车型
+				</view>
+				<view class="input-content">
+					<picker mode="selector" :range="carTypeArr" @change="carTypeChange">
+						<view class="pickertext">{{cartype?cartype:'请选择准驾车型'}}</view>
+					</picker>
+					<!-- <input type="number" maxlength="11" v-model="phoneNum" placeholder="请填写" /> -->
+					<!-- {{phoneNum}} -->
+				</view>
+			</view>
 			<!-- <view class="info-item flex-between">
 				<view class="header">
 					服务单位
@@ -71,9 +83,9 @@
 	import {
 		httpRequest
 	} from '../../utils/httpRequest.js'
-	
+
 	const app = getApp().globalData
-	
+
 	export default {
 		data() {
 			return {
@@ -82,7 +94,24 @@
 				phoneNum: '',
 				company: '',
 				companyArr: [],
-				compId:''
+				compId: '',
+				carTypeArr: [
+					'A1',
+					'A2',
+					'A3',
+					'M',
+					'B1',
+					'B2',
+					'C1',
+					'C2',
+					'C3',
+					'C4',
+					'C5',
+					'D',
+					'E',
+					'F'
+				],
+				cartype: ''
 			};
 		},
 		components: {
@@ -91,24 +120,31 @@
 		onLoad() {
 			let data = uni.getStorageSync('userCompanyInfo')
 			this.name = data.userName
-			this.gender = data.idCard.split('')[16]%2==0?'女':'男'
+			this.gender = data.idCard.split('')[16] % 2 == 0 ? '女' : '男'
 			this.queryInfo()
 		},
 		methods: {
 			// 添加或修改个人基本信息
 			goNextPager() {
-				uni.navigateTo({
-					url: '../documentRegistration/idCardRegister'
-				})
-				// let obj = {
-				// 	mobile: this.phoneNum,
-				// 	nickname: this.name,
-				// 	sex: this.gender,
-				// 	userNo: getUserLoginInfo('userNo'),
-				// 	userType:1,
-				// 	compId:0
-				// }
 
+				
+				if (!this.cartype) {
+					uni.showToast({
+						title: '请选择准驾车型',
+						icon: 'none'
+					})
+					return
+				}
+				let compid = uni.getStorageSync('userCompanyInfo').compId
+				let obj = {
+					mobile: this.phoneNum,
+					nickname: this.name,
+					sex: this.gender == '男'?1:2,
+					userNo: getUserLoginInfo('userNo'),
+					userType: 1,
+					drivingSubjectNo:this.cartype,
+					compId: compid
+				}
 				// if (!this.name) {
 				// 	uni.showToast({
 				// 		title: '姓名不能为空',
@@ -123,28 +159,27 @@
 				// 	})
 				// 	return
 				// }
-				// uni.showLoading({
-				// 	title: '处理中...'
-				// })
-				
-				// setUserInfomation(obj).then(res=>{
-				// 	uni.hideLoading()
-				// 	if (res.data.code == 200) {
-				// 		console.log('基本信息修改成功：', res)
-				// 		uni.setStorageSync('loginUserBasicInfo',obj)
-				// 		uni.navigateTo({
-				// 			url: '../documentRegistration/idCardRegister'
-				// 		})
-				// 	} else {
-				// 		console.log('添加错误', res)
-				// 		Toast({
-				// 			title: res.data.msg
-				// 		})
-				// 	}
-				// },err=>{
-				// 	uni.hideLoading()
-				// 	console.log('请求失败：', err)
-				// })
+				uni.showLoading({
+					title:'保存中'
+				})
+				setUserInfomation(obj).then(res => {
+					uni.hideLoading()
+					if (res.data.code == 200) {
+						console.log('基本信息修改成功：', res)
+						// uni.setStorageSync('loginUserBasicInfo', obj)
+						uni.navigateTo({
+							url: '../documentRegistration/idCardRegister'
+						})
+					} else {
+						console.log('添加错误', res)
+						Toast({
+							title: res.data.msg
+						})
+					}
+				}, err => {
+					uni.hideLoading()
+					console.log('请求失败：', err)
+				})
 				// httpRequest({
 				// 	url: '/user/api/user/perfect/basicInfo',
 				// 	method: 'POST',
@@ -154,9 +189,9 @@
 				// 		uni.hideLoading()
 				// 		if (res.data.code == 200) {
 				// 			console.log('基本信息修改成功：', res)
-							
+
 				// 			uni.navigateTo({
-				// 				url: '../documentRegistration/idCardRegister?infoMation='+obj
+				// 				url: '../documentRegistration/idCardRegister?infoMation=' + obj
 				// 			})
 				// 		} else {
 				// 			console.log('添加错误', res)
@@ -169,38 +204,39 @@
 				// 		uni.hideLoading()
 				// 		console.log('请求失败：', err)
 				// 	}
-				// },1)
+				// }, 1)
 
 
 			},
-			
+
 			// 查询
-			queryInfo(){
+			queryInfo() {
 				let userno = getUserLoginInfo('userNo')
 				httpRequest({
-					url:'user/api/user/perfect/getBasicInfo?userNo='+userno,
-					method:'POST',
-					success:resp=>{
-						console.log('resp:',resp)
-						if(resp.data.code == 200){
-							if(resp.data.data){
+					url: 'user/api/user/perfect/getBasicInfo?userNo=' + userno,
+					method: 'POST',
+					success: resp => {
+						console.log('resp:', resp)
+						if (resp.data.code == 200) {
+							if (resp.data.data) {
 								let _data = resp.data.data
 								// this.compId = _data.compId
 								this.phoneNum = _data.mobile
+								this.cartype = _data.drivingSubjectNo
 								// this.name = _data.nickname
 								// this.gender = _data.sex
 							}
 						}
 					},
-					fail:err=>{
-						console.log('请求失败',err)
+					fail: err => {
+						console.log('请求失败', err)
 						Toast({
-							title:'请求失败'
+							title: '请求失败'
 						})
 					}
-				},1)
+				}, 1)
 			},
-			
+
 			genderChange(e) {
 				this.gender = e.detail.value
 			},
@@ -227,11 +263,17 @@
 					})
 				})
 			},
-			
+
 			itemSelected(item) {
 				this.company = item.unitName
 				this.compId = item.unitId
 				this.companyArr = []
+			},
+
+			carTypeChange(e) {
+				console.log('cccccar:', e)
+				this.cartype = this.carTypeArr[e.target.value]
+
 			}
 		}
 	}
@@ -279,5 +321,10 @@
 
 	.xbl {
 		width: 70%;
+	}
+
+	.pickertext {
+		font-size: 30rpx;
+		color: #999;
 	}
 </style>

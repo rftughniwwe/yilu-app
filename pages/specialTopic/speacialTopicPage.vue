@@ -26,7 +26,6 @@
 	import {
 		getUserLoginInfo
 	} from '@/utils/util.js'
-
 	export default {
 		data() {
 			return {
@@ -111,6 +110,7 @@
 					data: {
 						labelType: 3,
 						pageCurrent: 1,
+						userNo:getUserLoginInfo('userNo'),
 						pageSize: 10,
 					},
 					success: res => {
@@ -136,6 +136,28 @@
 				uni.navigateTo({
 					url: './specialTopicDetail'
 				})
+			},
+			getCollectTopic(id) {
+				httpRequest({
+					url: 'community/api/labelUserRecord/selectUserRecord',
+					method: 'POST',
+					data: {
+						"labelId": id,
+						"opType": 1,
+						"userNo": getUserLoginInfo('userNo')
+					},
+					success: res => {
+						console.log('专题是否收藏：',res)
+						if (res.data == 0) {
+							this.collection = false
+						} else {
+							this.collection = true
+						}
+					},
+					fail: err => {
+						request_err(err, '查询是否收藏失败')
+					}
+				}, 3)
 			}
 		}
 	}

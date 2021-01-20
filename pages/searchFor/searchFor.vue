@@ -73,7 +73,7 @@
 				<view v-show="tab===2" class="course-content">
 					<template v-if="courseArr && courseArr.length > 0">
 						<view v-for="(item,index) in courseArr" :key='index'>
-							<course :data='item' @courseClick='itemClick'></course>
+							<course :data='item' @courseClick='itemClick' nolecturer='true' isFromAuto='true'></course>
 						</view>
 					</template>
 					<template v-else>

@@ -3,7 +3,8 @@
 	<view class="mainzz">
 		<chooseLearningType v-if='!chooseTypePager' />
 		<view v-else class="learning-content">
-			<view :class="type === 2?'no-padding':'learn-top-bar'">
+			<view :class="type === 1?'no-padding':'learn-top-bar'">
+			<!-- <view :class="type === 2?'no-padding':'learn-top-bar'"> -->
 				<view class="flex-between" :style="{'marginTop': isFullScreen?'40rpx':'0'}">
 					<view class="left-select">
 						<picker class="flex-between" :range="typeArrStr" :value="type" @change="bindPickerChange">
@@ -16,14 +17,17 @@
 					<!-- <view v-show="type !== 2" class="right-scannin-code" @click="scanCode">
 						<image src="../../static/camera-code.png" mode=""></image>
 					</view> -->
-					<view v-show="type === 2" class="right-leader-board" @click="goLeaderBoard">
+					
+					<view v-show="type === 1" class="right-leader-board" @click="goLeaderBoard">
+					<!-- <view v-show="type === 2" class="right-leader-board" @click="goLeaderBoard"> -->
 						<image src="../../static/leader-board.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 
 			<!-- 继续教育和安全教育 -->
-			<view v-show="type !== 2" class="learning-teach">
+			<view v-show="type !== 1" class="learning-teach">
+			<!-- <view v-show="type !== 2" class="learning-teach"> -->
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide :type='type' :AnquanType="AnquanType" />
 				</view>
@@ -104,7 +108,8 @@
 			</view>
 
 			<!-- 自主学习 -->
-			<view v-show="type === 2" class="self-learning">
+			<view v-show="type === 1" class="self-learning">
+			<!-- <view v-show="type === 2" class="self-learning"> -->
 				<view class="top-slide-content" :style="{'margin': isFullScreen?'170rpx 0 10rpx':'130rpx 0 10rpx'}">
 					<learnTopSlide type='2' :selfLearnType='selfLearnType' />
 				</view>
@@ -525,22 +530,24 @@
 				// 主项
 				uni.setStorageSync('selectedLearningType', item)
 				// 子项
+				// 安全教育
 				if (e.target.value == 0) {
 					let tab = uni.getStorageSync('anquanTab')
 					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
+					
 				} else if (e.target.value == 1) {
-					let tab = uni.getStorageSync('jixuTab')
-					// uni.setStorageSync('LearningSubType', item.listSub)
-					uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
+					
+					// let tab = uni.getStorageSync('jixuTab')
+					// uni.setStorageSync('LearningSubTypeSubItem', item['listSub'][tab])
 				}
 				// if(e.target.value == 2){
 				// 	this.getAutoLearning()
 				// }
 				// 1自主学习
-				if (e.target.value == 2) {
-					this.getAutoLearning()
-				}
-				// app.globalData.LearningSubType = item.listSub
+				this.getAutoLearning()
+				// if (e.target.value == 2) {
+				// 	this.getAutoLearning()
+				// }
 				if (this.type === 0) {
 					this.isHideSafetyModal = uni.getStorageSync('isHideSafetyModal')
 				}

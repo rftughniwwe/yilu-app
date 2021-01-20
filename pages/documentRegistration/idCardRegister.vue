@@ -267,13 +267,17 @@
 							Toast({
 								title: '保存成功',
 								icon: 'success',
-								mask: true
+								mask: true,
+								duration:1000
 							})
 							setTimeout(() => {
+								// uni.navigateTo({
+								// 	url: `./driverLicense`
+								// })
 								uni.navigateTo({
-									url: `./driverLicense`
+									url:'./jobLicense'
 								})
-							}, 1500)
+							}, 1000)
 							// this.getCompanyById(data.cardId)
 						} else {
 							Toast({
