@@ -96,7 +96,7 @@
 			</view>
 		</view>
 		<view class="next">
-			<nextPageBtn @goNextPage='goNextPager'></nextPageBtn>
+			<nextPageBtn @goNextPage='goNextPager' text='完成' :isSolid='true'></nextPageBtn>
 		</view>
 	</view>
 </template>
@@ -274,8 +274,11 @@
 								// uni.navigateTo({
 								// 	url: `./driverLicense`
 								// })
-								uni.navigateTo({
-									url:'./jobLicense'
+								// uni.navigateTo({
+								// 	url:'./jobLicense'
+								// })
+								uni.switchTab({
+									url:'../tabBar/user'
 								})
 							}, 1000)
 							// this.getCompanyById(data.cardId)

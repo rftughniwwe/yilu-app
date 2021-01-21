@@ -253,6 +253,7 @@
 					data: params,
 					success: res => {
 						console.log('上传考试记录：', res)
+						uni.setStorageSync('userexamfrom','onlineexam')
 						let url = '/pages/exam/startExam?id=' + this.examData.id;
 						uni.navigateTo({
 							url: url

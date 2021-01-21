@@ -360,7 +360,6 @@
 				})
 			},
 			getAutoLearningStati() {
-				console.log('dddate', this.date)
 				let userNo = getUserLoginInfo('userNo')
 				let year = this.date.split('-')[0]
 				let month = this.date.split('-')[1]
@@ -368,9 +367,6 @@
 				let end = new Date(year, month, 0).getDate()
 				let s_time = this.date + '-' + start
 				let e_time = this.date + '-' + end
-				console.log('s', s_time)
-				console.log('e', e_time)
-				console.log('userno', userNo)
 				httpRequest({
 					url: 'exam/api/tbCourQuestionPerson/questionCount',
 					method: 'POST',
@@ -545,6 +541,7 @@
 				// }
 				// 1自主学习
 				this.getAutoLearning()
+				this.getAutoLearningStati()
 				// if (e.target.value == 2) {
 				// 	this.getAutoLearning()
 				// }

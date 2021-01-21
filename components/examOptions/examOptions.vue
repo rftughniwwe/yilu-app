@@ -41,7 +41,7 @@
 					<!-- {{option.optionContent?option.optionContent:'未知'}} -->
 				</view>
 			</view>
-			<view v-show="singleItem1 || singleItem2 || singleItem3 || singleItem4" class="confirm-btn" @click="confirmssss">
+			<view v-show="(singleItem1 || singleItem2 || singleItem3 || singleItem4) && showMutileBtn" class="confirm-btn" @click="confirmssss">
 				确定
 			</view>
 		</template>
@@ -60,7 +60,8 @@
 				singleItem2: false,
 				singleItem3: false,
 				singleItem4: false,
-				mutileAnswers: []
+				mutileAnswers: [],
+				showMutileBtn:true
 			};
 		},
 		props: ['item', 'index'],
@@ -95,6 +96,7 @@
 				})
 			},
 			clickItemMulite(index, item) {
+				if(!this.showMutileBtn) return
 				if (index == 0) {
 					if (!this.singleItem1) {
 						this.mutileAnswers.push({
@@ -156,6 +158,7 @@
 			},
 			confirmssss() {
 				console.log('ooooooooooooo', this.mutileAnswers)
+				this.showMutileBtn = false
 				this.$emit('optionsClickMutile', {
 					option: this.mutileAnswers
 				})

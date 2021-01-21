@@ -88,7 +88,6 @@
 							this.setCompany(res.data.data)
 							this.idCardSave()
 							this.company = res.data.data.compName
-							this.username = res.data.data.userName
 						} else {
 							request_success(res)
 						}
@@ -151,9 +150,9 @@
 					userNo: getUserLoginInfo('userNo'),
 					compId: data.compId,
 					headImgUrl:this.userfaceimg,
-					nickName:this.username
+					nickname:data.userName
 				}
-				console.log('p',params)
+				console.log('zxiuchzxcjknsdkjf',params)
 				setUserInfomation(params).then(res => {
 					console.log('oaisdfhnksjd',res)
 					if (res.data.code == 200) {

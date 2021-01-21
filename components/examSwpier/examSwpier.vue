@@ -1,14 +1,15 @@
 <!-- 做题swpier -->
 <template>
 	<view class="main">
-		<swiper class='swiper' :indicator-dots='false' @change="itemChange" :current='currentItem' :disable-programmatic-animation='true'>
+		<swiper class='swiper' :indicator-dots='false' @change="itemChange" :current='currentItem'
+		 :disable-programmatic-animation='true'>
 			<template v-for="(item,index) in datas">
 				<swiper-item>
 					<view class="topic">
 						{{index+1}}.{{item.problemContent}}
 					</view>
 					<view class="options">
-						<examOptions :item='item' @optionsClick='clickItem($event,index)' @optionsClickMutile='MutileOptionClick($event,index)'/>
+						<examOptions :item='item' @optionsClick='clickItem($event,index)' @optionsClickMutile='MutileOptionClick($event,index)' />
 					</view>
 					<view v-if="item.userAnswer" class="answer-content">
 						<template v-if="(item.problemType == 1 || item.problemType == 3)">
@@ -93,45 +94,48 @@
 		data() {
 			return {
 				datas: [],
-				optionsMapping:['A','B','C','D','E','F'],
+				optionsMapping: ['A', 'B', 'C', 'D', 'E', 'F'],
 				singleItem: -1,
 				currnet: 0,
-				currentItem:0,
-				rightAnswerOption:0,
-				rightAnswerMutile:'',
-				currentOption:0,
-				currentOptionMutile:'',
-				isShowAnswer:false
+				currentItem: 0,
+				rightAnswerOption: 0,
+				rightAnswerMutile: '',
+				currentOption: 0,
+				currentOptionMutile: '',
+				isShowAnswer: false,
+				isFromErrorzz: false
 			};
 		},
 		components: {
 			examOptions
 		},
-		props: [],
+		props: ['isFromError'],
 		created() {
 			// let examdatas = uni.getStorageSync('autoExamQuestions')
-			
+			this.isFromErrorzz = this.isFromError
 			this.getQuestions()
-			uni.$on('tabChange',(res)=>{
+			uni.$on('tabChange', (res) => {
 				this.currentItem = res.index
 			})
 		},
 		methods: {
 			clickItem(e, index) {
 				uni.showLoading({
-					title:'判断中',
-					mask:true
+					title: '判断中',
+					mask: true
 				})
 				let examdatas = uni.getStorageSync('autoExamQuestions')
 				let selected = e.option
 				this.currentOption = selected
 				let myAnswer = examdatas[index].children[selected].optionContent
 				let answerid = examdatas[index].children[selected].answerId
-				examdatas[index].children.forEach((i,iii)=>{
-					if(i.isTrue == 1){
-						if(answerid == i.answerId){
-							this.rightAnswerOption = iii
-							this.removeThisItem(examdatas[index].id,examdatas,iii)
+				examdatas[index].children.forEach((i, iii) => {
+					if (i.isTrue == 1) {
+						this.rightAnswerOption = iii
+						if (answerid == i.answerId) {
+							if (this.isFromErrorzz) {
+								this.removeThisItem(examdatas[index].id, examdatas, iii)
+							}
 						}
 					}
 				})
@@ -139,26 +143,26 @@
 				examdatas[index].questionId = answerid
 				this.datas = examdatas
 				uni.setStorageSync('autoExamQuestions', examdatas)
-				uni.$emit('optionsChange',{})
+				uni.$emit('optionsChange', {})
 				uni.hideLoading()
 			},
-			removeThisItem(id,data,index){
+			removeThisItem(id, data, index) {
 				let userNo = getUserLoginInfo('userNo')
-				console.log('id',id)
+				console.log('id', id)
 				httpRequest({
-					url:'exam/api/tbCourQuestionPerson/errordelete',
-					method:'DELETE',
-					data:{
-						questionId:id,
-						updateUser:userNo
+					url: 'exam/api/tbCourQuestionPerson/errordelete',
+					method: 'DELETE',
+					data: {
+						questionId: id,
+						updateUser: userNo
 					},
-					success:res=>{
-						console.log('移除题目',res)
+					success: res => {
+						console.log('移除题目', res)
 					},
-					fail:err=>{
-						console.log('移除题目失败：',err)
+					fail: err => {
+						console.log('移除题目失败：', err)
 					}
-				},5)
+				}, 5)
 			},
 			itemChange(e) {
 				uni.$emit('swiperChange', {
@@ -175,7 +179,7 @@
 					method: 'POST',
 					success: res => {
 						uni.hideLoading()
-			
+
 						if (res.data.code == 200) {
 							// uni.setStorageSync('autoExamQuestions', res.data.data)
 							this.datas = res.data.data
@@ -187,36 +191,36 @@
 						uni.hideLoading()
 						console.log('获取试题失败', err)
 					}
-				},5)
+				}, 5)
 			},
-			MutileOptionClick(e,index){
+			MutileOptionClick(e, index) {
 				let examdatas = uni.getStorageSync('autoExamQuestions')
 				let selected = e.option
-				
+
 				console.log('当前答案集：', selected)
 				console.log('当前的item：', examdatas[index])
 				let rightAnswer = ''
 				let myAnsers = ''
 				let submit_answer = ''
-				examdatas[index].children.forEach((_item,_index)=>{
-					console.log('itemssss',_item)
-					if(_item.isTrue == 1){
+				examdatas[index].children.forEach((_item, _index) => {
+					console.log('itemssss', _item)
+					if (_item.isTrue == 1) {
 						rightAnswer += this.optionsMapping[_index]
 					}
 				})
-				selected.forEach((item,inx)=>{
+				selected.forEach((item, inx) => {
 					myAnsers += this.optionsMapping[item.index]
-					submit_answer += submit_answer.length==0?item.option.optionContent:'|'+item.option.optionContent
+					submit_answer += submit_answer.length == 0 ? item.option.optionContent : '|' + item.option.optionContent
 				})
-				console.log('正确答案：',rightAnswer)
-				console.log('我的答案：',submit_answer)
+				console.log('正确答案：', rightAnswer)
+				console.log('我的答案：', submit_answer)
 				this.rightAnswerMutile = rightAnswer
 				this.currentOptionMutile = myAnsers
 				examdatas[index].userAnswer = submit_answer
 				// examdatas[index].questionId = examdatas[index].children[selected].answerId
 				this.datas = examdatas
 				uni.setStorageSync('autoExamQuestions', examdatas)
-				uni.$emit('optionsChange',{})
+				uni.$emit('optionsChange', {})
 			}
 		}
 	}
@@ -243,8 +247,8 @@
 		position: absolute;
 		top: -66rpx;
 		left: 30rpx;
-		padding:14rpx 22rpx;
-		
+		padding: 14rpx 22rpx;
+
 		border-top-left-radius: 12rpx;
 		border-top-right-radius: 12rpx;
 
@@ -253,12 +257,12 @@
 			height: 36rpx;
 			margin-right: 10rpx;
 		}
-		
-		.text{
+
+		.text {
 			color: #FFFFFF;
 			font-size: 28rpx;
 		}
-		
+
 	}
 
 	.answer-contrast {
@@ -287,17 +291,20 @@
 		font-size: 36rpx;
 		font-weight: bold;
 	}
-	.answer-parse{
+
+	.answer-parse {
 		padding: 30rpx;
 		margin-bottom: 20rpx;
 		background-color: #FFFFFF;
 	}
-	.title-parse{
+
+	.title-parse {
 		margin: 4rpx 0 10rpx;
 		color: #333333;
 		font-size: 28rpx;
 	}
-	.parse-content{
+
+	.parse-content {
 		padding: 20rpx 0 30rpx;
 		color: #333333;
 		font-size: 28rpx;

@@ -5,7 +5,7 @@
 			<examTopContent :datas='topDatas' :currentTab='currentQuestion' :isFromError='isFromError'/>
 		</view>
 		<view class="swiper-contnet">
-			<examSwpier />
+			<examSwpier :isFromError='isFromError'/>
 		</view>
 		<view class="bottom-content">
 			<questionBottom @answerSheet='answerSheet' @complete='completeExam' :isFromError='isFromError' />

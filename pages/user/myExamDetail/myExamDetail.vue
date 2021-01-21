@@ -68,7 +68,14 @@
 					</view>
 				</view>
 				<view v-show="showLog" class="face-sign-log">
-					<uni-steps :options="xibai" direction="column"></uni-steps>
+					<template v-if="xibai && xibai.length > 0">
+						<uni-steps :options="xibai" direction="column"></uni-steps>
+					</template>
+					<template v-else>
+						<view class="empty-data">
+							暂无人脸数据
+						</view>
+					</template>
 				</view>
 			</view>
 			<view v-if="data.isPassExam == 0" class="goexam-btn">
@@ -95,12 +102,13 @@
 		},
 		onLoad() {
 			this.data = uni.getStorageSync('userselectedexamitem')
+			console.log('this.data,',this.data)
 			this.setFacelogList(this.data.list)
 		},
 		methods: {
 			setFacelogList(list){
 				let res = []
-				if(list.length >= 3){
+				if(list && list.length >= 3){
 					for(let i=0;i<3;i++){
 						res.push({
 							title: list[i].createTime,
@@ -121,6 +129,7 @@
 				this.xibai = res
 			},
 			goExamxiba() {
+				uni.setStorageSync('userexamfrom','userpage')
 				uni.navigateTo({
 					url:'../../exam/examInfo?examId='+this.data.examId
 				})
@@ -247,5 +256,11 @@
 	}
 	.soldfikhgj{
 		padding-top: 20rpx;
+	}
+	.empty-data{
+		text-align: center;
+		margin: 30rpx 0;
+		font-size: 30rpx;
+		color: #333333;
 	}
 </style>

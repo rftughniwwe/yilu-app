@@ -62,6 +62,7 @@
 		data() {
 			return {
 				examData: {},
+				userfrom:''
 			};
 		},
 		components: {
@@ -69,21 +70,33 @@
 		},
 		onLoad(options) {
 			this.examData = uni.getStorageSync('userexam-result')
+			this.userfrom = uni.getStorageSync('userexamfrom')
 			console.log('试卷结果：',this.examData)
 		},
 		onBackPress() {
-			setTimeout(()=>{
+			if(this.userfrom == 'onlineexam'){
 				uni.switchTab({
 					url:'../tabBar/learn'
 				})
-			},300)
+			}else {
+				uni.redirectTo({
+					url:'../myExamListPage/myExamListPage'
+				})
+			}
+			
 			return true
 		},
 		methods: {
 			close() {
-				uni.switchTab({
-					url:'../tabBar/index'
-				})
+				if(this.userfrom == 'onlineexam'){
+					uni.switchTab({
+						url:'../tabBar/learn'
+					})
+				}else {
+					uni.redirectTo({
+						url:'../myExamListPage/myExamListPage'
+					})
+				}
 			},
 			openExplain() {
 				uni.navigateTo({
