@@ -24,35 +24,35 @@
 					<view class="flex-row-start">
 						<image src="../../static/mini-time.png" mode=""></image>
 						<view class="time zzz">
-							开始时间：{{signDatas.startTime?signDatas.startTime:'未知'}}
+							开始时间：{{signDatas.trainStart?signDatas.trainStart:'未知'}}
 						</view>
 					</view>
 					<view class="flex-row-start">
 						<image src="../../static/mini-time.png" mode=""></image>
 						<view class="time zzz">
-							结束时间：{{signDatas.endTime?signDatas.endTime:'未知'}}
+							结束时间：{{signDatas.trainEnd?signDatas.trainEnd:'未知'}}
 						</view>
 					</view>
 					<view class="flex-row-start" style="margin-top: 20rpx;">
 						<image src="../../static/mini-course.png" mode=""></image>
 						<view class="time">
-							当前课程：{{signDatas.name?signDatas.name:oldSignData[0].refName}}
+							当前课程：{{signDatas.name?signDatas.name:'未知'}}
 						</view>
 					</view>
 
 				</view>
 				<view class="sign-content flex-around">
 					<view class="sign-in" @click="sign(0)">
-						<template v-if="!isOldData">
+						<template>
 							<view class="sign-title">
-								签入时间：{{signInTime?signInTime:'未签入'}}
+								{{noSign1?'未签入':'签入成功'}}
 							</view>
 						</template>
-						<template v-else>
+						<!-- <template v-else>
 							<view class="sign-title">
 								签入时间：{{oldSignData[1]?oldSignData[1].signDate[1]:oldSignData[0].signDate[1]}}
 							</view>
-						</template>
+						</template> -->
 						<view class="sign-img">
 							<image v-if='noSign1' src="../../static/signin.png" mode=""></image>
 							<image v-if='!noSign1' src="../../static/checkedin.png" mode=""></image>
@@ -62,16 +62,16 @@
 						</view>
 					</view>
 					<view class="sign-in" @click="sign(1)">
-						<template v-if="!isOldData">
+						<template>
 							<view class="sign-title">
-								签出时间：{{signOutTime?signOutTime:'未签出'}}
+								{{noSign2?'未签出':'签出成功'}}
 							</view>
 						</template>
-						<template v-else>
+						<!-- <template v-else>
 							<view class="sign-title">
 								签出时间：{{oldSignData[1]?oldSignData[0].signDate[1]:'未签出'}}
 							</view>
-						</template>
+						</template> -->
 
 						<view class="sign-img">
 							<image v-if='noSign2' src="../../static/signin.png" mode=""></image>
@@ -84,21 +84,23 @@
 				</view>
 			</view>
 			<view class="map-contentzz">
+				<view class="face-log-content">
+					<uni-steps :options="xibai" direction="column"></uni-steps>
+				</view>
 				<view class="top-tips flex-row-start">
-					<template v-if="!isOldData">
-						<!-- <image v-show="isInRange" src="../../static/success.png" mode=""></image>
-						<image v-show='!isInRange' src="../../static/signin.png" mode=""></image> -->
+					<!-- <template v-if="guaiwhdnbias[0].signonType == 1"> -->
+					<template>
+						<!-- <image src="../../static/success.png" mode=""></image> -->
 						<view class="txt">
 							<!-- {{isInRange?'已进入签到范围：':'当前位置未进入签到范围'}} -->
-							签到地点
+							签到地点：{{signDatas.address}}
 						</view>
 					</template>
-					<template v-else>
-						<image src="../../static/success.png" mode=""></image>
+					<!-- <template>
 						<view class="txt">
-							{{oldSignData[0].signonType==0?'已签到':'已签出'}}
+							未签出
 						</view>
-					</template>
+					</template> -->
 
 				</view>
 				<view class="address">
@@ -120,7 +122,7 @@
 						<image src="../../static/date.png" mode=""></image>
 					</view>
 				</picker>
-				
+
 			</view>
 			<view class="subtitle-s">
 				{{todayweek.week}}
@@ -173,7 +175,7 @@
 							<view v-for="(item,index) in tongJiSign.list" :key='index' class="item flex-between">
 								<view class="head flex-row-start">
 									<view class="circle">
-									
+
 									</view>
 									<view class="record-txt">
 										{{item.refName?item.refName:'未知'}}
@@ -243,7 +245,8 @@
 	import {
 		uploadImage
 	} from '@/utils/httpRequest.js'
-
+	import uniSteps from '@/components/uni-steps/uni-steps.vue'
+	
 	export default {
 		data() {
 			return {
@@ -259,9 +262,9 @@
 				noSign2: true,
 				signInTime: '',
 				signOutTime: '',
-				oldSignData: [],
-				isOldData: false,
 				todayweek: {},
+				guaiwhdnbias: [],
+				xibai: [],
 			};
 		},
 		components: {
@@ -272,7 +275,7 @@
 		onLoad(options) {
 			this.isFullScreen = uni.getStorageSync('isFullScreen')
 			this.signDatas = uni.getStorageSync('scanData') || {}
-			console.log('zxczxczxc',this.signDatas)
+			console.log('zxczxczxc', this.signDatas)
 			this.todayweek = dateWeek()
 			this.getOldSignDatas()
 			this.getSignInData()
@@ -284,7 +287,7 @@
 		onShow() {
 			// this.getLocationFun()
 			// 回显签到数据
-			
+
 		},
 		onPullDownRefresh() {
 			this.getLocationFun()
@@ -354,12 +357,13 @@
 			// 获取签到数据
 			getSignInData() {
 				let date = this.todayweek.date
+				console.log('123123', date)
 				getSignOnDateTime(date).then(res => {
 					console.log('获取签到统计数据：', res)
 					if (res.data.code == 200) {
-						
+
 						let _data = res.data.data
-						_data.list.forEach((item,index)=>{
+						_data.list.forEach((item, index) => {
 							_data.list[index].gmtCreate = item.gmtCreate.split('T')[1]
 						})
 						this.tongJiSign = _data
@@ -387,12 +391,12 @@
 						title: '您已签入'
 					})
 					return
-				} else if(num == 1 && this.signDatas.type == 1){
+				} else if (num == 1 && this.signDatas.type == 1) {
 					Toast({
 						title: '请扫签出码进行签出'
 					})
 					return
-				}else if (num == 1 && !this.noSign2) {
+				} else if (num == 1 && !this.noSign2) {
 					Toast({
 						title: '您已签出'
 					})
@@ -402,7 +406,7 @@
 						title: '请先签入'
 					})
 					return
-				}else if(now < start -((60*1000)*10)){
+				} else if (now < start - ((60 * 1000) * 10)) {
 					Toast({
 						title: '培训还未开始，请稍后'
 					})
@@ -428,14 +432,14 @@
 
 			// 签入签出
 			sign(num) {
-				
+
 				return
 				let that = this
 
 				if (!this.simpleJudge(num)) return
 
 				let address = uni.getStorageSync('userAddress')
-				console.log('params:::::',this.signDatas)
+				console.log('params:::::', this.signDatas)
 				let params = {
 					"chapterdId": this.signDatas.chapterList ? this.signDatas.chapterList[0].chapterId : '',
 					"compId": uni.getStorageSync('userCompanyInfo').compId,
@@ -521,7 +525,7 @@
 															// 	url: '/pages/exam/examInfo?id=' + that.signDatas.id
 															// })
 															uni.navigateTo({
-																url:'/pages/exam/examInfo?id=' + that.signDatas.id
+																url: '/pages/exam/examInfo?id=' + that.signDatas.id
 															})
 														}
 														// else if(res.cancel){
@@ -576,46 +580,52 @@
 
 			// 获取回显数据
 			getOldSignDatas() {
-				this.oldSignData = []
 				let iddata = uni.getStorageSync('userCompanyInfo')
 				let params = {
 					"numEvent": this.signDatas.id,
 					"courseType": '1',
-					"idcard":iddata.idCard
+					"idcard": iddata.idCard
 				}
 				uni.stopPullDownRefresh()
 				console.log('获取回显数据参数:', params)
 				getOldSignData(params).then(res => {
-					console.log('签到信息：', res)
-					if (res.data.code == 200) {
-						let _data = res.data.data
-						if (_data && _data.length > 0) {
-
-							// 已签入未签出
-							this.isOldData = true
-							if (_data[0].signonType == 0) {
-								this.noSign1 = false
-								this.noSign2 = true
-								_data[0]['signDate'] = _data[0].gmtCreate.split('T')
-
-								this.oldSignData.push(_data[0])
-							} else if (_data[0].signonType == 1) {
-								// 已签入签出
-								for (let i = 0; i <= 1; i++) {
-									_data[i]['signDate'] = _data[i].gmtCreate.split('T')
-									this.oldSignData.push(_data[i])
-								}
-								this.noSign1 = false
-								this.noSign2 = false
-							}
-
+					let _data = res.data
+					console.log('签到信息xxxxxxxxx：', _data)
+					if (_data && _data.length > 0) {
+						// 已签入未签出
+						
+						if (_data.length > 0) {
+							this.noSign1 = false
+							this.noSign2 = true
 						}
-					} else {
-						request_success(res)
+						if (_data.length >= 2) {
+							// 已签入签出
+							this.noSign1 = false
+							this.noSign2 = false
+						}
 					}
+					this.setFacelogcontent(_data)
+					this.guaiwhdnbias = _data
 				})
 			},
-
+			setFacelogcontent(data){
+				let d = data || []
+				let res = []
+				if(d.length == 0 ){
+					return
+				}
+				console.log('?????1111')
+				d.forEach((item,index)=>{
+					console.log('?????22222')
+					res.push({
+						title: index==0?'签入成功':'签出成功',
+						desc: this.signDatas.address,
+						headImg: item.facePicPath
+					})
+				})
+				console.log('res',res)
+				this.xibai = res
+			},
 			// 底部tab变换
 			changeTab(num) {
 				this.tab = num
@@ -633,10 +643,10 @@
 					url: './monthlySummary'
 				})
 			},
-			
+
 			// 日期改变事件
-			dateChange(e){
-				console.log('eeeeeee',e)
+			dateChange(e) {
+				console.log('eeeeeee', e)
 				let d = e.detail.value
 				this.todayweek = dateWeek(d)
 				this.getSignInData()
@@ -688,6 +698,7 @@
 	.sign-in {
 		background-color: #F0F4F7;
 		height: 292rpx;
+		width: 40%;
 		border-radius: 12rpx;
 		padding: 30rpx;
 		margin: 0 30rpx;
@@ -902,13 +913,16 @@
 			height: 38rpx;
 		}
 	}
-	.head{
+
+	.head {
 		width: 40%;
 	}
-	.middle-type{
+
+	.middle-type {
 		width: 20%;
 		text-align: center;
 	}
+
 	.no-data {
 		text-align: center;
 		color: #999999;

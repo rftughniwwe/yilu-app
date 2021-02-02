@@ -2,7 +2,7 @@
     "name" : "宜陆",
     "appid" : "__UNI__8009D71",
     "description" : "宜陆APP",
-    "versionName" : "1.0.0",
+    "versionName" : "1.1.0",
     "versionCode" : "100",
     "transformPx" : false,
     /* 5+App特有相关 */
@@ -167,20 +167,6 @@
                     }
                 }
             },
-            "BD-FacePlugin" : {
-                "__plugin_info__" : {
-                    "name" : "百度人脸识别（双端通用） - [试用版，仅用于自定义调试基座]",
-                    "description" : "百度离线人脸采集、活体检测、人脸搜索，iOS Android双端支持，动态切换摄像头，可配活体动作",
-                    "platforms" : "Android,iOS",
-                    "url" : "https://ext.dcloud.net.cn/plugin?id=2179",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : true,
-                    "bought" : 0,
-                    "pid" : "2179",
-                    "parameters" : {}
-                }
-            },
             "DC-WBFaceService" : {
                 "__plugin_info__" : {
                     "name" : "DC-WBFaceService",
@@ -206,6 +192,20 @@
                     "isCloud" : true,
                     "bought" : 1,
                     "pid" : "1491",
+                    "parameters" : {}
+                }
+            },
+            "BD-FacePlugin" : {
+                "__plugin_info__" : {
+                    "name" : "百度人脸识别（双端通用）",
+                    "description" : "百度离线人脸采集、活体检测、人脸搜索，iOS Android双端支持，动态配置UI、前后摄像头、音效",
+                    "platforms" : "Android,iOS",
+                    "url" : "https://ext.dcloud.net.cn/plugin?id=2179",
+                    "android_package_name" : "uni.yiliapp.com",
+                    "ios_bundle_id" : "",
+                    "isCloud" : true,
+                    "bought" : 1,
+                    "pid" : "2179",
                     "parameters" : {}
                 }
             }

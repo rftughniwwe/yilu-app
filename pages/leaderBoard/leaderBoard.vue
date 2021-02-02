@@ -14,7 +14,10 @@
 				<view class="top-two">
 					<view class="circle-img">
 						<image class="top-two-img" src="../../static/number-two.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' :url="threeRanking[1]&& threeRanking.length >= 1?threeRanking[1].headImgUrl:'default'" />
+						<!-- <userHeadImg width='112rpx' height='112rpx' :url="threeRanking[1]&& threeRanking.length >= 1?threeRanking[1].headImgUrl:'default'" /> -->
+						<view class="image-content">
+							<image :src="threeRanking[1]&& threeRanking.length >= 1?threeRanking[1].headImgUrl:'../../static/user2.png'" mode=""></image>
+						</view>
 					</view>
 					<view class="name">
 						{{threeRanking[1] && threeRanking.length >= 1?threeRanking[1].nickName:'暂无人选'}}
@@ -26,7 +29,10 @@
 				<view class="top-one">
 					<view class="circle-img">
 						<image class="top-one-img" src="../../static/number-one.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' :url="threeRanking[0]&& threeRanking.length > 0?threeRanking[0].headImgUrl:'default'" />
+						<!-- <userHeadImg width='112rpx' height='112rpx' :url="threeRanking[0]&& threeRanking.length >= 0?threeRanking[0].headImgUrl:'default'" /> -->
+						<view class="image-content">
+							<image :src="threeRanking[0]&& threeRanking.length >= 0?threeRanking[0].headImgUrl:'../../static/user2.png'" mode=""></image>
+						</view>
 					</view>
 					<view class="name">
 						{{threeRanking && threeRanking.length > 0?threeRanking[0].nickName:'暂无人选'}}
@@ -38,10 +44,13 @@
 				<view class="top-three">
 					<view class="circle-img">
 						<image class="top-three-img" src="../../static/number-three.png" mode=""></image>
-						<userHeadImg width='112rpx' height='112rpx' :url="threeRanking[2]&& threeRanking.length >= 2?threeRanking[2].headImgUrl:'default'" />
+						<!-- <userHeadImg width='112rpx' height='112rpx' :url="threeRanking[2]&& threeRanking.length >= 2?threeRanking[2].headImgUrl:'default'" /> -->
+						<view class="image-content">
+							<image :src="threeRanking[2]&& threeRanking.length >= 2?threeRanking[2].headImgUrl:'../../static/user2.png'" mode=""></image>
+						</view>
 					</view>
 					<view class="name">
-						{{threeRanking && threeRanking.length >= 2?threeRanking[2].nickName:'暂无人选'}}
+						{{threeRanking[2] && threeRanking.length >= 2?threeRanking[2].nickName:'暂无人选'}}
 					</view>
 					<view class="totla-time">
 						{{threeRanking[2] && threeRanking[2].watchLength?threeRanking[2].watchLength:0}}
@@ -82,7 +91,7 @@
 							<userHeadImg width='70rpx' height='70rpx' :url='item.headImgUrl'/>
 						</view> -->
 						<view class="real-name">
-							{{item.nickName}}
+							{{item.nickName?item.nickName:'未知'}}
 						</view>
 					</view>
 					<view class="company">
@@ -136,6 +145,7 @@
 			getData(num) {
 				let n = num || this.tabNum
 				let d = {}
+				this.threeRanking = []
 				if(n === 0){
 					d = {
 						"compId": this.tabNum == 0 ? uni.getStorageSync('userCompanyInfo').compId : null,
@@ -158,12 +168,18 @@
 						if (res.data.code == 200) {
 							let x = res.data.data
 							this.datas = x
-
-							for (let i = 0; i < 3; i++) {
-								if (x.list[i]) {
+							
+							console.log('排行榜数据：',x)
+							if(x.list.length > 0 && x.list.length <= 3){
+								x.list.forEach((item,index)=>{
+									this.threeRanking.push(item)
+								})
+							}else if(x.list.length > 0){
+								for (let i = 0; i < 3; i++) {
 									this.threeRanking.push(x.list[i])
 								}
 							}
+							console.log('zxcioussedfh',this.threeRanking)
 						} else {
 							request_success(res)
 						}
@@ -397,5 +413,16 @@
 
 	.select-tab {
 		background-color: #8FC0FB;
+	}
+	.image-content{
+		border-radius: $uni-border-radius-circle;
+		background-color: #eeeeee;
+		width: 112rpx;
+		height: 112rpx;
+		image{
+			width: 100%;
+			height: 100%;
+			border-radius: $uni-border-radius-circle;
+		}
 	}
 </style>

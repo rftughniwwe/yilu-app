@@ -203,6 +203,19 @@ export function getMonthSummaryData(options) {
 	const compId = getLearningTypeInfo().compId
 	// 用户ID
 	const userNum = getUserLoginInfo('userNo')
+	let mapping = {
+		'从业人员安全学习':'1',
+		'从业人员技能培训':'2',
+		'安全领导小组学习':'3',
+		'应急演练':'4',
+		'新进人员三级教育':'5',
+		'从业人员违法教育':'6',
+		'其他学习':'7'
+	}
+	
+	let zxc = uni.getStorageSync('LearningSubTypeSubItem')
+	let tttype = mapping[zxc.categoryName]
+	
 	let params = {
 		"categoryId1": categoryId1,
 		"categoryId2": categoryId2,
@@ -210,7 +223,9 @@ export function getMonthSummaryData(options) {
 		"weekStart": options.weekStart,
 		"weekEnd": options.weekEnd,
 		"userId": userNum,
+		"type":tttype
 	}
+
 	console.log('月汇总params:', params)
 	return new Promise((resolve, reject) => {
 		httpRequest({
@@ -309,7 +324,7 @@ export function setUserInfomation(obj) {
 export function getOldSignData(datas) {
 	return new Promise((resolve) => {
 		httpRequest({
-			url: 'course/auth/face/sign/log/signlist',
+			url: 'user/api/tbSignon/viewSignon',
 			method: 'POST',
 			data: datas,
 			success: res => {
@@ -318,7 +333,7 @@ export function getOldSignData(datas) {
 			fail: err => {
 				request_err(err)
 			}
-		}, 2)
+		}, 1)
 	})
 }
 

@@ -46,6 +46,9 @@
 				</view>
 			</view> -->
 		</view>
+		<uni-popup ref="sharepopup" type="bottom">
+			<share-btn :sharedataTemp="sharedata"></share-btn>
+		</uni-popup>
 	</view>
 </template>
 
@@ -57,7 +60,8 @@
 				isFullScreen: false,
 				examResult: {},
 				examtime: '',
-				nickname: ''
+				nickname: '',
+				sharedata: {}
 			};
 		},
 		components: {
@@ -86,7 +90,14 @@
 			},
 			// 分享
 			rightClick() {
-
+				this.sharedata = {
+					type: 0,
+					strShareUrl: 'https://www.ylonlinedu.com/share-page/examresultShare.html?total='+this.examtime + '&score='+this.examResult.score+'&name='+this.nickname+'&time='+this.examtime,
+					strShareTitle: '我的成绩',
+					strShareSummary: '考试结果',
+					strShareImageUrl: 'https://www.ylonlinedu.com/share-page/assets/exam-result-bg.png'
+				}
+				this.$refs.sharepopup.open();
 			}
 		}
 	}

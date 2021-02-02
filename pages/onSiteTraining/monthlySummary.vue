@@ -107,7 +107,7 @@
 									{{item.startTime}} <text class="hight-color">签出没有打卡</text>
 								</view>
 							</view>
-						<!-- 	<view class="go-learning" @click="goLearning(item)">
+							<!-- 	<view class="go-learning" @click="goLearning(item)">
 								去学习
 							</view> -->
 						</view>
@@ -164,7 +164,7 @@
 				})
 				let _date = new Date(this.dateString)
 				let y = _date.getFullYear()
-				let m = _date.getMonth() + 1
+				let m = (_date.getMonth() + 1) < 10?'0'+(_date.getMonth() + 1):_date.getMonth() + 1
 				let start = y + '-' + m + '-' + '01'
 				let lastday = new Date(y, m, 0).getDate() < 10 ? '0' + new Date(y, m, 0).getDate() : new Date(y, m, 0).getDate()
 				let end = y + '-' + m + '-' + lastday

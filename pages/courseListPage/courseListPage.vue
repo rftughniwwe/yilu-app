@@ -58,9 +58,9 @@
 		methods: {
 			chooseTab(e) {
 				this.tab = e
-				this.getAutoLearning()
+				this.getAutoLearning(e)
 			},
-			getAutoLearning() {
+			getAutoLearning(tab) {
 				let typeData = uni.getStorageSync('sdrhdrfthftghftyjh')
 				let chooseTypeData = uni.getStorageSync('selectedLearningType')
 				if (chooseTypeData.id != typeData[0].id) {
@@ -105,8 +105,9 @@
 					})
 					return
 				}
-				console.log('tab', this.tab)
-				let type = this.tab
+				this.autoLearning = []
+				console.log('tab', tab)
+				let type = tab
 				let userno = getUserLoginInfo('userNo')
 				let compId = uni.getStorageSync('userCompanyInfo').compId
 

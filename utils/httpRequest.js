@@ -9,8 +9,8 @@ const BASE_URL = 'http://172.168.1.229'
 // const BASE_URL = 'https://www.ylonlinedu.com/gateway'
 
 // 图片上传
-const BASE_URL2 = 'http://172.168.1.229:8730/'
 // const BASE_URL2 = 'http://47.101.131.157:8880'
+const BASE_URL2 = 'http://172.168.1.229:8730/'
 // const BASE_URL2 = 'https://www.ylonlinedu.com/gateway'
 
 // 身份证OCR地址
@@ -55,6 +55,7 @@ function httpRequest(options, url_type, isToken) {
 	}
 	getNetworkType().then((res) => {
 		if (res) {
+			console.log('zxczxczxczxc',base_url + options.url)
 			uni.request({
 				// 必选
 				url: base_url + options.url,

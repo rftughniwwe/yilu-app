@@ -50,7 +50,8 @@
 				articleId: '',
 				isCollectionData: false,
 				sharedata: {},
-				coverimg: ''
+				coverimg: '',
+				newsid:''
 			};
 		},
 		onLoad(options) {
@@ -62,6 +63,7 @@
 				})
 				return
 			}
+			this.newsid = options.id
 			this.getNewsData(options.id)
 			// this.isCollection(options.id)
 			this.articleId = options.id
@@ -75,7 +77,7 @@
 			onShareClick() {
 				this.sharedata = {
 					type: 0,
-					strShareUrl: "http://www.baidu.com",
+					strShareUrl: "https://www.ylonlinedu.com/share-page/newsShare.html?id="+this.newsid,
 					strShareTitle: this.data.summary,
 					strShareSummary: this.data.summary,
 					strShareImageUrl: this.coverimg

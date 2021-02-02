@@ -34,11 +34,11 @@
 
 				<view class="top-img-content">
 					<swiper class="swiper-content" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="600" circular="true">
-						<swiper-item class="swiper-item-wrap">
+						<!-- <swiper-item class="swiper-item-wrap">
 							<view class="swiper-item">
 								<image src="../../static/learning-banner2.png" mode=""></image>
 							</view>
-						</swiper-item>
+						</swiper-item> -->
 						<swiper-item>
 							<view class="swiper-item">
 								<image src="../../static/learning-banner1.png" mode=""></image>
@@ -367,13 +367,15 @@
 				let end = new Date(year, month, 0).getDate()
 				let s_time = this.date + '-' + start
 				let e_time = this.date + '-' + end
+				let cId = getLearningTypeInfo().compId
 				httpRequest({
 					url: 'exam/api/tbCourQuestionPerson/questionCount',
 					method: 'POST',
 					data: {
 						"endTime": e_time,
 						"startTime": s_time,
-						"updateUser": userNo
+						"updateUser": userNo,
+						"compId":cId
 					},
 					success: res => {
 						console.log('自主学习统计数据：', res)
@@ -594,9 +596,16 @@
 				})
 				getExamLists().then(res => {
 					console.log('试卷列表', res)
+					if(res.data.length > 0){
+						let d = res.data[0]
+						this.getExaminfomation(d.examId)
+					}else {
+						uni.showToast({
+							title:'请联系单位开始考试'
+						})
+					}
 					// if (res.data.code == 200) {
-					let d = res.data[0]
-					this.getExaminfomation(d.examId)
+					
 					// } else {
 					// 	request_success(res)
 					// }
@@ -609,7 +618,7 @@
 			getExaminfomation(id) {
 				if (!id) {
 					uni.showToast({
-						title:'暂无考试，请联系管理员开始考试',
+						title:'请联系单位进行考试',
 						icon:'none'
 					})
 					uni.hideLoading()

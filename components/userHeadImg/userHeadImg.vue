@@ -16,6 +16,7 @@
 			// 获取用户头像
 			let headurl = uni.getStorageSync('userBasicInfo').headImgUrl
 			if(this.url){
+				console.log('传过来的用户头像：',this.url)
 				this.headimg = this.url
 			}else if(this.url == 'default'){
 				this.headimg = '../../static/user2.png'

@@ -97,9 +97,10 @@
 		httpRequest
 	} from '@/utils/httpRequest.js'
 	import {
-		getUserLoginInfo
+		getUserLoginInfo,
+		getLearningTypeInfo
 	} from '@/utils/util.js'
-
+	
 	export default {
 		data() {
 			return {
@@ -262,8 +263,10 @@
 			submitExam(list) {
 				let userno = getUserLoginInfo('userNo')
 				let now_date = new Date()
+				let cId = getLearningTypeInfo().compId
 				let data = {
 					questionList: JSON.stringify(list),
+					compId:cId,
 					tbMockTest: {
 						createUser: userno,
 						paperId: this.examId
