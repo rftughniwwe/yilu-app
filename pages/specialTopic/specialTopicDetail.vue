@@ -72,13 +72,14 @@
 		},
 		onLoad(options) {
 			this.item = uni.getStorageSync('speacalDetails') || {}
+			console.log('tag name',this.item)
 			this.getArticle()
 		},
 		methods: {
 			onShareClick() {
 				this.sharedata = {
 					type: 0,
-					strShareUrl: "http://www.baidu.com",
+					strShareUrl: "https://www.ylonlinedu.com/share-page/topicShare.html?name="+this.item.labelName+"&content="+this.item.content+"&coverpic="+this.item.coverPic,
 					strShareTitle: this.item.labelName,
 					strShareSummary: this.item.content,
 					strShareImageUrl: this.item.coverPic

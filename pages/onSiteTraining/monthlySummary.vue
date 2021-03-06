@@ -31,15 +31,15 @@
 				</view>
 				<view class="subtitle flex-between">
 					<view class="txt">
-						{{datas.countList?datas.countList.length:0}}天
+						{{datas.list?datas.list.length:0}}天
 					</view>
 					<image class="push-down-img" src="../../static/down-push-arrow.png" mode=""></image>
 				</view>
 
 			</view>
 			<view v-show="tab1">
-				<template v-if="datas.countList && datas.countList.length > 0">
-					<view class="details-items" v-for="(item,index) in datas.countList" :key='index'>
+				<template v-if="datas.list && datas.list.length > 0">
+					<view class="details-items" v-for="(item,index) in datas.list" :key='index'>
 						<view class="sigle-item flex-between">
 							<view class="head">
 								{{item.dat}}
@@ -61,20 +61,20 @@
 				</view>
 				<view class="subtitle flex-between">
 					<view class="txt">
-						{{datas.countStudyTime?datas.countStudyTime:0}}次
+						{{datas.sum?datas.sum:0}}次
 					</view>
 					<image class="push-down-img" src="../../static/down-push-arrow.png" mode=""></image>
 				</view>
 			</view>
 			<view v-show="tab2">
-				<template v-if="datas.countList && datas.countList.length > 0">
-					<view class="details-items" v-for="(item,index) in datas.countList" :key='index'>
+				<template v-if="datas.list && datas.list.length > 0">
+					<view class="details-items" v-for="(item,index) in datas.list" :key='index'>
 						<view class="sigle-item flex-between">
 							<view class="head">
 								{{item.dat}}
 							</view>
 							<view class="txt">
-								1次
+								{{item.count}}次
 							</view>
 						</view>
 					</view>
@@ -96,15 +96,18 @@
 				</view>
 			</view>
 			<view v-show="tab3">
-				<template v-if="datas.list && datas.list.length > 0">
-					<view class="details-items" v-for="(item,index) in datas.list" :key='index'>
+				<template v-if="datas.tbTrainingListByCompIdRESPList && datas.tbTrainingListByCompIdRESPList.length > 0">
+					<view class="details-items" v-for="(item,index) in datas.tbTrainingListByCompIdRESPList" :key='index'>
 						<view class="sigle-item flex-between">
 							<view class="head">
 								<view class="qk-title">
-									{{item.courseName}}
+									{{item.name}}
 								</view>
 								<view class="time-subtitle">
-									{{item.startTime}} <text class="hight-color">签出没有打卡</text>
+									{{item.trainStart}}
+								</view>
+								<view class="time-subtitle">
+									{{item.address}}
 								</view>
 							</view>
 							<!-- 	<view class="go-learning" @click="goLearning(item)">

@@ -73,6 +73,7 @@
 		},
 		props: ['data', 'isTag', 'nolecturer', 'isFromAuto'],
 		created() {
+			console.log('洗白开sei给',this.data)
 			this.datas = this.data ? this.data : {}
 			this.isShowTag = this.isTag ? true : false
 			this.isShowlecturer = this.nolecturer ? true : false

@@ -237,11 +237,23 @@
 							}
 						} else {
 							// request_success(res)
-							uni.showToast({
-								title: resp.data.msg,
-								duration: 1500,
-								icon: 'none'
+							// uni.showToast({
+							// 	title: resp.data.msg,
+							// 	duration: 1500,
+							// 	icon: 'none'
+							// })
+							uni.showModal({
+								title:'识别失败',
+								content:resp.data.msg,
+								showCancel:false,
+								confirmText:'重试',
+								success:res=>{
+									if(res.confirm){
+										this.faceVierhudghr(true)
+									}
+								}
 							})
+						
 							// if (this.isGradeExam) {
 							// 	const d = {
 							// 		id: this.recordId
@@ -272,7 +284,7 @@
 						}
 					}, err => {
 						uni.hideLoading()
-						request_err(err, '人脸验证失败，稍后重试')
+						request_err(err, '系统错误，稍后重试')
 					})
 				})
 			},

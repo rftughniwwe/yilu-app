@@ -130,7 +130,7 @@
 				}, 3)
 			},
 			routeJump(e) {
-				
+				console.log('专题：',e.item)
 				// let obj = encodeURIComponent(JSON.stringify(e.item))
 				uni.setStorageSync('speacalDetails',e.item)
 				uni.navigateTo({

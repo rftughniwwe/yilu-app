@@ -141,7 +141,6 @@
 				},5)
 			},
 			goExam(){
-				
 				uni.navigateTo({
 					url:'/pages/examQuestion/examQuestion?id='+this.examinfo.id
 				})

@@ -310,7 +310,9 @@
 					if (data.num === 0) {
 						this.isHideSafetyModal = false
 					}
-					if(data.num == 2){
+					// if(data.num == 2){
+					// hide problem
+					if(data.num == 1){
 						this.getAutoLearning()
 					}
 					this.type = data.num ? data.num : 0
@@ -416,7 +418,7 @@
 					},
 					success: res => {
 						uni.hideLoading()
-						console.log('自主学习课程列表',res)
+						console.log('自主学习课程列表:',res)
 						if (res.data.code == 200) {
 							this.autoLearning = res.data.data
 						}
@@ -601,7 +603,8 @@
 						this.getExaminfomation(d.examId)
 					}else {
 						uni.showToast({
-							title:'请联系单位开始考试'
+							title:'请联系单位开始考试',
+							icon:'none'
 						})
 					}
 					// if (res.data.code == 200) {
@@ -673,12 +676,14 @@
 						// 	})
 						// 	return
 						// }
-						// uni.navigateTo({
+						// uni.navigateTo({ 
 						// 	url: '../user/myCourse'
 						// })
 						// uni.navigateTo({
 						// 	url: '../course/list/list'
 						// })
+						uni.setStorageSync('userexamfrom','onlineexam')
+						console.log('学习页面进：',uni.getStorageSync('userexamfrom'))
 						this.getExamId()
 						
 					}
@@ -754,13 +759,18 @@
 			},
 			getErrorQuestion() {
 				let userid = getUserLoginInfo('userNo')
+				let cId = getLearningTypeInfo().compId
 				uni.showLoading({
 					title: '出题中',
 					mask: true
 				})
 				httpRequest({
-					url: 'exam/api/tbCourQuestionPerson/errorlist?userId=' + userid,
-					method: 'GET',
+					url: 'exam/api/tbCourQuestionPerson/errorlist',
+					method: 'POST',
+					data:{
+						compId:cId,
+						userId:userid
+					},
 					success: res => {
 						console.log('错题集zz：', res.data.data.length)
 						uni.hideLoading()

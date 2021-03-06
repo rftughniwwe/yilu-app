@@ -178,14 +178,14 @@
 
 									</view>
 									<view class="record-txt">
-										{{item.refName?item.refName:'未知'}}
+										{{item.trainName?item.trainName:'未知'}}
 									</view>
 								</view>
 								<view class="record-txt middle-type">
 									{{item.signonType =='1'?'签出':'签入'}}
 								</view>
 								<view class="time-content">
-									{{item.gmtCreate?item.gmtCreate:'未知'}}
+									{{item.signonTime?item.signonTime:'未知'}}
 								</view>
 							</view>
 						</template>
@@ -363,9 +363,9 @@
 					if (res.data.code == 200) {
 
 						let _data = res.data.data
-						_data.list.forEach((item, index) => {
-							_data.list[index].gmtCreate = item.gmtCreate.split('T')[1]
-						})
+						// _data.list.forEach((item, index) => {
+						// 	_data.list[index].gmtCreate = item.gmtCreate.split('T')[1]
+						// })
 						this.tongJiSign = _data
 					} else {
 						request_success(res)
@@ -614,11 +614,9 @@
 				if(d.length == 0 ){
 					return
 				}
-				console.log('?????1111')
 				d.forEach((item,index)=>{
-					console.log('?????22222')
 					res.push({
-						title: index==0?'签入成功':'签出成功',
+						title: index==0?'签入成功：'+item.signonTime:'签出成功：'+item.signonTime,
 						desc: this.signDatas.address,
 						headImg: item.facePicPath
 					})

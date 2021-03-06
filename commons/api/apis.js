@@ -172,10 +172,23 @@ export function getIdCardInfo(num) {
 export function getSignOnDateTime(date) {
 	let cId = getLearningTypeInfo().compId
 	let usernum = getUserLoginInfo('userNo')
+	let mapping = {
+		'从业人员安全学习':'1',
+		'从业人员技能培训':'2',
+		'安全领导小组学习':'3',
+		'应急演练':'4',
+		'新进人员三级教育':'5',
+		'从业人员违法教育':'6',
+		'其他学习':'7'
+	}
+	
+	let zxc = uni.getStorageSync('LearningSubTypeSubItem')
+	let tttype = mapping[zxc.categoryName]
 	let params = {
 		"compId": cId,
 		"dateTime": date,
 		"userId": usernum,
+		"type":tttype
 	}
 	console.log('vvvv', params)
 	return new Promise((resolve, reject) => {
@@ -217,8 +230,8 @@ export function getMonthSummaryData(options) {
 	let tttype = mapping[zxc.categoryName]
 	
 	let params = {
-		"categoryId1": categoryId1,
-		"categoryId2": categoryId2,
+		// "categoryId1": categoryId1,
+		// "categoryId2": categoryId2,
 		"compId": compId,
 		"weekStart": options.weekStart,
 		"weekEnd": options.weekEnd,
@@ -286,7 +299,6 @@ export function signInOut(params) {
 	params.compId = compId
 	params.userId = userNum
 	let t = getUserLoginInfo('token')
-	console.log('token:::', t)
 	return new Promise((resolve, reject) => {
 		httpRequest({
 			url: 'course/auth/face/sign/log/signSave',

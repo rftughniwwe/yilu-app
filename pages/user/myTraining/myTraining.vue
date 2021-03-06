@@ -83,6 +83,7 @@
 				let compId = uni.getStorageSync('userCompanyInfo').compId
 				let tab = this.tab
 				let userid = getUserLoginInfo('userNo')
+				this.courseData = []
 				uni.showLoading({
 					title: '加载中...'
 				})

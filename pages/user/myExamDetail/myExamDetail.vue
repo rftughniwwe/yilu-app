@@ -130,6 +130,7 @@
 			},
 			goExamxiba() {
 				uni.setStorageSync('userexamfrom','userpage')
+				console.log('我的页面进：',uni.getStorageSync('userexamfrom'))
 				uni.navigateTo({
 					url:'../../exam/examInfo?examId='+this.data.examId
 				})

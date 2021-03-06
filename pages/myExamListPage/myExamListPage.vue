@@ -64,6 +64,7 @@
 		},
 		methods: {
 			goDetail(item) {
+				
 				uni.setStorageSync('userselectedexamitem',item)
 				uni.navigateTo({
 					url: '../user/myExamDetail/myExamDetail'

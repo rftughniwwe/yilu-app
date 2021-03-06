@@ -71,30 +71,34 @@
 		onLoad(options) {
 			this.examData = uni.getStorageSync('userexam-result')
 			this.userfrom = uni.getStorageSync('userexamfrom')
-			console.log('试卷结果：',this.examData)
 		},
 		onBackPress() {
 			if(this.userfrom == 'onlineexam'){
-				uni.switchTab({
-					url:'../tabBar/learn'
-				})
+				setTimeout(()=>{
+					uni.switchTab({
+						url:'../tabBar/learn'
+					})
+				},200)
 			}else {
-				uni.redirectTo({
-					url:'../myExamListPage/myExamListPage'
-				})
+				setTimeout(()=>{
+					uni.redirectTo({
+						url: '../user/myExamDetail/myExamDetail'
+					})
+				},200)
 			}
 			
 			return true
 		},
 		methods: {
 			close() {
+				console.log('soID胡覅是',this.userfrom)
 				if(this.userfrom == 'onlineexam'){
 					uni.switchTab({
 						url:'../tabBar/learn'
 					})
 				}else {
 					uni.redirectTo({
-						url:'../myExamListPage/myExamListPage'
+						url: '../user/myExamDetail/myExamDetail'
 					})
 				}
 			},
