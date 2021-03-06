@@ -62,7 +62,8 @@
 		data() {
 			return {
 				examData: {},
-				userfrom:''
+				userfrom:'',
+				
 			};
 		},
 		components: {
@@ -71,6 +72,13 @@
 		onLoad(options) {
 			this.examData = uni.getStorageSync('userexam-result')
 			this.userfrom = uni.getStorageSync('userexamfrom')
+			if(options.isInvalid){
+				uni.showModal({
+					title:'提示',
+					content:'非本人考试，此次考试无效，请重新考试！',
+					showCancel:false
+				})
+			}
 		},
 		onBackPress() {
 			if(this.userfrom == 'onlineexam'){

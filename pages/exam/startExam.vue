@@ -164,12 +164,12 @@
 		onBackPress() {
 			uni.showModal({
 				title: '提示',
-				content: '退出将自动交卷，确定退出？',
+				content: '中途退出考试无效，确认退出？',
 				confirmText: '确定',
 				cancelText: '取消',
 				success: res => {
 					if (res.confirm) {
-						this.submit()
+						this.submit(true,true)
 					}
 				},
 			})
@@ -464,7 +464,7 @@
 				}, 5)
 			},
 
-			submit(flag) {
+			submit(flag,middleLogout = false) {
 				clearInterval(this.time)
 				console.log('flagflagflagflag:', flag)
 				if (!flag) {
@@ -475,12 +475,13 @@
 						faceVerification(res).then(resp => {
 							console.log('交卷人脸识别：', resp)
 							uni.hideLoading()
+							const d = {
+								recordId: this.recordId
+							}
 							if (resp.data.code == 200) {
 								this.submitFlag = true
 								this.aikujsfbhnsjdkef(res, true)
-								const d = {
-									recordId: this.recordId
-								}
+								
 								console.log('交卷2222：', d)
 								examApis.examFinish(d).then((e) => {
 									e.examId = this.examId;
@@ -491,10 +492,30 @@
 									})
 								})
 							} else {
-								uni.showToast({
-									title: resp.data.msg,
-									icon: 'none',
-									duration: 1500
+								// uni.showToast({
+								// 	title: resp.data.msg,
+								// 	icon: 'none',
+								// 	duration: 1500
+								// })
+								uni.showModal({
+									title:'识别失败',
+									content:'识别失败，是否重试',
+									cancelText:'交卷',
+									confirmText:'重试',
+									success: (res) => {
+										if(res.cancel){
+											examApis.examFinish(d).then((e) => {
+												e.examId = this.examId;
+												e.recordId = this.recordId;
+												uni.setStorageSync('userexam-result', e);
+												uni.redirectTo({
+													url: '/pages/exam/result'
+												})
+											})
+										}else {
+											this.submit(flag)
+										}
+									}
 								})
 							}
 						}, err => {
@@ -528,10 +549,16 @@
 						e.recordId = this.recordId;
 						
 						uni.setStorageSync('userexam-result', e);
-
-						uni.redirectTo({
-							url: '/pages/exam/result'
-						})
+						if(middleLogout){
+							uni.redirectTo({
+								url: '/pages/exam/result?isInvalid=true'
+							})
+						}else {
+							uni.redirectTo({
+								url: '/pages/exam/result'
+							})
+						}
+						
 					})
 					// }
 				}
