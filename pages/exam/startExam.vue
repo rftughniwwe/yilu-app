@@ -483,6 +483,7 @@
 								this.aikujsfbhnsjdkef(res, true)
 								
 								console.log('交卷2222：', d)
+								d.discernType = 1
 								examApis.examFinish(d).then((e) => {
 									e.examId = this.examId;
 									e.recordId = this.recordId;
@@ -504,6 +505,7 @@
 									confirmText:'重试',
 									success: (res) => {
 										if(res.cancel){
+											d.discernType = 2
 											examApis.examFinish(d).then((e) => {
 												e.examId = this.examId;
 												e.recordId = this.recordId;
@@ -544,6 +546,9 @@
 						recordId: this.recordId
 					}
 					console.log('交卷4：', d)
+					if(middleLogout){
+						d.discernType = 2
+					}
 					examApis.examFinish(d).then((e) => {
 						e.examId = this.examId;
 						e.recordId = this.recordId;
